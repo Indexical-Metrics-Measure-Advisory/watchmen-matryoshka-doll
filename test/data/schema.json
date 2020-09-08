@@ -1,0 +1,1094 @@
+{
+  "modelId": null,
+  "name": "policy",
+  "description": null,
+  "context": null,
+  "businessFields": {
+    "AgentCode": {
+      "fieldId": null,
+      "name": "AgentCode",
+      "description": null,
+      "type": "str"
+    },
+    "AutoUwResultCode": {
+      "fieldId": null,
+      "name": "AutoUwResultCode",
+      "description": null,
+      "type": "str"
+    },
+    "BeforeVatPremium": {
+      "fieldId": null,
+      "name": "BeforeVatPremium",
+      "description": null,
+      "type": "num"
+    },
+    "BookCurrencyCode": {
+      "fieldId": null,
+      "name": "BookCurrencyCode",
+      "description": null,
+      "type": "str"
+    },
+    "BusinessCateCode": {
+      "fieldId": null,
+      "name": "BusinessCateCode",
+      "description": null,
+      "type": "str"
+    },
+    "BusinessObjectId": {
+      "fieldId": null,
+      "name": "BusinessObjectId",
+      "description": null,
+      "type": "num"
+    },
+    "Commission": {
+      "fieldId": null,
+      "name": "Commission",
+      "description": null,
+      "type": "num"
+    },
+    "CommissionRate": {
+      "fieldId": null,
+      "name": "CommissionRate",
+      "description": null,
+      "type": "num"
+    },
+    "DeliveryType": {
+      "fieldId": null,
+      "name": "DeliveryType",
+      "description": null,
+      "type": "str"
+    },
+    "DuePremium": {
+      "fieldId": null,
+      "name": "DuePremium",
+      "description": null,
+      "type": "num"
+    },
+    "EffectiveDate": {
+      "fieldId": null,
+      "name": "EffectiveDate",
+      "description": null,
+      "type": "str"
+    },
+    "ExpiryDate": {
+      "fieldId": null,
+      "name": "ExpiryDate",
+      "description": null,
+      "type": "str"
+    },
+    "GrossPremium": {
+      "fieldId": null,
+      "name": "GrossPremium",
+      "description": null,
+      "type": "num"
+    },
+    "InterestDescription": {
+      "fieldId": null,
+      "name": "InterestDescription",
+      "description": null,
+      "type": "str"
+    },
+    "IsPremiumCalcSuccess": {
+      "fieldId": null,
+      "name": "IsPremiumCalcSuccess",
+      "description": null,
+      "type": "str"
+    },
+    "IsRenewable": {
+      "fieldId": null,
+      "name": "IsRenewable",
+      "description": null,
+      "type": "str"
+    },
+    "IsRenewalPolicy": {
+      "fieldId": null,
+      "name": "IsRenewalPolicy",
+      "description": null,
+      "type": "str"
+    },
+    "IsTakeUpPolicy": {
+      "fieldId": null,
+      "name": "IsTakeUpPolicy",
+      "description": null,
+      "type": "str"
+    },
+    "IssueDate": {
+      "fieldId": null,
+      "name": "IssueDate",
+      "description": null,
+      "type": "str"
+    },
+    "LastPolicyId": {
+      "fieldId": null,
+      "name": "LastPolicyId",
+      "description": null,
+      "type": "str"
+    },
+    "OrgCode": {
+      "fieldId": null,
+      "name": "OrgCode",
+      "description": null,
+      "type": "str"
+    },
+    "POIRate": {
+      "fieldId": null,
+      "name": "POIRate",
+      "description": null,
+      "type": "num"
+    },
+    "PolicyElementId": {
+      "fieldId": null,
+      "name": "PolicyElementId",
+      "description": null,
+      "type": "num"
+    },
+    "PolicyId": {
+      "fieldId": null,
+      "name": "PolicyId",
+      "description": null,
+      "type": "str"
+    },
+    "PolicyNo": {
+      "fieldId": null,
+      "name": "PolicyNo",
+      "description": null,
+      "type": "str"
+    },
+    "PolicyStatus": {
+      "fieldId": null,
+      "name": "PolicyStatus",
+      "description": null,
+      "type": "num"
+    },
+    "PolicyType": {
+      "fieldId": null,
+      "name": "PolicyType",
+      "description": null,
+      "type": "str"
+    },
+    "PremiumBookExchangeRate": {
+      "fieldId": null,
+      "name": "PremiumBookExchangeRate",
+      "description": null,
+      "type": "num"
+    },
+    "PremiumCurrencyCode": {
+      "fieldId": null,
+      "name": "PremiumCurrencyCode",
+      "description": null,
+      "type": "str"
+    },
+    "ProductCode": {
+      "fieldId": null,
+      "name": "ProductCode",
+      "description": null,
+      "type": "str"
+    },
+    "ProductId": {
+      "fieldId": null,
+      "name": "ProductId",
+      "description": null,
+      "type": "num"
+    },
+    "ProductVersion": {
+      "fieldId": null,
+      "name": "ProductVersion",
+      "description": null,
+      "type": "str"
+    },
+    "ProposalDate": {
+      "fieldId": null,
+      "name": "ProposalDate",
+      "description": null,
+      "type": "str"
+    },
+    "ProposalNo": {
+      "fieldId": null,
+      "name": "ProposalNo",
+      "description": null,
+      "type": "str"
+    },
+    "ProposalStatus": {
+      "fieldId": null,
+      "name": "ProposalStatus",
+      "description": null,
+      "type": "str"
+    },
+    "SequenceNumber": {
+      "fieldId": null,
+      "name": "SequenceNumber",
+      "description": null,
+      "type": "num"
+    },
+    "SumInsured": {
+      "fieldId": null,
+      "name": "SumInsured",
+      "description": null,
+      "type": "num"
+    },
+    "TechProductCode": {
+      "fieldId": null,
+      "name": "TechProductCode",
+      "description": null,
+      "type": "str"
+    },
+    "TechProductId": {
+      "fieldId": null,
+      "name": "TechProductId",
+      "description": null,
+      "type": "num"
+    },
+    "Vat": {
+      "fieldId": null,
+      "name": "Vat",
+      "description": null,
+      "type": "num"
+    },
+    "VatRate": {
+      "fieldId": null,
+      "name": "VatRate",
+      "description": null,
+      "type": "num"
+    },
+    "VersionSeq": {
+      "fieldId": null,
+      "name": "VersionSeq",
+      "description": null,
+      "type": "num"
+    }
+  },
+  "relationships": {
+    "PolicyCustomerList": {
+      "relationshipId": null,
+      "type": "OneToMany",
+      "modelSchema": {
+        "modelId": null,
+        "name": "PolicyCustomerList",
+        "description": null,
+        "context": null,
+        "businessFields": {
+          "Address": {
+            "fieldId": null,
+            "name": "Address",
+            "description": null,
+            "type": "str"
+          },
+          "AddressNumber": {
+            "fieldId": null,
+            "name": "AddressNumber",
+            "description": null,
+            "type": "str"
+          },
+          "BusinessObjectId": {
+            "fieldId": null,
+            "name": "BusinessObjectId",
+            "description": null,
+            "type": "num"
+          },
+          "City": {
+            "fieldId": null,
+            "name": "City",
+            "description": null,
+            "type": "str"
+          },
+          "CustomerName": {
+            "fieldId": null,
+            "name": "CustomerName",
+            "description": null,
+            "type": "str"
+          },
+          "CustomerNo": {
+            "fieldId": null,
+            "name": "CustomerNo",
+            "description": null,
+            "type": "str"
+          },
+          "CustomerType": {
+            "fieldId": null,
+            "name": "CustomerType",
+            "description": null,
+            "type": "str"
+          },
+          "DateOfBirth": {
+            "fieldId": null,
+            "name": "DateOfBirth",
+            "description": null,
+            "type": "str"
+          },
+          "Email": {
+            "fieldId": null,
+            "name": "Email",
+            "description": null,
+            "type": "str"
+          },
+          "Gender": {
+            "fieldId": null,
+            "name": "Gender",
+            "description": null,
+            "type": "num"
+          },
+          "IdNo": {
+            "fieldId": null,
+            "name": "IdNo",
+            "description": null,
+            "type": "str"
+          },
+          "IdType": {
+            "fieldId": null,
+            "name": "IdType",
+            "description": null,
+            "type": "str"
+          },
+          "IsBeneficiary": {
+            "fieldId": null,
+            "name": "IsBeneficiary",
+            "description": null,
+            "type": "str"
+          },
+          "IsCoInsured": {
+            "fieldId": null,
+            "name": "IsCoInsured",
+            "description": null,
+            "type": "str"
+          },
+          "IsInsured": {
+            "fieldId": null,
+            "name": "IsInsured",
+            "description": null,
+            "type": "str"
+          },
+          "IsOrgParty": {
+            "fieldId": null,
+            "name": "IsOrgParty",
+            "description": null,
+            "type": "str"
+          },
+          "IsPolicyHolder": {
+            "fieldId": null,
+            "name": "IsPolicyHolder",
+            "description": null,
+            "type": "str"
+          },
+          "Mobile": {
+            "fieldId": null,
+            "name": "Mobile",
+            "description": null,
+            "type": "str"
+          },
+          "PolicyElementId": {
+            "fieldId": null,
+            "name": "PolicyElementId",
+            "description": null,
+            "type": "num"
+          },
+          "PolicyId": {
+            "fieldId": null,
+            "name": "PolicyId",
+            "description": null,
+            "type": "str"
+          },
+          "PolicyStatus": {
+            "fieldId": null,
+            "name": "PolicyStatus",
+            "description": null,
+            "type": "num"
+          },
+          "PostCode": {
+            "fieldId": null,
+            "name": "PostCode",
+            "description": null,
+            "type": "str"
+          },
+          "SequenceNumber": {
+            "fieldId": null,
+            "name": "SequenceNumber",
+            "description": null,
+            "type": "num"
+          },
+          "State": {
+            "fieldId": null,
+            "name": "State",
+            "description": null,
+            "type": "str"
+          },
+          "Suburb": {
+            "fieldId": null,
+            "name": "Suburb",
+            "description": null,
+            "type": "str"
+          }
+        },
+        "relationships": {}
+      }
+    },
+    "PolicyLobList": {
+      "relationshipId": null,
+      "type": "OneToMany",
+      "modelSchema": {
+        "modelId": null,
+        "name": "PolicyLobList",
+        "description": null,
+        "context": null,
+        "businessFields": {
+          "BeforeVatPremium": {
+            "fieldId": null,
+            "name": "BeforeVatPremium",
+            "description": null,
+            "type": "num"
+          },
+          "BusinessObjectId": {
+            "fieldId": null,
+            "name": "BusinessObjectId",
+            "description": null,
+            "type": "num"
+          },
+          "GrossPremium": {
+            "fieldId": null,
+            "name": "GrossPremium",
+            "description": null,
+            "type": "num"
+          },
+          "PolicyElementId": {
+            "fieldId": null,
+            "name": "PolicyElementId",
+            "description": null,
+            "type": "num"
+          },
+          "PolicyId": {
+            "fieldId": null,
+            "name": "PolicyId",
+            "description": null,
+            "type": "str"
+          },
+          "PolicyStatus": {
+            "fieldId": null,
+            "name": "PolicyStatus",
+            "description": null,
+            "type": "num"
+          },
+          "ProductCode": {
+            "fieldId": null,
+            "name": "ProductCode",
+            "description": null,
+            "type": "str"
+          },
+          "ProductElementCode": {
+            "fieldId": null,
+            "name": "ProductElementCode",
+            "description": null,
+            "type": "str"
+          },
+          "ProductElementId": {
+            "fieldId": null,
+            "name": "ProductElementId",
+            "description": null,
+            "type": "num"
+          },
+          "ProductId": {
+            "fieldId": null,
+            "name": "ProductId",
+            "description": null,
+            "type": "num"
+          },
+          "ProductLobId": {
+            "fieldId": null,
+            "name": "ProductLobId",
+            "description": null,
+            "type": "num"
+          },
+          "SequenceNumber": {
+            "fieldId": null,
+            "name": "SequenceNumber",
+            "description": null,
+            "type": "num"
+          },
+          "SumInsured": {
+            "fieldId": null,
+            "name": "SumInsured",
+            "description": null,
+            "type": "num"
+          },
+          "TechProductCode": {
+            "fieldId": null,
+            "name": "TechProductCode",
+            "description": null,
+            "type": "str"
+          },
+          "TechProductId": {
+            "fieldId": null,
+            "name": "TechProductId",
+            "description": null,
+            "type": "num"
+          }
+        },
+        "relationships": {
+          "PolicyRiskList": {
+            "relationshipId": null,
+            "type": "OneToMany",
+            "modelSchema": {
+              "modelId": null,
+              "name": "PolicyRiskList",
+              "description": null,
+              "context": null,
+              "businessFields": {
+                "BeforeVatPremium": {
+                  "fieldId": null,
+                  "name": "BeforeVatPremium",
+                  "description": null,
+                  "type": "num"
+                },
+                "BusinessObjectId": {
+                  "fieldId": null,
+                  "name": "BusinessObjectId",
+                  "description": null,
+                  "type": "num"
+                },
+                "CalculationType": {
+                  "fieldId": null,
+                  "name": "CalculationType",
+                  "description": null,
+                  "type": "num"
+                },
+                "Client": {
+                  "fieldId": null,
+                  "name": "Client",
+                  "description": null,
+                  "type": "num"
+                },
+                "CountryCode": {
+                  "fieldId": null,
+                  "name": "CountryCode",
+                  "description": null,
+                  "type": "str"
+                },
+                "GrossPremium": {
+                  "fieldId": null,
+                  "name": "GrossPremium",
+                  "description": null,
+                  "type": "num"
+                },
+                "InsurPremPerc": {
+                  "fieldId": null,
+                  "name": "InsurPremPerc",
+                  "description": null,
+                  "type": "num"
+                },
+                "InsuranceLimit": {
+                  "fieldId": null,
+                  "name": "InsuranceLimit",
+                  "description": null,
+                  "type": "num"
+                },
+                "LoanAmount": {
+                  "fieldId": null,
+                  "name": "LoanAmount",
+                  "description": null,
+                  "type": "num"
+                },
+                "Margin": {
+                  "fieldId": null,
+                  "name": "Margin",
+                  "description": null,
+                  "type": "num"
+                },
+                "ObligorName": {
+                  "fieldId": null,
+                  "name": "ObligorName",
+                  "description": null,
+                  "type": "str"
+                },
+                "PolicyElementId": {
+                  "fieldId": null,
+                  "name": "PolicyElementId",
+                  "description": null,
+                  "type": "num"
+                },
+                "PolicyId": {
+                  "fieldId": null,
+                  "name": "PolicyId",
+                  "description": null,
+                  "type": "str"
+                },
+                "PolicyStatus": {
+                  "fieldId": null,
+                  "name": "PolicyStatus",
+                  "description": null,
+                  "type": "num"
+                },
+                "ProductElementCode": {
+                  "fieldId": null,
+                  "name": "ProductElementCode",
+                  "description": null,
+                  "type": "str"
+                },
+                "ProductElementId": {
+                  "fieldId": null,
+                  "name": "ProductElementId",
+                  "description": null,
+                  "type": "num"
+                },
+                "RegionCode": {
+                  "fieldId": null,
+                  "name": "RegionCode",
+                  "description": null,
+                  "type": "str"
+                },
+                "SequenceNumber": {
+                  "fieldId": null,
+                  "name": "SequenceNumber",
+                  "description": null,
+                  "type": "num"
+                },
+                "SumInsured": {
+                  "fieldId": null,
+                  "name": "SumInsured",
+                  "description": null,
+                  "type": "num"
+                },
+                "TenorYears": {
+                  "fieldId": null,
+                  "name": "TenorYears",
+                  "description": null,
+                  "type": "num"
+                },
+                "TransactionType": {
+                  "fieldId": null,
+                  "name": "TransactionType",
+                  "description": null,
+                  "type": "num"
+                }
+              },
+              "relationships": {
+                "ContractList": {
+                  "relationshipId": null,
+                  "type": "OneToMany",
+                  "modelSchema": {
+                    "modelId": null,
+                    "name": "ContractList",
+                    "description": null,
+                    "context": null,
+                    "businessFields": {
+                      "BrokerCommission": {
+                        "fieldId": null,
+                        "name": "BrokerCommission",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "BusinessObjectId": {
+                        "fieldId": null,
+                        "name": "BusinessObjectId",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "InsuranceCompanyCode": {
+                        "fieldId": null,
+                        "name": "InsuranceCompanyCode",
+                        "description": null,
+                        "type": "str"
+                      },
+                      "PolicyElementId": {
+                        "fieldId": null,
+                        "name": "PolicyElementId",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "PolicyId": {
+                        "fieldId": null,
+                        "name": "PolicyId",
+                        "description": null,
+                        "type": "str"
+                      },
+                      "PolicyStatus": {
+                        "fieldId": null,
+                        "name": "PolicyStatus",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "SequenceNumber": {
+                        "fieldId": null,
+                        "name": "SequenceNumber",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "ShareRate": {
+                        "fieldId": null,
+                        "name": "ShareRate",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "SharingLimit": {
+                        "fieldId": null,
+                        "name": "SharingLimit",
+                        "description": null,
+                        "type": "num"
+                      }
+                    },
+                    "relationships": {}
+                  }
+                },
+                "PolicyCoverageList": {
+                  "relationshipId": null,
+                  "type": "OneToMany",
+                  "modelSchema": {
+                    "modelId": null,
+                    "name": "PolicyCoverageList",
+                    "description": null,
+                    "context": null,
+                    "businessFields": {
+                      "BeforeVatPremium": {
+                        "fieldId": null,
+                        "name": "BeforeVatPremium",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "BusinessObjectId": {
+                        "fieldId": null,
+                        "name": "BusinessObjectId",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "FinalClientPayment": {
+                        "fieldId": null,
+                        "name": "FinalClientPayment",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "GrossPremium": {
+                        "fieldId": null,
+                        "name": "GrossPremium",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "InsuredReceived": {
+                        "fieldId": null,
+                        "name": "InsuredReceived",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "InsuredShare": {
+                        "fieldId": null,
+                        "name": "InsuredShare",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "IsFinalLevelCt": {
+                        "fieldId": null,
+                        "name": "IsFinalLevelCt",
+                        "description": null,
+                        "type": "str"
+                      },
+                      "POIRate": {
+                        "fieldId": null,
+                        "name": "POIRate",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "PolicyElementId": {
+                        "fieldId": null,
+                        "name": "PolicyElementId",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "PolicyId": {
+                        "fieldId": null,
+                        "name": "PolicyId",
+                        "description": null,
+                        "type": "str"
+                      },
+                      "PolicyStatus": {
+                        "fieldId": null,
+                        "name": "PolicyStatus",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "ProductElementCode": {
+                        "fieldId": null,
+                        "name": "ProductElementCode",
+                        "description": null,
+                        "type": "str"
+                      },
+                      "ProductElementId": {
+                        "fieldId": null,
+                        "name": "ProductElementId",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "SequenceNumber": {
+                        "fieldId": null,
+                        "name": "SequenceNumber",
+                        "description": null,
+                        "type": "num"
+                      },
+                      "SumInsured": {
+                        "fieldId": null,
+                        "name": "SumInsured",
+                        "description": null,
+                        "type": "num"
+                      }
+                    },
+                    "relationships": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "PolicyPaymentInfoList": {
+      "relationshipId": null,
+      "type": "OneToMany",
+      "modelSchema": {
+        "modelId": null,
+        "name": "PolicyPaymentInfoList",
+        "description": null,
+        "context": null,
+        "businessFields": {
+          "BusinessObjectId": {
+            "fieldId": null,
+            "name": "BusinessObjectId",
+            "description": null,
+            "type": "num"
+          },
+          "ExpiryDate": {
+            "fieldId": null,
+            "name": "ExpiryDate",
+            "description": null,
+            "type": "str"
+          },
+          "InstallmentPeriodCount": {
+            "fieldId": null,
+            "name": "InstallmentPeriodCount",
+            "description": null,
+            "type": "num"
+          },
+          "InstallmentType": {
+            "fieldId": null,
+            "name": "InstallmentType",
+            "description": null,
+            "type": "str"
+          },
+          "IsInstallment": {
+            "fieldId": null,
+            "name": "IsInstallment",
+            "description": null,
+            "type": "str"
+          },
+          "PayModeCode": {
+            "fieldId": null,
+            "name": "PayModeCode",
+            "description": null,
+            "type": "str"
+          },
+          "PayRate": {
+            "fieldId": null,
+            "name": "PayRate",
+            "description": null,
+            "type": "num"
+          },
+          "PolicyElementId": {
+            "fieldId": null,
+            "name": "PolicyElementId",
+            "description": null,
+            "type": "num"
+          },
+          "PolicyId": {
+            "fieldId": null,
+            "name": "PolicyId",
+            "description": null,
+            "type": "str"
+          },
+          "PolicyStatus": {
+            "fieldId": null,
+            "name": "PolicyStatus",
+            "description": null,
+            "type": "num"
+          },
+          "SequenceNumber": {
+            "fieldId": null,
+            "name": "SequenceNumber",
+            "description": null,
+            "type": "num"
+          }
+        },
+        "relationships": {
+          "InstallmentList": {
+            "relationshipId": null,
+            "type": "OneToMany",
+            "modelSchema": {
+              "modelId": null,
+              "name": "InstallmentList",
+              "description": null,
+              "context": null,
+              "businessFields": {
+                "BeforeVatPremium": {
+                  "fieldId": null,
+                  "name": "BeforeVatPremium",
+                  "description": null,
+                  "type": "num"
+                },
+                "BeforeVatPremiumLocal": {
+                  "fieldId": null,
+                  "name": "BeforeVatPremiumLocal",
+                  "description": null,
+                  "type": "num"
+                },
+                "BusinessObjectId": {
+                  "fieldId": null,
+                  "name": "BusinessObjectId",
+                  "description": null,
+                  "type": "num"
+                },
+                "Commission": {
+                  "fieldId": null,
+                  "name": "Commission",
+                  "description": null,
+                  "type": "num"
+                },
+                "CommissionLocal": {
+                  "fieldId": null,
+                  "name": "CommissionLocal",
+                  "description": null,
+                  "type": "num"
+                },
+                "DuePremium": {
+                  "fieldId": null,
+                  "name": "DuePremium",
+                  "description": null,
+                  "type": "num"
+                },
+                "FeeSeq": {
+                  "fieldId": null,
+                  "name": "FeeSeq",
+                  "description": null,
+                  "type": "num"
+                },
+                "FinalClientPayment": {
+                  "fieldId": null,
+                  "name": "FinalClientPayment",
+                  "description": null,
+                  "type": "num"
+                },
+                "InstallmentAmount": {
+                  "fieldId": null,
+                  "name": "InstallmentAmount",
+                  "description": null,
+                  "type": "num"
+                },
+                "InstallmentAmountLocal": {
+                  "fieldId": null,
+                  "name": "InstallmentAmountLocal",
+                  "description": null,
+                  "type": "num"
+                },
+                "InstallmentDate": {
+                  "fieldId": null,
+                  "name": "InstallmentDate",
+                  "description": null,
+                  "type": "str"
+                },
+                "InstallmentPeriodSeq": {
+                  "fieldId": null,
+                  "name": "InstallmentPeriodSeq",
+                  "description": null,
+                  "type": "num"
+                },
+                "InsuredReceived": {
+                  "fieldId": null,
+                  "name": "InsuredReceived",
+                  "description": null,
+                  "type": "num"
+                },
+                "InsuredShare": {
+                  "fieldId": null,
+                  "name": "InsuredShare",
+                  "description": null,
+                  "type": "num"
+                },
+                "PolicyElementId": {
+                  "fieldId": null,
+                  "name": "PolicyElementId",
+                  "description": null,
+                  "type": "num"
+                },
+                "PolicyId": {
+                  "fieldId": null,
+                  "name": "PolicyId",
+                  "description": null,
+                  "type": "str"
+                },
+                "PolicyStatus": {
+                  "fieldId": null,
+                  "name": "PolicyStatus",
+                  "description": null,
+                  "type": "num"
+                },
+                "PremiumInterest": {
+                  "fieldId": null,
+                  "name": "PremiumInterest",
+                  "description": null,
+                  "type": "num"
+                },
+                "PremiumInterestLocal": {
+                  "fieldId": null,
+                  "name": "PremiumInterestLocal",
+                  "description": null,
+                  "type": "num"
+                },
+                "SequenceNumber": {
+                  "fieldId": null,
+                  "name": "SequenceNumber",
+                  "description": null,
+                  "type": "num"
+                },
+                "SumInsured": {
+                  "fieldId": null,
+                  "name": "SumInsured",
+                  "description": null,
+                  "type": "num"
+                },
+                "TaxInterest": {
+                  "fieldId": null,
+                  "name": "TaxInterest",
+                  "description": null,
+                  "type": "num"
+                },
+                "TaxInterestLocal": {
+                  "fieldId": null,
+                  "name": "TaxInterestLocal",
+                  "description": null,
+                  "type": "num"
+                },
+                "TotalInterest": {
+                  "fieldId": null,
+                  "name": "TotalInterest",
+                  "description": null,
+                  "type": "num"
+                },
+                "TotalInterestLocal": {
+                  "fieldId": null,
+                  "name": "TotalInterestLocal",
+                  "description": null,
+                  "type": "num"
+                },
+                "Vat": {
+                  "fieldId": null,
+                  "name": "Vat",
+                  "description": null,
+                  "type": "num"
+                },
+                "VatLocal": {
+                  "fieldId": null,
+                  "name": "VatLocal",
+                  "description": null,
+                  "type": "num"
+                }
+              },
+              "relationships": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

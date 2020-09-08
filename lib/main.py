@@ -1,0 +1,31 @@
+###
+# 1. select basic domain for example insurance product ,marketing
+# 2. read json from connector
+# 3. generate basic schema base on json data
+# 4. match schema with domain  knowledge dataset and provide suggestions
+# 5. link knowledge domain to schema
+
+from fastapi import FastAPI
+
+from lib.model.generate.model_schema_generater import generate_basic_schema
+from lib.model.model_schema import ModelSchema
+
+app = FastAPI()
+
+
+@app.get("/health")
+async def health():
+    return {"health": True}
+
+
+@app.get("/generate/{key}/{path}", response_model=ModelSchema)
+async def generate_schema(key: str, path: str):
+    return generate_basic_schema(key, path)
+
+
+
+
+
+
+
+
