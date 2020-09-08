@@ -11,9 +11,6 @@ cymem==2.0.3
 decamelize==0.1.2
 dnspython==2.0.0
 email-validator==1.1.1
-en-core-web-lg==2.3.1
-en-core-web-md==2.3.1
-en-core-web-sm==2.3.1
 fastapi==0.61.0
 graphene==2.1.8
 graphql-core==2.3.2

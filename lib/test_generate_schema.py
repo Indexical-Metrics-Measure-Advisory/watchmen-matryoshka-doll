@@ -10,7 +10,10 @@ from lib.model.model_schema import Domain
 from lib.service.generate_schema import generate_schema
 
 
-generate_schema("policy",row_data_load('../test/data/policy.json'),Domain.INSURANCE)
+
+def test():
+    generate_schema("policy",row_data_load('../test/data/policy.json'),Domain.INSURANCE)
+
 
 # TODO batch import data and get schema
 
