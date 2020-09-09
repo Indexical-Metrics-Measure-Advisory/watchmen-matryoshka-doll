@@ -1,5 +1,5 @@
-from lib.model.generate.rule_schema_generater import generate_schema_rules
-from lib.model.rule_context import RuleContext
+from watchmen.model.generate.rule_schema_generater import generate_schema_rules
+from watchmen.model.rule_context import RuleContext
 
 
 def import_single_rule(rule_context: RuleContext, rule: str):

@@ -1,9 +1,9 @@
 import json
 
-from lib.match.lexicon_matcher import lexicon_match
-from lib.model.model_field import ModelField, FieldType
-from lib.model.model_relationship import ModelRelationship, RelationshipType
-from lib.model.model_schema import ModelSchema, Domain
+from watchmen.match.lexicon_matcher import lexicon_match
+from watchmen.model.model_field import ModelField, FieldType
+from watchmen.model.model_relationship import ModelRelationship, RelationshipType
+from watchmen.model.model_schema import ModelSchema, Domain
 
 ROOT = "root"
 

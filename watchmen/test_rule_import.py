@@ -1,8 +1,8 @@
 import json
 
-from lib.model.rule_context import RuleContext
-from lib.model.rule_schema import RuleType
-from lib.service.import_rule import import_single_rule
+from watchmen.model.rule_context import RuleContext
+from watchmen.model.rule_schema import RuleType
+from watchmen.service.import_rule import import_single_rule
 
 
 # TODO add schema in parameter
@@ -24,3 +24,5 @@ def test():
     result = import_single_rule(rule_context, rule)
 
     print(json.dumps(result))
+
+

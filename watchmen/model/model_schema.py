@@ -3,9 +3,9 @@ from typing import Optional, Dict
 
 from pydantic import BaseModel
 
-from lib.model.context import Context
-from lib.model.model_field import ModelField
-from lib.model.model_relationship import ModelRelationship
+from watchmen.model.context import Context
+from watchmen.model.model_field import ModelField
+from watchmen.model.model_relationship import ModelRelationship
 
 
 class FieldType(str, Enum):

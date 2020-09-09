@@ -1,5 +1,5 @@
-from lib.knowledge.knowledge_loader import load_lexicon
-from lib.model.model_schema import ModelSchema
+from watchmen.knowledge.knowledge_loader import load_lexicon
+from watchmen.model.model_schema import ModelSchema
 # from spacy.tokens import Token
 import spacy;
 nlp = spacy.load('en_core_web_md')

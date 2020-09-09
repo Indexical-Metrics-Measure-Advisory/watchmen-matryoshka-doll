@@ -5,9 +5,9 @@
 # 5. link knowledge domain to schema
 
 
-from lib.connector.local_connector import row_data_load
-from lib.model.model_schema import Domain
-from lib.service.generate_schema import generate_schema
+from watchmen.connector.local_connector import row_data_load
+from watchmen.model.model_schema import Domain
+from watchmen.service.generate_schema import generate_schema
 
 
 
