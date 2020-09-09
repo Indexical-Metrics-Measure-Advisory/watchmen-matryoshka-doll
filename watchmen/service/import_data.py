@@ -16,7 +16,7 @@ def process_topic_data():
 
 
 def process_data_attr(schema, key, value, entity):
-    field_schema = schema["businessFields"][key]
+    field_schema = schema.businessFields[key]
     # TODO[M] value validation rule
     entity.attr[key] = value
 
@@ -35,10 +35,10 @@ def import_row_data(data: json, schema_set: ModelSchemaSet, event: Event):
         if is_field_value(value):
             process_data_attr(schema, key, value, entity)
         else:
-            relationships = relationship_dict[schema["modelId"]]
+            relationships = relationship_dict[schema.modelId]
             for relationship in relationships:
-                if key == relationship["name"]:
-                    sub_schema = schema_dict[relationship["childId"]]
+                if key == relationship.name:
+                    sub_schema = schema_dict[relationship.childId]
 
     entity_set.entities.append(entity)
     return entity_set

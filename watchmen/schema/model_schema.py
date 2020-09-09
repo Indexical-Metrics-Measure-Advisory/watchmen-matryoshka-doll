@@ -28,7 +28,7 @@ class SubDomain(str, Enum):
 
 
 class ModelSchema(BaseModel):
-    modelId: int = None
+    modelId: str = None
     domain: Domain = None
     subDomain: SubDomain = None
     name: str = None
