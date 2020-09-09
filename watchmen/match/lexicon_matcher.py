@@ -2,7 +2,7 @@ from watchmen.knowledge.knowledge_loader import load_lexicon
 from watchmen.schema.model_schema import ModelSchema
 # from spacy.tokens import Token
 import spacy;
-nlp = spacy.load('en_core_web_md')
+nlp = spacy.load('en_core_web_sm')
 import decamelize
 
 

@@ -36,4 +36,4 @@ class ModelSchema(BaseModel):
     context: Optional[Context] = None
     businessFields: Dict[str, ModelField] = {}
     lexiconMatch:list = []
-    # relationships: Dict[str, ModelRelationship] = {}
+    relationships: Dict[str, ModelRelationship] = {}

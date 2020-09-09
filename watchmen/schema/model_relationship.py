@@ -19,7 +19,7 @@ class ModelRelationship(BaseModel):
     type: RelationshipType = None
     modelSchema: BaseModel = None
     parentId: int = None
-    childrenId:int = None
+    childId:int = None
     parentVariable:dict={}
     childVariable: dict = {}
     # oneToOne: bool= None
