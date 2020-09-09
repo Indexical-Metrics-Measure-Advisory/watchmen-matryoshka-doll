@@ -1,7 +1,7 @@
 {
   "schemas": [
     {
-      "modelId": "5f5895533d9beb3047d41af3",
+      "modelId": "5f589b973d9beb32a4a92f39",
       "domain": null,
       "subDomain": null,
       "name": "PolicyCustomerList",
@@ -269,7 +269,7 @@
       "relationships": {}
     },
     {
-      "modelId": "5f5895543d9beb3047d41af6",
+      "modelId": "5f589b983d9beb32a4a92f3c",
       "domain": null,
       "subDomain": null,
       "name": "ContractList",
@@ -362,7 +362,7 @@
       "relationships": {}
     },
     {
-      "modelId": "5f5895543d9beb3047d41af7",
+      "modelId": "5f589b993d9beb32a4a92f3d",
       "domain": null,
       "subDomain": null,
       "name": "PolicyCoverageList",
@@ -515,7 +515,7 @@
       "relationships": {}
     },
     {
-      "modelId": "5f5895543d9beb3047d41af5",
+      "modelId": "5f589b983d9beb32a4a92f3b",
       "domain": null,
       "subDomain": null,
       "name": "PolicyRiskList",
@@ -722,7 +722,7 @@
       "relationships": {}
     },
     {
-      "modelId": "5f5895543d9beb3047d41af4",
+      "modelId": "5f589b983d9beb32a4a92f3a",
       "domain": null,
       "subDomain": null,
       "name": "PolicyLobList",
@@ -869,7 +869,7 @@
       "relationships": {}
     },
     {
-      "modelId": "5f5895563d9beb3047d41af9",
+      "modelId": "5f589b9a3d9beb32a4a92f3f",
       "domain": null,
       "subDomain": null,
       "name": "InstallmentList",
@@ -1599,7 +1599,7 @@
       "relationships": {}
     },
     {
-      "modelId": "5f5895563d9beb3047d41af8",
+      "modelId": "5f589b9a3d9beb32a4a92f3e",
       "domain": null,
       "subDomain": null,
       "name": "PolicyPaymentInfoList",
@@ -1716,7 +1716,7 @@
       "relationships": {}
     },
     {
-      "modelId": "5f5895533d9beb3047d41af2",
+      "modelId": "5f589b973d9beb32a4a92f38",
       "domain": "insurance",
       "subDomain": null,
       "name": "policy",
@@ -2114,58 +2114,65 @@
   ],
   "relationships": [
     {
+      "name": "PolicyCustomerList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f5895533d9beb3047d41af2",
-      "childId": "5f5895533d9beb3047d41af3",
+      "parentId": "5f589b973d9beb32a4a92f38",
+      "childId": "5f589b973d9beb32a4a92f39",
       "parentVariable": {},
       "childVariable": {}
     },
     {
+      "name": "ContractList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f5895543d9beb3047d41af5",
-      "childId": "5f5895543d9beb3047d41af6",
+      "parentId": "5f589b983d9beb32a4a92f3b",
+      "childId": "5f589b983d9beb32a4a92f3c",
       "parentVariable": {},
       "childVariable": {}
     },
     {
+      "name": "PolicyCoverageList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f5895543d9beb3047d41af5",
-      "childId": "5f5895543d9beb3047d41af7",
+      "parentId": "5f589b983d9beb32a4a92f3b",
+      "childId": "5f589b993d9beb32a4a92f3d",
       "parentVariable": {},
       "childVariable": {}
     },
     {
+      "name": "PolicyRiskList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f5895543d9beb3047d41af4",
-      "childId": "5f5895543d9beb3047d41af5",
+      "parentId": "5f589b983d9beb32a4a92f3a",
+      "childId": "5f589b983d9beb32a4a92f3b",
       "parentVariable": {},
       "childVariable": {}
     },
     {
+      "name": "PolicyLobList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f5895533d9beb3047d41af2",
-      "childId": "5f5895543d9beb3047d41af4",
+      "parentId": "5f589b973d9beb32a4a92f38",
+      "childId": "5f589b983d9beb32a4a92f3a",
       "parentVariable": {},
       "childVariable": {}
     },
     {
+      "name": "InstallmentList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f5895563d9beb3047d41af8",
-      "childId": "5f5895563d9beb3047d41af9",
+      "parentId": "5f589b9a3d9beb32a4a92f3e",
+      "childId": "5f589b9a3d9beb32a4a92f3f",
       "parentVariable": {},
       "childVariable": {}
     },
     {
+      "name": "PolicyPaymentInfoList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f5895533d9beb3047d41af2",
-      "childId": "5f5895563d9beb3047d41af8",
+      "parentId": "5f589b973d9beb32a4a92f38",
+      "childId": "5f589b9a3d9beb32a4a92f3e",
       "parentVariable": {},
       "childVariable": {}
     }

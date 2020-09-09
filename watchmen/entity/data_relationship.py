@@ -1,10 +1,10 @@
+from pydantic import BaseModel
 
-
-class DataRelationship(object):
-    code:str
-    id:str
-    parent_id:str
-    child_id:str
+class DataRelationship(BaseModel):
+    code:str=None
+    id:str=None
+    parent_id:str=None
+    child_id:str=None
 
 
 

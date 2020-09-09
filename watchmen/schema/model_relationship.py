@@ -13,6 +13,7 @@ class RelationshipType(Enum):
 
 
 class ModelRelationship(BaseModel):
+    name:str = None
     relationshipId: int = None
     # fromId: int = None
     # toId : int = None

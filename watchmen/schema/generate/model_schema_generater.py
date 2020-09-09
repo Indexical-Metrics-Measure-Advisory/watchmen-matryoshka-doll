@@ -66,6 +66,7 @@ def process_attrs(data, model_schema,model_schema_set):
             relationship = ModelRelationship()
             relationship.parentId=model_schema.modelId
             relationship.childId=sub_model_schema.modelId
+            relationship.name = key
 
             if type(value) == dict or type(value) == list:
                 for sub_model in value:
