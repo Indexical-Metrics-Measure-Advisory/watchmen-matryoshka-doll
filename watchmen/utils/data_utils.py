@@ -1,3 +1,5 @@
+from enum import Enum
+
 from watchmen.schema.model_schema_set import ModelSchemaSet
 
 
@@ -21,3 +23,9 @@ def get_dict_relationship(model_schema_set:ModelSchemaSet):
             result[relationship.parentId]=[]
             result[relationship.parentId].append(relationship)
     return result
+
+
+class RelationshipType(Enum):
+    OneToOne = "OneToOne"
+    OneToMany = "OneToMany"
+    ManyToMany = "ManyToMany"

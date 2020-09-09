@@ -1,4 +1,12 @@
-def load_topic(domian: str ,language:str):
-    return {}
+from typing import List
+
+from pydantic import BaseModel
+
+
+class Topic(BaseModel):
+    topicId: str = None
+    name: str = None
+    tags: List[str] =[]
+
 
 

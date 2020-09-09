@@ -3,13 +3,7 @@ from pydantic import BaseModel
 # from lib.schema.context import Context
 # import ../schema/ModelSchema
 # import lib.schema.model_schema.ModelSchema
-from enum import Enum
-
-
-class RelationshipType(Enum):
-    OneToOne = "OneToOne"
-    OneToMany = "OneToMany"
-    ManyToMany = "ManyToMany"
+from watchmen.utils.data_utils import RelationshipType
 
 
 class ModelRelationship(BaseModel):
