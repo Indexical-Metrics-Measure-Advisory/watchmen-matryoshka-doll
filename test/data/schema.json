@@ -1,5 +1,7 @@
 {
   "modelId": null,
+  "domain": "insurance",
+  "subDomain": null,
   "name": "policy",
   "description": null,
   "context": null,
@@ -8,261 +10,406 @@
       "fieldId": null,
       "name": "AgentCode",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "PTY370078201"
+      ]
     },
     "AutoUwResultCode": {
       "fieldId": null,
       "name": "AutoUwResultCode",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "1"
+      ]
     },
     "BeforeVatPremium": {
       "fieldId": null,
       "name": "BeforeVatPremium",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        0.14
+      ]
     },
     "BookCurrencyCode": {
       "fieldId": null,
       "name": "BookCurrencyCode",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "USD"
+      ]
     },
     "BusinessCateCode": {
       "fieldId": null,
       "name": "BusinessCateCode",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "1"
+      ]
     },
     "BusinessObjectId": {
       "fieldId": null,
       "name": "BusinessObjectId",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        371836312
+      ]
     },
     "Commission": {
       "fieldId": null,
       "name": "Commission",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        0.01
+      ]
     },
     "CommissionRate": {
       "fieldId": null,
       "name": "CommissionRate",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        0.1
+      ]
     },
     "DeliveryType": {
       "fieldId": null,
       "name": "DeliveryType",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "1"
+      ]
     },
     "DuePremium": {
       "fieldId": null,
       "name": "DuePremium",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        0.16
+      ]
     },
     "EffectiveDate": {
       "fieldId": null,
       "name": "EffectiveDate",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "2020-08-24"
+      ]
     },
     "ExpiryDate": {
       "fieldId": null,
       "name": "ExpiryDate",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "2029-08-23T23:59:59"
+      ]
     },
     "GrossPremium": {
       "fieldId": null,
       "name": "GrossPremium",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        0.14
+      ]
     },
     "InterestDescription": {
       "fieldId": null,
       "name": "InterestDescription",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "1111"
+      ]
     },
     "IsPremiumCalcSuccess": {
       "fieldId": null,
       "name": "IsPremiumCalcSuccess",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "Y"
+      ]
     },
     "IsRenewable": {
       "fieldId": null,
       "name": "IsRenewable",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "Y"
+      ]
     },
     "IsRenewalPolicy": {
       "fieldId": null,
       "name": "IsRenewalPolicy",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "Y"
+      ]
     },
     "IsTakeUpPolicy": {
       "fieldId": null,
       "name": "IsTakeUpPolicy",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "N"
+      ]
     },
     "IssueDate": {
       "fieldId": null,
       "name": "IssueDate",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "2020-08-24T11:22:20"
+      ]
     },
     "LastPolicyId": {
       "fieldId": null,
       "name": "LastPolicyId",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "856640431,A6F76F6063D0247EE5C1DF0B1B41B69B"
+      ]
     },
     "OrgCode": {
       "fieldId": null,
       "name": "OrgCode",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "10000000002001"
+      ]
     },
     "POIRate": {
       "fieldId": null,
       "name": "POIRate",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        9.0054794521
+      ]
     },
     "PolicyElementId": {
       "fieldId": null,
       "name": "PolicyElementId",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        856640528
+      ]
     },
     "PolicyId": {
       "fieldId": null,
       "name": "PolicyId",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "856640528,3EFCADF447D8D30925FF5BCB65D1D64B"
+      ]
     },
     "PolicyNo": {
       "fieldId": null,
       "name": "PolicyNo",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "POCF00000017"
+      ]
     },
     "PolicyStatus": {
       "fieldId": null,
       "name": "PolicyStatus",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        2
+      ]
     },
     "PolicyType": {
       "fieldId": null,
       "name": "PolicyType",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "1"
+      ]
     },
     "PremiumBookExchangeRate": {
       "fieldId": null,
       "name": "PremiumBookExchangeRate",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        1
+      ]
     },
     "PremiumCurrencyCode": {
       "fieldId": null,
       "name": "PremiumCurrencyCode",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "USD"
+      ]
     },
     "ProductCode": {
       "fieldId": null,
       "name": "ProductCode",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "CF"
+      ]
     },
     "ProductId": {
       "fieldId": null,
       "name": "ProductId",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        371836977
+      ]
     },
     "ProductVersion": {
       "fieldId": null,
       "name": "ProductVersion",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "1.0"
+      ]
     },
     "ProposalDate": {
       "fieldId": null,
       "name": "ProposalDate",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "2028-08-24"
+      ]
     },
     "ProposalNo": {
       "fieldId": null,
       "name": "ProposalNo",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "PCF0000000046"
+      ]
     },
     "ProposalStatus": {
       "fieldId": null,
       "name": "ProposalStatus",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "3"
+      ]
     },
     "SequenceNumber": {
       "fieldId": null,
       "name": "SequenceNumber",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        1
+      ]
     },
     "SumInsured": {
       "fieldId": null,
       "name": "SumInsured",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        5000
+      ]
     },
     "TechProductCode": {
       "fieldId": null,
       "name": "TechProductCode",
       "description": null,
-      "type": "str"
+      "type": "str",
+      "value": [
+        "CREDIT"
+      ]
     },
     "TechProductId": {
       "fieldId": null,
       "name": "TechProductId",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        371836955
+      ]
     },
     "Vat": {
       "fieldId": null,
       "name": "Vat",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        0.02
+      ]
     },
     "VatRate": {
       "fieldId": null,
       "name": "VatRate",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        0.12
+      ]
     },
     "VersionSeq": {
       "fieldId": null,
       "name": "VersionSeq",
       "description": null,
-      "type": "num"
+      "type": "num",
+      "value": [
+        5
+      ]
     }
   },
+  "lexiconMatch": [
+    {
+      "source": "Commission",
+      "target": "Commission",
+      "similarity": "1.0"
+    },
+    {
+      "source": "Commission",
+      "target": "Pay",
+      "similarity": "0.5187975"
+    },
+    {
+      "source": "Commission",
+      "target": "Proposal",
+      "similarity": "0.5226295"
+    }
+  ],
   "relationships": {
     "PolicyCustomerList": {
       "relationshipId": null,
       "type": "OneToMany",
       "modelSchema": {
         "modelId": null,
+        "domain": null,
+        "subDomain": null,
         "name": "PolicyCustomerList",
         "description": null,
         "context": null,
@@ -271,153 +418,360 @@
             "fieldId": null,
             "name": "Address",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "11"
+            ]
           },
           "AddressNumber": {
             "fieldId": null,
             "name": "AddressNumber",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "11"
+            ]
           },
           "BusinessObjectId": {
             "fieldId": null,
             "name": "BusinessObjectId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              1000000290
+            ]
           },
           "City": {
             "fieldId": null,
             "name": "City",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "1"
+            ]
           },
           "CustomerName": {
             "fieldId": null,
             "name": "CustomerName",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "cherry uic"
+            ]
           },
           "CustomerNo": {
             "fieldId": null,
             "name": "CustomerNo",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "CI00000050"
+            ]
           },
           "CustomerType": {
             "fieldId": null,
             "name": "CustomerType",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "Individual"
+            ]
           },
           "DateOfBirth": {
             "fieldId": null,
             "name": "DateOfBirth",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "2015-05-26T08:00:00"
+            ]
           },
           "Email": {
             "fieldId": null,
             "name": "Email",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "11@11.com"
+            ]
           },
           "Gender": {
             "fieldId": null,
             "name": "Gender",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              1
+            ]
           },
           "IdNo": {
             "fieldId": null,
             "name": "IdNo",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "11"
+            ]
           },
           "IdType": {
             "fieldId": null,
             "name": "IdType",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "1"
+            ]
           },
           "IsBeneficiary": {
             "fieldId": null,
             "name": "IsBeneficiary",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "N"
+            ]
           },
           "IsCoInsured": {
             "fieldId": null,
             "name": "IsCoInsured",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "N"
+            ]
           },
           "IsInsured": {
             "fieldId": null,
             "name": "IsInsured",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "N"
+            ]
           },
           "IsOrgParty": {
             "fieldId": null,
             "name": "IsOrgParty",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "N"
+            ]
           },
           "IsPolicyHolder": {
             "fieldId": null,
             "name": "IsPolicyHolder",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "Y"
+            ]
           },
           "Mobile": {
             "fieldId": null,
             "name": "Mobile",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "1"
+            ]
           },
           "PolicyElementId": {
             "fieldId": null,
             "name": "PolicyElementId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              856640529
+            ]
           },
           "PolicyId": {
             "fieldId": null,
             "name": "PolicyId",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "856640528,3EFCADF447D8D30925FF5BCB65D1D64B"
+            ]
           },
           "PolicyStatus": {
             "fieldId": null,
             "name": "PolicyStatus",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              2
+            ]
           },
           "PostCode": {
             "fieldId": null,
             "name": "PostCode",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "1"
+            ]
           },
           "SequenceNumber": {
             "fieldId": null,
             "name": "SequenceNumber",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              1
+            ]
           },
           "State": {
             "fieldId": null,
             "name": "State",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "1"
+            ]
           },
           "Suburb": {
             "fieldId": null,
             "name": "Suburb",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "11"
+            ]
           }
         },
+        "lexiconMatch": [
+          {
+            "source": "City",
+            "target": "capital",
+            "similarity": "0.5926216"
+          },
+          {
+            "source": "City",
+            "target": "assessor",
+            "similarity": "0.57611287"
+          },
+          {
+            "source": "City",
+            "target": "capital",
+            "similarity": "0.5926216"
+          },
+          {
+            "source": "Email",
+            "target": "account",
+            "similarity": "0.5046697"
+          },
+          {
+            "source": "Email",
+            "target": "account",
+            "similarity": "0.5046697"
+          },
+          {
+            "source": "Gender",
+            "target": "society",
+            "similarity": "0.5370811"
+          },
+          {
+            "source": "Mobile",
+            "target": "Telematics",
+            "similarity": "0.5112732"
+          },
+          {
+            "source": "State",
+            "target": "representative",
+            "similarity": "0.50820863"
+          },
+          {
+            "source": "State",
+            "target": "policy",
+            "similarity": "0.5077961"
+          },
+          {
+            "source": "State",
+            "target": "Current",
+            "similarity": "0.53319466"
+          },
+          {
+            "source": "State",
+            "target": "Current",
+            "similarity": "0.53319466"
+          },
+          {
+            "source": "State",
+            "target": "policy",
+            "similarity": "0.5077961"
+          },
+          {
+            "source": "State",
+            "target": "policy",
+            "similarity": "0.5077961"
+          },
+          {
+            "source": "State",
+            "target": "policy",
+            "similarity": "0.5077961"
+          },
+          {
+            "source": "State",
+            "target": "assessor",
+            "similarity": "0.5675828"
+          },
+          {
+            "source": "State",
+            "target": "National",
+            "similarity": "0.5864274"
+          },
+          {
+            "source": "State",
+            "target": "National",
+            "similarity": "0.5864274"
+          },
+          {
+            "source": "State",
+            "target": "Policy",
+            "similarity": "0.5077961"
+          },
+          {
+            "source": "State",
+            "target": "Policy",
+            "similarity": "0.5077961"
+          },
+          {
+            "source": "State",
+            "target": "policy",
+            "similarity": "0.5077961"
+          },
+          {
+            "source": "State",
+            "target": "Public",
+            "similarity": "0.56935465"
+          },
+          {
+            "source": "State",
+            "target": "State",
+            "similarity": "1.0"
+          },
+          {
+            "source": "State",
+            "target": "State",
+            "similarity": "1.0"
+          },
+          {
+            "source": "State",
+            "target": "State",
+            "similarity": "1.0"
+          },
+          {
+            "source": "State",
+            "target": "State",
+            "similarity": "1.0"
+          },
+          {
+            "source": "State",
+            "target": "policy",
+            "similarity": "0.5077961"
+          }
+        ],
         "relationships": {}
       }
     },
@@ -426,6 +780,8 @@
       "type": "OneToMany",
       "modelSchema": {
         "modelId": null,
+        "domain": null,
+        "subDomain": null,
         "name": "PolicyLobList",
         "description": null,
         "context": null,
@@ -434,99 +790,147 @@
             "fieldId": null,
             "name": "BeforeVatPremium",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              0.14
+            ]
           },
           "BusinessObjectId": {
             "fieldId": null,
             "name": "BusinessObjectId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              371836318
+            ]
           },
           "GrossPremium": {
             "fieldId": null,
             "name": "GrossPremium",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              0.14
+            ]
           },
           "PolicyElementId": {
             "fieldId": null,
             "name": "PolicyElementId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              856640530
+            ]
           },
           "PolicyId": {
             "fieldId": null,
             "name": "PolicyId",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "856640528,3EFCADF447D8D30925FF5BCB65D1D64B"
+            ]
           },
           "PolicyStatus": {
             "fieldId": null,
             "name": "PolicyStatus",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              2
+            ]
           },
           "ProductCode": {
             "fieldId": null,
             "name": "ProductCode",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "CF"
+            ]
           },
           "ProductElementCode": {
             "fieldId": null,
             "name": "ProductElementCode",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "CF"
+            ]
           },
           "ProductElementId": {
             "fieldId": null,
             "name": "ProductElementId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              371836978
+            ]
           },
           "ProductId": {
             "fieldId": null,
             "name": "ProductId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              371836977
+            ]
           },
           "ProductLobId": {
             "fieldId": null,
             "name": "ProductLobId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              371836978
+            ]
           },
           "SequenceNumber": {
             "fieldId": null,
             "name": "SequenceNumber",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              1
+            ]
           },
           "SumInsured": {
             "fieldId": null,
             "name": "SumInsured",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              5000
+            ]
           },
           "TechProductCode": {
             "fieldId": null,
             "name": "TechProductCode",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "CREDIT"
+            ]
           },
           "TechProductId": {
             "fieldId": null,
             "name": "TechProductId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              371836955
+            ]
           }
         },
+        "lexiconMatch": [],
         "relationships": {
           "PolicyRiskList": {
             "relationshipId": null,
             "type": "OneToMany",
             "modelSchema": {
               "modelId": null,
+              "domain": null,
+              "subDomain": null,
               "name": "PolicyRiskList",
               "description": null,
               "context": null,
@@ -535,135 +939,262 @@
                   "fieldId": null,
                   "name": "BeforeVatPremium",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0.14
+                  ]
                 },
                 "BusinessObjectId": {
                   "fieldId": null,
                   "name": "BusinessObjectId",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    371836326
+                  ]
                 },
                 "CalculationType": {
                   "fieldId": null,
                   "name": "CalculationType",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    1
+                  ]
                 },
                 "Client": {
                   "fieldId": null,
                   "name": "Client",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    3
+                  ]
                 },
                 "CountryCode": {
                   "fieldId": null,
                   "name": "CountryCode",
                   "description": null,
-                  "type": "str"
+                  "type": "str",
+                  "value": [
+                    "1"
+                  ]
                 },
                 "GrossPremium": {
                   "fieldId": null,
                   "name": "GrossPremium",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0.14
+                  ]
                 },
                 "InsurPremPerc": {
                   "fieldId": null,
                   "name": "InsurPremPerc",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0.000125
+                  ]
                 },
                 "InsuranceLimit": {
                   "fieldId": null,
                   "name": "InsuranceLimit",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    5000
+                  ]
                 },
                 "LoanAmount": {
                   "fieldId": null,
                   "name": "LoanAmount",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    1000000
+                  ]
                 },
                 "Margin": {
                   "fieldId": null,
                   "name": "Margin",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    5
+                  ]
                 },
                 "ObligorName": {
                   "fieldId": null,
                   "name": "ObligorName",
                   "description": null,
-                  "type": "str"
+                  "type": "str",
+                  "value": [
+                    "xxxxx"
+                  ]
                 },
                 "PolicyElementId": {
                   "fieldId": null,
                   "name": "PolicyElementId",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    856640531
+                  ]
                 },
                 "PolicyId": {
                   "fieldId": null,
                   "name": "PolicyId",
                   "description": null,
-                  "type": "str"
+                  "type": "str",
+                  "value": [
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B"
+                  ]
                 },
                 "PolicyStatus": {
                   "fieldId": null,
                   "name": "PolicyStatus",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    2
+                  ]
                 },
                 "ProductElementCode": {
                   "fieldId": null,
                   "name": "ProductElementCode",
                   "description": null,
-                  "type": "str"
+                  "type": "str",
+                  "value": [
+                    "R10041"
+                  ]
                 },
                 "ProductElementId": {
                   "fieldId": null,
                   "name": "ProductElementId",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    371836993
+                  ]
                 },
                 "RegionCode": {
                   "fieldId": null,
                   "name": "RegionCode",
                   "description": null,
-                  "type": "str"
+                  "type": "str",
+                  "value": [
+                    "1"
+                  ]
                 },
                 "SequenceNumber": {
                   "fieldId": null,
                   "name": "SequenceNumber",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    1
+                  ]
                 },
                 "SumInsured": {
                   "fieldId": null,
                   "name": "SumInsured",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    5000
+                  ]
                 },
                 "TenorYears": {
                   "fieldId": null,
                   "name": "TenorYears",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    8
+                  ]
                 },
                 "TransactionType": {
                   "fieldId": null,
                   "name": "TransactionType",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    7
+                  ]
                 }
               },
+              "lexiconMatch": [
+                {
+                  "source": "Client",
+                  "target": "management",
+                  "similarity": "0.5284365"
+                },
+                {
+                  "source": "Client",
+                  "target": "Business",
+                  "similarity": "0.5111099"
+                },
+                {
+                  "source": "Client",
+                  "target": "business",
+                  "similarity": "0.5111099"
+                },
+                {
+                  "source": "Client",
+                  "target": "personal",
+                  "similarity": "0.5002851"
+                },
+                {
+                  "source": "Client",
+                  "target": "Personal",
+                  "similarity": "0.5002851"
+                },
+                {
+                  "source": "Client",
+                  "target": "Personal",
+                  "similarity": "0.5002851"
+                },
+                {
+                  "source": "Client",
+                  "target": "Personal",
+                  "similarity": "0.5002851"
+                },
+                {
+                  "source": "Client",
+                  "target": "personal",
+                  "similarity": "0.5002851"
+                },
+                {
+                  "source": "Client",
+                  "target": "administrator",
+                  "similarity": "0.5181647"
+                },
+                {
+                  "source": "Margin",
+                  "target": "percentage",
+                  "similarity": "0.5470795"
+                },
+                {
+                  "source": "Margin",
+                  "target": "Profit",
+                  "similarity": "0.5063178"
+                },
+                {
+                  "source": "Margin",
+                  "target": "profit",
+                  "similarity": "0.5063178"
+                }
+              ],
               "relationships": {
                 "ContractList": {
                   "relationshipId": null,
                   "type": "OneToMany",
                   "modelSchema": {
                     "modelId": null,
+                    "domain": null,
+                    "subDomain": null,
                     "name": "ContractList",
                     "description": null,
                     "context": null,
@@ -672,57 +1203,85 @@
                         "fieldId": null,
                         "name": "BrokerCommission",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          5
+                        ]
                       },
                       "BusinessObjectId": {
                         "fieldId": null,
                         "name": "BusinessObjectId",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          371980684
+                        ]
                       },
                       "InsuranceCompanyCode": {
                         "fieldId": null,
                         "name": "InsuranceCompanyCode",
                         "description": null,
-                        "type": "str"
+                        "type": "str",
+                        "value": [
+                          "48"
+                        ]
                       },
                       "PolicyElementId": {
                         "fieldId": null,
                         "name": "PolicyElementId",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          856640532
+                        ]
                       },
                       "PolicyId": {
                         "fieldId": null,
                         "name": "PolicyId",
                         "description": null,
-                        "type": "str"
+                        "type": "str",
+                        "value": [
+                          "856640528,3EFCADF447D8D30925FF5BCB65D1D64B"
+                        ]
                       },
                       "PolicyStatus": {
                         "fieldId": null,
                         "name": "PolicyStatus",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          2
+                        ]
                       },
                       "SequenceNumber": {
                         "fieldId": null,
                         "name": "SequenceNumber",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          1
+                        ]
                       },
                       "ShareRate": {
                         "fieldId": null,
                         "name": "ShareRate",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          5
+                        ]
                       },
                       "SharingLimit": {
                         "fieldId": null,
                         "name": "SharingLimit",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          5
+                        ]
                       }
                     },
+                    "lexiconMatch": [],
                     "relationships": {}
                   }
                 },
@@ -731,6 +1290,8 @@
                   "type": "OneToMany",
                   "modelSchema": {
                     "modelId": null,
+                    "domain": null,
+                    "subDomain": null,
                     "name": "PolicyCoverageList",
                     "description": null,
                     "context": null,
@@ -739,93 +1300,139 @@
                         "fieldId": null,
                         "name": "BeforeVatPremium",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          0.14
+                        ]
                       },
                       "BusinessObjectId": {
                         "fieldId": null,
                         "name": "BusinessObjectId",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          371836330
+                        ]
                       },
                       "FinalClientPayment": {
                         "fieldId": null,
                         "name": "FinalClientPayment",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          1237774.51
+                        ]
                       },
                       "GrossPremium": {
                         "fieldId": null,
                         "name": "GrossPremium",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          0.14
+                        ]
                       },
                       "InsuredReceived": {
                         "fieldId": null,
                         "name": "InsuredReceived",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          237774.5
+                        ]
                       },
                       "InsuredShare": {
                         "fieldId": null,
                         "name": "InsuredShare",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          1188.88
+                        ]
                       },
                       "IsFinalLevelCt": {
                         "fieldId": null,
                         "name": "IsFinalLevelCt",
                         "description": null,
-                        "type": "str"
+                        "type": "str",
+                        "value": [
+                          "Y"
+                        ]
                       },
                       "POIRate": {
                         "fieldId": null,
                         "name": "POIRate",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          9.0054794521
+                        ]
                       },
                       "PolicyElementId": {
                         "fieldId": null,
                         "name": "PolicyElementId",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          856640533
+                        ]
                       },
                       "PolicyId": {
                         "fieldId": null,
                         "name": "PolicyId",
                         "description": null,
-                        "type": "str"
+                        "type": "str",
+                        "value": [
+                          "856640528,3EFCADF447D8D30925FF5BCB65D1D64B"
+                        ]
                       },
                       "PolicyStatus": {
                         "fieldId": null,
                         "name": "PolicyStatus",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          2
+                        ]
                       },
                       "ProductElementCode": {
                         "fieldId": null,
                         "name": "ProductElementCode",
                         "description": null,
-                        "type": "str"
+                        "type": "str",
+                        "value": [
+                          "C101421"
+                        ]
                       },
                       "ProductElementId": {
                         "fieldId": null,
                         "name": "ProductElementId",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          371836995
+                        ]
                       },
                       "SequenceNumber": {
                         "fieldId": null,
                         "name": "SequenceNumber",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          1
+                        ]
                       },
                       "SumInsured": {
                         "fieldId": null,
                         "name": "SumInsured",
                         "description": null,
-                        "type": "num"
+                        "type": "num",
+                        "value": [
+                          5000
+                        ]
                       }
                     },
+                    "lexiconMatch": [],
                     "relationships": {}
                   }
                 }
@@ -840,6 +1447,8 @@
       "type": "OneToMany",
       "modelSchema": {
         "modelId": null,
+        "domain": null,
+        "subDomain": null,
         "name": "PolicyPaymentInfoList",
         "description": null,
         "context": null,
@@ -848,75 +1457,111 @@
             "fieldId": null,
             "name": "BusinessObjectId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              520259
+            ]
           },
           "ExpiryDate": {
             "fieldId": null,
             "name": "ExpiryDate",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "2029-08-23T23:59:59"
+            ]
           },
           "InstallmentPeriodCount": {
             "fieldId": null,
             "name": "InstallmentPeriodCount",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              18
+            ]
           },
           "InstallmentType": {
             "fieldId": null,
             "name": "InstallmentType",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "3"
+            ]
           },
           "IsInstallment": {
             "fieldId": null,
             "name": "IsInstallment",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "Y"
+            ]
           },
           "PayModeCode": {
             "fieldId": null,
             "name": "PayModeCode",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "30"
+            ]
           },
           "PayRate": {
             "fieldId": null,
             "name": "PayRate",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              1
+            ]
           },
           "PolicyElementId": {
             "fieldId": null,
             "name": "PolicyElementId",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              856640534
+            ]
           },
           "PolicyId": {
             "fieldId": null,
             "name": "PolicyId",
             "description": null,
-            "type": "str"
+            "type": "str",
+            "value": [
+              "856640528,3EFCADF447D8D30925FF5BCB65D1D64B"
+            ]
           },
           "PolicyStatus": {
             "fieldId": null,
             "name": "PolicyStatus",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              2
+            ]
           },
           "SequenceNumber": {
             "fieldId": null,
             "name": "SequenceNumber",
             "description": null,
-            "type": "num"
+            "type": "num",
+            "value": [
+              1
+            ]
           }
         },
+        "lexiconMatch": [],
         "relationships": {
           "InstallmentList": {
             "relationshipId": null,
             "type": "OneToMany",
             "modelSchema": {
               "modelId": null,
+              "domain": null,
+              "subDomain": null,
               "name": "InstallmentList",
               "description": null,
               "context": null,
@@ -925,165 +1570,722 @@
                   "fieldId": null,
                   "name": "BeforeVatPremium",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01
+                  ]
                 },
                 "BeforeVatPremiumLocal": {
                   "fieldId": null,
                   "name": "BeforeVatPremiumLocal",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01
+                  ]
                 },
                 "BusinessObjectId": {
                   "fieldId": null,
                   "name": "BusinessObjectId",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394,
+                    200001394
+                  ]
                 },
                 "Commission": {
                   "fieldId": null,
                   "name": "Commission",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 },
                 "CommissionLocal": {
                   "fieldId": null,
                   "name": "CommissionLocal",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 },
                 "DuePremium": {
                   "fieldId": null,
                   "name": "DuePremium",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01
+                  ]
                 },
                 "FeeSeq": {
                   "fieldId": null,
                   "name": "FeeSeq",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                  ]
                 },
                 "FinalClientPayment": {
                   "fieldId": null,
                   "name": "FinalClientPayment",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25,
+                    68765.25
+                  ]
                 },
                 "InstallmentAmount": {
                   "fieldId": null,
                   "name": "InstallmentAmount",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01
+                  ]
                 },
                 "InstallmentAmountLocal": {
                   "fieldId": null,
                   "name": "InstallmentAmountLocal",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01,
+                    0.01
+                  ]
                 },
                 "InstallmentDate": {
                   "fieldId": null,
                   "name": "InstallmentDate",
                   "description": null,
-                  "type": "str"
+                  "type": "str",
+                  "value": [
+                    "2020-08-24",
+                    "2021-02-24",
+                    "2021-08-24",
+                    "2022-02-24",
+                    "2022-08-24",
+                    "2023-02-24",
+                    "2023-08-24",
+                    "2024-02-24",
+                    "2024-08-24",
+                    "2025-02-24",
+                    "2025-08-24",
+                    "2026-02-24",
+                    "2026-08-24",
+                    "2027-02-24",
+                    "2027-08-24",
+                    "2028-02-24",
+                    "2028-08-24",
+                    "2029-02-24"
+                  ]
                 },
                 "InstallmentPeriodSeq": {
                   "fieldId": null,
                   "name": "InstallmentPeriodSeq",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18
+                  ]
                 },
                 "InsuredReceived": {
                   "fieldId": null,
                   "name": "InsuredReceived",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69,
+                    13209.69
+                  ]
                 },
                 "InsuredShare": {
                   "fieldId": null,
                   "name": "InsuredShare",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05,
+                    66.05
+                  ]
                 },
                 "PolicyElementId": {
                   "fieldId": null,
                   "name": "PolicyElementId",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    856640535,
+                    856640536,
+                    856640537,
+                    856640538,
+                    856640539,
+                    856640540,
+                    856640541,
+                    856640542,
+                    856640543,
+                    856640544,
+                    856640545,
+                    856640546,
+                    856640547,
+                    856640548,
+                    856640549,
+                    856640550,
+                    856640556,
+                    856640557
+                  ]
                 },
                 "PolicyId": {
                   "fieldId": null,
                   "name": "PolicyId",
                   "description": null,
-                  "type": "str"
+                  "type": "str",
+                  "value": [
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B",
+                    "856640528,3EFCADF447D8D30925FF5BCB65D1D64B"
+                  ]
                 },
                 "PolicyStatus": {
                   "fieldId": null,
                   "name": "PolicyStatus",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2,
+                    2
+                  ]
                 },
                 "PremiumInterest": {
                   "fieldId": null,
                   "name": "PremiumInterest",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 },
                 "PremiumInterestLocal": {
                   "fieldId": null,
                   "name": "PremiumInterestLocal",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 },
                 "SequenceNumber": {
                   "fieldId": null,
                   "name": "SequenceNumber",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18
+                  ]
                 },
                 "SumInsured": {
                   "fieldId": null,
                   "name": "SumInsured",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78,
+                    277.78
+                  ]
                 },
                 "TaxInterest": {
                   "fieldId": null,
                   "name": "TaxInterest",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 },
                 "TaxInterestLocal": {
                   "fieldId": null,
                   "name": "TaxInterestLocal",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 },
                 "TotalInterest": {
                   "fieldId": null,
                   "name": "TotalInterest",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 },
                 "TotalInterestLocal": {
                   "fieldId": null,
                   "name": "TotalInterestLocal",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 },
                 "Vat": {
                   "fieldId": null,
                   "name": "Vat",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 },
                 "VatLocal": {
                   "fieldId": null,
                   "name": "VatLocal",
                   "description": null,
-                  "type": "num"
+                  "type": "num",
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
                 }
               },
+              "lexiconMatch": [
+                {
+                  "source": "Commission",
+                  "target": "Commission",
+                  "similarity": "1.0"
+                },
+                {
+                  "source": "Commission",
+                  "target": "Pay",
+                  "similarity": "0.5187975"
+                },
+                {
+                  "source": "Commission",
+                  "target": "Proposal",
+                  "similarity": "0.5226295"
+                }
+              ],
               "relationships": {}
             }
           }

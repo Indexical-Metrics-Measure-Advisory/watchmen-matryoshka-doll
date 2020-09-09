@@ -50,3 +50,4 @@ uvloop==0.14.0
 wasabi==0.8.0
 websockets==8.1
 zipp==3.1.0
+bson==0.5.10
