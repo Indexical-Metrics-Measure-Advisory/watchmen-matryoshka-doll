@@ -1,12 +1,12 @@
 from watchmen.knowledge.knowledge_loader import load_lexicon
-from watchmen.model.model_schema import ModelSchema
+from watchmen.schema.model_schema import ModelSchema
 # from spacy.tokens import Token
 import spacy;
 nlp = spacy.load('en_core_web_md')
 import decamelize
 
 
-# TODO add ref id to filed_schema
+# TODO[next] add ref id to filed_schema
 def lexicon_match(model_schema: ModelSchema):
     keys = model_schema.businessFields.keys()
     # values = model_schema.businessFields.values()
@@ -19,9 +19,9 @@ def lexicon_match(model_schema: ModelSchema):
 
     lexicon_tokens  = nlp(lexicon_str)
 
-    # TODO need to optimize performance
+    # TODO[future] need to optimize performance
     # TODO【BUG】 find duplicate tokens
-    # TODO split field_names base on camelize
+    # TODO[?] split field_names base on camelize
     lexicon_match_results = []
 
     for import_token in tokens:

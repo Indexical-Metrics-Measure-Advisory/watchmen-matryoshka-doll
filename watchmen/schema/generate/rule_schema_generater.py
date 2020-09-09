@@ -3,7 +3,7 @@ from spacy.matcher import Matcher
 from spacy.symbols import nsubj, CCONJ, nmod, acomp, dobj, prep, pobj, ADJ,xcomp,nsubjpass,attr
 from spacy.tokens import Token
 
-from watchmen.model.rule_context import RuleContext
+from watchmen.schema.rule_context import RuleContext
 
 IF = "if_sentence"
 THEN = "then_sentence"
@@ -26,7 +26,7 @@ def spilt_by_cconj(if_docs, index_list):
 
 
 def is_and(cconjs):
-    #TODO check empty
+    #TODO[next] check empty
     return all(x.lemma_ == "and" for x in cconjs)
 
 
@@ -149,9 +149,8 @@ def generate_schema_rules(rule_context: RuleContext, rule: str):
             result["value"] = value
             rule_schema["then"]=result
 
-    # TODO match factor to domain and basic schema
-    # TODO test execute rule in data pool
-    # TODO generate report for rules
+    # TODO[next] match factor to domain and basic schema
+    # TODO[future] generate report for rules
     return rule_schema
 
 
@@ -185,7 +184,7 @@ def root_match(nlp, rule):
 
 def build_rule_schema():
     # nlp match
-    # match noun with model schema and domain schema
+    # match noun with schema schema and domain schema
     # generate basic schema
 
     pass

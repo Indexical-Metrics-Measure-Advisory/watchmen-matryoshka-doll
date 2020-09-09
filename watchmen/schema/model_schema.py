@@ -3,9 +3,9 @@ from typing import Optional, Dict
 
 from pydantic import BaseModel
 
-from watchmen.model.context import Context
-from watchmen.model.model_field import ModelField
-from watchmen.model.model_relationship import ModelRelationship
+from watchmen.schema.context import Context
+from watchmen.schema.model_field import ModelField
+from watchmen.schema.model_relationship import ModelRelationship
 
 
 class FieldType(str, Enum):
@@ -36,4 +36,4 @@ class ModelSchema(BaseModel):
     context: Optional[Context] = None
     businessFields: Dict[str, ModelField] = {}
     lexiconMatch:list = []
-    relationships: Dict[str, ModelRelationship] = {}
+    # relationships: Dict[str, ModelRelationship] = {}

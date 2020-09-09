@@ -1,15 +1,15 @@
 import json
 
 from watchmen.match.lexicon_matcher import lexicon_match
-from watchmen.model.model_field import ModelField, FieldType
-from watchmen.model.model_relationship import ModelRelationship, RelationshipType
-from watchmen.model.model_schema import ModelSchema, Domain
+from watchmen.schema.model_field import ModelField, FieldType
+from watchmen.schema.model_relationship import ModelRelationship, RelationshipType
+from watchmen.schema.model_schema import ModelSchema, Domain
+from watchmen.utils.data_utils import is_field_value
 
 ROOT = "root"
 
 
-def __is_field_value(value):
-    return type(value) != dict and type(value) != list
+# TODO[next] refactor schema schema structure
 
 
 def __process_sub_models(key: str, sub_models: list, sub_model_schema: ModelSchema):
@@ -36,7 +36,7 @@ def __build_model_fields(key: str, value):
 
 
 def __generate_sub_model(key: str, sub_model: json, sub_model_schema: ModelSchema):
-    sub_model_schema.name = key  # TODO add logic for key check
+    sub_model_schema.name = key  # TODO[next] add logic for key check (same as topic match)
     process_attrs(sub_model, sub_model_schema)
     sub_model_schema.lexiconMatch = lexicon_match(sub_model_schema)
     return sub_model_schema
@@ -58,7 +58,7 @@ def __generate_root(key: str, data: json,domain:Domain):
 
 def process_attrs(data, model_schema):
     for key, value in data.items():
-        if __is_field_value(value):
+        if is_field_value(value):
             model_field = __build_model_fields(key, value)
             # print (key in model_schema.businessFields)
             if key in model_schema.businessFields:
@@ -66,7 +66,7 @@ def process_attrs(data, model_schema):
             else:
                 model_schema.businessFields[key] = model_field
         else:
-            # process sub model
+            # process sub schema
             sub_model_schema = ModelSchema()
             relationship = ModelRelationship()
             if type(value) == dict or type(value) == list:
@@ -85,19 +85,6 @@ def process_attrs(data, model_schema):
                     model_schema.relationships[key] = relationship
 
 
-def __find_sub_models(root: json):
-    return []
-
-
-def __filter_sub_models(model):
-    return []
-
-
-def __process_fields(fileds: []):
-    # TODO return similar fields list and scope
-    return {}
-
-
 def __create_links():
     pass
 
@@ -105,28 +92,14 @@ def __create_links():
 def generate_basic_schema(key: str, data: json,domain:Domain):
     root = __generate_root(key, data,domain)
 
-    print(root.json())
+    # print(root.json())
+    # TODO[next]  match domain topic
 
     return root
 
-    # TODO  match domain topic
 
-    # TODO match entity  and lexicon
 
-    # TODO add entity extensions data collector
 
-    # fields = __filter_sub_models(root)
-    similar_fields = __process_fields(fields)
-    sub_models = __find_sub_models(root)
-
-    ##
-
-    # match root schema
-    # find sub model
-    # recursion sub model
-    # match lexicon
-    # match entity schema
-    # pass
 
 
 def save_schema(data: json):

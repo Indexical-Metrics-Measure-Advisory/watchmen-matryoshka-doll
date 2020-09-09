@@ -1,6 +1,6 @@
 import json
 
-from lib.model.model_schema import ModelSchema
+from watchmen.schema.model_schema import ModelSchema
 
 
 class Event(object):
@@ -8,10 +8,35 @@ class Event(object):
     type:str
 
 
+def process_topic_data():
+    pass
+
+
+def process_data_attr():
+    pass
+
+
 
 def import_row_data(data:json,schema:ModelSchema,event:Event):
+    for key, value in data.items():
+
+
+
+
+
+
+        # find sub schema in relationship schema
+        # process attr
+        # generate ID   for sub schema`s relationship
+        #
+
+        pass
+
+
+
     # find root
     # build relationship
+
 
 
 
@@ -30,5 +55,5 @@ def batch_import_data():
 
     # extract data topic base on schema
 
-    # TODO use dark for parallel run
+    # TODO[future] use dark for parallel run
     pass

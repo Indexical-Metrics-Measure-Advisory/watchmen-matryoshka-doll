@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-# from lib.model.context import Context
-# import ../model/ModelSchema
-# import lib.model.model_schema.ModelSchema
+# from lib.schema.context import Context
+# import ../schema/ModelSchema
+# import lib.schema.model_schema.ModelSchema
 from enum import Enum
 
 
@@ -18,6 +18,10 @@ class ModelRelationship(BaseModel):
     # toId : int = None
     type: RelationshipType = None
     modelSchema: BaseModel = None
+    parentId: int = None
+    childrenId:int = None
+    parentVariable:dict={}
+    childVariable: dict = {}
     # oneToOne: bool= None
     # oneToMany: bool= None
 

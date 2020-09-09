@@ -1,11 +1,11 @@
-from watchmen.model.generate.rule_schema_generater import generate_schema_rules
-from watchmen.model.rule_context import RuleContext
+from watchmen.schema.generate.rule_schema_generater import generate_schema_rules
+from watchmen.schema.rule_context import RuleContext
 
 
 def import_single_rule(rule_context: RuleContext, rule: str):
     print(rule)
 
-    # TODO check rule context data
+    # TODO[next] check rule context data
 
     return generate_schema_rules(rule_context, rule)
 
