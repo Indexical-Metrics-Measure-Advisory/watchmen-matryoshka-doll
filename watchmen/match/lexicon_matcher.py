@@ -28,7 +28,7 @@ def lexicon_match(model_schema: ModelSchema):
         for lexicon_token in lexicon_tokens:
             if import_token.has_vector:
                 similarity = import_token.similarity(lexicon_token)
-                if similarity > 0.5:
+                if similarity > 0.7:
                     lexicon_match_results.append(
                         {"source": import_token.text, "target": lexicon_token.text, "similarity": str(similarity)})
 

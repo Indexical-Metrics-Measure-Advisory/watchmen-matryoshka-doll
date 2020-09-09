@@ -17,7 +17,7 @@ class ModelRelationship(BaseModel):
     # fromId: int = None
     # toId : int = None
     type: RelationshipType = None
-    modelSchema: BaseModel = None
+    # modelSchema: BaseModel = None
     parentId: int = None
     childId:int = None
     parentVariable:dict={}

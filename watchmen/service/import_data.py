@@ -1,6 +1,6 @@
 import json
 
-from watchmen.schema.model_schema import ModelSchema
+from watchmen.schema.model_schema_set import ModelSchemaSet
 
 
 class Event(object):
@@ -17,7 +17,7 @@ def process_data_attr():
 
 
 
-def import_row_data(data:json,schema:ModelSchema,event:Event):
+def import_row_data(data:json,schema:ModelSchemaSet,event:Event):
     for key, value in data.items():
 
 

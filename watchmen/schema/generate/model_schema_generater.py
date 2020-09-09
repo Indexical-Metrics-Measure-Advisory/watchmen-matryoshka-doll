@@ -12,19 +12,6 @@ from watchmen.utils.data_utils import is_field_value
 ROOT = "root"
 
 
-# TODO[next] refactor schema schema structure
-
-
-def __process_sub_models(key: str, sub_models: list, sub_model_schema: ModelSchema):
-    for data in sub_models:
-        result = __generate_sub_model(key, data, sub_model_schema)
-        relationship = ModelRelationship()
-        relationship.modelSchema = result
-        relationship.type = RelationshipType.OneToMany
-        if result is not None:
-            sub_model_schema.relationships[key] = result
-
-
 def __build_model_fields(key: str, value):
     model_field = ModelField()
     model_field.value.append(value)
@@ -85,14 +72,14 @@ def process_attrs(data, model_schema,model_schema_set):
                     sub_model_schema = __generate_sub_model(key, sub_model, sub_model_schema,model_schema_set)
                     if sub_model_schema is not None:
                         relationship.type = RelationshipType.OneToMany
-                        relationship.modelSchema = sub_model_schema
+                        # relationship.modelSchema = sub_model_schema
                         # if key in model_schema.relationships:
                         # model_schema.relationships[key] = relationship
             else:
                 sub_model_schema = __generate_sub_model(key, value, sub_model_schema,model_schema_set)
                 if sub_model_schema is not None:
                     relationship.type = RelationshipType.OneToOne
-                    relationship.modelSchema = sub_model_schema
+                    # relationship.modelSchema = sub_model_schema
                     # model_schema.relationships[key] = relationship
             model_schema_set.schemas.append(sub_model_schema)
             model_schema_set.relationships.append(relationship)
