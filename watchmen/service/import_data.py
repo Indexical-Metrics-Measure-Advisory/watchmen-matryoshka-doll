@@ -46,7 +46,6 @@ def import_row_data(data: json, schema_set: ModelSchemaSet, event: Event):
     # find sub schema in relationship schema
     # process attr
     # generate ID   for sub schema`s relationship
-    #
 
 
 def batch_import_data():

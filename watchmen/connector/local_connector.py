@@ -9,7 +9,6 @@ def batch_load():
 def row_data_load(path: str):
     with open(path) as f:
         return  json.loads(f.read())
-        #
 
 
 
