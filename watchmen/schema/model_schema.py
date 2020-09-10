@@ -37,3 +37,5 @@ class ModelSchema(BaseModel):
     businessFields: Dict[str, ModelField] = {}
     lexiconMatch:list = []
     relationships: Dict[str, ModelRelationship] = {}
+    isRoot: bool = False
+

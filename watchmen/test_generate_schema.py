@@ -7,12 +7,12 @@
 
 from watchmen.connector.local_connector import row_data_load
 from watchmen.schema.model_schema import Domain
-from watchmen.service.generate_schema import generate_schema
+from watchmen.service.generate_schema import generate_basic_schema
 
 
 
 def test():
-    generate_schema("policy",row_data_load('../test/data/policy.json'),Domain.INSURANCE)
+    generate_basic_schema("policy",row_data_load('../test/data/policy.json'),Domain.INSURANCE)
 
 
 # TODO[next] batch import data and get schema

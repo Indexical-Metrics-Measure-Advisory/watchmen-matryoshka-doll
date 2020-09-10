@@ -1,7 +1,7 @@
 {
   "schemas": [
     {
-      "modelId": "5f589b973d9beb32a4a92f39",
+      "modelId": "5f59deae3d9beb556e1d302e",
       "domain": null,
       "subDomain": null,
       "name": "PolicyCustomerList",
@@ -266,10 +266,11 @@
           "similarity": "1.0"
         }
       ],
-      "relationships": {}
+      "relationships": {},
+      "isRoot": false
     },
     {
-      "modelId": "5f589b983d9beb32a4a92f3c",
+      "modelId": "5f59deaf3d9beb556e1d3031",
       "domain": null,
       "subDomain": null,
       "name": "ContractList",
@@ -359,10 +360,11 @@
         }
       },
       "lexiconMatch": [],
-      "relationships": {}
+      "relationships": {},
+      "isRoot": false
     },
     {
-      "modelId": "5f589b993d9beb32a4a92f3d",
+      "modelId": "5f59deb03d9beb556e1d3032",
       "domain": null,
       "subDomain": null,
       "name": "PolicyCoverageList",
@@ -512,10 +514,11 @@
           "similarity": "0.7257114"
         }
       ],
-      "relationships": {}
+      "relationships": {},
+      "isRoot": false
     },
     {
-      "modelId": "5f589b983d9beb32a4a92f3b",
+      "modelId": "5f59deaf3d9beb556e1d3030",
       "domain": null,
       "subDomain": null,
       "name": "PolicyRiskList",
@@ -719,10 +722,11 @@
           "similarity": "0.71608096"
         }
       ],
-      "relationships": {}
+      "relationships": {},
+      "isRoot": false
     },
     {
-      "modelId": "5f589b983d9beb32a4a92f3a",
+      "modelId": "5f59deaf3d9beb556e1d302f",
       "domain": null,
       "subDomain": null,
       "name": "PolicyLobList",
@@ -866,10 +870,11 @@
         }
       },
       "lexiconMatch": [],
-      "relationships": {}
+      "relationships": {},
+      "isRoot": false
     },
     {
-      "modelId": "5f589b9a3d9beb32a4a92f3f",
+      "modelId": "5f59deb13d9beb556e1d3034",
       "domain": null,
       "subDomain": null,
       "name": "InstallmentList",
@@ -1596,10 +1601,11 @@
           "similarity": "0.7412129"
         }
       ],
-      "relationships": {}
+      "relationships": {},
+      "isRoot": false
     },
     {
-      "modelId": "5f589b9a3d9beb32a4a92f3e",
+      "modelId": "5f59deb13d9beb556e1d3033",
       "domain": null,
       "subDomain": null,
       "name": "PolicyPaymentInfoList",
@@ -1713,10 +1719,11 @@
           "similarity": "0.71927255"
         }
       ],
-      "relationships": {}
+      "relationships": {},
+      "isRoot": false
     },
     {
-      "modelId": "5f589b973d9beb32a4a92f38",
+      "modelId": "5f59deae3d9beb556e1d302d",
       "domain": "insurance",
       "subDomain": null,
       "name": "policy",
@@ -2109,7 +2116,8 @@
           "similarity": "1.0"
         }
       ],
-      "relationships": {}
+      "relationships": {},
+      "isRoot": true
     }
   ],
   "relationships": [
@@ -2117,8 +2125,8 @@
       "name": "PolicyCustomerList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f589b973d9beb32a4a92f38",
-      "childId": "5f589b973d9beb32a4a92f39",
+      "parentId": "5f59deae3d9beb556e1d302d",
+      "childId": "5f59deae3d9beb556e1d302e",
       "parentVariable": {},
       "childVariable": {}
     },
@@ -2126,8 +2134,8 @@
       "name": "ContractList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f589b983d9beb32a4a92f3b",
-      "childId": "5f589b983d9beb32a4a92f3c",
+      "parentId": "5f59deaf3d9beb556e1d3030",
+      "childId": "5f59deaf3d9beb556e1d3031",
       "parentVariable": {},
       "childVariable": {}
     },
@@ -2135,8 +2143,8 @@
       "name": "PolicyCoverageList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f589b983d9beb32a4a92f3b",
-      "childId": "5f589b993d9beb32a4a92f3d",
+      "parentId": "5f59deaf3d9beb556e1d3030",
+      "childId": "5f59deb03d9beb556e1d3032",
       "parentVariable": {},
       "childVariable": {}
     },
@@ -2144,8 +2152,8 @@
       "name": "PolicyRiskList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f589b983d9beb32a4a92f3a",
-      "childId": "5f589b983d9beb32a4a92f3b",
+      "parentId": "5f59deaf3d9beb556e1d302f",
+      "childId": "5f59deaf3d9beb556e1d3030",
       "parentVariable": {},
       "childVariable": {}
     },
@@ -2153,8 +2161,8 @@
       "name": "PolicyLobList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f589b973d9beb32a4a92f38",
-      "childId": "5f589b983d9beb32a4a92f3a",
+      "parentId": "5f59deae3d9beb556e1d302d",
+      "childId": "5f59deaf3d9beb556e1d302f",
       "parentVariable": {},
       "childVariable": {}
     },
@@ -2162,8 +2170,8 @@
       "name": "InstallmentList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f589b9a3d9beb32a4a92f3e",
-      "childId": "5f589b9a3d9beb32a4a92f3f",
+      "parentId": "5f59deb13d9beb556e1d3033",
+      "childId": "5f59deb13d9beb556e1d3034",
       "parentVariable": {},
       "childVariable": {}
     },
@@ -2171,8 +2179,8 @@
       "name": "PolicyPaymentInfoList",
       "relationshipId": null,
       "type": "OneToMany",
-      "parentId": "5f589b973d9beb32a4a92f38",
-      "childId": "5f589b9a3d9beb32a4a92f3e",
+      "parentId": "5f59deae3d9beb556e1d302d",
+      "childId": "5f59deb13d9beb556e1d3033",
       "parentVariable": {},
       "childVariable": {}
     }
