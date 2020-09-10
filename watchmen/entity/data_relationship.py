@@ -1,14 +1,19 @@
 from pydantic import BaseModel
 
+# from watchmen.entity.object_id import PydanticObjectId
 from watchmen.utils.data_utils import RelationshipType
 
 
 class DataRelationship(BaseModel):
-    code:str=None
+    desc:str=None
     id:str=None
-    parent_id:str=None
-    child_id:str=None
+    parentId:str=None
+    childId:str=None
     type:RelationshipType=None
+    name:str=None
+
+
+
 
 
 

@@ -1,5 +1,8 @@
 import json
 
+from bson import ObjectId as BsonObjectId
+import decamelize
+
 from watchmen.entity.data_entity import DataEntity
 from watchmen.entity.data_entity_set import DataEntitySet
 from watchmen.entity.data_relationship import DataRelationship
@@ -14,11 +17,15 @@ class Event(object):
 
 
 def process_topic_data():
+    # TODO topic match
     pass
 
 
-def process_model(sub, schema: ModelSchema, entity_set: DataEntitySet, relationship_dict,schema_dict):
+def process_model(sub, schema: ModelSchema, entity_set: DataEntitySet, relationship_dict,schema_dict,data_relationship):
     entity = DataEntity()
+    entity.entityId=str(BsonObjectId())
+    data_relationship.childId=entity.entityId
+    entity.name=data_relationship.name
     for key, value in sub.items():
         if is_field_value(value):
             process_data_attr(schema, key, value, entity)
@@ -28,8 +35,9 @@ def process_model(sub, schema: ModelSchema, entity_set: DataEntitySet, relations
                 if key == relationship.name:
                     sub_schema = schema_dict[relationship.childId]
             for sub in value:
-                process_model(sub, sub_schema, entity_set,relationship_dict,schema_dict)
+                process_model(sub, sub_schema, entity_set,relationship_dict,schema_dict,data_relationship)
 
+    entity_set.relationships.append(data_relationship)
     entity_set.entities.append(entity)
     # return entity
 
@@ -41,7 +49,13 @@ def process_data_attr(schema, key, value, entity):
 
 
 def find_root_schema(schema_dict: dict):
+    # TODO mock data
     return schema_dict["5f589b973d9beb32a4a92f38"]
+
+
+def generate_description(name):
+    # print( decamelize.convert(name))
+    return decamelize.convert(name)
 
 
 def import_row_data(data: json, schema_set: ModelSchemaSet, event: Event):
@@ -50,6 +64,7 @@ def import_row_data(data: json, schema_set: ModelSchemaSet, event: Event):
     schema = find_root_schema(schema_dict)
     entity_set = DataEntitySet()
     entity = DataEntity()
+    entity.entityId = str(BsonObjectId())
     for key, value in data.items():
         if is_field_value(value):
             process_data_attr(schema, key, value, entity)
@@ -58,11 +73,16 @@ def import_row_data(data: json, schema_set: ModelSchemaSet, event: Event):
             for relationship in relationships:
                 if key == relationship.name:
                     sub_schema = schema_dict[relationship.childId]
+                    for sub in value:
+                        data_relationship = DataRelationship()
+                        data_relationship.parentId = entity.entityId
+                        data_relationship.type = relationship.type
+                        data_relationship.name = relationship.name
+                        data_relationship.desc = generate_description(relationship.name)
+                        process_model(sub, sub_schema, entity_set, relationship_dict, schema_dict, data_relationship)
 
             # TODO[next] one to one default merge to main topic
-            for sub in value:
-                data_relationship = DataRelationship()
-                process_model(sub, sub_schema, entity_set, relationship_dict, schema_dict)
+
 
     entity_set.entities.append(entity)
     print(entity_set.json())
