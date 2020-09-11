@@ -1,0 +1,219 @@
+{
+  "topic": [
+    {
+      "name": "Proposal"
+    },
+    {
+      "name": "Quotation"
+    },
+    {
+      "name": "Policy"
+    },
+    {
+      "name": "Producer"
+    },
+    {
+      "name": "InsuredOrPrincipal"
+    },
+    {
+      "name": "Location"
+    },
+    {
+      "name": "LocationUWInfo"
+    },
+    {
+      "name": "AccidentHealthLineBusiness"
+    },
+    {
+      "name": "Coverage"
+    },
+    {
+      "name": "Limit"
+    },
+    {
+      "name": "Deductible"
+    },
+    {
+      "name":"Form"
+    },
+    {
+      "name":"ExposureInfo"
+    }
+  ],
+  "nodes": [
+    {
+      "name":"ProRateFactor"
+    },
+    {
+      "name":"RatingClassificationCd"
+    },
+    {
+      "name":"PremiumBasisCd",
+      "refCode":"PremiumBase"
+    },
+    {
+      "name":"MinPremAmt",
+      "fields":[
+        {"name":"Amt"},
+        {"refName":"CurCd"}
+      ]
+    },
+    {
+      "name":"CategoryCd",
+      "refCode":"CoverageCategory"
+    },
+    {
+      "name":"ExposureCd",
+      "refCode":"Exposures"
+    },
+
+    {
+      "name":"ExpirationDt"
+
+    },
+    {
+      "name": "DeductibleTypeCd",
+      "isCodeList": true,
+      "refCode": "DeductibleType"
+    },
+    {
+      "name": "DeductibleAppliesToCd",
+      "isCodeList": true,
+      "refCode": "DeductibleApplies"
+    },
+    {
+      "name": "IndexAdjustment",
+      "fields": [
+        {
+          "name": "Rate"
+        },
+        {
+          "name": "EffectiveDt"
+        },
+        {
+          "name": "IndexAdjustmentFrequencyCd",
+          "isCodeList": true,
+          "refCode": "Frequency"
+        }
+      ]
+    },
+    {
+      "name": "LimitAppliesToCd",
+      "description": "A code identifying to what the limit applies",
+      "isCodeList": true,
+      "refCode": "LimitApplies"
+    },
+    {
+      "name": "CurCd",
+      "description": "Currency Code"
+    },
+    {
+      "name": "ConversionRate",
+      "description": "translate either a currency or measurement from one unit of measure to another."
+    },
+    {
+      "name": "LOBCd",
+      "alias": "LineOfBusiness",
+      "description": "Line of Business Code List"
+    },
+    {
+      "name": "SourceSystem",
+      "description": "System of record for a piece of information. One system of record could be on many aggregates and/or elements. A system of record could be the source system or a system that enriched the client entered data by adding or modifying an element."
+    },
+    {
+      "name": "TransactionSeqNumber"
+    },
+    {
+      "name": "PolicyNumber"
+    },
+    {
+      "name": "FullTermAmt",
+      "description": "The total gross amount billable for the full policy/bond term, plus all taxes, fees, discounts, surcharges, etc. If the policy/bond has been written outside the normal term for this type policy/bond (i.e., short term), this is the amount that would be billable if the policy/bond had been written for its normal full term. For example, the FullTermAmt for a three year policy/bond would account for all three years (terms) rather than the current (single) term."
+    },
+    {
+      "name": "NetChangeAmt"
+    },
+    {
+      "name": "WrittenAmt"
+    },
+    {
+      "name": "PolicyStatusCd",
+      "isCodeList": true,
+      "refCode": "PolicyStatus"
+    },
+    {
+      "name": "PolicyTypeCd",
+      "isCodeList": true,
+      "refCode": "PolicyType"
+    },
+    {
+      "name": "CoverageCd",
+      "isCodeList": true,
+      "refCode": "Coverages"
+    },
+    {
+      "name": "CoverageTypeCd",
+      "isCodeList": true,
+      "refCode": "CoverageType"
+    },
+    {
+      "name": "CoverageName",
+      "description": "The name of the coverage"
+    },
+    {
+      "name": "CalculationMethodCd",
+      "isCodeList": true,
+      "refCode": "CalculationMethod"
+    },
+
+    {
+      "name": "PaymentPeriod",
+      "type": "MEASUREMENT"
+    },
+    {
+      "name": "PayFrequencyCd",
+      "isCodeList": true,
+      "refCode": "Frequency"
+    },
+    {
+      "name": "BenefitDeferredPeriod",
+      "type": "MEASUREMENT"
+    }
+  ],
+  "codeList": [
+    {
+      "name": "PolicyStatus",
+      "codes": [
+        {
+          "Audit": "Audit"
+        },
+        {
+          "Issued": "Policy is issued and available for change"
+        },
+        {
+          "NBS": "New Business"
+        },
+        {
+          "NotQuotedNotBound": "Policy is not in force"
+        }
+      ]
+    },
+    {
+      "name": "CoverageType",
+      "codes": [
+        {
+          "Coverage": "Coverage"
+        },
+        {
+          "CreditSurcharge": "Credit or Surcharge"
+        },
+        {
+          "TaxFeeAssess":
+          "Tax, Fee or Assessment"
+        }
+      ]
+    }
+  ],
+  "relationships": []
+}
+

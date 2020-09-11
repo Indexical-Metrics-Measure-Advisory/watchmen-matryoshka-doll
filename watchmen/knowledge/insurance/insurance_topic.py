@@ -1,9 +1,22 @@
+
+
+def load_topics():
+    pass
+
+
+def load_kb_entities():
+    pass
+
+
+def load_relationships(id:str):
+    pass
+
+
 # claim
 # application
 # broker , agent
 # policy quotation ,binding
 # customer ,
-
 
 
 ## Marketing
@@ -29,4 +42,14 @@
 # Claim outstanding estimate changes
 # Collection data
 # Client data
+
+
+
+
+
+
+
+
+
+
 
