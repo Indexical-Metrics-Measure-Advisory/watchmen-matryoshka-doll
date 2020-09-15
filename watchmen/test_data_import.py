@@ -22,11 +22,5 @@ def test():
 
     import_row_data(row_data_load('../test/data/policy.json'),model_schema_set,None)
 
-
-
-
-
-
-
     # print(m)
 

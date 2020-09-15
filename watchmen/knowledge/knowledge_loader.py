@@ -20,3 +20,9 @@ def find_lexicon_path(domain: str, language: str):
 
     return domain_conf[key]
 
+
+
+
+
+
+
