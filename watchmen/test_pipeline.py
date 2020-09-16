@@ -34,6 +34,18 @@ def create_pipeline():
 
 
 
+def analyze():
+    
+    pass
+
+
+
+
+
+
+
+
+
 
 
 
