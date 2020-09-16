@@ -2,7 +2,6 @@
 def analyze():
     # load pipeline by user and name
     # run first stage
-
     pass
 
 
@@ -20,6 +19,14 @@ def login():
 
 def view_report():
     pass
+
+
+def customize_pipeline():
+    pass
+
+
+
+
 
 
 
