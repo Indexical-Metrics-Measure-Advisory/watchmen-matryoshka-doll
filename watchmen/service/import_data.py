@@ -26,6 +26,7 @@ def process_model(sub, schema: ModelSchema, entity_set: DataEntitySet, relations
     entity.entityId=str(BsonObjectId())
     data_relationship.childId=entity.entityId
     entity.name=data_relationship.name
+    entity.topicCode = schema.name
     for key, value in sub.items():
         if is_field_value(value):
             process_data_attr(schema, key, value, entity)
@@ -50,7 +51,7 @@ def process_data_attr(schema, key, value, entity):
 
 def find_root_schema(schema_dict: dict):
     # TODO mock data
-    return schema_dict["5f589b973d9beb32a4a92f38"]
+    return schema_dict["5f59deae3d9beb556e1d302d"]
 
 
 def generate_description(name):
@@ -64,6 +65,8 @@ def import_row_data(data: json, schema_set: ModelSchemaSet, event: Event):
     schema = find_root_schema(schema_dict)
     entity_set = DataEntitySet()
     entity = DataEntity()
+    entity.topicCode= schema.name
+
     entity.entityId = str(BsonObjectId())
     for key, value in data.items():
         if is_field_value(value):

@@ -13,7 +13,7 @@ class DataEntity(BaseModel):
     entityId: str = None
     attr: dict = {}
     # entity_set: DataEntitySet = None
-    topicId: str = None
+    topicCode: str = None
     name: str = None
 
 
