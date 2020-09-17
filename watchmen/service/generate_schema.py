@@ -39,7 +39,7 @@ def __build_model_fields(key: str, value):
 def __generate_sub_model(key: str, sub_model: json, sub_model_schema: ModelSchema,model_schema_set):
     sub_model_schema.name = key  # TODO[next] add logic for key check (same as topic match)
     process_attrs(sub_model, sub_model_schema,model_schema_set)
-    sub_model_schema.lexiconMatch = lexicon_match(sub_model_schema)
+    # sub_model_schema.lexiconMatch = lexicon_match(sub_model_schema)
     return sub_model_schema
 
 
@@ -58,7 +58,7 @@ def __generate_root(key: str, data: json,domain:Domain):
     # value content match
 
     model_schema_set.schemas.append(model_schema)
-    model_schema.lexiconMatch=lexicon_match(model_schema)
+    # model_schema.lexiconMatch=lexicon_match(model_schema)
     return model_schema_set
 
 
@@ -107,7 +107,7 @@ def generate_basic_schema(key: str, data: json,domain:Domain):
 
     # print(json.dumps(root))
 
-    print(root.json())
+    # print(root.json())
     # TODO[next]  match domain topic
 
     return root

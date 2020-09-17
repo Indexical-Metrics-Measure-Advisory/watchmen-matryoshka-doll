@@ -18,3 +18,5 @@ class Factor(BaseModel):
     isStockIndex: bool = None,
     isDerivativeIndicators: bool = None
 
+
+

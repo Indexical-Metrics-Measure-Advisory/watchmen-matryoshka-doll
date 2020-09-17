@@ -1,7 +1,14 @@
+from watchmen.pipeline.pipeline import basic_schema
+from watchmen.utils.data_utils import RelationshipType
 
 
-def generate_basic_schema():
-    pass
+def test_basic_schema():
+
+
+
+    # print(type(RelationshipType.OneToMany))
+    basic_schema()
+    # pass
 
 
 # mapping to exist domain model
@@ -30,12 +37,8 @@ def create_new_factor():
 
 
 def create_pipeline():
-    pass
 
 
-
-def analyze():
-    
     pass
 
 

@@ -17,17 +17,7 @@ def test():
 
 # TODO[next] batch import data and get schema
 
-
-
-
-
-
-
-# rule = "if the customer’s gender is male, the age is over 60, and the main clause limit exceeds 100W, then the underwriting level is set to advanced"
-
-
-
-
-
-
+# rule = "if the customer’s gender is male, the age is over 60,
+# and the main clause limit exceeds 100W,
+# then the underwriting level is set to advanced"
 
