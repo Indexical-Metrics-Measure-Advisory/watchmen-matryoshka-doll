@@ -9,6 +9,7 @@ from watchmen.utils.data_utils import RelationshipType
 
 from bson.codec_options import TypeRegistry
 from bson.codec_options import CodecOptions
+
 # from bson.son import Decimal128
 
 client = MongoClient('localhost', 27017)
@@ -33,8 +34,8 @@ def insert_data_schema(data):
     return collection.insert_one(data)
 
 
-def update_data_schema(data):
-    pass
+def update_data_schema(id, data):
+    return collection.update_one({"_id": id},{"$set": data})
 
 
 def load_data_schema_by_id(id):
@@ -43,4 +44,4 @@ def load_data_schema_by_id(id):
 
 
 def delete_data_schema_by_id(id):
-    pass
+    return collection.delete_one({"_id": id})
