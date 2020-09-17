@@ -1,17 +1,11 @@
-import pprint
-import string
-from enum import Enum
-
-from bson.codec_options import TypeCodec, TypeEncoder
+from bson.codec_options import CodecOptions
+from bson.codec_options import TypeEncoder
+from bson.codec_options import TypeRegistry
 from pymongo import MongoClient
 
 from watchmen.utils.data_utils import RelationshipType
 
-from bson.codec_options import TypeRegistry
-from bson.codec_options import CodecOptions
-
-# from bson.son import Decimal128
-
+# TODO load config data from file
 client = MongoClient('localhost', 27017)
 db = client['watchmen']
 
@@ -35,7 +29,7 @@ def insert_data_schema(data):
 
 
 def update_data_schema(id, data):
-    return collection.update_one({"_id": id},{"$set": data})
+    return collection.update_one({"_id": id}, {"$set": data})
 
 
 def load_data_schema_by_id(id):
