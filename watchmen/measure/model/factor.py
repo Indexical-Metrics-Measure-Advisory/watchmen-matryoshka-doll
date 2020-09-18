@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel
 
 
@@ -17,6 +19,7 @@ class Factor(BaseModel):
     isTransactionalIndicators: bool = None,
     isStockIndex: bool = None,
     isDerivativeIndicators: bool = None
+    fieldIds: List[str] = None
 
 
 
