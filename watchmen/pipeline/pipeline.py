@@ -1,5 +1,4 @@
 
-# TODO (next)
 import pprint
 from watchmen.connector.local_connector import row_data_load
 from watchmen.schema.model_schema import Domain

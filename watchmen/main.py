@@ -7,8 +7,8 @@
 
 from fastapi import FastAPI
 
-from lib.model.generate.model_schema_generater import generate_basic_schema
-from lib.model.model_schema import ModelSchema
+# from watchmen.model.generate.model_schema_generater import generate_basic_schema
+# from watchmen.model.model_schema import ModelSchema
 
 app = FastAPI()
 
@@ -18,9 +18,9 @@ async def health():
     return {"health": True}
 
 
-@app.get("/generate/{key}/{path}", response_model=ModelSchema)
-async def generate_schema(key: str, path: str):
-    return generate_basic_schema(key, path)
+# @app.get("/generate/{key}/{path}", response_model=ModelSchema)
+# async def generate_schema(key: str, path: str):
+#     return generate_basic_schema(key, path)
 
 
 

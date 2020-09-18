@@ -1,5 +1,6 @@
 
-
+from __future__ import absolute_import
+# from . import watchmen
 # load data schema
 
 # spilt data to topic base on schema
@@ -23,4 +24,5 @@ def test():
     import_row_data(row_data_load('../test/data/policy.json'),model_schema_set,None)
 
     # print(m)
+
 
