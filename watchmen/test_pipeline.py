@@ -11,8 +11,6 @@ def test_basic_schema():
 def test_confirm_schema():
     update_schema()
 
-    pass
-
 
 def import_instance_data():
     pass
@@ -35,8 +33,6 @@ def create_new_factor():
 
 
 def create_pipeline():
-
-
     pass
 
 

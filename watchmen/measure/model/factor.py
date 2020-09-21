@@ -2,6 +2,11 @@ from typing import List
 
 from pydantic import BaseModel
 
+from watchmen.measure.model.factor_dimension import FactorDimension
+from watchmen.measure.model.factor_layer import FactorLayer
+from watchmen.measure.model.factor_time_period import FactorTimePeriod
+from watchmen.measure.model.scene import Scene
+
 
 class Factor(BaseModel):
     factorId: str = None
@@ -9,17 +14,18 @@ class Factor(BaseModel):
     name: str = None,
     isQuantify: bool = None,
     isResult: bool = None
-    layerId: str = None
-    sceneId: str = None
+    layer: FactorLayer = None
+    scene: Scene = None
     isDerivedIndex: bool = None
-    timePeriodId: str = None
+    timePeriod: FactorTimePeriod = None
     isAtomicIndex: bool = None
     isDimension: bool = None
-    fromDimensionId: str = None
+    factorDimension: FactorDimension = None
     isTransactionalIndicators: bool = None,
     isStockIndex: bool = None,
     isDerivativeIndicators: bool = None
     fieldIds: List[str] = None
+
 
 
 
