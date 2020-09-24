@@ -6,7 +6,7 @@ def run_engine_by_factors():
     # load data with default conditions
     # run all the operate base on factor
     # save result row data to temp and summary result
-    # 
+    #
 
 
 
