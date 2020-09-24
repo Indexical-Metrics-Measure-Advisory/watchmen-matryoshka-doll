@@ -3,11 +3,14 @@ from bson.codec_options import TypeEncoder
 from bson.codec_options import TypeRegistry
 from pymongo import MongoClient
 
+from watchmen.storage.engine.storage_engine import get_client
 from watchmen.utils.data_utils import RelationshipType
 
-# TODO load config data from file
-client = MongoClient('localhost', 27017)
-db = client['watchmen']
+
+# client = MongoClient('localhost', 27017)
+# db = client['watchmen']
+
+db = get_client("watchmen")
 
 
 class EnumCodec(TypeEncoder):

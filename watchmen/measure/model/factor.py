@@ -14,12 +14,12 @@ class Factor(BaseModel):
 
     value: str = None,
 
-    topicId:str = None
+    topicId: str = None
     # isQuantify: bool = None,
     # isResult: bool = None
     groupId: str = None
 
-    type:FactorType=None
+    type: FactorType = None
 
     # isDimension: bool = None
 
@@ -28,6 +28,10 @@ class Factor(BaseModel):
     # factorDimension: FactorDimension = None
     isTransactionalIndicators: bool = None,
 
-    isStockIndex: bool = None,
+    isStockIndex: bool = False,
+
+    isWordFrequency: bool = False,
+
+    codeTable: str = None
 
 

@@ -1,6 +1,6 @@
 
 
-def find_factors_by_scenes():
+def find_factors_by_topic_id():
     pass;
 
 
@@ -14,5 +14,8 @@ def run_factors_row_data():
 
 def run_factors_batch_data():
     pass
+
+
+
 
 

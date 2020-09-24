@@ -113,8 +113,8 @@ def generate_basic_schema(key: str, data: json,domain:Domain):
     return root
 
 
-
-
+def link_to_topic_and_factors():
+    pass
 
 
 def save_schema(data: json):
