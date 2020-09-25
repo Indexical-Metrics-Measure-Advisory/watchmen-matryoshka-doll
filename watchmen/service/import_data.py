@@ -96,7 +96,6 @@ def import_row_data(data: json, schema_set: ModelSchemaSet, event: Event):
 
             # TODO[next] one to one default merge to main topic
 
-
     entity_set.entities.append(entity)
     print(entity_set.json())
     return entity_set

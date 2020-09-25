@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 
 from pydantic import BaseModel
 
@@ -12,7 +13,9 @@ class FactorType(str, Enum):
 class Factor(BaseModel):
     factorId: str = None
 
-    value: str = None,
+    value: str = None
+
+    alias: List[str] = None
 
     topicId: str = None
     # isQuantify: bool = None,
@@ -26,12 +29,15 @@ class Factor(BaseModel):
     timePeriodId: str = None
 
     # factorDimension: FactorDimension = None
-    isTransactionalIndicators: bool = None,
+    isTransactionalIndicators: bool = None
 
-    isStockIndex: bool = False,
+    isStockIndex: bool = False
 
-    isWordFrequency: bool = False,
+    isWordFrequency: bool = False
 
     codeTable: str = None
+
+
+
 
 

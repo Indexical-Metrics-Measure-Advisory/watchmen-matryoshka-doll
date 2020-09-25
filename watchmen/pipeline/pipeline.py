@@ -7,28 +7,23 @@ from watchmen.service.import_data import import_row_data
 from watchmen.storage.data_schema_storage import insert_data_schema, update_data_schema
 
 
-def basic_schema():
-    schema = generate_basic_schema("policy", row_data_load('../test/data/policy.json'), Domain.INSURANCE)
+def basic_schema(json,domain=None):
+    schema = generate_basic_schema("policy", json, domain)
     data = schema.dict()
     result = insert_data_schema(data)
     return result.inserted_id
 
 
-def update_schema():
-    id = basic_schema()
-    schema = generate_basic_schema("policy", row_data_load('../test/data/policy.json'), Domain.INSURANCE)
+def update_schema(id, json,domain=None):
+    schema = generate_basic_schema("policy",json,domain)
     data = schema.dict()
-    update_data_schema(id,data)
+    return update_data_schema(id,data)
 
 
-def import_data():
-    pickle_data = pickle.dumps(row_data_load('../test/data/schema.json'))
-    model_schema_set = ModelSchemaSet.parse_raw(
-        pickle_data, content_type='application/pickle', allow_pickle=True
-    )
+def import_data(json,schema):
 
     # print(type(model_schema_set))
-    import_row_data(row_data_load('../test/data/policy.json'),model_schema_set,None)
+    return import_row_data(json,schema,None)
 
 
 def run_factors():

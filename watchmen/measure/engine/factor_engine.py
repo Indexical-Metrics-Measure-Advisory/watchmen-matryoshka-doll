@@ -1,23 +1,27 @@
 from watchmen.measure.model.factor import Factor, FactorType
 
 
-def run_factors_on_topic_data(factors:List[Factor] ,topic_data):
-    #
+class DependencyProvider(object):
+    def find_related_topic(self):
+        pass
 
 
+def run_factors_on_topic_data(factors:List[Factor] ,topic_data,dependency_provider:DependencyProvider):
+    if dependency_provider is None:
+        dependency_provider = DependencyProvider()
 
-
+    for factor in factors:
+       result =  __execute_factor_on_topic_data(factor,topic_data,dependency_provider)
+       # update_topic_data #TODO audit
 
     pass
 
 
 def _get_value_from_topic(value, data):
-
-    # return value
-    pass
+    return data[value]
 
 
-def _execute_factor_on_topic_data(factor:Factor,topic_data):
+def __execute_factor_on_topic_data(factor:Factor,topic_data,dependency_provider):
 
     if factor.type is FactorType.AtomicIndex:
         value = _get_value_from_topic(factor.value,topic_data)
@@ -35,8 +39,7 @@ def _execute_factor_on_topic_data(factor:Factor,topic_data):
 
     # return topic data with factor value
 
-
-    pass
+    return {}
 
 
 
