@@ -35,12 +35,22 @@ def process_model(sub, schema: ModelSchema, entity_set: DataEntitySet, relations
             for relationship in relationships:
                 if key == relationship.name:
                     sub_schema = schema_dict[relationship.childId]
-            for sub in value:
-                process_model(sub, sub_schema, entity_set,relationship_dict,schema_dict,data_relationship)
+                    for sub in value:
+                        data_relationship = build_data_relationship( entity, relationship)
+                        process_model(sub, sub_schema, entity_set, relationship_dict, schema_dict, data_relationship)
 
     entity_set.relationships.append(data_relationship)
     entity_set.entities.append(entity)
     # return entity
+
+
+def build_data_relationship(entity, relationship):
+    data_relationship = DataRelationship()
+    data_relationship.parentId = entity.entityId
+    data_relationship.type = relationship.type
+    data_relationship.name = relationship.name
+    data_relationship.desc = generate_description(relationship.name)
+    return data_relationship
 
 
 def process_data_attr(schema, key, value, entity):

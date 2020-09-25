@@ -1,4 +1,4 @@
-from watchmen.pipeline.pipeline import basic_schema,update_schema
+from watchmen.pipeline.pipeline import basic_schema, update_schema, import_data
 from watchmen.storage.data_schema_storage import update_data_schema
 from watchmen.utils.data_utils import RelationshipType
 
@@ -12,10 +12,9 @@ def test_confirm_schema():
     update_schema()
 
 
-def import_instance_data():
+def test_import_instance_data():
+    import_data()
 
-
-    pass
 
 
 def generate_standard_report_suggest():
