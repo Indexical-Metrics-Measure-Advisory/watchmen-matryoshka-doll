@@ -21,7 +21,6 @@ def update_schema(id, json,domain=None):
 
 
 def import_data(json,schema):
-
     # print(type(model_schema_set))
     return import_row_data(json,schema,None)
 

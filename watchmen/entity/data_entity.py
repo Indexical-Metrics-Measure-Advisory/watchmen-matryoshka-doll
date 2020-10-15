@@ -2,11 +2,6 @@
 from pydantic import BaseModel
 
 from watchmen.entity.data_entity_set import DataEntitySet
-# from watchmen.entity.object_id import ObjectIdStr
-
-
-
-
 
 
 class DataEntity(BaseModel):

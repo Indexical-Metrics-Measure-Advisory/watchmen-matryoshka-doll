@@ -16,6 +16,11 @@ def run_factors_batch_data():
     pass
 
 
+def load_factors_data_by_conditions():
+
+    pass
+
+
 
 
 

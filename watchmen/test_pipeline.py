@@ -5,9 +5,7 @@ from watchmen.measure.model.factor import Factor, FactorType
 from watchmen.pipeline.pipeline import basic_schema, update_schema, import_data
 from watchmen.schema.model_schema import Domain
 from watchmen.schema.model_schema_set import ModelSchemaSet
-from watchmen.storage.data_schema_storage import update_data_schema
 from watchmen.storage.factor_storage import save_factor
-from watchmen.utils.data_utils import RelationshipType
 
 
 def test_basic_schema():
@@ -25,7 +23,7 @@ def suggestions_match_rule_for_master_topics():
 def test_confirm_schema():
     json = row_data_load('../test/data/policy.json')
     id = basic_schema(json, Domain.INSURANCE)
-    result = update_schema(id , json, Domain.INSURANCE)
+    result = update_schema(id, json, Domain.INSURANCE)
     assert result is not None
 
 
@@ -35,32 +33,23 @@ def test_import_instance_data():
         pickle_data, content_type='application/pickle', allow_pickle=True
     )
     json = row_data_load('../test/data/policy.json')
-    result = import_data(json,model_schema_set)
+    result = import_data(json, model_schema_set)
     assert result is not None
 
 
 def test_save_factor():
     factor = Factor()
-    factor.type=FactorType.AtomicIndex
-    factor.value="field name"
-    factor.topicId="master_topic_id "
+    factor.type = FactorType.AtomicIndex
+    factor.value = "field name"
+    factor.topicId = "master_topic_id "
     # factor.groupId
-
     # print(factor.dict())
-    result =  save_factor(factor.dict())
+    result = save_factor(factor.dict())
     assert result.inserted_id is not None
 
 
 def run_factors():
-
-
-
-
-
     pass
-
-
-
 
 
 def generate_standard_report_suggest():
@@ -81,18 +70,3 @@ def create_new_factor():
 
 def create_pipeline():
     pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

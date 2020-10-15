@@ -1,3 +1,5 @@
+from typing import List
+
 from watchmen.measure.model.factor import Factor, FactorType
 
 
@@ -17,14 +19,14 @@ def run_factors_on_topic_data(factors:List[Factor] ,topic_data,dependency_provid
     pass
 
 
-def _get_value_from_topic(value, data):
+def __get_value_from_topic(value, data):
     return data[value]
 
 
 def __execute_factor_on_topic_data(factor:Factor,topic_data,dependency_provider):
 
     if factor.type is FactorType.AtomicIndex:
-        value = _get_value_from_topic(factor.value,topic_data)
+        value = __get_value_from_topic(factor.value,topic_data)
 
     if factor.type is FactorType.DerivedIndex:
 
