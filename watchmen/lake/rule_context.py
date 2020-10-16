@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from watchmen.schema.rule_schema import RuleType, DSLType
+from watchmen.lake.rule_schema import RuleType, DSLType
 
 
 class RuleContext(BaseModel):

@@ -1,4 +1,4 @@
-from watchmen.measure.engine.factor_engine import run_factors_on_topic_data
+from watchmen.factors.engine.factor_engine import run_factors_on_topic_data
 from watchmen.storage.factor_storage import load_factors_by_topic_id
 
 
@@ -19,7 +19,7 @@ def run_factors(entity_set):
 
     ## save factors result to topic collection
 
-    # track issue factor
+    # trace issue factor
 
 
 

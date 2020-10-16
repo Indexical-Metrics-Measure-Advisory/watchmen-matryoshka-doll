@@ -1,10 +1,10 @@
 import pickle
 
 from watchmen.connector.local_connector import row_data_load
-from watchmen.measure.model.factor import Factor, FactorType
+from watchmen.factors.model.factor import Factor, FactorType
 from watchmen.pipeline.pipeline import basic_schema, update_schema, import_data
-from watchmen.schema.model_schema import Domain
-from watchmen.schema.model_schema_set import ModelSchemaSet
+from watchmen.lake.model_schema import Domain
+from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.storage.factor_storage import save_factor
 
 
@@ -28,7 +28,7 @@ def test_confirm_schema():
 
 
 def test_import_instance_data():
-    pickle_data = pickle.dumps(row_data_load('../test/data/schema.json'))
+    pickle_data = pickle.dumps(row_data_load('../test/data/lake.json'))
     model_schema_set = ModelSchemaSet.parse_raw(
         pickle_data, content_type='application/pickle', allow_pickle=True
     )

@@ -3,9 +3,10 @@ from typing import Optional, Dict
 
 from pydantic import BaseModel
 
-from watchmen.schema.context import Context
-from watchmen.schema.model_field import ModelField
-from watchmen.schema.model_relationship import ModelRelationship
+from watchmen.event.event import Event
+from watchmen.lake.context import Context
+from watchmen.lake.model_field import ModelField
+from watchmen.lake.model_relationship import ModelRelationship
 
 
 class FieldType(str, Enum):
@@ -29,6 +30,7 @@ class SubDomain(str, Enum):
 
 class ModelSchema(BaseModel):
     modelId: str = None
+    event:Event = None
     domain: Domain = None
     subDomain: SubDomain = None
     name: str = None

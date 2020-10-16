@@ -1,7 +1,7 @@
 # import json
 #
-# from watchmen.schema.generate.model_schema_generater import generate_basic_schema
-# from watchmen.schema.model_schema import Domain
+# from watchmen.lake.generate.model_schema_generater import generate_basic_schema
+# from watchmen.lake.model_schema import Domain
 #
 #
 # def generate_schema(key: str, data: json, domain: Domain):
@@ -14,10 +14,10 @@ import json
 from bson import ObjectId as BsonObjectId
 
 from watchmen.match.lexicon_matcher import lexicon_match
-from watchmen.schema.model_field import ModelField, FieldType
-from watchmen.schema.model_relationship import ModelRelationship, RelationshipType
-from watchmen.schema.model_schema import ModelSchema, Domain
-from watchmen.schema.model_schema_set import ModelSchemaSet
+from watchmen.lake.model_field import ModelField, FieldType
+from watchmen.lake.model_relationship import ModelRelationship, RelationshipType
+from watchmen.lake.model_schema import ModelSchema, Domain
+from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.utils.data_utils import is_field_value
 
 ROOT = "root"
@@ -72,7 +72,7 @@ def process_attrs(data, model_schema,model_schema_set):
             else:
                 model_schema.businessFields[key] = model_field
         else:
-            # process sub schema
+            # process sub lake
             sub_model_schema = ModelSchema()
             sub_model_schema.modelId = str( BsonObjectId())
             relationship = ModelRelationship()

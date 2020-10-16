@@ -1,9 +1,9 @@
 ###
 # 1. select basic domain for example insurance product ,marketing
 # 2. read json from connector
-# 3. generate basic schema base on json data
-# 4. match schema with domain  knowledge dataset and provide suggestions
-# 5. link knowledge domain to schema
+# 3. generate basic lake base on json data
+# 4. match lake with domain  knowledge dataset and provide suggestions
+# 5. link knowledge domain to lake
 
 from fastapi import FastAPI
 

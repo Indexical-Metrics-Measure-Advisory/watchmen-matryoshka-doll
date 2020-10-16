@@ -1,11 +1,11 @@
 import json
 
-from watchmen.schema.rule_context import RuleContext
-from watchmen.schema.rule_schema import RuleType
+from watchmen.lake.rule_context import RuleContext
+from watchmen.lake.rule_schema import RuleType
 from watchmen.service.import_rule import import_single_rule
 
 
-# TODO[next] add schema in parameter
+# TODO[next] add lake in parameter
 
 
 def test():

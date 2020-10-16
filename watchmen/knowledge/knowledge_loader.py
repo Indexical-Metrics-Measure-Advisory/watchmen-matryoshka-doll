@@ -1,6 +1,6 @@
 import json
 
-from watchmen.schema.model_schema import Domain
+from watchmen.lake.model_schema import Domain
 
 domain_conf = {
     "insurance_en": "./data/lexicon/insurance-data.json"

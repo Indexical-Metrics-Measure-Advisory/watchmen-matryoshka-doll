@@ -6,8 +6,8 @@ import decamelize
 from watchmen.entity.data_entity import DataEntity
 from watchmen.entity.data_entity_set import DataEntitySet
 from watchmen.entity.data_relationship import DataRelationship
-from watchmen.schema.model_schema import ModelSchema
-from watchmen.schema.model_schema_set import ModelSchemaSet
+from watchmen.lake.model_schema import ModelSchema
+from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.utils.data_utils import get_dict_schema_set, get_dict_relationship, is_field_value
 
 
@@ -100,15 +100,15 @@ def import_row_data(data: json, schema_set: ModelSchemaSet, event: Event):
     print(entity_set.json())
     return entity_set
 
-    # find sub schema in relationship schema
+    # find sub lake in relationship lake
     # process attr
-    # generate ID   for sub schema`s relationship
+    # generate ID   for sub lake`s relationship
 
 
 def batch_import_data():
-    # find schema
+    # find lake
 
-    # extract data topic base on schema
+    # extract data topic base on lake
 
     # TODO[future] use dark for parallel run
     pass

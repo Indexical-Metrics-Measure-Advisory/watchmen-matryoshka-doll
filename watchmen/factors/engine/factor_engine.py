@@ -1,6 +1,6 @@
 from typing import List
 
-from watchmen.measure.model.factor import Factor, FactorType
+from watchmen.factors.model.factor import Factor, FactorType
 
 
 class DependencyProvider(object):
