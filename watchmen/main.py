@@ -9,6 +9,7 @@ from fastapi import FastAPI
 
 # from watchmen.model.generate.model_schema_generater import generate_basic_schema
 # from watchmen.model.model_schema import ModelSchema
+from .index import select_domain
 
 app = FastAPI()
 
@@ -16,6 +17,15 @@ app = FastAPI()
 @app.get("/health")
 async def health():
     return {"health": True}
+
+
+@app.get("/select/domain")
+async def domain(name: str):
+    select_domain(name)
+    return {"success": True}
+
+
+
 
 
 # @app.get("/generate/{key}/{path}", response_model=ModelSchema)

@@ -1,6 +1,7 @@
 import json
 
 from watchmen.lake.model_schema import Domain
+from watchmen.storage.templat_storage import load_template
 
 domain_conf = {
     "insurance_en": "./data/lexicon/insurance-data.json"
@@ -21,8 +22,21 @@ def find_lexicon_path(domain: str, language: str):
     return domain_conf[key]
 
 
+def __check_domain(domain):
+    return True
 
 
+def find_template_by_domain(domain):
+    # check domain name
+    if __check_domain(domain):
+        template = dynamic_import_template(domain)
+        return template
+
+    # TODO error check
+    pass
 
 
-
+def dynamic_import_template(name):
+    name = "watchmen.knowledge."+name + ".index"
+    template = __import__(name, fromlist=[''])
+    return template.load_template()

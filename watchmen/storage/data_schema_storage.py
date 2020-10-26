@@ -42,3 +42,8 @@ def load_data_schema_by_id(id):
 
 def delete_data_schema_by_id(id):
     return collection.delete_one({"_id": id})
+
+
+def batch_import_data(data):
+    collection.insert_many(data)
+

@@ -8,8 +8,12 @@
 ## version info
 
 ##
+from typing import List
+
 from pydantic import BaseModel
 
 
 class MasterSchema(BaseModel):
-    pass #
+     id : str = None
+     topic_list:List = None
+     user: str = None

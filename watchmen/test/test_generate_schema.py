@@ -7,11 +7,21 @@
 
 from watchmen.connector.local_connector import row_data_load
 from watchmen.lake.model_schema import Domain
-from watchmen.service.generate_schema import generate_basic_schema
+from watchmen.pipeline.stage.generate_schema import GenerateLakeSchema
+from watchmen.service.generate_schema import generate_basic_schema, generate_basic_schema_for_list_data
 
-def test():
-    generate_basic_schema("policy",row_data_load('../test/data/policy.json'),Domain.INSURANCE)
 
+def test_generate_schema():
+    generate_basic_schema("policy",row_data_load('../../test/data/policy.json'),Domain.INSURANCE)
+
+
+def test_generate_schema_for_list_data():
+
+    GenerateLakeSchema().run([[row_data_load('../../test/data/policy.json'),row_data_load('../../test/data/policy.json')],"policy"],{})
+    # generate_basic_schema_for_list_data("policy", [row_data_load('../../test/data/policy.json'),row_data_load('../../test/data/policy.json')], Domain.INSURANCE)
+
+
+# def test_generate_schema_for_list_data():
 
 # TODO[next] batch import data and get lake
 

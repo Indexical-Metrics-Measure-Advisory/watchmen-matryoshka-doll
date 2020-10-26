@@ -1,4 +1,4 @@
-from typing import List
+from typing import List,Dict
 
 from pydantic import BaseModel
 
@@ -7,5 +7,5 @@ from watchmen.lake.model_schema import ModelSchema
 
 
 class ModelSchemaSet(BaseModel):
-    schemas: List[ModelSchema] = []
-    relationships: List[ModelRelationship] = []
+    schemas: Dict[str,ModelSchema] = {}
+    relationships: Dict[str,ModelRelationship] = {}

@@ -37,6 +37,8 @@ class Factor(BaseModel):
 
     codeTable: str = None
 
+    isTag: bool = False
+
 
 
 

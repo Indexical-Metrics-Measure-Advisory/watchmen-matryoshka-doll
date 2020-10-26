@@ -17,6 +17,9 @@ class ModelRelationship(BaseModel):
     childId:str = None
     parentVariable:dict={}
     childVariable: dict = {}
+
+    parentName: str = None
+    childName: str = None
     # oneToOne: bool= None
     # oneToMany: bool= None
 

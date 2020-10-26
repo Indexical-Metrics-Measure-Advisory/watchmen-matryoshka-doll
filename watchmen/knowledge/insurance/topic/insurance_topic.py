@@ -1,23 +1,10 @@
 
 
-def load_topics():
-    pass
-
-
-def load_kb_entities():
-    pass
-
-
-def load_relationships(id:str):
-    pass
-
-
 # claim
 # application
 # broker , agent
 # policy quotation ,binding
 # customer ,
-
 
 ## Marketing
 
@@ -42,6 +29,25 @@ def load_relationships(id:str):
 # Claim outstanding estimate changes
 # Collection data
 # Client data
+# from bson import timestamp
+from pydantic import BaseModel
+from pydantic.schema import datetime
+
+from watchmen.event.event import Event
+
+
+class InsuranceTopics(BaseModel):
+    id: str = None
+    features: dict = None
+    event: str = None
+    insert_time: datetime = None
+
+
+
+
+
+
+
 
 
 
