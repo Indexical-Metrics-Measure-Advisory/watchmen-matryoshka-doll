@@ -139,11 +139,12 @@ def __create_links():
 def generate_basic_schema_for_list_data(key: str, data_list: [], domain: Domain):
     model_schema = build_root_basic_info(domain, key)
     model_schema_set = ModelSchemaSet()
+    model_schema_set.code = key
     for data in data_list:
         process_attrs(data, model_schema, model_schema_set)
 
     model_schema_set.schemas[model_schema.name] = model_schema
-    print(model_schema_set.json())
+    # print(model_schema_set.json())
     return model_schema_set
 
 

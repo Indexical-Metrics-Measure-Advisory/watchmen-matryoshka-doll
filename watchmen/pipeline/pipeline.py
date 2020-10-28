@@ -1,5 +1,6 @@
 
 from watchmen.pipeline.stage.generate_schema import GenerateLakeSchema
+from watchmen.pipeline.stage.save_lake_schema_to_mongo import SaveSchemaToMongo
 from watchmen.pipeline.stage.save_to_mongo import SaveToMongo
 from watchmen.service.generate_schema import generate_basic_schema
 from watchmen.service.import_data import import_row_data
@@ -40,6 +41,7 @@ def build_default_pipeline():
     pipeline = Pipeline()
     pipeline.add(SaveToMongo())
     pipeline.add(GenerateLakeSchema())
+    pipeline.add(SaveSchemaToMongo())
     return pipeline
 
 
@@ -60,12 +62,14 @@ class Pipeline(object):
         for stage in self.stages:
             if stage.dependency() is None or stage.dependency() in  context["status"]:
                 output_param = stage.run(input_param, context)
-                context["status"].append(stage.name)
+                context["status"].append(stage.name) # TODO change to dict for trace success/fail
                 input_param = output_param
             else:
-                print(stage.dependency()+"is Missing")
 
-        print(context)
+                raise Exception(stage.dependency()+"is Missing")
+
+        # print(context)
+
         return output_param
 
 
