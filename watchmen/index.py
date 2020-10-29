@@ -59,6 +59,10 @@ def mapping_to_master(user, key: str):
     pass
 
 
+def check_factor_is_exist():
+    pass
+
+
 def add_topic_to_master():
     pass
 
