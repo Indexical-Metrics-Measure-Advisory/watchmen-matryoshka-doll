@@ -8,7 +8,7 @@ from watchmen.service.import_rule import import_single_rule
 # TODO[next] add lake in parameter
 
 
-def test():
+def test_import_rule():
     rule = "if the customer’s gender is male and the age is over 60 and the main clause limit exceeds 100W, " \
            "then the underwriting level is set to advanced."
 

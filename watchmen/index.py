@@ -7,6 +7,7 @@ from watchmen.pipeline.pipeline import build_default_pipeline
 
 
 # auth
+from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_rule
 
 
 def login():
@@ -70,12 +71,13 @@ def add_topic_to_master():
     pass
 
 
-def save_topic_mapping(model_schema, topic):
+def load_topic_mapping(model_schema_id,topic_id):
+    return load_topic_mapping_rule(model_schema_id,topic_id)
 
 
+def save_topic_mapping(topic_mapping_rule):
+    return save_topic_mapping_rule(topic_mapping_rule)
 
-
-    pass #
 
 
 def update_factor_mapping():
