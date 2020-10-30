@@ -1,8 +1,11 @@
+import pickle
+
 from bson.codec_options import CodecOptions
 from bson.codec_options import TypeEncoder
 from bson.codec_options import TypeRegistry
 from pymongo import MongoClient
 
+from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.storage.engine.storage_engine import get_client
 from watchmen.utils.data_utils import RelationshipType
 
@@ -35,9 +38,15 @@ def update_data_schema(id, data):
     return collection.update_one({"_id": id}, {"$set": data})
 
 
-def load_data_schema_by_id(id):
+def load_data_schema_by_code(code):
     # collection
-    return collection.find_one(id)
+    data =  collection.find_one({"code":code})
+    pickle_data = pickle.dumps(data)
+    return  ModelSchemaSet.parse_raw(
+        pickle_data, content_type='application/pickle', allow_pickle=True
+    )
+
+
 
 
 def delete_data_schema_by_id(id):

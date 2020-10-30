@@ -1,10 +1,10 @@
 from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class Topic(BaseModel):
-    id: str = Field( alias='_id')
+    topicId: str = None
     businessKey  : str = None
     alias: List[str] = None
     indexKey : List[str] = None

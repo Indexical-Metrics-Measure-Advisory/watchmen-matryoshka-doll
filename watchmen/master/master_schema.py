@@ -16,6 +16,6 @@ from watchmen.factors.model.topic import Topic
 
 
 class MasterSchema(BaseModel):
-     id: int = Field( alias='_id')
+     # id: int = Field( alias='_id')
      topic_list:List[Topic] = None
      user: str = None

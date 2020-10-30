@@ -4,6 +4,7 @@ from watchmen.auth.index import get_current_user, check_promise
 from watchmen.auth.user import User
 from watchmen.factors.model.factor import Factor
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
+from watchmen.mapping.suggestion.generate_suggestion import generate_topic_suggestion
 from watchmen.master.index import create_master_space, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space
 from watchmen.pipeline.pipeline import build_default_pipeline
@@ -59,6 +60,13 @@ def generate_lake_schema(json_files, name):
 # CRUD for pipeline
 
 # create relationship for master schema
+
+
+def generate_suggestion(lake_schema,master_schema):
+    return generate_topic_suggestion(lake_schema,master_schema)
+
+
+
 
 
 def mapping_to_master(user, key: str):
