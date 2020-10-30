@@ -1,7 +1,7 @@
-import pickle
 
 from watchmen.master.master_schema import MasterSchema
 from watchmen.storage.engine.storage_engine import get_client
+from watchmen.utils.pickle_wrapper import pickle_wrapper
 
 db = get_client("watchmen")
 
@@ -19,8 +19,5 @@ def update_master_space(master_space):
 
 
 def load_master_space_by_user(user):
-    data =  collection.find_one({"user": user})
-    pickle_data = pickle.dumps(data)
-    return MasterSchema.parse_raw(
-        pickle_data, content_type='application/pickle', allow_pickle=True
-    )
+    data = collection.find_one({"user": user})
+    return pickle_wrapper(data,MasterSchema)

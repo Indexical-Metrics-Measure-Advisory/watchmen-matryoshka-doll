@@ -12,6 +12,7 @@ from watchmen.utils.data_utils import RelationshipType
 
 # client = MongoClient('localhost', 27017)
 # db = client['watchmen']
+from watchmen.utils.pickle_wrapper import pickle_wrapper
 
 db = get_client("watchmen")
 
@@ -39,14 +40,8 @@ def update_data_schema(id, data):
 
 
 def load_data_schema_by_code(code):
-    # collection
     data =  collection.find_one({"code":code})
-    pickle_data = pickle.dumps(data)
-    return  ModelSchemaSet.parse_raw(
-        pickle_data, content_type='application/pickle', allow_pickle=True
-    )
-
-
+    return pickle_wrapper(data,ModelSchemaSet)
 
 
 def delete_data_schema_by_id(id):
