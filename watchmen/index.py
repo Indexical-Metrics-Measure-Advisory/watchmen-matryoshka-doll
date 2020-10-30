@@ -55,6 +55,9 @@ def generate_lake_schema(json_files, name):
 
 # create relationship for master schema
 
+
+
+
 def mapping_to_master(user, key: str):
     pass
 
@@ -67,7 +70,11 @@ def add_topic_to_master():
     pass
 
 
-def update_topic_mapping():
+def save_topic_mapping(model_schema, topic):
+
+
+
+
     pass #
 
 
