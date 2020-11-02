@@ -37,8 +37,8 @@ def add_topic_to_master_space(topic, master_space):
 
 def add_topic_list_to_master(topic_list, master_space):
     master_space.topic_list = topic_list
-    inserted_id = save_master_space(master_space).inserted_id
-    master_space.id = inserted_id
+    save_master_space(master_space).inserted_id
+    # master_space.id = inserted_id
     return master_space
 
 

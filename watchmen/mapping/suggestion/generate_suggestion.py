@@ -26,8 +26,9 @@ def generate_topic_suggestion(lake_schema: ModelSchemaSet, master_space: MasterS
 
 
 def __build_topic_names(topic):
-    topic_name_list = []
-    topic_name_list.append(topic.name).extend(topic.aliases)
+    topic_name_list = [topic.businessKey]
+    if topic.alias:
+        topic_name_list.extend(topic.alias)
     topic_names = " ".join(topic_name_list)
     return topic_names
 

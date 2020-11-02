@@ -8,12 +8,10 @@ from watchmen.mapping.suggestion.generate_suggestion import generate_topic_sugge
 from watchmen.master.index import create_master_space, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space
 from watchmen.pipeline.pipeline import build_default_pipeline
-
-
-# auth
 from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_rule
 
 
+# auth
 def login(user:User):
     return True
     # pass
@@ -64,8 +62,6 @@ def generate_lake_schema(json_files, name):
 
 def generate_suggestion(lake_schema,master_schema):
     return generate_topic_suggestion(lake_schema,master_schema)
-
-
 
 
 

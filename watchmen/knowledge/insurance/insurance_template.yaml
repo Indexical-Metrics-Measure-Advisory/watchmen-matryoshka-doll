@@ -1,6 +1,7 @@
-insurance:
-    policy_info:
-        country:""
+topic_list:
+    - policy_info:
+        country:
+            businessKey:
         market:""
         city:""
         current_year:""
@@ -31,16 +32,16 @@ insurance:
         shipping_cost:""
         shape_of_YoY:""
         YoY_premium:""
-    claim_info:
+    - claim_info:
         claimed_premium:""
         claims_count
-    agent_info:
+    - agent_info:
         agent_id:""
         agent_name:""
         avg_premium_per_agent:""
         policies_sold:""
         profit:""
-    customer_info:
+    - customer_info:
         customer_id:""
         salary_bin:""
         education:""
@@ -51,7 +52,7 @@ insurance:
         postal_code:""
         age:""
         age_bin:""
-    risk_vehicle_info:
+    - risk_vehicle_info:
         make:""
         symboling:""
         aspiration:""

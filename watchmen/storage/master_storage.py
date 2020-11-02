@@ -20,4 +20,5 @@ def update_master_space(master_space):
 
 def load_master_space_by_user(user):
     data = collection.find_one({"user": user})
+    print(data)
     return pickle_wrapper(data,MasterSchema)

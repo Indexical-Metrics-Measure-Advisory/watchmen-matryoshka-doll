@@ -30,10 +30,7 @@ def find_template_by_domain(domain):
     # check domain name
     if __check_domain(domain):
         template = dynamic_import_template(domain)
-        return template
-
-    # TODO error check
-    pass
+        return template["topic_list"]
 
 
 def dynamic_import_template(name):
