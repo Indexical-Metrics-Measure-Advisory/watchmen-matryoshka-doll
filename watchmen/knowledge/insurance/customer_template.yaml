@@ -73,17 +73,17 @@ customer:
         value:is_in_life_blacklist
       has_loans_of_policy:
         value:has_loans_of_policy
-     property:
-       number_of_property_policy:
-         value:number_of_property_policy
-       property_products:
-         value:property_products
-       number_of_cancel_property_policy_year:
-         value:number_of_cancel_property_policy_year
-       renew_years:
-         value:renew_years
-       has_valid_policy:
-         value:has_valid_policy
+      property:
+        number_of_property_policy:
+          value:number_of_property_policy
+        property_products:
+          value:property_products
+        number_of_cancel_property_policy_year:
+          value:number_of_cancel_property_policy_year
+        renew_years:
+          value:renew_years
+        has_valid_policy:
+          value:has_valid_policy
 
 
 

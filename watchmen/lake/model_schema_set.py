@@ -1,4 +1,5 @@
-from typing import List,Dict
+import datetime
+from typing import Dict
 
 from pydantic import BaseModel
 
@@ -10,3 +11,5 @@ class ModelSchemaSet(BaseModel):
     code:str = None
     schemas: Dict[str,ModelSchema] = {}
     relationships: Dict[str,ModelRelationship] = {}
+    # user: str = None
+    # insertTime: datetime = None

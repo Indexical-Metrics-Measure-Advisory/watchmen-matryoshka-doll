@@ -2,7 +2,7 @@
 import yaml
 import os
 
-TEMPLATE_YAML = "/insurance_template.yaml"
+TEMPLATE_YAML = "/insurance_template.yml"
 
 
 def load_template():

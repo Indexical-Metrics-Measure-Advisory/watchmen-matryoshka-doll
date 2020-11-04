@@ -10,12 +10,13 @@
 ##
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from watchmen.factors.model.topic import Topic
 
 
 class MasterSchema(BaseModel):
-     id : str = None
-     topic_list:List[Topic] = None
+     # id: int = Field( alias='_id')
+     topic_list:List = None
      user: str = None
+     name:str = None

@@ -9,7 +9,7 @@ from watchmen.storage.factor_storage import save_factor
 
 
 def test_basic_schema():
-    json = row_data_load('../test/data/policy.json')
+    json = row_data_load('../../test/data/policy.json')
     id = basic_schema(json, Domain.INSURANCE)
     print(id)
     assert id is not None
@@ -21,20 +21,20 @@ def suggestions_match_rule_for_master_topics():
 
 # mapping to exist domain model
 def test_confirm_schema():
-    json = row_data_load('../test/data/policy.json')
+    json = row_data_load('../../test/data/policy.json')
     id = basic_schema(json, Domain.INSURANCE)
     result = update_schema(id, json, Domain.INSURANCE)
     assert result is not None
 
 
-def test_import_instance_data():
-    pickle_data = pickle.dumps(row_data_load('../test/data/lake.json'))
-    model_schema_set = ModelSchemaSet.parse_raw(
-        pickle_data, content_type='application/pickle', allow_pickle=True
-    )
-    json = row_data_load('../test/data/policy.json')
-    result = import_data(json, model_schema_set)
-    assert result is not None
+# def test_import_instance_data():
+#     pickle_data = pickle.dumps(row_data_load('../../test/data/instance_data.json'))
+#     model_schema_set = ModelSchemaSet.parse_raw(
+#         pickle_data, content_type='application/pickle', allow_pickle=True
+#     )
+#     json = row_data_load('../../test/data/policy.json')
+#     result = import_data(json, model_schema_set)
+#     assert result is not None
 
 
 def test_save_factor():
