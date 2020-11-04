@@ -11,7 +11,10 @@ class FactorType(str, Enum):
 
 
 class Factor(BaseModel):
-    factorId: str = None
+
+    factorId: int = None
+
+    factor_name:str = None
 
     value: str = None
 
@@ -38,8 +41,6 @@ class Factor(BaseModel):
     codeTable: str = None
 
     isTag: bool = False
-
-
 
 
 
