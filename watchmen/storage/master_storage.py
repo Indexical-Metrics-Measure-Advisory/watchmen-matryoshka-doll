@@ -1,9 +1,10 @@
 
 from watchmen.master.master_schema import MasterSchema
 from watchmen.storage.engine.storage_engine import get_client
+from watchmen.utils.data_utils import WATCHMEN
 from watchmen.utils.pickle_wrapper import pickle_wrapper
 
-db = get_client("watchmen")
+db = get_client(WATCHMEN)
 
 collection = db.get_collection('master_space')
 

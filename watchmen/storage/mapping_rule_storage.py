@@ -1,6 +1,7 @@
 from watchmen.storage.engine.storage_engine import get_client
+from watchmen.utils.data_utils import WATCHMEN
 
-db = get_client("watchmen")
+db = get_client(WATCHMEN)
 
 collection = db.get_collection('mapping_rules')
 

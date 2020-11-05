@@ -5,7 +5,9 @@ from watchmen.factors.model.topic import Topic
 
 import datetime
 
-db = get_client("watchmen")
+from watchmen.utils.data_utils import WATCHMEN
+
+db = get_client(WATCHMEN)
 
 topic_col = db.get_collection('topic')
 

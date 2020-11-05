@@ -7,14 +7,13 @@ from pymongo import MongoClient
 
 from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.storage.engine.storage_engine import get_client
-from watchmen.utils.data_utils import RelationshipType
-
+from watchmen.utils.data_utils import RelationshipType, WATCHMEN
 
 # client = MongoClient('localhost', 27017)
 # db = client['watchmen']
 from watchmen.utils.pickle_wrapper import pickle_wrapper
 
-db = get_client("watchmen")
+db = get_client(WATCHMEN)
 
 
 class EnumCodec(TypeEncoder):

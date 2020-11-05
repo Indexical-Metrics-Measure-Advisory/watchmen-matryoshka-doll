@@ -1,5 +1,6 @@
 from enum import Enum
 
+WATCHMEN = "watchmen"
 
 
 def is_field_value(value):

@@ -1,7 +1,10 @@
 
 from watchmen.storage.engine.storage_engine import get_client
 
-client = get_client("data")
+# WATCHMEN = "watchmen"
+from watchmen.utils.data_utils import WATCHMEN
+
+client = get_client(WATCHMEN)
 
 
 def save_topic_instance(topic_name, instance):
@@ -10,6 +13,7 @@ def save_topic_instance(topic_name, instance):
         s.start_transaction()
         topic_instance_col.insert_one(instance)
         s.commit_transaction()
+
 
 def save_topic_instances(topic_name, instances):
     topic_instance_col = client.get_collection(topic_name)
