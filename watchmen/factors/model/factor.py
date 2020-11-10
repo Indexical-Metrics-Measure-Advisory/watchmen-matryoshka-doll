@@ -14,27 +14,33 @@ class Factor(BaseModel):
 
     factorId: int = None
 
-    factor_name:str = None
+    factorName:str = None
 
     value: str = None
 
     alias: List[str] = None
 
     topicId: str = None
+
+    topicName:str = None
     # isQuantify: bool = None,
     # isResult: bool = None
     groupId: str = None
 
     type: FactorType = None
 
-    # isDimension: bool = None
+    isDimension: bool = None
 
-    timePeriodId: str = None
+    isMeasure: bool = None
+
+    timePeriod: str = None
 
     # factorDimension: FactorDimension = None
-    isTransactionalIndicators: bool = None
+    isTransactionalIndicators: bool = True
 
     isStockIndex: bool = False
+
+    isCompoundIndex:bool = False
 
     isWordFrequency: bool = False
 

@@ -2,9 +2,6 @@ from typing import List
 
 from watchmen.factors.model.factor import Factor, FactorType
 from watchmen.factors.model.topic import Topic
-from pymongo import MongoClient
-import datetime
-from pydantic import parse_obj_as
 from watchmen.storage.topic_schema_storage import save_topic
 
 

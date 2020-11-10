@@ -12,7 +12,7 @@ class Topic(BaseModel):
 
     businessKey  : str = None
 
-    factors: List[Factor] = None
+    factors: List[Factor] = []
 
     alias: List[str] = None
 
