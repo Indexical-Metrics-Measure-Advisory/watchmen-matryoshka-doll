@@ -1,23 +1,30 @@
+from bson import ObjectId
 from fastapi import HTTPException
 
 from watchmen.auth.index import get_current_user, check_promise
 from watchmen.auth.user import User
 from watchmen.factors.model.factor import Factor
+from watchmen.factors.model.topic import Topic
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
-from watchmen.mapping.suggestion.generate_suggestion import generate_topic_suggestion
+from watchmen.lake.model_schema import ModelSchema
+from watchmen.mapping.suggestion.generate_suggestion import generate_topic_suggestion, generate_factor_suggestion
 from watchmen.master.index import create_master_space, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space
 from watchmen.pipeline.pipeline import build_default_pipeline
 from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_rule
 
+from fastapi.encoders import jsonable_encoder
 
 # auth
-def login(user:User):
+from watchmen.storage.topic_schema_storage import get_topic_list_by_ids
+
+
+def auth_login(user:User):
     return True
     # pass
 
 
-def logout(user:User):
+def  auth_logout(user:User):
     return True
     # pass
 
@@ -29,7 +36,7 @@ def select_domain(domain: str):
         # find domain template
         topic_list = find_template_by_domain(domain)
         # create master space
-        master_space = create_master_space(current_user)
+        master_space = create_master_space(current_user,domain)
         # add template to master space
         master_space = add_topic_list_to_master(topic_list, master_space)
         # get summary for master_space
@@ -57,12 +64,16 @@ def generate_lake_schema(json_files, name):
 
 # CRUD for pipeline
 
-# create relationship for master schema
+
+def generate_suggestion_topic_service(lake_schema,master_schema):
+    topic_id_list = master_schema.topic_id_list
+    object_ids = map(lambda x: ObjectId(x), topic_id_list)
+    topic_list = get_topic_list_by_ids(list(object_ids))
+    return generate_topic_suggestion(lake_schema,topic_list)
 
 
-def generate_suggestion(lake_schema,master_schema):
-    return generate_topic_suggestion(lake_schema,master_schema)
-
+def generate_suggestion_factor(lake_model: ModelSchema, topic: Topic):
+    return generate_factor_suggestion(lake_model, topic)
 
 
 def mapping_to_master(user, key: str):

@@ -1,5 +1,6 @@
 from watchmen.master.master_schema import MasterSchema
 from watchmen.storage.master_storage import save_master_space, update_master_space
+from watchmen.storage.topic_schema_storage import save_topic
 
 
 def add_topic_to_master():
@@ -22,10 +23,11 @@ def add_factor_to_master_topic():
     pass
 
 
-def create_master_space(user):
+def create_master_space(user,domain):
     master_space = MasterSchema()
     master_space.user = user
-    # inserted_id = save_master_space(master_space).inserted_id
+    master_space.name = user+"_"+domain
+    # save_master_space(master_space)
     # master_space.id = inserted_id
     return master_space
 
@@ -36,7 +38,14 @@ def add_topic_to_master_space(topic, master_space):
 
 
 def add_topic_list_to_master(topic_list, master_space):
-    master_space.topic_list = topic_list
+
+    topic_id_list =[]
+    for topic in topic_list:
+        insert_id =str(save_topic(topic.dict()).inserted_id)
+        topic_id_list.append(insert_id)
+
+    print(topic_id_list)
+    master_space.topic_id_list = topic_id_list
     save_master_space(master_space).inserted_id
     # master_space.id = inserted_id
     return master_space

@@ -15,6 +15,7 @@ def test_convert_template():
         # topic.topic_name = template.keys()
         for key ,value in template.items():
             topic = Topic()
+            topic.businessKey = "insurance_template"
             # for x in template.values():
             topic.topic_name = key
             for factor_name, factor_details in value.items():

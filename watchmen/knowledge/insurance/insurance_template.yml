@@ -1,5 +1,5 @@
 topic_list: 
-  - policy_info: 
+  - policy:
       country:
           type: "AtomicIndex"
           isDimension: True
@@ -87,7 +87,7 @@ topic_list:
       YoY_premium:
           type: "DerivedIndex"
           isMeasure: True
-  - claim_info: 
+  - claim:
       claimed_premium:
           type: "DerivedIndex"
           isMeasure: True
@@ -95,7 +95,7 @@ topic_list:
           type: "DerivedIndex"
           isMeasure: True
           isStockIndex: True
-  - agent_info: 
+  - agent:
       agent_id:
           type: "AtomicIndex"
           isDimension: True
@@ -111,7 +111,7 @@ topic_list:
       profit:
           type: "DerivedIndex"
           isMeasure: True
-  - customer_info: 
+  - customer:
       customer_id:
           type: "AtomicIndex"
           isDimension: True
@@ -142,7 +142,7 @@ topic_list:
       age_bin:
           type: "DerivativeIndicators"
           isDimension: True
-  - risk_vehicle_info: 
+  - risk_vehicle:
       make:
           type: "AtomicIndex"
           isDimension: True

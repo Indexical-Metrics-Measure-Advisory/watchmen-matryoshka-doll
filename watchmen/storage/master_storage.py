@@ -23,3 +23,8 @@ def load_master_space_by_user(user):
     data = collection.find_one({"user": user})
     print(data)
     return pickle_wrapper(data,MasterSchema)
+
+
+def load_master_space_by_name(name):
+    data = collection.find_one({"name": name})
+    return pickle_wrapper(data, MasterSchema)
