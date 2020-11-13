@@ -58,7 +58,6 @@ def test_generate_factor_suggestion():
     # lake_schema.
 
 
-
 def test_load_topic_mapping_rule():
     print(load_topic_mapping("123","235"))
 

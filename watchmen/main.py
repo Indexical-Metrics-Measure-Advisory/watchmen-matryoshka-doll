@@ -10,8 +10,10 @@ from pydantic import BaseModel
 
 from watchmen.auth.user import User
 from watchmen.factors.model.topic import Topic
+from watchmen.index import save_topic_mapping_rule
 from watchmen.lake.model_schema import ModelSchema
 from watchmen.lake.model_schema_set import ModelSchemaSet
+from watchmen.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.master.master_schema import MasterSchema
 from .index import select_domain, generate_suggestion_topic_service, auth_login, auth_logout, generate_suggestion_factor
 
@@ -56,6 +58,26 @@ async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
 @app.post("/suggestion/factors")
 async def generate_suggestion_topic(factor_suggestion: FactorSuggestionIn):
     return generate_suggestion_factor(factor_suggestion.lake_schema, factor_suggestion.topic)
+
+
+@app.post("/mapping/topic")
+async def save_topic_mapping(topic_mapping_rule:TopicMappingRule):
+    return save_topic_mapping_rule(topic_mapping_rule)
+
+
+@app.get("/mapping/topic", response_model=TopicMappingRule)
+async def load_topic_mapping(temp_topic_name:str,topic_name:str):
+    pass
+    # return save_topic_mapping_rule(topic_mapping_rule)
+
+
+# TODO management topic service
+
+# TODO collection data service
+
+# TODO monitoring service
+
+
 
 # @app.get("/generate/{key}/{path}", response_model=ModelSchema)
 # async def generate_schema(key: str, path: str):

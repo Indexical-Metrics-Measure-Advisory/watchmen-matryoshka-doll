@@ -8,6 +8,7 @@ from watchmen.factors.model.topic import Topic
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
 from watchmen.lake.model_schema import ModelSchema
 from watchmen.mapping.suggestion.generate_suggestion import generate_topic_suggestion, generate_factor_suggestion
+from watchmen.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.master.index import create_master_space, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space
 from watchmen.pipeline.pipeline import build_default_pipeline
@@ -76,8 +77,8 @@ def generate_suggestion_factor(lake_model: ModelSchema, topic: Topic):
     return generate_factor_suggestion(lake_model, topic)
 
 
-def mapping_to_master(user, key: str):
-    pass
+# def add_topic_mapping_rule():
+#     pass
 
 
 def check_factor_is_exist():
@@ -89,7 +90,7 @@ def load_topic_mapping(model_schema_id,topic_id):
     return load_topic_mapping_rule(model_schema_id,topic_id)
 
 
-def save_topic_mapping(topic_mapping_rule):
+def save_topic_mapping_rule(topic_mapping_rule: TopicMappingRule):
     return save_topic_mapping_rule(topic_mapping_rule)
 
 

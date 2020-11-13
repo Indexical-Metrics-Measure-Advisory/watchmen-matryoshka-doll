@@ -4,7 +4,6 @@ import spacy
 from watchmen.factors.model.topic import Topic
 from watchmen.lake.model_schema import ModelSchema
 from watchmen.lake.model_schema_set import ModelSchemaSet
-from watchmen.master.master_schema import MasterSchema
 
 nlp = spacy.load('en_core_web_md')
 
@@ -68,14 +67,14 @@ def generate_factor_suggestion(lake_model: ModelSchema, topic: Topic):
             for factor_token in factor_tokens:
                 field_tokens = nlp(process_name(key))
                 for field_token in field_tokens:
-                    similarity = factor_token.similarity(field_token)
-                    # if similarity>0.5:
-                    # if factor_name =="premium" and key=="GrossPremium":
-                    field_matchs.append({
-                        "factor": factor_token.text, "field": field_token.text, "similarity": similarity
-                    })
+                    if factor_token.has_vector:
+                        similarity = factor_token.similarity(field_token)
+                        field_matchs.append({
+                            "factor": factor_token.text, "field": field_token.text, "similarity": similarity
+                        })
+
             if field_matchs:
-                print (field_matchs)
+
                 similarity = calculate_similarity(field_matchs)
                 if similarity > 0.6:
                     result_match_list.append({
@@ -83,6 +82,3 @@ def generate_factor_suggestion(lake_model: ModelSchema, topic: Topic):
                     })
 
     return result_match_list
-
-
-
