@@ -71,11 +71,48 @@ async def load_topic_mapping(temp_topic_name:str,topic_name:str):
     # return save_topic_mapping_rule(topic_mapping_rule)
 
 
+async def load_space_topic_list(space_name:str):
+    pass
+
+
+async def save_topic(topic:Topic):
+    pass
+
+
+async def load_topic(topic_id:str):
+    pass
+
+
+async def save_topic_relationship(topic_relationship):
+    pass
+
+
+async def fuzzy_query_topic(topic_name:str):
+    pass
+
+
+async def fuzzy_query_factor(factor_name:str):
+    pass
+
+
 # TODO management topic service
 
 # TODO collection data service
 
+async def collection_data(template_space_name:str,instance_data:str,pipeline_name:str):
+    pass
+
+
 # TODO monitoring service
+
+async def load_monitoring_data_by_pipeline_trace_id(pipeline_trace_id:str):
+    pass
+
+# TODO user cooperation API
+
+
+async def share_dashboard_url(to:str):
+    pass
 
 
 
