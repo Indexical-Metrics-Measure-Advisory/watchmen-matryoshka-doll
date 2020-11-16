@@ -12,9 +12,7 @@ from watchmen.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.master.index import create_master_space, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space
 from watchmen.pipeline.pipeline import build_default_pipeline
-from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_rule
-
-from fastapi.encoders import jsonable_encoder
+from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule,load_topic_mapping_by_name
 
 # auth
 from watchmen.storage.topic_schema_storage import get_topic_list_by_ids
@@ -86,15 +84,24 @@ def check_factor_is_exist():
     pass
 
 
-def load_topic_mapping(model_schema_id,topic_id):
-    return load_topic_mapping_rule(model_schema_id,topic_id)
+def load_topic_mapping(source_topic_name,target_topic_name):
+    return load_topic_mapping_by_name(source_topic_name,target_topic_name)
 
 
-def save_topic_mapping_rule(topic_mapping_rule: TopicMappingRule):
+def save_topic_mapping(topic_mapping_rule: TopicMappingRule):
     return save_topic_mapping_rule(topic_mapping_rule)
 
 
-#
+def load_space_topic_list(space_name):
+    # TODO user info missing
+    # load master space data
+    # load topic data by id
+
+
+
+    pass
+
+
 # def update_factor_mapping():
 #     pass #
 

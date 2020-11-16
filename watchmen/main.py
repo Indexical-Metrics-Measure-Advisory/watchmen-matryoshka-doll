@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 from watchmen.auth.user import User
 from watchmen.factors.model.topic import Topic
-from watchmen.index import save_topic_mapping_rule
+from watchmen.index import save_topic_mapping_rule, load_topic_mapping
 from watchmen.lake.model_schema import ModelSchema
 from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
@@ -66,9 +66,8 @@ async def save_topic_mapping(topic_mapping_rule:TopicMappingRule):
 
 
 @app.get("/mapping/topic", response_model=TopicMappingRule)
-async def load_topic_mapping(temp_topic_name:str,topic_name:str):
-    pass
-    # return save_topic_mapping_rule(topic_mapping_rule)
+async def load_topic_mapping_http(temp_topic_name:str,topic_name:str):
+    return load_topic_mapping(temp_topic_name,topic_name)
 
 
 async def load_space_topic_list(space_name:str):
