@@ -7,15 +7,19 @@ from watchmen.factors.model.factor import Factor
 from watchmen.factors.model.topic import Topic
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
 from watchmen.lake.model_schema import ModelSchema
+from watchmen.main import SpaceOut
 from watchmen.mapping.suggestion.generate_suggestion import generate_topic_suggestion, generate_factor_suggestion
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.master.index import create_master_space, add_topic_list_to_master, get_summary_for_master_space, \
-    add_topic_to_master_space
+    add_topic_to_master_space, load_master_space
 from watchmen.pipeline.pipeline import build_default_pipeline
 from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule,load_topic_mapping_by_name
 
 # auth
 from watchmen.storage.topic_schema_storage import get_topic_list_by_ids
+
+
+
 
 
 def auth_login(user:User):
@@ -92,14 +96,21 @@ def save_topic_mapping(topic_mapping_rule: TopicMappingRule):
     return save_topic_mapping_rule(topic_mapping_rule)
 
 
-def load_space_topic_list(space_name):
+def load_space_topic_list(space_name)->SpaceOut:
+    master_space = load_master_space(space_name)
+    topic_id_list = master_space.topic_id_list
+
+    topic_list = get_topic_list_by_ids(topic_id_list)
+    # master_space.topic_list = topic_list
+    return SpaceOut(master_space, topic_list)
+
     # TODO user info missing
     # load master space data
     # load topic data by id
 
 
 
-    pass
+
 
 
 # def update_factor_mapping():

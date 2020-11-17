@@ -1,5 +1,5 @@
 from watchmen.master.master_schema import MasterSchema
-from watchmen.storage.master_storage import save_master_space, update_master_space
+from watchmen.storage.master_storage import save_master_space, update_master_space, load_master_space_by_name
 from watchmen.storage.topic_schema_storage import save_topic
 
 
@@ -15,8 +15,8 @@ def update_topic_to_master():
     pass
 
 
-def load_master_space():
-    pass
+def load_master_space(space_name):
+    return load_master_space_by_name(space_name)
 
 
 def add_factor_to_master_topic():

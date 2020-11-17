@@ -4,13 +4,14 @@
 # 3. generate basic lake base on json data
 # 4. match lake with domain  knowledge dataset and provide suggestions
 # 5. link knowledge domain to lake
+from typing import List
 
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 from watchmen.auth.user import User
 from watchmen.factors.model.topic import Topic
-from watchmen.index import save_topic_mapping_rule, load_topic_mapping
+from watchmen.index import save_topic_mapping_rule, load_topic_mapping, load_space_topic_list
 from watchmen.lake.model_schema import ModelSchema
 from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
@@ -28,6 +29,11 @@ class TopicSuggestionIn(BaseModel):
 class FactorSuggestionIn(BaseModel):
     lake_schema: ModelSchema = None
     topic: Topic = None
+
+
+class SpaceOut(BaseModel):
+    master_space: MasterSchema = None
+    topic_list: List[Topic] = None
 
 
 @app.get("/health")
@@ -70,11 +76,16 @@ async def load_topic_mapping_http(temp_topic_name:str,topic_name:str):
     return load_topic_mapping(temp_topic_name,topic_name)
 
 
-async def load_space_topic_list(space_name:str):
-    pass
+@app.get("/space", response_model=SpaceOut)
+async def load_space_topic_list_http(space_name:str):
+    return load_space_topic_list(space_name)
+
 
 
 async def save_topic(topic:Topic):
+
+
+
     pass
 
 
@@ -100,7 +111,6 @@ async def fuzzy_query_factor(factor_name:str):
 
 async def collection_data(template_space_name:str,instance_data:str,pipeline_name:str):
     pass
-
 
 # TODO monitoring service
 
