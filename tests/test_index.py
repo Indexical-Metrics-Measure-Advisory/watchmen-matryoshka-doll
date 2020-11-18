@@ -21,7 +21,7 @@ def test_select_domain():
 
 
 def test_import_instance_data():
-    generate_lake_schema([row_data_load('../../test/data/policy.json'),row_data_load('../../test/data/policy.json')],"policy")
+    generate_lake_schema([row_data_load('../assert/data/policy.json'),row_data_load('../assert/data/policy.json')],"policy")
 
 
 def test_save_topic_mapping_rule():
