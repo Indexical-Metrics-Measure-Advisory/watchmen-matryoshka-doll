@@ -1,5 +1,8 @@
+from typing import List
+
 from bson import ObjectId
 from fastapi import HTTPException
+from pydantic import BaseModel
 
 from watchmen.auth.index import get_current_user, check_promise
 from watchmen.auth.user import User
@@ -7,27 +10,28 @@ from watchmen.factors.model.factor import Factor
 from watchmen.factors.model.topic import Topic
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
 from watchmen.lake.model_schema import ModelSchema
-from watchmen.main import SpaceOut
+# from watchmen.main import SpaceOut
 from watchmen.mapping.suggestion.generate_suggestion import generate_topic_suggestion, generate_factor_suggestion
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.master.index import create_master_space, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space, load_master_space
+from watchmen.master.master_schema import MasterSchema
 from watchmen.pipeline.pipeline import build_default_pipeline
-from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule,load_topic_mapping_by_name
-
+from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
 # auth
 from watchmen.storage.topic_schema_storage import get_topic_list_by_ids
 
 
+class SpaceOut(BaseModel):
+    master_space: MasterSchema = None
+    topic_list: List[Topic] = None
 
-
-
-def auth_login(user:User):
+def auth_login(user: User):
     return True
     # pass
 
 
-def  auth_logout(user:User):
+def auth_logout(user: User):
     return True
     # pass
 
@@ -39,7 +43,7 @@ def select_domain(domain: str):
         # find domain template
         topic_list = find_template_by_domain(domain)
         # create master space
-        master_space = create_master_space(current_user,domain)
+        master_space = create_master_space(current_user, domain)
         # add template to master space
         master_space = add_topic_list_to_master(topic_list, master_space)
         # get summary for master_space
@@ -65,14 +69,15 @@ def generate_lake_schema(json_files, name):
     else:
         raise HTTPException(status_code=401, detail="NO_PROMISE")
 
+
 # CRUD for pipeline
 
 
-def generate_suggestion_topic_service(lake_schema,master_schema):
+def generate_suggestion_topic_service(lake_schema, master_schema):
     topic_id_list = master_schema.topic_id_list
     object_ids = map(lambda x: ObjectId(x), topic_id_list)
     topic_list = get_topic_list_by_ids(list(object_ids))
-    return generate_topic_suggestion(lake_schema,topic_list)
+    return generate_topic_suggestion(lake_schema, topic_list)
 
 
 def generate_suggestion_factor(lake_model: ModelSchema, topic: Topic):
@@ -88,15 +93,15 @@ def check_factor_is_exist():
     pass
 
 
-def load_topic_mapping(source_topic_name,target_topic_name):
-    return load_topic_mapping_by_name(source_topic_name,target_topic_name)
+def load_topic_mapping(source_topic_name, target_topic_name):
+    return load_topic_mapping_by_name(source_topic_name, target_topic_name)
 
 
 def save_topic_mapping(topic_mapping_rule: TopicMappingRule):
     return save_topic_mapping_rule(topic_mapping_rule)
 
 
-def load_space_topic_list(space_name)->SpaceOut:
+def load_space_topic_list(space_name) -> SpaceOut:
     master_space = load_master_space(space_name)
     topic_id_list = master_space.topic_id_list
 
@@ -105,27 +110,17 @@ def load_space_topic_list(space_name)->SpaceOut:
     return SpaceOut(master_space, topic_list)
 
     # TODO user info missing
-    # load master space data
-    # load topic data by id
 
 
 
-
-
-
-# def update_factor_mapping():
-#     pass #
-
-
-def add_factor_to_master_topic(factor:Factor,master_space):
-
+def add_factor_to_master_topic(factor: Factor, master_space):
     # current_user = get_current_user()
 
     pass
 
 
 def add_topic_to_master(topic, master_space):
-    return  add_topic_to_master_space(topic, master_space)
+    return add_topic_to_master_space(topic, master_space)
 
 
 # CRUD for master schema and relationship
@@ -137,7 +132,14 @@ def add_topic_to_master(topic, master_space):
 def load_factor_by_id():
     pass
 
+
 # CRUD for mapping rules
+
+
+
+
+def post_data(data,event):
+    pass
 
 
 # CRUD for report
@@ -150,13 +152,13 @@ def load_reports():
 
 
 # query for factors
-def query_factor():
+def query_factor(factor_name:str):
     pass
+
 
 # analyze
 def analyze_master_space():
     pass
-
 
 
 def analyze():
@@ -169,19 +171,12 @@ def dashboard():
     pass
 
 
-
-
 def view_report():
     pass
 
 
 def customize_pipeline():
     pass
-
-
-
-
-
 
 
 def use_default_pipeline(user):

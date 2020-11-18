@@ -11,7 +11,7 @@ from pydantic import BaseModel
 
 from watchmen.auth.user import User
 from watchmen.factors.model.topic import Topic
-from watchmen.index import save_topic_mapping_rule, load_topic_mapping, load_space_topic_list
+from watchmen.index import save_topic_mapping, load_topic_mapping, load_space_topic_list, SpaceOut
 from watchmen.lake.model_schema import ModelSchema
 from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
@@ -31,9 +31,7 @@ class FactorSuggestionIn(BaseModel):
     topic: Topic = None
 
 
-class SpaceOut(BaseModel):
-    master_space: MasterSchema = None
-    topic_list: List[Topic] = None
+
 
 
 @app.get("/health")
@@ -67,8 +65,8 @@ async def generate_suggestion_topic(factor_suggestion: FactorSuggestionIn):
 
 
 @app.post("/mapping/topic")
-async def save_topic_mapping(topic_mapping_rule:TopicMappingRule):
-    return save_topic_mapping_rule(topic_mapping_rule)
+async def save_topic_mapping_http(topic_mapping_rule:TopicMappingRule):
+    return save_topic_mapping(topic_mapping_rule)
 
 
 @app.get("/mapping/topic", response_model=TopicMappingRule)
@@ -81,10 +79,7 @@ async def load_space_topic_list_http(space_name:str):
     return load_space_topic_list(space_name)
 
 
-
 async def save_topic(topic:Topic):
-
-
 
     pass
 
