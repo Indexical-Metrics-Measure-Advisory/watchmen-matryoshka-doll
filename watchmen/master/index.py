@@ -1,4 +1,4 @@
-from watchmen.master.master_schema import MasterSchema
+from watchmen.master.master_space import MasterSpace
 from watchmen.storage.master_storage import save_master_space, update_master_space, load_master_space_by_name
 from watchmen.storage.topic_schema_storage import save_topic
 
@@ -24,7 +24,7 @@ def add_factor_to_master_topic():
 
 
 def create_master_space(user,domain):
-    master_space = MasterSchema()
+    master_space = MasterSpace()
     master_space.user = user
     master_space.name = user+"_"+domain
     # save_master_space(master_space)

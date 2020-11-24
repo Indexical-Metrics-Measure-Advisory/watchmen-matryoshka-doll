@@ -15,7 +15,7 @@ from watchmen.mapping.suggestion.generate_suggestion import generate_topic_sugge
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.master.index import create_master_space, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space, load_master_space
-from watchmen.master.master_schema import MasterSchema
+from watchmen.master.master_space import MasterSpace
 from watchmen.pipeline.pipeline import build_default_pipeline
 from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
 # auth
@@ -23,8 +23,9 @@ from watchmen.storage.topic_schema_storage import get_topic_list_by_ids
 
 
 class SpaceOut(BaseModel):
-    master_space: MasterSchema = None
+    master_space: MasterSpace = None
     topic_list: List[Topic] = None
+
 
 def auth_login(user: User):
     return True

@@ -1,7 +1,7 @@
-from watchmen.master.master_schema import MasterSchema
+from watchmen.master.master_space import MasterSpace
 
 
-def save_master_space(master_space:MasterSchema):
+def save_master_space(master_space:MasterSpace):
     topic_list = master_space.topic_list
 
     ## update_topic_storage

@@ -1,5 +1,5 @@
 
-from watchmen.master.master_schema import MasterSchema
+from watchmen.master.master_space import MasterSpace
 from watchmen.storage.engine.storage_engine import get_client
 from watchmen.utils.data_utils import WATCHMEN
 from watchmen.utils.pickle_wrapper import pickle_wrapper
@@ -22,9 +22,9 @@ def update_master_space(master_space):
 def load_master_space_by_user(user):
     data = collection.find_one({"user": user})
     print(data)
-    return pickle_wrapper(data,MasterSchema)
+    return pickle_wrapper(data, MasterSpace)
 
 
 def load_master_space_by_name(name):
     data = collection.find_one({"name": name})
-    return pickle_wrapper(data, MasterSchema)
+    return pickle_wrapper(data, MasterSpace)
