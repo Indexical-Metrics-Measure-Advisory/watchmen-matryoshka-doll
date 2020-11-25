@@ -31,7 +31,7 @@ class FactorSuggestionIn(BaseModel):
     topic: Topic = None
 
 
-
+# common api
 
 
 @app.get("/health")
@@ -49,8 +49,36 @@ async def logout(user: User):
     return auth_logout(user)
 
 
+async def save_topic(topic:Topic):
+    pass
 
-## ADMIN API
+
+async def load_topic(topic_id:str):
+    pass
+
+
+async def save_topic_relationship(topic_relationship):
+    pass
+
+
+async def fuzzy_query_topic(topic_name:str):
+    pass
+
+
+async def fuzzy_query_factor(factor_name:str):
+    pass
+
+
+
+
+## TODO admin api
+
+@app.get("/select/domain", response_model=MasterSpace)
+async def domain(name: str):
+    return select_domain(name)
+
+
+# ADMIN API
 
 
 @app.get("/select/domain", response_model=MasterSpace)
@@ -83,33 +111,6 @@ async def load_space_topic_list_http(space_name:str):
     return load_space_topic_list(space_name)
 
 
-async def save_topic(topic:Topic):
-
-    pass
-
-
-async def load_topic(topic_id:str):
-    pass
-
-
-async def save_topic_relationship(topic_relationship):
-    pass
-
-
-async def fuzzy_query_topic(topic_name:str):
-    pass
-
-
-async def fuzzy_query_factor(factor_name:str):
-    pass
-
-
-# TODO management topic service
-
-# TODO collection data service
-
-async def collection_data(template_space_name:str,instance_data:str,pipeline_name:str):
-    pass
 
 # TODO monitoring service
 
@@ -119,18 +120,15 @@ async def load_monitoring_data_by_pipeline_trace_id(pipeline_trace_id:str):
 # TODO user cooperation API
 
 
-async def share_dashboard_url(to:str):
-    pass
 
 
-
-# @app.get("/generate/{key}/{path}", response_model=ModelSchema)
-# async def generate_schema(key: str, path: str):
-#     return generate_basic_schema(key, path)
 
 
 
 ## Console API
+
+
+## TODO console api
 
 async def load_space_list_by_user():
     pass
@@ -142,9 +140,6 @@ async def load_space_by_id(id: str):
 
 async def sort_space_by_sort_type():
     pass
-
-
-
 
 
 async def load_dashboard_list_by_user():
@@ -197,6 +192,19 @@ async def load_instance_data_by_subject_id():
 async def load_reports_by_subject_id():
     pass
 
+
+async def share_dashboard_url(to:str):
+    pass
+
+
+## inbox
+
+## notifications
+
+## Timeline
+
+## settings
+
 # TODO  user session data
 ###
 # pin and unpin
@@ -206,4 +214,9 @@ async def load_reports_by_subject_id():
 
 
 
+
+## integration api
+
+async def collection_data(template_space_name:str,instance_data:str,pipeline_name:str):
+    pass
 

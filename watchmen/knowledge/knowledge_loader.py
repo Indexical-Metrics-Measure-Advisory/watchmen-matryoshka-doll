@@ -1,7 +1,7 @@
 import json
 
 from watchmen.lake.model_schema import Domain
-from watchmen.storage.templat_storage import load_template
+from watchmen.storage.template_storage import load_template
 
 domain_conf = {
     "insurance_en": "./data/lexicon/insurance-data.json"
