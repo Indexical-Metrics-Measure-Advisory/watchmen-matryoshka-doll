@@ -34,7 +34,7 @@ async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
 
 
 @router.post("/suggestion/factors",tags=["admin"],)
-async def generate_suggestion_topic(factor_suggestion: FactorSuggestionIn):
+async def generate_suggestion_factor(factor_suggestion: FactorSuggestionIn):
     return generate_suggestion_factor(factor_suggestion.lake_schema, factor_suggestion.topic)
 
 

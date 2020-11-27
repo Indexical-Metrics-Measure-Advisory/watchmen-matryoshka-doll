@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from watchmen.auth.user import User
 from watchmen.factors.model.topic import Topic
 from watchmen.index import auth_login, auth_logout
+from watchmen.storage.topic_schema_storage import save_topic, get_topic_by_id, get_topic_by_name
 
 router = APIRouter()
 
@@ -22,16 +23,20 @@ async def logout(user: User):
     return auth_logout(user)
 
 
-async def save_topic(topic:Topic):
-    pass
+async def save_topic_http(topic:Topic):
+    return save_topic(topic)
 
 
 async def load_topic(topic_id:str):
-    pass
+    return get_topic_by_id(topic_id)
 
 
 async def save_topic_relationship(topic_relationship):
     pass
+
+
+async def load_topic_by_name_http(topic_name: str):
+    return get_topic_by_name(topic_name)
 
 
 async def fuzzy_query_topic(topic_name:str):

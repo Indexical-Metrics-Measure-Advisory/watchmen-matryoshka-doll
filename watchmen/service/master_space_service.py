@@ -1,3 +1,4 @@
+from watchmen.entity.pagination import Pagination
 from watchmen.master.master_space import MasterSpace
 
 
@@ -11,6 +12,13 @@ def save_master_space(master_space:MasterSpace):
 
     return master_space
 
+
+
+
+
+
+# def load_space_by_user_id_with_pagination(user_id,pagination:Pagination):
+#
 
 
 

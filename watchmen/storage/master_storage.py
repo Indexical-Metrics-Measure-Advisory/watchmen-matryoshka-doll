@@ -1,4 +1,4 @@
-
+from watchmen.entity.pagination import Pagination
 from watchmen.master.master_space import MasterSpace
 from watchmen.storage.engine.storage_engine import get_client
 from watchmen.utils.data_utils import WATCHMEN
@@ -27,4 +27,10 @@ def load_master_space_by_user(user):
 
 def load_master_space_by_name(name):
     data = collection.find_one({"name": name})
+    return pickle_wrapper(data, MasterSpace)
+
+
+def load_space_list_by_user_id_with_pagination(user_id, pagination: Pagination):
+    skips = pagination.pageSize * (pagination.pageNumber - 1)
+    data = collection.find_one({"user": user_id}).skip(skips).limit(pagination.pageSize)
     return pickle_wrapper(data, MasterSpace)
