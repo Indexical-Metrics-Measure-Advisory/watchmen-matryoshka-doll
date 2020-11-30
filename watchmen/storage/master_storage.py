@@ -32,5 +32,11 @@ def load_master_space_by_name(name):
 
 def load_space_list_by_user_id_with_pagination(user_id, pagination: Pagination):
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    data = collection.find_one({"user": user_id}).skip(skips).limit(pagination.pageSize)
-    return pickle_wrapper(data, MasterSpace)
+    data_list = collection.find_one({"createUser": user_id}).skip(skips).limit(pagination.pageSize)
+    if data_list is None or len(data_list) ==0:
+        data_list = collection.find({"accessUsers": {"$in": [user_id]}})
+        return pickle_wrapper(data_list, MasterSpace)
+    else:
+        return pickle_wrapper(data_list, MasterSpace)
+
+

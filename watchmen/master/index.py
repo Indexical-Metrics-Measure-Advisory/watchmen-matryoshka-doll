@@ -23,7 +23,7 @@ def add_factor_to_master_topic():
     pass
 
 
-def create_master_space(user,domain):
+def create_master_space_by_domain_template(user, domain):
     master_space = MasterSpace()
     master_space.user = user
     master_space.name = user+"_"+domain

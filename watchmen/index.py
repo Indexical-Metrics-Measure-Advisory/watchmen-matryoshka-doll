@@ -13,7 +13,7 @@ from watchmen.lake.model_schema import ModelSchema
 # from watchmen.main import SpaceOut
 from watchmen.mapping.suggestion.generate_suggestion import generate_topic_suggestion, generate_factor_suggestion
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.master.index import create_master_space, add_topic_list_to_master, get_summary_for_master_space, \
+from watchmen.master.index import create_master_space_by_domain_template, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space, load_master_space
 from watchmen.master.master_space import MasterSpace
 from watchmen.pipeline.pipeline import build_default_pipeline
@@ -44,7 +44,7 @@ def select_domain(domain: str):
         # find domain template
         topic_list = find_template_by_domain(domain)
         # create master space
-        master_space = create_master_space(current_user, domain)
+        master_space = create_master_space_by_domain_template(current_user, domain)
         # add template to master space
         master_space = add_topic_list_to_master(topic_list, master_space)
         # get summary for master_space

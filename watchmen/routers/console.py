@@ -20,6 +20,7 @@ async def load_space_list_by_user(pagination: Pagination):
     return load_space_list_by_user_id_with_pagination(user_id, pagination)
 
 
+
 async def load_space_by_id(id: str):
     pass
 
