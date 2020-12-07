@@ -1,5 +1,5 @@
 from watchmen.entity.pagination import Pagination
-from watchmen.master.master_space import MasterSpace
+from watchmen.space.master_space import MasterSpace
 from watchmen.storage.engine.storage_engine import get_client
 from watchmen.utils.data_utils import WATCHMEN
 from watchmen.utils.pickle_wrapper import pickle_wrapper

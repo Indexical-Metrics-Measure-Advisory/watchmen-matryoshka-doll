@@ -38,7 +38,7 @@ def generate_topic_suggestion(lake_schema: ModelSchemaSet, topic_list):
             if model_match_list:
                 similarity = calculate_similarity(model_match_list)
                 topic_match_results.append({
-                    "master": topic["topic_name"], "lake": model_schema.name, "similarity": similarity
+                    "space": topic["topic_name"], "lake": model_schema.name, "similarity": similarity
                 })
 
     return topic_match_results

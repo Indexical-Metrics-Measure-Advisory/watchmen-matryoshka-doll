@@ -1,5 +1,5 @@
 from watchmen.entity.pagination import Pagination
-from watchmen.master.master_space import MasterSpace
+from watchmen.space.master_space import MasterSpace
 
 
 def save_master_space(master_space:MasterSpace):

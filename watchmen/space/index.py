@@ -1,4 +1,4 @@
-from watchmen.master.master_space import MasterSpace
+from watchmen.space.master_space import MasterSpace
 from watchmen.storage.master_storage import save_master_space, update_master_space, load_master_space_by_name
 from watchmen.storage.topic_schema_storage import save_topic
 

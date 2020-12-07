@@ -7,7 +7,7 @@ from watchmen.index import select_domain, generate_suggestion_topic_service, gen
 from watchmen.lake.model_schema import ModelSchema
 from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.master.master_space import MasterSpace
+from watchmen.space.master_space import MasterSpace
 from watchmen.service.master_space_service import save_master_space
 
 router = APIRouter()
@@ -23,19 +23,39 @@ class FactorSuggestionIn(BaseModel):
     topic: Topic = None
 
 
-@router.get("/select/domain", tags=["admin"], response_model=MasterSpace)
-async def domain(name: str):
+# CORE ADMIN PATH
+
+@router.get("/admin/space/domain", tags=["admin"], response_model=MasterSpace)
+async def create_space_from_domain_template(name: str):
     return select_domain(name)
 
 
-@router.post("/suggestion/topic", tags=["admin"], )
+@router.post("/admin/space", tags=["admin"])
+async def create_empty_space(space):
+    master_space = MasterSpace(space)
+    return save_master_space(master_space)
+
+
+@router.post("/admin/suggestion/topic", tags=["admin"], )
 async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
     return generate_suggestion_topic_service(topic_suggestion.lake_schema, topic_suggestion.master_schema)
 
 
-@router.post("/suggestion/factors", tags=["admin"], )
+@router.post("/admin/suggestion/factors", tags=["admin"], )
 async def generate_suggestion_factor(factor_suggestion: FactorSuggestionIn):
     return generate_suggestion_factor(factor_suggestion.lake_schema, factor_suggestion.topic)
+
+
+async def create_pipeline():
+    pass
+
+
+async def add_stage_to_pipeline():
+    pass
+
+
+async def save_stage():
+    pass
 
 
 @router.post("/mapping/topic", tags=["admin"], )

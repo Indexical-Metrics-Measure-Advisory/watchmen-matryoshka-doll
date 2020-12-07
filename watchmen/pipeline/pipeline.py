@@ -39,22 +39,29 @@ def process_factor_results():
 
 def build_default_pipeline():
     pipeline = Pipeline()
-    pipeline.add(SaveToMongo())
-    pipeline.add(GenerateLakeSchema())
-    pipeline.add(SaveSchemaToMongo())
+
+    # pipeline.add(SaveToMongo())
+    # pipeline.add(GenerateLakeSchema())
+    # pipeline.add(SaveSchemaToMongo())
     return pipeline
 
 
 class Pipeline(object):
 
-    def __init__(self):
-        self.stages = []
+    # def __init__(self):
+    #
+
+
 
     def add(self,stage):
         self.stages.append(stage)
 
     def build(self,stage_list):
         self.stages  = stage_list
+
+
+
+
 
     def run(self,input_param,context):
         output_param = None
