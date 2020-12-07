@@ -54,3 +54,8 @@ print(record_object.dict())
 #save_topic(topic)
 
 save_topic(record_object.dict())
+
+topic = {"topic_name": "policy", "factors": [{"factor_name": "policyId"}, {"factor_name": "policyNumber"}, {"factor_name": "issueDate"}]}
+
+topic_data = {"policyId": 1234567, "policyNumber": "HO88888", "issueDate": "2020-11-17"}
+
