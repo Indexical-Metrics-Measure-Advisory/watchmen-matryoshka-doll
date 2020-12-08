@@ -53,7 +53,7 @@ def select_domain(domain: str):
         raise HTTPException(status_code=401, detail="NO_PROMISE")
 
 
-def generate_lake_schema(json_files, name):
+def generate_row_data_schema(json_files, name):
     current_user = get_current_user()
     if check_promise(current_user):
         if use_default_pipeline(current_user):

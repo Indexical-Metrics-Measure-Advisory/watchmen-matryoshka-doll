@@ -36,6 +36,20 @@ async def create_empty_space(space):
     return save_master_space(master_space)
 
 
+async def import_row_data():
+    pass
+
+
+async def add_topic_to_space():
+    pass
+
+
+async def add_topic_list_to_space():
+    pass
+
+
+
+
 @router.post("/admin/suggestion/topic", tags=["admin"], )
 async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
     return generate_suggestion_topic_service(topic_suggestion.lake_schema, topic_suggestion.master_schema)
