@@ -1,10 +1,9 @@
-import datetime
 from typing import Dict
 
 from pydantic import BaseModel
 
-from watchmen.lake.model_relationship import ModelRelationship
-from watchmen.lake.model_schema import ModelSchema
+from watchmen.space.row_data import ModelRelationship
+from watchmen.space.row_data import ModelSchema
 
 
 class ModelSchemaSet(BaseModel):

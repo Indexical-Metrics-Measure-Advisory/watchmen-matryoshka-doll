@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-# from lib.lake.context import Context
-# import ../lake/ModelSchema
-# import lib.lake.model_schema.ModelSchema
+# from lib.row_data.context import Context
+# import ../row_data/ModelSchema
+# import lib.row_data.model_schema.ModelSchema
 from watchmen.utils.data_utils import RelationshipType
 
 

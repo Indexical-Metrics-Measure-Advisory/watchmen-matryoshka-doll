@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Dict
 
-from watchmen.mapping.mapping_rule import MappingRule
+from watchmen.pipeline.mapping import MappingRule
 
 
 class TopicMappingRule(BaseModel):

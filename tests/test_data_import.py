@@ -1,15 +1,15 @@
 #
 # from __future__ import absolute_import
 # # from . import watchmen
-# # load data lake
+# # load data row_data
 #
-# # spilt data to topic base on lake
+# # spilt data to topic base on row_data
 #
 # # topic and feature map
 # import pickle
 # # from watchmen.model. import
 # from watchmen.connector.local_connector import row_data_load
-# from watchmen.lake.model_schema_set import ModelSchemaSet
+# from watchmen.row_data.model_schema_set import ModelSchemaSet
 # from watchmen.service.import_data import import_row_data
 #
 #

@@ -9,10 +9,10 @@ from watchmen.auth.user import User
 from watchmen.space.factors.factor import Factor
 from watchmen.space.factors.model import Topic
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
-from watchmen.lake.model_schema import ModelSchema
+from watchmen.space.row_data import ModelSchema
 # from watchmen.main import SpaceOut
-from watchmen.mapping.suggestion.generate_suggestion import generate_topic_suggestion, generate_factor_suggestion
-from watchmen.mapping.topic_mapping_rule import TopicMappingRule
+from watchmen.pipeline.mapping import generate_topic_suggestion, generate_factor_suggestion
+from watchmen.pipeline.mapping import TopicMappingRule
 from watchmen.space.index import create_master_space_by_domain_template, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space, load_master_space
 from watchmen.space.space import Space

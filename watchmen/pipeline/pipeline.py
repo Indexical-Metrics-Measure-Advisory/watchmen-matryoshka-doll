@@ -33,7 +33,7 @@ def process_factor_results():
     pass
 
 
-    # generate import lake
+    # generate import row_data
     # generate data statistics
     # return data basic explore
 

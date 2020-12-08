@@ -4,9 +4,9 @@ from typing import Optional, Dict
 from pydantic import BaseModel
 
 from watchmen.event.event import Event
-from watchmen.lake.context import Context
-from watchmen.lake.model_field import ModelField
-from watchmen.lake.model_relationship import ModelRelationship
+from watchmen.space.row_data.context import Context
+from watchmen.space.row_data import ModelField
+from watchmen.space.row_data import ModelRelationship
 
 
 class FieldType(str, Enum):

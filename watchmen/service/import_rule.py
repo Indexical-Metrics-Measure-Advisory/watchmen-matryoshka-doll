@@ -3,7 +3,7 @@ from spacy.matcher import Matcher
 from spacy.symbols import nsubj, CCONJ, nmod, acomp, dobj, prep, pobj, ADJ,xcomp,nsubjpass,attr
 from spacy.tokens import Token
 
-from watchmen.lake.rule_context import RuleContext
+from watchmen.space.row_data import RuleContext
 
 IF = "if_sentence"
 THEN = "then_sentence"
@@ -148,7 +148,7 @@ def import_single_rule(rule_context: RuleContext, rule: str):
             result["value"] = value
             rule_schema["then"]=result
 
-    # TODO[next] match factor to domain and basic lake
+    # TODO[next] match factor to domain and basic row_data
     # TODO[future] generate report for rules
     return rule_schema
 
@@ -183,7 +183,7 @@ def root_match(nlp, rule):
 
 def build_rule_schema():
     # nlp match
-    # match noun with lake lake and domain lake
-    # generate basic lake
+    # match noun with row_data row_data and domain row_data
+    # generate basic row_data
 
     pass

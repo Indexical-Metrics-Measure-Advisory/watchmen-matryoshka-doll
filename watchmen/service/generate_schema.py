@@ -1,7 +1,7 @@
 # import json
 #
-# from watchmen.lake.generate.model_schema_generater import generate_basic_schema
-# from watchmen.lake.model_schema import Domain
+# from watchmen.row_data.generate.model_schema_generater import generate_basic_schema
+# from watchmen.row_data.model_schema import Domain
 #
 #
 # def generate_schema(key: str, data: json, domain: Domain):
@@ -13,10 +13,10 @@ import json
 
 from bson import ObjectId as BsonObjectId, ObjectId
 
-from watchmen.lake.model_field import ModelField, FieldType
-from watchmen.lake.model_relationship import ModelRelationship, RelationshipType
-from watchmen.lake.model_schema import ModelSchema, Domain
-from watchmen.lake.model_schema_set import ModelSchemaSet
+from watchmen.space.row_data import ModelField, FieldType
+from watchmen.space.row_data import ModelRelationship, RelationshipType
+from watchmen.space.row_data import ModelSchema, Domain
+from watchmen.space.row_data.model_schema_set import ModelSchemaSet
 from watchmen.utils.data_utils import is_field_value
 
 ROOT = "root"
@@ -111,7 +111,7 @@ def process_attrs(data, model_schema, model_schema_set):
 
             # if  model_schema_set.relationships
 
-            # process sub lake
+            # process sub row_data
             sub_model_id = str(BsonObjectId())
             relationship = ModelRelationship()
             relationship.parentId = model_schema.modelId
