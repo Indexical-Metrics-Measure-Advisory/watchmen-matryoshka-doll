@@ -2,8 +2,8 @@
 import yaml
 import os
 
-from watchmen.factors.model.factor import Factor
-from watchmen.factors.model.topic import Topic
+from watchmen.space.factors.factor import Factor
+from watchmen.space.factors.model import Topic
 
 TEMPLATE_YAML = "/insurance_template.yml"
 

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from watchmen.factors.model.factor import Factor
+from watchmen.space.factors.factor import Factor
 from watchmen.lake.model_field import ModelField
 
 

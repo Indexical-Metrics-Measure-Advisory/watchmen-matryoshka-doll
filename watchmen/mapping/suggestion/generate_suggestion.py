@@ -1,7 +1,7 @@
 import decamelize
 import spacy
 
-from watchmen.factors.model.topic import Topic
+from watchmen.space.factors.model import Topic
 from watchmen.lake.model_schema import ModelSchema
 from watchmen.lake.model_schema_set import ModelSchemaSet
 

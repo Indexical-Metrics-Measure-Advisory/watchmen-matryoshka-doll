@@ -1,7 +1,7 @@
 
 
 from watchmen.storage.engine.storage_engine import get_client
-from watchmen.factors.model.topic import Topic
+from watchmen.space.factors.model import Topic
 
 from watchmen.utils.data_utils import WATCHMEN
 

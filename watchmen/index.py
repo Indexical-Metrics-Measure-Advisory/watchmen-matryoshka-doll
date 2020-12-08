@@ -6,8 +6,8 @@ from pydantic import BaseModel
 
 from watchmen.auth.index import get_current_user, check_promise
 from watchmen.auth.user import User
-from watchmen.factors.model.factor import Factor
-from watchmen.factors.model.topic import Topic
+from watchmen.space.factors.factor import Factor
+from watchmen.space.factors.model import Topic
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
 from watchmen.lake.model_schema import ModelSchema
 # from watchmen.main import SpaceOut
@@ -15,7 +15,7 @@ from watchmen.mapping.suggestion.generate_suggestion import generate_topic_sugge
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.space.index import create_master_space_by_domain_template, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space, load_master_space
-from watchmen.space.master_space import MasterSpace
+from watchmen.space.space import Space
 from watchmen.pipeline.pipeline import build_default_pipeline
 from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
 # auth
@@ -23,7 +23,7 @@ from watchmen.storage.topic_schema_storage import get_topic_list_by_ids
 
 
 class SpaceOut(BaseModel):
-    master_space: MasterSpace = None
+    master_space: Space = None
     topic_list: List[Topic] = None
 
 

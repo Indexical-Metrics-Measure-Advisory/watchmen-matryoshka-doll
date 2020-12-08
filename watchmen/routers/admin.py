@@ -1,13 +1,13 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from watchmen.factors.model.topic import Topic
+from watchmen.space.factors.model import Topic
 from watchmen.index import select_domain, generate_suggestion_topic_service, generate_suggestion_factor, \
     save_topic_mapping, load_topic_mapping, SpaceOut, load_space_topic_list
 from watchmen.lake.model_schema import ModelSchema
 from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.space.master_space import MasterSpace
+from watchmen.space.space import Space
 from watchmen.service.master_space_service import save_master_space
 
 router = APIRouter()
@@ -15,7 +15,7 @@ router = APIRouter()
 
 class TopicSuggestionIn(BaseModel):
     lake_schema_set: ModelSchemaSet = None
-    master_schema: MasterSpace = None
+    master_schema: Space = None
 
 
 class FactorSuggestionIn(BaseModel):
@@ -25,14 +25,14 @@ class FactorSuggestionIn(BaseModel):
 
 # CORE ADMIN PATH
 
-@router.get("/admin/space/domain", tags=["admin"], response_model=MasterSpace)
+@router.get("/admin/space/domain", tags=["admin"], response_model=Space)
 async def create_space_from_domain_template(name: str):
     return select_domain(name)
 
 
 @router.post("/admin/space", tags=["admin"])
 async def create_empty_space(space):
-    master_space = MasterSpace(space)
+    master_space = Space(space)
     return save_master_space(master_space)
 
 
@@ -89,7 +89,7 @@ async def load_space_topic_list_http(space_name: str):
 
 @router.post("/space", tags=["admin"])
 async def create_space(space):
-    master_space = MasterSpace(space)
+    master_space = Space(space)
     return save_master_space(master_space)
 
 

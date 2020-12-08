@@ -1,8 +1,8 @@
 from watchmen.entity.pagination import Pagination
-from watchmen.space.master_space import MasterSpace
+from watchmen.space.space import Space
 
 
-def save_master_space(master_space:MasterSpace):
+def save_master_space(master_space:Space):
     topic_list = master_space.topic_list
 
     ## update_topic_storage

@@ -1,11 +1,14 @@
-import pickle
-
 from watchmen.connector.local_connector import row_data_load
-from watchmen.factors.model.factor import Factor, FactorType
-from watchmen.pipeline.pipeline import basic_schema, update_schema, import_data
+from watchmen.space.factors.factor import Factor, FactorType
+from watchmen.pipeline.pipeline import basic_schema, update_schema
 from watchmen.lake.model_schema import Domain
-from watchmen.lake.model_schema_set import ModelSchemaSet
 from watchmen.storage.factor_storage import save_factor
+
+
+
+
+
+
 
 
 def test_basic_schema():
