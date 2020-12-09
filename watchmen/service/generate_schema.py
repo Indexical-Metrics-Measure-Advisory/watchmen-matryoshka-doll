@@ -1,23 +1,15 @@
-# import json
-#
-# from watchmen.row_data.generate.model_schema_generater import generate_basic_schema
-# from watchmen.row_data.model_schema import Domain
-#
-#
-# def generate_schema(key: str, data: json, domain: Domain):
-#
-#     return generate_basic_schema(key, data, domain)
+
 
 
 import json
 
 from bson import ObjectId as BsonObjectId, ObjectId
 
-from watchmen.row_data import ModelField, FieldType
-from watchmen.row_data import ModelRelationship, RelationshipType
-from watchmen.row_data import ModelSchema, Domain
+from watchmen.row_data.model_field import FieldType, ModelField
+from watchmen.row_data.model_relationship import ModelRelationship
+from watchmen.row_data.model_schema import ModelSchema, Domain
 from watchmen.row_data.model_schema_set import ModelSchemaSet
-from watchmen.utils.data_utils import is_field_value
+from watchmen.utils.data_utils import is_field_value, RelationshipType
 
 ROOT = "root"
 

@@ -3,7 +3,7 @@ import yaml
 import os
 
 from watchmen.space.factors.factor import Factor
-from watchmen.space.factors.model import Topic
+from watchmen.space.factors.topic import Topic
 
 TEMPLATE_YAML = "/insurance_template.yml"
 
@@ -23,7 +23,7 @@ def load_template():
                     topic = Topic()
                     topic.businessKey = "insurance_template"
                     # for x in template.values():
-                    topic.topic_name = key
+                    topic.topicName = key
                     for factor_name, factor_details in value.items():
                         factor = Factor(**factor_details)
                         factor.factorName = factor_name

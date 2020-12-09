@@ -1,7 +1,7 @@
 import json
 
-from watchmen.row_data import RuleContext
-from watchmen.row_data import RuleType
+from watchmen.row_data.rule_context import RuleContext
+from watchmen.row_data.rule_schema import RuleType
 from watchmen.service.import_rule import import_single_rule
 
 

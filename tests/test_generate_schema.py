@@ -6,8 +6,9 @@
 
 
 from watchmen.connector.local_connector import row_data_load
-from watchmen.row_data import Domain
+
 from watchmen.pipeline.stage.generate_schema import GenerateLakeSchema
+from watchmen.row_data.model_schema import Domain
 from watchmen.service.generate_schema import generate_basic_schema
 
 

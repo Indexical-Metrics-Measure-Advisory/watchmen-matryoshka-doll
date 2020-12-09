@@ -6,7 +6,7 @@ import decamelize
 from watchmen.entity.data_entity import DataEntity
 from watchmen.entity.data_entity_set import DataEntitySet
 from watchmen.entity.data_relationship import DataRelationship
-from watchmen.row_data import ModelSchema
+from watchmen.row_data.model_schema import ModelSchema
 from watchmen.row_data.model_schema_set import ModelSchemaSet
 from watchmen.utils.data_utils import get_dict_schema_set, get_dict_relationship, is_field_value
 
