@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from watchmen.space.topic.topic import Topic
 
 from pydantic import BaseModel
 
@@ -11,10 +11,15 @@ class FactorType(str, Enum):
 
 
 class Factor(BaseModel):
+    id: int
+    name: str
+    type: str
+    topic: Topic
 
-    factorId: int = None
+    '''
+    factor_id: int = None
 
-    factorName:str = None
+    factor_name:str = None
 
     value: str = None
 
@@ -49,6 +54,6 @@ class Factor(BaseModel):
     codeTable: str = None
 
     isTag: bool = False
-
+'''
 
 
