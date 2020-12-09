@@ -5,11 +5,11 @@ from bson import ObjectId
 from watchmen.connector.local_connector import row_data_load
 from watchmen.space.factors.factor import Factor
 from watchmen.index import select_domain, generate_lake_schema, save_topic_mapping
-from watchmen.space.row_data import ModelField
+from watchmen.row_data import ModelField
 from watchmen.pipeline.mapping import MappingRule
 from watchmen.pipeline.mapping import generate_topic_suggestion, generate_factor_suggestion
 from watchmen.pipeline.mapping import TopicMappingRule
-from watchmen.storage.data_schema_storage import load_data_schema_by_code
+from watchmen.row_data.storage.row_schema_storage import load_row_schema_by_code
 from watchmen.storage.mapping_rule_storage import load_topic_mapping_by_name, load_topic_mapping_by_id
 from watchmen.space.storage.space_storage import  load_space_by_name
 from watchmen.storage.topic_schema_storage import get_topic_list_by_ids
@@ -39,7 +39,7 @@ def test_save_topic_mapping_rule():
 
 
 def test_generate_factor_suggestion():
-    lake_schema = load_data_schema_by_code("policy")
+    lake_schema = load_row_schema_by_code("policy")
     master_schema = load_space_by_name("mock_insurance")
     topic_id_list = master_schema.topic_id_list
     object_ids = map(lambda x: ObjectId(x), topic_id_list)
@@ -69,7 +69,7 @@ def test_load_topic_mapping_rule():
 
 
 def test_generate_suggestion():
-    lake_schema = load_data_schema_by_code("policy")
+    lake_schema = load_row_schema_by_code("policy")
     master_schema = load_space_by_name("mock_insurance")
     topic_id_list = master_schema.topic_id_list
     object_ids = map(lambda x: ObjectId(x), topic_id_list)

@@ -8,7 +8,7 @@ class Topic(BaseModel):
 
     topicId: str = None
 
-    topic_name: str = None
+    topicName: str = None
 
     businessKey  : str = None
 

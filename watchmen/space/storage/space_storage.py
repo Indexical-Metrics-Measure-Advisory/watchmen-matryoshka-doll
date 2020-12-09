@@ -6,7 +6,7 @@ from watchmen.utils.pickle_wrapper import pickle_wrapper
 
 db = get_client(WATCHMEN)
 
-collection = db.get_collection('master_space')
+collection = db.get_collection('space')
 
 
 def insert_space_to_storage(space):
@@ -15,8 +15,12 @@ def insert_space_to_storage(space):
     return collection.insert_one(space)
 
 
-def update_space_to_storage(master_space):
-    collection.updateOne({"_id": master_space.id})
+def update_space_to_storage(space:Space):
+    if type(space) is not dict:
+        space = space.dict()
+    query = {"name": space["name"]}
+    new_values = {"$set": {"topic_list": space["topic_list"]}}
+    collection.update_one(query,new_values)
 
 
 def load_space_by_user(user):

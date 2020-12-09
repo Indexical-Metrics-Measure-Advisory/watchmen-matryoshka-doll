@@ -22,6 +22,8 @@ class Factor(BaseModel):
 
     topicId: str = None
 
+    valueType: str = None
+
     topicName:str = None
     # isQuantify: bool = None,
     # isResult: bool = None

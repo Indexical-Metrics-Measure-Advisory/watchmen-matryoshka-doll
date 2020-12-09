@@ -2,7 +2,7 @@ from bson.codec_options import CodecOptions
 from bson.codec_options import TypeEncoder
 from bson.codec_options import TypeRegistry
 
-from watchmen.space.row_data.model_schema_set import ModelSchemaSet
+from watchmen.row_data.model_schema_set import ModelSchemaSet
 from watchmen.storage.engine.storage_engine import get_client
 from watchmen.utils.data_utils import RelationshipType, WATCHMEN
 
@@ -35,7 +35,7 @@ def update_data_schema(id, data):
     return collection.update_one({"_id": id}, {"$set": data})
 
 
-def load_data_schema_by_code(code):
+def load_row_schema_by_code(code):
     data =  collection.find_one({"code":code})
     return pickle_wrapper(data,ModelSchemaSet)
 

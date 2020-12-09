@@ -1,5 +1,5 @@
 
-from watchmen.pipeline.single.pipeline import build_pipeline, run_pipeline
+from watchmen.pipeline.single.pipeline_service import build_pipeline, run_pipeline
 
 
 def test_build_pipeline():

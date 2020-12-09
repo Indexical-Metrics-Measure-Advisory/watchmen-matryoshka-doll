@@ -4,8 +4,8 @@ from pydantic import BaseModel
 from watchmen.space.factors.model import Topic
 from watchmen.index import select_domain, generate_suggestion_topic_service, generate_suggestion_factor, \
     save_topic_mapping, load_topic_mapping, SpaceOut, load_space_topic_list
-from watchmen.space.row_data import ModelSchema
-from watchmen.space.row_data.model_schema_set import ModelSchemaSet
+from watchmen.row_data import ModelSchema
+from watchmen.row_data.model_schema_set import ModelSchemaSet
 from watchmen.pipeline.mapping import TopicMappingRule
 from watchmen.space.space import Space
 from watchmen.service.master_space_service import save_master_space

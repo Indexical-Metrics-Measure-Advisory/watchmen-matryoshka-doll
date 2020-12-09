@@ -2,8 +2,8 @@ from typing import Dict
 
 from pydantic import BaseModel
 
-from watchmen.space.row_data import ModelRelationship
-from watchmen.space.row_data import ModelSchema
+from watchmen.row_data.model_relationship import ModelRelationship
+from watchmen.row_data.model_schema import ModelSchema
 
 
 class ModelSchemaSet(BaseModel):

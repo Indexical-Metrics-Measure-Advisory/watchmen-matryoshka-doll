@@ -1,5 +1,5 @@
 from watchmen.pipeline.stage.stage import PipelineStage
-from watchmen.storage.data_schema_storage import insert_data_schema
+from watchmen.row_data.storage.row_schema_storage import insert_data_schema
 
 
 class SaveSchemaToMongo(PipelineStage):

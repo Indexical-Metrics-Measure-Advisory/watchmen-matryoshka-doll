@@ -13,10 +13,10 @@ import json
 
 from bson import ObjectId as BsonObjectId, ObjectId
 
-from watchmen.space.row_data import ModelField, FieldType
-from watchmen.space.row_data import ModelRelationship, RelationshipType
-from watchmen.space.row_data import ModelSchema, Domain
-from watchmen.space.row_data.model_schema_set import ModelSchemaSet
+from watchmen.row_data import ModelField, FieldType
+from watchmen.row_data import ModelRelationship, RelationshipType
+from watchmen.row_data import ModelSchema, Domain
+from watchmen.row_data.model_schema_set import ModelSchemaSet
 from watchmen.utils.data_utils import is_field_value
 
 ROOT = "root"

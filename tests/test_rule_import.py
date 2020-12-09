@@ -1,7 +1,7 @@
 import json
 
-from watchmen.space.row_data import RuleContext
-from watchmen.space.row_data import RuleType
+from watchmen.row_data import RuleContext
+from watchmen.row_data import RuleType
 from watchmen.service.import_rule import import_single_rule
 
 
@@ -17,12 +17,9 @@ def test_import_rule():
     rule_context = RuleContext()
     rule_context.ruleName = "test_rule_1"
     rule_context.type = RuleType.natural_language
-
     result = import_single_rule(rule_context, rule2)
     print(json.dumps(result))
-
     result = import_single_rule(rule_context, rule)
-
     print(json.dumps(result))
 
 

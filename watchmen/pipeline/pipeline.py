@@ -1,10 +1,6 @@
-
-from watchmen.pipeline.stage.generate_schema import GenerateLakeSchema
-from watchmen.pipeline.stage.save_lake_schema_to_mongo import SaveSchemaToMongo
-from watchmen.pipeline.stage.save_to_mongo import SaveToMongo
 from watchmen.service.generate_schema import generate_basic_schema
 from watchmen.service.import_data import import_row_data
-from watchmen.storage.data_schema_storage import insert_data_schema, update_data_schema
+from watchmen.row_data.storage.row_schema_storage import insert_data_schema, update_data_schema
 
 
 def basic_schema(json,domain=None):

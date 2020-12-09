@@ -3,7 +3,7 @@ from spacy.matcher import Matcher
 from spacy.symbols import nsubj, CCONJ, nmod, acomp, dobj, prep, pobj, ADJ,xcomp,nsubjpass,attr
 from spacy.tokens import Token
 
-from watchmen.space.row_data import RuleContext
+from watchmen.row_data import RuleContext
 
 IF = "if_sentence"
 THEN = "then_sentence"
