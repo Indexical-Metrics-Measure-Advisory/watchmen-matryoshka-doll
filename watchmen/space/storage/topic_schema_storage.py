@@ -14,7 +14,7 @@ def save_topic(topic):
 
 
 def get_topic_by_name(topic_name):
-    return topic_col.find_one("topicName", topic_name)
+    return topic_col.find_one("topißcName", topic_name)
 
 
 def get_topic_by_id(topic_id):

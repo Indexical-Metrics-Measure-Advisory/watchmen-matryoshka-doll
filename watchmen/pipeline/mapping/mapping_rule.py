@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from watchmen.row_data.model_field import ModelField
+from watchmen.raw_data.model_field import ModelField
 from watchmen.space.factors.factor import Factor
 
 

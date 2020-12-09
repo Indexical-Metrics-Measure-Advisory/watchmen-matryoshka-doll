@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-# from lib.row_data.context import Context
-# import ../row_data/ModelSchema
-# import lib.row_data.model_schema.ModelSchema
+# from lib.raw_data.context import Context
+# import ../raw_data/ModelSchema
+# import lib.raw_data.model_schema.ModelSchema
 from watchmen.utils.data_utils import RelationshipType
 
 

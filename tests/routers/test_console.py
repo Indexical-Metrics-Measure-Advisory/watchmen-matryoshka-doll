@@ -1,4 +1,4 @@
-def test_import_row_data():
+def test_import_raw_data():
     pass
 
 

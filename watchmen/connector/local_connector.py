@@ -6,9 +6,9 @@ def batch_load():
     pass
 
 
-def row_data_load(path: str):
+def raw_data_load(path: str):
     with open(path) as f:
-        return  json.loads(f.read())
+        return json.loads(f.read())
 
 
 

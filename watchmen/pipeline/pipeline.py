@@ -1,6 +1,9 @@
+from watchmen.pipeline.stage.generate_schema import GenerateLakeSchema
+from watchmen.pipeline.stage.save_lake_schema_to_mongo import SaveSchemaToMongo
+from watchmen.pipeline.stage.save_to_mongo import SaveToMongo
+from watchmen.raw_data.storage.row_schema_storage import insert_data_schema, update_data_schema
 from watchmen.service.generate_schema import generate_basic_schema
-from watchmen.service.import_data import import_row_data
-from watchmen.row_data.storage.row_schema_storage import insert_data_schema, update_data_schema
+from watchmen.raw_data.service.import_data import import_raw_data
 
 
 def basic_schema(json,domain=None):
@@ -18,7 +21,7 @@ def update_schema(id, json,domain=None):
 
 def import_data(json,schema):
     # print(type(model_schema_set))
-    return import_row_data(json,schema,None)
+    return import_raw_data(json,schema,None)
 
 
 def run_factors():
@@ -29,23 +32,24 @@ def process_factor_results():
     pass
 
 
-    # generate import row_data
+    # generate import raw_data
     # generate data statistics
     # return data basic explore
 
 def build_default_pipeline():
     pipeline = Pipeline()
 
-    # pipeline.add(SaveToMongo())
-    # pipeline.add(GenerateLakeSchema())
-    # pipeline.add(SaveSchemaToMongo())
+    pipeline.add(SaveToMongo())
+    pipeline.add(GenerateLakeSchema())
+    pipeline.add(SaveSchemaToMongo())
     return pipeline
 
 
 class Pipeline(object):
 
-    # def __init__(self):
-    #
+    def __init__(self):
+        self.stages=[]
+
 
 
 

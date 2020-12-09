@@ -9,14 +9,14 @@ def is_field_value(value):
 
 def get_dict_schema_set(model_schema_set):
     result = {}
-    for schema in model_schema_set.schemas:
-        result[schema.modelId]=schema
+    for schema in model_schema_set.schemas.values():
+        result[schema.modelId]= schema
     return result
 
 
 def get_dict_relationship(model_schema_set):
     result = {}
-    for relationship in model_schema_set.relationships:
+    for relationship in model_schema_set.relationships.values():
         if relationship.parentId in result.keys():
             result[relationship.parentId].append(relationship)
         else:

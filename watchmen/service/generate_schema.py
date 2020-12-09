@@ -5,10 +5,10 @@ import json
 
 from bson import ObjectId as BsonObjectId, ObjectId
 
-from watchmen.row_data.model_field import FieldType, ModelField
-from watchmen.row_data.model_relationship import ModelRelationship
-from watchmen.row_data.model_schema import ModelSchema, Domain
-from watchmen.row_data.model_schema_set import ModelSchemaSet
+from watchmen.raw_data.model_field import FieldType, ModelField
+from watchmen.raw_data.model_relationship import ModelRelationship
+from watchmen.raw_data.model_schema import ModelSchema, Domain
+from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.utils.data_utils import is_field_value, RelationshipType
 
 ROOT = "root"
@@ -84,16 +84,16 @@ def __build_sub_model_schema(model_schema_set, relationship_key):
         return model_schema_set.schemas[relationship.childName]
     else:
         sub_model_schema = ModelSchema()
-        sub_model_schema.modelId = str(BsonObjectId())
+        sub_model_schema.modelId =str(BsonObjectId())
         return sub_model_schema
 
 
 def process_attrs(data, model_schema, model_schema_set):
+    print("-------------",model_schema.name)
     # TODO identify ID attr
     for key, value in data.items():
         if is_field_value(value):
 
-            # print (key in model_schema.businessFields)
             if key in model_schema.businessFields:
                 model_schema.businessFields[key].value.append(convert_value(value))
             else:
@@ -101,19 +101,17 @@ def process_attrs(data, model_schema, model_schema_set):
                 model_schema.businessFields[key] = model_field
         else:
 
-            # if  model_schema_set.relationships
-
-            # process sub row_data
-            sub_model_id = str(BsonObjectId())
+            # sub_model_id= str(BsonObjectId())
+            # print("sub_model_id {}",sub_model_id)
             relationship = ModelRelationship()
             relationship.parentId = model_schema.modelId
-            relationship.childId = sub_model_id
+
             relationship.parentName = model_schema.name
             relationship.childName = key
             relationship.type = __get_type(value)
             relationship_key = __build_relationship_key(relationship)
-
             sub_model_schema = __build_sub_model_schema(model_schema_set, relationship_key)
+            relationship.childId=sub_model_schema.modelId
             if __is_dict(value):
                 for sub_model in value:
                     sub_model_schema = __generate_sub_model(key, sub_model, sub_model_schema, model_schema_set)
@@ -121,8 +119,11 @@ def process_attrs(data, model_schema, model_schema_set):
                 sub_model_schema = __generate_sub_model(key, value, sub_model_schema, model_schema_set)
 
             model_schema_set.schemas[sub_model_schema.name] = sub_model_schema
+            print(relationship.childId)
+            print(sub_model_schema.modelId)
+            print(sub_model_schema.name)
             model_schema_set.relationships[relationship_key] = relationship
-
+    print("------------------")
 
 def __create_links():
     pass
@@ -145,7 +146,7 @@ def generate_basic_schema(key: str, data: json, domain: Domain):
 
     # print(json.dumps(root))
 
-    # print(root.json())
+    print(root.json())
     # TODO[next]  match domain topic
 
     return root

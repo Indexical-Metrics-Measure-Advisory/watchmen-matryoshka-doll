@@ -1,8 +1,8 @@
 import decamelize
 import spacy
 
-from watchmen.row_data.model_schema import ModelSchema
-from watchmen.row_data.model_schema_set import ModelSchemaSet
+from watchmen.raw_data.model_schema import ModelSchema
+from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.factors.topic import Topic
 
 nlp = spacy.load('en_core_web_md')
@@ -38,7 +38,7 @@ def generate_topic_suggestion(lake_schema: ModelSchemaSet, topic_list):
             if model_match_list:
                 similarity = calculate_similarity(model_match_list)
                 topic_match_results.append({
-                    "space": topic["topic_name"], "row_data": model_schema.name, "similarity": similarity
+                    "space": topic["topic_name"], "raw_data": model_schema.name, "similarity": similarity
                 })
 
     return topic_match_results

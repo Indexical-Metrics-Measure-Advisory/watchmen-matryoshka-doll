@@ -2386,7 +2386,7 @@ NumDependents
 NumExemptsEntitled
 NumExemptsWithholding
 RegularDept
-BorrowedDept
+BorrawedDept
 FullPayDayInjuredInd
 SalaryContinuanceInd
 OccurredPremisesCd

@@ -1,5 +1,5 @@
-from watchmen.storage.topic_data_storage import save_topic_instances
-from watchmen.storage.topic_data_storage import save_topic_instance
+from watchmen.space.storage.topic_data_storage import save_topic_instances
+from watchmen.space.storage.topic_data_storage import save_topic_instance
 import json
 import os
 

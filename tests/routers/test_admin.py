@@ -24,7 +24,7 @@ def test_user_connect_to_space():
     pass
 
 
-def test_import_row_data():
+def test_import_raw_data():
     pass
 
 

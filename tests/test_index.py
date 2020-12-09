@@ -2,19 +2,19 @@ import json
 
 from bson import ObjectId
 
-from watchmen.connector.local_connector import row_data_load
+from watchmen.connector.local_connector import raw_data_load
 from watchmen.pipeline.mapping.mapping_rule import MappingRule
 from watchmen.pipeline.mapping.suggestion.generate_suggestion import generate_topic_suggestion, \
     generate_factor_suggestion
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.row_data.model_field import ModelField
+from watchmen.raw_data.model_field import ModelField
+from watchmen.raw_data.storage.row_schema_storage import load_raw_schema_by_code
 from watchmen.space.factors.factor import Factor
-from watchmen.index import select_domain, save_topic_mapping, generate_row_data_schema
+from watchmen.index import select_domain, save_topic_mapping, generate_raw_data_schema
 
-from watchmen.row_data.storage.row_schema_storage import load_row_schema_by_code
 from watchmen.storage.mapping_rule_storage import load_topic_mapping_by_name, load_topic_mapping_by_id
 from watchmen.space.storage.space_storage import  load_space_by_name
-from watchmen.storage.topic_schema_storage import get_topic_list_by_ids
+from watchmen.space.storage.topic_schema_storage import get_topic_list_by_ids
 
 
 def test_select_domain():
@@ -23,7 +23,7 @@ def test_select_domain():
 
 
 def test_import_instance_data():
-    generate_row_data_schema([row_data_load('../assert/data/policy.json'),row_data_load('../assert/data/policy.json')],"policy")
+    generate_raw_data_schema([raw_data_load('../assert/data/policy.json'),raw_data_load('../assert/data/policy.json')],"policy")
 
 
 def test_save_topic_mapping_rule():
@@ -41,7 +41,7 @@ def test_save_topic_mapping_rule():
 
 
 def test_generate_factor_suggestion():
-    lake_schema = load_row_schema_by_code("policy")
+    lake_schema = load_raw_schema_by_code("policy")
     master_schema = load_space_by_name("mock_insurance")
     topic_id_list = master_schema.topic_id_list
     object_ids = map(lambda x: ObjectId(x), topic_id_list)
@@ -71,7 +71,7 @@ def test_load_topic_mapping_rule():
 
 
 def test_generate_suggestion():
-    lake_schema = load_row_schema_by_code("policy")
+    lake_schema = load_raw_schema_by_code("policy")
     master_schema = load_space_by_name("mock_insurance")
     topic_id_list = master_schema.topic_id_list
     object_ids = map(lambda x: ObjectId(x), topic_id_list)

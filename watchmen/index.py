@@ -9,7 +9,7 @@ from watchmen.auth.user import User
 from watchmen.pipeline.mapping.suggestion.generate_suggestion import generate_topic_suggestion, \
     generate_factor_suggestion
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.row_data.model_schema import ModelSchema
+from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.space.factors.factor import Factor
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
 
@@ -23,7 +23,7 @@ from watchmen.space.space import Space
 from watchmen.pipeline.pipeline import build_default_pipeline
 from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
 # auth
-from watchmen.storage.topic_schema_storage import get_topic_list_by_ids
+from watchmen.space.storage.topic_schema_storage import get_topic_list_by_ids
 
 
 class SpaceOut(BaseModel):
@@ -57,7 +57,7 @@ def select_domain(domain: str):
         raise HTTPException(status_code=401, detail="NO_PROMISE")
 
 
-def generate_row_data_schema(json_files, name):
+def generate_raw_data_schema(json_files, name):
     current_user = get_current_user()
     if check_promise(current_user):
         if use_default_pipeline(current_user):
@@ -201,7 +201,7 @@ def create_report():
 
 
 # runtime import data
-def import_row_data():
+def import_raw_data():
     # save to mongodb
     # call mapping rule
     # rum factor engine

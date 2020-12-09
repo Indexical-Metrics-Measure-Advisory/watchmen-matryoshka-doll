@@ -4025,7 +4025,7 @@ ProductCode
 AssetClass
 CurrencyTypeCode
 AnnualDividend
-GrowthRate
+GrawthRate
 PriceFactor
 InvestmentRate
 RateType
@@ -4056,7 +4056,7 @@ CarrierName
 AssetClass
 CurrencyTypeCode
 AnnualDividend
-GrowthRate
+GrawthRate
 PriceFactor
 InvestmentRate
 RateType

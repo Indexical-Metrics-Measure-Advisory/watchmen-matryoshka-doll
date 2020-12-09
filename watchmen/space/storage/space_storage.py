@@ -1,4 +1,4 @@
-from watchmen.entity.pagination import Pagination
+from watchmen.common.pagination import Pagination
 from watchmen.space.space import Space
 from watchmen.storage.engine.storage_engine import get_client
 from watchmen.utils.data_utils import WATCHMEN
