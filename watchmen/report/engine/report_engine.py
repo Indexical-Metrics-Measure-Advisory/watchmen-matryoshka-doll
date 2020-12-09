@@ -37,41 +37,54 @@ def report(subject: Subject):
     pass
 
 
-def report(topics: [Topic], factors: [Factor], filters, joins):
-    for topic in topics:
-        print(topic.name)
-
-
-def report(topics: [Topic], joins: [Join]):
+def report(topics: [Topic], joins: [Join], filters, factors):
     dataframes = {}
     for topic in topics:
         docs = get_topic_instances(topic.name)
         dataframes[topic.name] = pd.DataFrame(list(docs)).set_index('@pk')
-    join_dataframe(topics, dataframes, joins)
+    data_master = join_dataframe(topics, dataframes, joins)
+
+    query_str = ''
+    for filter in filters:
+        if query_str == '':
+            query_str = filter.name + '== ' + '\''+ filter.value +'\''
+        else:
+            query_str = query_str + '&' + filter.name + '== ' + '\''+ filter.value + '\''
+    filter_data = data_master.query(query_str)
+    columns = []
+    for factor in factors:
+        columns.append(factor.name)
+    print(filter_data[columns])
+
+
 
 def join_dataframe(topics, dataframes, joins):
-    graph={}
+    graph = {}
     for topic in topics:
-        nodes= []
+        nodes = []
         for join in joins:
-           if topic.name == join.left:
-               nodes.append(join.right)
-           if topic.name == join.right:
-               nodes.append(join.left)
-        graph[topic.name]= nodes
+            if topic.name == join.left:
+                nodes.append(join.right)
+            if topic.name == join.right:
+                nodes.append(join.left)
+        graph[topic.name] = nodes
     print(graph)
     dfs(graph, topics[0].name, dataframes)
     print(DFS_TEMP)
+    del DFS_TEMP['_id_x']
+    return DFS_TEMP
+
 
 DFS_SEARCHED = set()
 
 DFS_TEMP = None
 
+
 def dfs(graph, start, dataframes):
     global DFS_TEMP
     if start not in DFS_SEARCHED:
         if DFS_TEMP is None:
-            DFS_TEMP =  dataframes[start]
+            DFS_TEMP = dataframes[start]
         else:
             DFS_TEMP = DFS_TEMP.merge(dataframes[start], on='@pk')
         DFS_SEARCHED.add(start)
@@ -102,17 +115,31 @@ factor3 = Factor()
 factor3.__setattr__('name', 'telephone')
 factor3.__setattr__('topic', customer_topic)
 factors.append(factor3)
+factor4 = Factor()
+factor4.__setattr__('name', 'birthDate')
+factor4.__setattr__('topic', customer_topic)
+factors.append(factor4)
 
 joins = []
-join1= Join()
+join1 = Join()
 join1.__setattr__('left', 'test_report_policy_data_col')
 join1.__setattr__('right', 'test_report_customer_data_col')
 join1.__setattr__('key', '@pk')
 joins.append(join1)
 
-report(topics, joins)
+filters= []
+filter1 = Filter()
+filter1.__setattr__('name', 'address1')
+filter1.__setattr__('value', '北海道')
+filters.append(filter1)
+filter2 = Filter()
+filter2.__setattr__('name', 'birthDate')
+filter2.__setattr__('value', '2010-10-10')
+filters.append(filter2)
 
-#join_dataframe(topics,joins)
+report(topics, joins, filters, factors)
+
+# join_dataframe(topics,joins)
 '''
 def generate_query(topics: [Topic], factors: [Factor], filters, groups):
 

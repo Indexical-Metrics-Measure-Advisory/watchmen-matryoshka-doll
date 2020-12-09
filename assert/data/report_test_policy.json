@@ -1,0 +1,37 @@
+[
+   {
+      "@pk":855579653,
+      "policyId":"855579653",
+      "applyCode":"NBS0005014",
+      "liabilityState":0,
+      "policyCode":"C201000120"
+   },
+   {
+      "@pk":855579654,
+      "policyId":"855579653",
+      "applyCode":"NBS0005014",
+      "liabilityState":0,
+      "policyCode":"C201000120"
+   },
+   {
+      "@pk":855579655,
+      "policyId":"855579653",
+      "applyCode":"NBS0005014",
+      "liabilityState":0,
+      "policyCode":"C201000120"
+   },
+   {
+      "@pk":855579656,
+      "policyId":"855579653",
+      "applyCode":"NBS0005014",
+      "liabilityState":0,
+      "policyCode":"C201000120"
+   },
+   {
+      "@pk":855579657,
+      "policyId":"855579653",
+      "applyCode":"NBS0005014",
+      "liabilityState":0,
+      "policyCode":"C201000120"
+   }   
+]

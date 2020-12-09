@@ -1,4 +1,4 @@
-from watchmen.space.factors.topic import Topic
+from watchmen.space.topic.topic import Topic
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import insert_space_to_storage, load_space_by_name, update_space_to_storage
 

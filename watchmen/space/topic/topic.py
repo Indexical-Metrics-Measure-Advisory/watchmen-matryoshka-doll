@@ -1,14 +1,15 @@
-from typing import List
-
 from pydantic import BaseModel
-from watchmen.space.factors.factor import Factor
 
 
 class Topic(BaseModel):
+    topic_id: int
+    name: str
+    topic_type: str
 
-    topicId: str = None
+    '''
+    topic_id: str = None
 
-    topicName: str = None
+    topic_name: str = None
 
     businessKey  : str = None
 
@@ -23,4 +24,4 @@ class Topic(BaseModel):
     embeddedRelationship: List[str] = None
 
     parentTopicId: str = None
-
+    '''
