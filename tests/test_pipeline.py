@@ -1,6 +1,6 @@
-from watchmen.connector.local_connector import row_data_load
+from watchmen.connector.local_connector import row_data_load, raw_data_load
+from watchmen.raw_data.model_schema import Domain
 from watchmen.space.factor.factor import Factor, FactorType
-from watchmen.row_data.model_schema import Domain
 from watchmen.pipeline.pipeline import basic_schema, update_schema
 
 from watchmen.space.storage.factor_storage import save_factor

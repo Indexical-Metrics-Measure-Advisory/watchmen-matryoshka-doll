@@ -1,4 +1,4 @@
-from watchmen.storage.topic_data_storage import save_topic_instances
+from watchmen.space.storage.topic_data_storage import save_topic_instances
 from watchmen.space.topic.topic import Topic
 from watchmen.space.factor.factor import Factor
 from watchmen.space.subject.join import Join
