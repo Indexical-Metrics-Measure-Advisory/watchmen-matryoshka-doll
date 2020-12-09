@@ -6,15 +6,18 @@ from pydantic import BaseModel
 
 from watchmen.auth.index import get_current_user, check_promise
 from watchmen.auth.user import User
+from watchmen.pipeline.mapping.suggestion.generate_suggestion import generate_topic_suggestion, \
+    generate_factor_suggestion
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
+from watchmen.row_data.model_schema import ModelSchema
 from watchmen.space.factors.factor import Factor
-from watchmen.space.factors.model import Topic
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
-from watchmen.row_data import ModelSchema
+
 # from watchmen.main import SpaceOut
 # from watchmen.pipeline.mapping import generate_topic_suggestion, generate_factor_suggestion
 # from watchmen.pipeline.mapping import TopicMappingRule
-from watchmen.space.index import create_master_space_by_domain_template, add_topic_list_to_master, get_summary_for_master_space, \
+from watchmen.space.factors.topic import Topic
+from watchmen.space.index import create_space_by_domain_template, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space, load_master_space
 from watchmen.space.space import Space
 from watchmen.pipeline.pipeline import build_default_pipeline
@@ -45,7 +48,7 @@ def select_domain(domain: str):
         # find domain template
         topic_list = find_template_by_domain(domain)
         # create space space
-        master_space = create_master_space_by_domain_template(current_user, domain)
+        master_space = create_space_by_domain_template(current_user, domain)
         # add template to space space
         master_space = add_topic_list_to_master(topic_list, master_space)
         # get summary for master_space
@@ -112,7 +115,6 @@ def load_space_topic_list(space_name) -> SpaceOut:
     return SpaceOut(master_space, topic_list)
 
     # TODO user info missing
-
 
 
 def add_factor_to_master_topic(factor: Factor, master_space):

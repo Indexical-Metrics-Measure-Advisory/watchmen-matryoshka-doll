@@ -23,9 +23,9 @@ def add_factor_to_master_topic():
     pass
 
 
-def create_master_space_by_domain_template(user, domain):
+def create_space_by_domain_template(user, domain):
     master_space = Space()
-    master_space.user = user
+    master_space.createUser = user
     master_space.name = user+"_"+domain
     # save_master_space(master_space)
     # master_space.id = inserted_id
