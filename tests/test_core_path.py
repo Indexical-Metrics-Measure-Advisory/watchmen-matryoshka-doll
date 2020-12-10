@@ -53,14 +53,31 @@ def test_build_pipeline():
 
     run_pipeline(pipeline, {"data": entity_set})
 
-    pass
+
+def test_build_aggregate_pipeline():
+    pass 
 
 
 def call_raw_data_collection_api():
+
+    ## call api save raw data
+
+    ## trigger pipeline
+
+
+
+
+
+
+
     pass
 
 
 def test_create_report():
+
+    ## create a report query
+
+
     pass
 
 
