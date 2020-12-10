@@ -55,10 +55,16 @@ def test_build_pipeline():
 
 
 def test_build_aggregate_pipeline():
-    pass 
+
+
+
+
+    pass
 
 
 def call_raw_data_collection_api():
+
+
 
     ## call api save raw data
 

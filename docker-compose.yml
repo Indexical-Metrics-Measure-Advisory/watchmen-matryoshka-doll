@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  mongo:
+    build: ./mongo
+    container_name: mongo
+    volumes:
+      - mongo-data:/data/db
+  presto:
+    build: ./presto
+    container_name: presto
+    ports:
+      - "8080:8080"
+
+
+
+
+volumes:
+  mongo-data:
+    name: mongo-data
+#  postgres-data:
+#    name: postgres-data
