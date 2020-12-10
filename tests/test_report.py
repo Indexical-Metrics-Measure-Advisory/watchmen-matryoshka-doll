@@ -9,7 +9,6 @@ from watchmen.space.report.report import Report
 import json
 
 
-
 def import_report_data():
     # Reading the json as a dict, policy information
     with open('../assert/data/report_test_policy.json') as json_data:
@@ -45,7 +44,8 @@ def get_report_dataset():
     factors.append(factor4)
 
     joins = []
-    join1 = Join(**{'id': 1, 'left': 'test_report_policy_data_col', 'right': 'test_report_customer_data_col', 'key': '@pk'})
+    join1 = Join(
+        **{'id': 1, 'left': 'test_report_policy_data_col', 'right': 'test_report_customer_data_col', 'key': '@pk'})
     joins.append(join1)
 
     filters = []

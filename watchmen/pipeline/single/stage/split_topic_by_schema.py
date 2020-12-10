@@ -1,29 +1,38 @@
+import pandas
 
-
-from watchmen.pipeline.stage_constants import SPILT_FACTOR
+from watchmen.pipeline.stage_constants import SPILT_FACTOR, SPILT_FACTOR_VALUE, DATA, FILTER
+from watchmen.raw_data.entity.data_entity_set import DataEntitySet
 
 
 def init(**kwargs):
-    # if schema is empty ,generate a raw schema
-    # split data base on schema
-    # return topic_list , relationship and schema
     factor_name = kwargs[SPILT_FACTOR]
+    factor_name_value = kwargs[SPILT_FACTOR_VALUE]
+    filter_factor = kwargs[FILTER]
 
-    def run(raw_data):
+    def filter_data(raw_data: DataEntitySet):
 
-        pass
+        for data_entity in raw_data.entities:
+            if data_entity.topicCode == filter_factor:
+                return data_entity
 
-        # if type(raw_data) is not dict:
-        #     pass # error
-        # else:
-        #     data_frames = pandas.DataFrame.from_dict()
-        #     data = data_frames.groupby([factor_name])
-        #     print(data)
-        #     return data
+    def split_topic_by_schema(request):
+        raw_data = request[DATA]
+        filter_result = filter_data(raw_data)
+        d = filter_result.attr
+        pandas_dict = convert_dict_to_pandas_dict(filter_result.attr)
+        df = pandas.DataFrame.from_dict(pandas_dict)
+        return df[df[factor_name] == factor_name_value]
+    return split_topic_by_schema
 
-    return run
 
+# def trigger(**kwargs) -> bool:
+#     pass
 
-def trigger(**kwargs) -> bool:
+def get_name():
+    return "split data by topic name"
 
-    pass
+def convert_dict_to_pandas_dict(kv):
+    new_kv={}
+    for k,v in kv.items():
+        new_kv[k]=[v]
+    return new_kv

@@ -36,8 +36,6 @@ def process_model(sub, schema: ModelSchema, entity_set: DataEntitySet, relations
         if is_field_value(value):
             process_data_attr(schema, key, value, entity)
         else:
-            print("key ",key)
-            print("schema",schema.name)
             relationships = relationship_dict[schema.modelId]
             for relationship in relationships:
                 if key == relationship.childName:
@@ -90,8 +88,6 @@ def import_raw_data(data: json, schema_set: ModelSchemaSet, event: Event):
         if is_field_value(value):
             process_data_attr(schema, key, value, entity)
         else:
-            print("key ", key)
-            print("schema",schema.name)
 
             relationships = relationship_dict[schema.modelId]
             for relationship in relationships:
