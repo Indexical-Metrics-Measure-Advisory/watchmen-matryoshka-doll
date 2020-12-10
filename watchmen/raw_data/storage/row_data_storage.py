@@ -1,5 +1,6 @@
 from bson.codec_options import TypeEncoder, TypeRegistry, CodecOptions
 
+from watchmen.event import event
 from watchmen.storage.engine.storage_engine import get_client
 from watchmen.utils.data_utils import WATCHMEN, RelationshipType
 
@@ -23,7 +24,7 @@ def build_collection_name(name):
     return "raw_"+name
 
 
+@event.after
 def save_entity_set(entity_set):
-    # TODO check domain code
     domain_collection = db.get_collection(build_collection_name(entity_set.domain),codec_options=codec_options)
     return domain_collection.insert_one(entity_set.dict())
