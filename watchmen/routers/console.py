@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from watchmen.auth.index import get_current_user
-from watchmen.raw_data.entity import Pagination
+from watchmen.common.pagination import Pagination
 from watchmen.space.storage.space_storage import load_space_list_by_user_id_with_pagination
 
 router = APIRouter()

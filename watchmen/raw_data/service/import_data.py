@@ -11,7 +11,7 @@ from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.raw_data.storage.row_data_storage import save_entity_set
 
-from watchmen.utils.data_utils import get_dict_schema_set, get_dict_relationship, is_field_value
+from watchmen.common.utils.data_utils import get_dict_schema_set, get_dict_relationship, is_field_value
 
 
 def process_topic_data():

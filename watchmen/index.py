@@ -10,20 +10,18 @@ from watchmen.pipeline.mapping.suggestion.generate_suggestion import generate_to
     generate_factor_suggestion
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.raw_data.model_schema import ModelSchema
-from watchmen.space.factors.factor import Factor
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
 
-# from watchmen.main import SpaceOut
-# from watchmen.pipeline.mapping import generate_topic_suggestion, generate_factor_suggestion
-# from watchmen.pipeline.mapping import TopicMappingRule
-from watchmen.space.factors.topic import Topic
+
+from watchmen.space.factor.factor import Factor
 from watchmen.space.index import create_space_by_domain_template, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space, load_master_space
 from watchmen.space.space import Space
 from watchmen.pipeline.pipeline import build_default_pipeline
-from watchmen.storage.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
+from watchmen.pipeline.mapping.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
 # auth
 from watchmen.space.storage.topic_schema_storage import get_topic_list_by_ids
+from watchmen.space.topic.topic import Topic
 
 
 class SpaceOut(BaseModel):

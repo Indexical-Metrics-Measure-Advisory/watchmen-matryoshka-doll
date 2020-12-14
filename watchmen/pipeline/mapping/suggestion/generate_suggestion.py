@@ -3,7 +3,7 @@ import spacy
 
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
-from watchmen.space.factors.topic import Topic
+from watchmen.space.topic.topic import Topic
 
 nlp = spacy.load('en_core_web_md')
 

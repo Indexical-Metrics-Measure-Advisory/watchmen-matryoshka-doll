@@ -1,8 +1,9 @@
-from watchmen.space.factors.topic import Topic
-from watchmen.storage.engine.storage_engine import get_client
+
+from watchmen.common.storage.engine.storage_engine import get_client
 
 
-from watchmen.utils.data_utils import WATCHMEN
+from watchmen.common.utils.data_utils import WATCHMEN
+from watchmen.space.topic.topic import Topic
 
 db = get_client(WATCHMEN)
 

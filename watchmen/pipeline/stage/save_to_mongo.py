@@ -1,5 +1,5 @@
 from watchmen.pipeline.stage.stage import PipelineStage
-from watchmen.storage.lake_data_storage import batch_import_data
+from watchmen.raw_data.lake_data_storage import batch_import_data
 
 
 class SaveToMongo(PipelineStage):

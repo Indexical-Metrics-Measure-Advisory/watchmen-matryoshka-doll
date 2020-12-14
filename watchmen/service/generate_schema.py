@@ -9,7 +9,7 @@ from watchmen.raw_data.model_field import FieldType, ModelField
 from watchmen.raw_data.model_relationship import ModelRelationship
 from watchmen.raw_data.model_schema import ModelSchema, Domain
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
-from watchmen.utils.data_utils import is_field_value, RelationshipType
+from watchmen.common.utils.data_utils import is_field_value, RelationshipType
 
 ROOT = "root"
 

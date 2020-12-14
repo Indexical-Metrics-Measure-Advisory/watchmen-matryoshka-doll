@@ -3,7 +3,7 @@ from pydantic import BaseModel
 # from lib.raw_data.context import Context
 # import ../raw_data/ModelSchema
 # import lib.raw_data.model_schema.ModelSchema
-from watchmen.utils.data_utils import RelationshipType
+from watchmen.common.utils.data_utils import RelationshipType
 
 
 class ModelRelationship(BaseModel):

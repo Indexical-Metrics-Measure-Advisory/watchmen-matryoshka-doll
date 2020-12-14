@@ -1,3 +1,4 @@
+pypika
 
 dask
 pandas

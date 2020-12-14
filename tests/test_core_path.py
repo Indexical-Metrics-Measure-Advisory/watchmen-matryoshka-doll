@@ -1,13 +1,10 @@
-import pickle
-
 from watchmen.connector.local_connector import raw_data_load
 from watchmen.pipeline.single.pipeline_service import run_pipeline, build_pipeline
-from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.raw_data.service.import_data import process_raw_data, import_raw_data
 from watchmen.raw_data.storage.row_schema_storage import load_raw_schema_by_code
 from watchmen.space.service.admin import save_space, load_space, add_topic_to_space, update_topic_in_space
 from watchmen.space.space import Space
-from watchmen.utils.copy import direct_copy_raw_schema_to_topic
+from watchmen.common.utils.copy import direct_copy_raw_schema_to_topic
 
 
 def test_create_space():
@@ -52,6 +49,7 @@ def test_build_pipeline():
     pipeline = build_pipeline(stage_list)
 
     run_pipeline(pipeline, {"data": entity_set})
+
 
 
 def test_build_aggregate_pipeline():
