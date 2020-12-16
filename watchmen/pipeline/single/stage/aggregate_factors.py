@@ -2,6 +2,18 @@ from watchmen.common.mongo.index import check_collection_if_exist
 from watchmen.pipeline.single.constants import TOPIC,TOPIC_TYPE
 
 
+def __generate_sql(request):
+    return ""
+
+
+def find_data(sql):
+    pass
+
+
+def create_new_collection(collection_name, data_rows):
+    return None
+
+
 def init(**kwargs):
     factors = kwargs["factors"]
     dimensions = kwargs["dimensions"]
@@ -15,31 +27,25 @@ def init(**kwargs):
         filter_result = filter_data(request)
         collection_name = build_collection_name(topic_name,topic_type,dimensions)
         if check_collection_if_exist(None,collection_name):
+
+
             # load current dimensions and update data
             pass
         else:
             # load data from sql
+
+            sql = __generate_sql(request)
+            data_rows = find_data(sql)
+            # error handling
+
+            result = create_new_collection(collection_name,data_rows)
+
             # create new aggregate topic
-            # update data
+
             # send notifications
-            pass
+            return result
 
 
-
-
-
-
-
-        ## check wether exsiting collection
-
-
-
-        ## generate sql base on request conditions
-        ## call presto clinet get aggregate_factors
-        ## insert data
-
-
-        ## convert data to
 
         return request
 
