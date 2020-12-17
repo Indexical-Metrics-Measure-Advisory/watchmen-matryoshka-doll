@@ -33,7 +33,6 @@ def init(**kwargs):
             pass
         else:
             # load data from sql
-
             sql = __generate_sql(request)
             data_rows = find_data(sql)
             # error handling

@@ -1,7 +1,8 @@
 
 
 from fastapi import FastAPI
-from .routers import admin, console, common
+
+from watchmen.routers import admin,console,common
 
 app = FastAPI()
 
