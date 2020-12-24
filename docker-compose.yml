@@ -11,8 +11,11 @@ services:
     container_name: presto
     ports:
       - "8080:8080"
-
-
+  watchmen:
+    build: ./watchmen
+    container_name: watchmen-backend
+    ports:
+      - "8090:8090"
 
 
 volumes:

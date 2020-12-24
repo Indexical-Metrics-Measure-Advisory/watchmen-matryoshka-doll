@@ -31,6 +31,7 @@ def init(**kwargs):
 def get_name():
     return "split data by topic name"
 
+
 def convert_dict_to_pandas_dict(kv):
     new_kv={}
     for k,v in kv.items():

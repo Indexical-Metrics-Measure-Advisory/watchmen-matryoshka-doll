@@ -3,11 +3,11 @@ from bson.codec_options import TypeEncoder
 from bson.codec_options import TypeRegistry
 
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
-from watchmen.storage.engine.storage_engine import get_client
-from watchmen.utils.data_utils import RelationshipType, WATCHMEN
+from watchmen.common.storage.engine.storage_engine import get_client
+from watchmen.common.utils.data_utils import RelationshipType, WATCHMEN
 # client = MongoClient('localhost', 27017)
 # db = client['watchmen']
-from watchmen.utils.pickle_wrapper import pickle_wrapper
+from watchmen.common.utils import pickle_wrapper
 
 db = get_client(WATCHMEN)
 

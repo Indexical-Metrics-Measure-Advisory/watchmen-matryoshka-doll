@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 # from watchmen.entity.object_id import PydanticObjectId
-from watchmen.utils.data_utils import RelationshipType
+from watchmen.common.utils.data_utils import RelationshipType
 
 
 class DataRelationship(BaseModel):

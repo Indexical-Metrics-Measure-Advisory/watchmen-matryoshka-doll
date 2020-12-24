@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 
 from watchmen.raw_data.model_field import ModelField
-from watchmen.space.factors.factor import Factor
-
+from watchmen.space.factor.factor import Factor
 
 
 class MappingRule(BaseModel):

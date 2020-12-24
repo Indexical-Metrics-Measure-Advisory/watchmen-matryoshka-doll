@@ -1,9 +1,11 @@
 from fastapi import APIRouter
 
 from watchmen.auth.user import User
-from watchmen.space.factors.model import Topic
 from watchmen.index import auth_login, auth_logout
+
 from watchmen.space.topic.storage.topic_schema_storage import save_topic, get_topic_by_id, get_topic_by_name
+from watchmen.space.topic.topic import Topic
+
 
 router = APIRouter()
 

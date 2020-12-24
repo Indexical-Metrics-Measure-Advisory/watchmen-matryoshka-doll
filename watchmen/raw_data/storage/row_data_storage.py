@@ -1,8 +1,8 @@
 from bson.codec_options import TypeEncoder, TypeRegistry, CodecOptions
 
 from watchmen.event import event
-from watchmen.storage.engine.storage_engine import get_client
-from watchmen.utils.data_utils import WATCHMEN, RelationshipType
+from watchmen.common.storage.engine.storage_engine import get_client
+from watchmen.common.utils.data_utils import WATCHMEN, RelationshipType
 
 db = get_client(WATCHMEN)
 

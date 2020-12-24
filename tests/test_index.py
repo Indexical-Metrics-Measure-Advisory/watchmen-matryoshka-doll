@@ -12,7 +12,7 @@ from watchmen.raw_data.storage.row_schema_storage import load_raw_schema_by_code
 from watchmen.space.factor.factor import Factor
 from watchmen.index import select_domain, save_topic_mapping, generate_raw_data_schema
 
-from watchmen.storage.mapping_rule_storage import load_topic_mapping_by_name, load_topic_mapping_by_id
+from watchmen.pipeline.mapping.mapping_rule_storage import load_topic_mapping_by_name, load_topic_mapping_by_id
 from watchmen.space.storage.space_storage import  load_space_by_name
 from watchmen.space.topic.storage.topic_schema_storage import get_topic_list_by_ids
 

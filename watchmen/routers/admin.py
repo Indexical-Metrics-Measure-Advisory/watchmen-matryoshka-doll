@@ -1,14 +1,16 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from watchmen.space.factors.model import Topic
 from watchmen.index import select_domain, generate_suggestion_topic_service, generate_suggestion_factor, \
     save_topic_mapping, load_topic_mapping, SpaceOut, load_space_topic_list
-from watchmen.raw_data import ModelSchema
+from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
+from watchmen.raw_data.model_schema import ModelSchema
+
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
-from watchmen.pipeline.mapping import TopicMappingRule
+
 from watchmen.space.space import Space
 from watchmen.service.master_space_service import save_master_space
+from watchmen.space.topic.topic import Topic
 
 router = APIRouter()
 
@@ -48,14 +50,12 @@ async def add_topic_list_to_space():
     pass
 
 
-
-
-@router.post("/admin/suggestion/topic", tags=["admin"], )
+@router.post("/admin/suggestion/topic", tags=["admin"])
 async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
     return generate_suggestion_topic_service(topic_suggestion.lake_schema, topic_suggestion.master_schema)
 
 
-@router.post("/admin/suggestion/factors", tags=["admin"], )
+@router.post("/admin/suggestion/factors", tags=["admin"])
 async def generate_suggestion_factor(factor_suggestion: FactorSuggestionIn):
     return generate_suggestion_factor(factor_suggestion.lake_schema, factor_suggestion.topic)
 
