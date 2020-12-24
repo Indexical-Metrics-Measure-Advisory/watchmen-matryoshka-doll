@@ -2,6 +2,7 @@ from enum import Enum
 from watchmen.space.topic.topic import Topic
 
 from pydantic import BaseModel
+import uuid
 
 
 class FactorType(str, Enum):
@@ -14,9 +15,9 @@ class Factor(BaseModel):
     id: int
     name: str
     type: str
-    topic: Topic
 
-    '''
+
+'''
     factor_id: int = None
 
     factor_name:str = None

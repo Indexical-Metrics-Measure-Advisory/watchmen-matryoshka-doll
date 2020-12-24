@@ -21,10 +21,10 @@ codec_options = CodecOptions(type_registry=type_registry)
 
 
 def build_collection_name(name):
-    return "raw_"+name
+    return "raw_" + name
 
 
 @event.after
 def save_entity_set(entity_set):
-    domain_collection = db.get_collection(build_collection_name(entity_set.domain),codec_options=codec_options)
+    domain_collection = db.get_collection(build_collection_name(entity_set.domain), codec_options=codec_options)
     return domain_collection.insert_one(entity_set.dict())

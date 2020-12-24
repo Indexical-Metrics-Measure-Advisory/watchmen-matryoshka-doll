@@ -35,7 +35,7 @@ def update_data_schema(id, data):
 
 
 def load_raw_schema_by_code(code):
-    data =  collection.find_one({"code": code})
+    data = collection.find_one({"code": code})
     return pickle_wrapper(data, ModelSchemaSet)
 
 
@@ -43,6 +43,4 @@ def delete_data_schema_by_id(id):
     return collection.delete_one({"_id": id})
 
 
-def batch_import_data(data):
-    collection.insert_many(data)
 

@@ -2,7 +2,7 @@ from watchmen.space.factors.factor import Factor
 
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
 from watchmen.space.factors.topic import Topic
-from watchmen.space.storage.topic_schema_storage import save_topic
+from watchmen.space.topic.storage.topic_schema_storage import save_topic
 
 
 def test_convert_template():

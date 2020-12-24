@@ -5,6 +5,7 @@ class Topic(BaseModel):
     topic_id: int
     name: str
     topic_type: str
+    factors: list
 
     '''
     topic_id: str = None

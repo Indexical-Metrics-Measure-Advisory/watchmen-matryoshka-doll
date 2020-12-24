@@ -55,50 +55,22 @@ def test_build_pipeline():
 
 
 def test_build_aggregate_pipeline():
-
-
-
-
     pass
 
 
 def call_raw_data_collection_api():
-
-
-
     ## call api save raw data
-
     ## trigger pipeline
-
-
-
-
-
-
-
     pass
 
 
 def test_create_report():
-
     ## create a report query
-
-
     pass
 
 
 def test_run_report():
     pass
-
-
-
-
-
-
-
-
-
-
     #load_raw_schema(name)
 
     #find policy schema
@@ -106,6 +78,7 @@ def test_run_report():
     # add topic to space
 
     # save to space
+
 
 
 

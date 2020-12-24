@@ -1,9 +1,7 @@
-from watchmen.space.storage.topic_data_storage import save_topic_instance, get_topic_instances
+from watchmen.space.topic.storage.topic_data_storage import save_topic_instance, get_topic_instances
 
 TOPIC = "topic_name"
 MERGE_KEY = "merge_key"
-import pprint
-
 
 
 def find_key_in_storage(topic_name, merge_key, key_value):
