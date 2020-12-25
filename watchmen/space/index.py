@@ -1,6 +1,6 @@
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import insert_space_to_storage, update_space_to_storage, load_space_by_name
-from watchmen.space.storage.topic_schema_storage import save_topic
+from watchmen.space.topic.storage.topic_schema_storage import save_topic
 
 
 def add_topic_to_master():

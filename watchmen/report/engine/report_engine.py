@@ -1,5 +1,5 @@
 import pandas as pd
-from watchmen.space.storage.topic_data_storage import get_topic_instances
+from watchmen.space.topic.storage.topic_data_storage import get_topic_instances
 
 
 class Topic:

@@ -1,5 +1,7 @@
+
 from watchmen.pipeline.single.constants import TOPIC
-from watchmen.space.storage.topic_data_storage import save_topic_instance, get_topic_instances
+from watchmen.space.topic.storage.topic_data_storage import save_topic_instance, get_topic_instances
+
 
 MERGE_KEY = "merge_key"
 
