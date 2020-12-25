@@ -8,3 +8,5 @@ class Trigger(BaseModel):
 
 class Pipeline(BaseModel):
     trigger: Trigger = None
+
+

@@ -1,5 +1,7 @@
 from pandas import DataFrame
 
+from watchmen.pipeline.single.filter.filter_data import filter_data
+
 
 def run_mapping_rules(mapping_rules, filter_result:DataFrame):
     topics=[]
@@ -15,8 +17,7 @@ def run_mapping_rules(mapping_rules, filter_result:DataFrame):
 def init(**kwargs):
     mapping_rules = kwargs["mapping_rules"]
 
-    def filter_data(data):
-        return data
+
 
     def mapping_to_topic(request):
         ## convert data to

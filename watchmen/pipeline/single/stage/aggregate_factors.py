@@ -1,5 +1,6 @@
 from watchmen.common.mongo.index import check_collection_if_exist
 from watchmen.pipeline.single.constants import TOPIC,TOPIC_TYPE
+from watchmen.pipeline.single.filter.filter_data import filter_data
 
 
 def __generate_sql(request):
@@ -20,8 +21,7 @@ def init(**kwargs):
     topic_name = kwargs[TOPIC]
     topic_type = kwargs[TOPIC_TYPE]
 
-    def filter_data(data):
-        return data
+
 
     def aggregate_factors(request):
         filter_result = filter_data(request)

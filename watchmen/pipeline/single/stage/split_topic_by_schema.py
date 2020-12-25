@@ -10,7 +10,6 @@ def init(**kwargs):
     filter_factor = kwargs[FILTER]
 
     def filter_data(raw_data: DataEntitySet):
-
         for data_entity in raw_data.entities:
             if data_entity.topicCode == filter_factor:
                 return data_entity
