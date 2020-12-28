@@ -11,6 +11,7 @@ from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.space import Space
 from watchmen.service.master_space_service import save_master_space
 from watchmen.space.topic.topic import Topic
+from fastapi import  File, UploadFile
 
 router = APIRouter()
 
@@ -38,8 +39,13 @@ async def create_empty_space(space):
     return save_master_space(master_space)
 
 
-async def import_raw_data():
-    pass
+@router.post("/upload/files/", tags=["admin"])
+async def import_raw_data(file: bytes = File(...)):
+
+    # unzip_file()
+
+
+    return {"file_size": len(file)}
 
 
 async def add_topic_to_space():
@@ -72,7 +78,7 @@ async def save_stage():
     pass
 
 
-@router.post("/mapping/topic", tags=["admin"], )
+@router.post("/mapping/topic", tags=["admin"] )
 async def save_topic_mapping_http(topic_mapping_rule: TopicMappingRule):
     return save_topic_mapping(topic_mapping_rule)
 

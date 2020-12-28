@@ -20,7 +20,8 @@ from watchmen.space.space import Space
 from watchmen.pipeline.pipeline import build_default_pipeline
 from watchmen.pipeline.mapping.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
 # auth
-from watchmen.space.storage.topic_schema_storage import get_topic_list_by_ids
+from watchmen.space.topic.storage.topic_schema_storage import get_topic_list_by_ids
+
 from watchmen.space.topic.topic import Topic
 
 
