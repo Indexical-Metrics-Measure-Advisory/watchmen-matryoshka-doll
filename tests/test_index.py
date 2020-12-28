@@ -16,13 +16,22 @@ from watchmen.pipeline.mapping.mapping_rule_storage import load_topic_mapping_by
 from watchmen.space.storage.space_storage import  load_space_by_name
 from watchmen.space.topic.storage.topic_schema_storage import get_topic_list_by_ids
 
+import logging
+
 
 def test_select_domain():
     master_space  = select_domain("insurance")
     assert master_space is not None
 
 
+def test_import_raw_data_list():
+    pass
+
+
+
+
 def test_import_instance_data():
+    logging.debug("tst start")
     generate_raw_data_schema([raw_data_load('../assert/data/policy.json'),raw_data_load('../assert/data/policy.json')],"policy")
 
 

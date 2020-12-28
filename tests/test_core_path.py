@@ -1,16 +1,75 @@
 from watchmen.connector.local_connector import raw_data_load
+from watchmen.index import generate_raw_data_schema
 from watchmen.pipeline.single.pipeline_service import run_pipeline, build_pipeline
+from watchmen.raw_data.model_schema import Domain
 from watchmen.raw_data.service.import_data import process_raw_data, import_raw_data
 from watchmen.raw_data.storage.row_schema_storage import load_raw_schema_by_code
+from watchmen.service.generate_schema import generate_basic_schema_for_list_data
 from watchmen.space.service.admin import save_space, load_space, add_topic_to_space, update_topic_in_space
 from watchmen.space.space import Space
 from watchmen.common.utils.copy import direct_copy_raw_schema_to_topic
+import logging
+import os
 
 
 def test_create_space():
+    logging.error("tst start")
     space = Space()
     space.name="test_demo"
     save_space(space)
+
+
+def __build_json_list(files_name,path):
+    json_list = []
+    for filename in files_name:
+        full_path = path+"/"+filename
+        if os.path.isfile(full_path):
+            json_list.append(raw_data_load(full_path))
+
+    return json_list
+
+
+def test_import_raw_data_list():
+
+    path = '/Users/yifeng/PycharmProjects/ebaogi-data-collection/collection_data/PGA'
+
+    files_name = os.listdir(path)
+
+    json_list = __build_json_list(files_name,path)
+    print (len(json_list))
+
+    # generate_raw_data_schema(json_list,"4.5-sit-policy")
+
+    generate_basic_schema_for_list_data("4.5-sit-policy",json_list,Domain.INSURANCE)
+
+
+
+
+
+
+
+
+
+    ## read raw_data
+    ## call api
+    ## save raw topic
+    ## run suggestion api
+
+
+
+    pass
+
+
+def export_http_api_for_raw_data():
+    pass
+
+
+
+
+
+def test_create_target_topic():
+    pass
+
 
 
 def test_add_topic_to_space():
@@ -56,9 +115,21 @@ def test_build_aggregate_pipeline():
     pass
 
 
+
+### user
+
+
 def call_raw_data_collection_api():
     ## call api save raw data
     ## trigger pipeline
+    pass
+
+
+def test_create_subject():
+    pass
+
+
+def test_create_dataset():
     pass
 
 

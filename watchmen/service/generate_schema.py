@@ -28,8 +28,9 @@ def __build_model_fields(key: str, value):
     if type(value) == str:
         model_field.name = key
         model_field.type = FieldType.STR
-
-    model_field.value.append(convert_value(value))
+    str_value = convert_value(value)
+    if str_value not in model_field.value:
+        model_field.value.append(str_value)
     return model_field
 
 
@@ -89,13 +90,14 @@ def __build_sub_model_schema(model_schema_set, relationship_key):
 
 
 def process_attrs(data, model_schema, model_schema_set):
-    print("-------------",model_schema.name)
+    # print("-------------",model_schema.name)
     # TODO identify ID attr
     for key, value in data.items():
         if is_field_value(value):
-
             if key in model_schema.businessFields:
-                model_schema.businessFields[key].value.append(convert_value(value))
+                str_value = convert_value(value)
+                if str_value not in model_schema.businessFields[key].value:
+                    model_schema.businessFields[key].value.append(str_value)
             else:
                 model_field = __build_model_fields(key, value)
                 model_schema.businessFields[key] = model_field
@@ -119,11 +121,11 @@ def process_attrs(data, model_schema, model_schema_set):
                 sub_model_schema = __generate_sub_model(key, value, sub_model_schema, model_schema_set)
 
             model_schema_set.schemas[sub_model_schema.name] = sub_model_schema
-            print(relationship.childId)
-            print(sub_model_schema.modelId)
-            print(sub_model_schema.name)
+            # print(relationship.childId)
+            # print(sub_model_schema.modelId)
+            # print(sub_model_schema.name)
             model_schema_set.relationships[relationship_key] = relationship
-    print("------------------")
+
 
 def __create_links():
     pass
@@ -137,7 +139,7 @@ def generate_basic_schema_for_list_data(key: str, data_list: [], domain: Domain)
         process_attrs(data, model_schema, model_schema_set)
 
     model_schema_set.schemas[model_schema.name] = model_schema
-    # print(model_schema_set.json())
+    print(model_schema_set.json())
     return model_schema_set
 
 
