@@ -1,7 +1,7 @@
 import json
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.space.factor.factor import Factor
+from watchmen.topic.factor.factor import Factor
 from watchmen.raw_data import Mapping, MappingDetail
 from watchmen.topic.topic import Topic
 

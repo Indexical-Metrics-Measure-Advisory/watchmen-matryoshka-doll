@@ -30,10 +30,8 @@ def __build_json_list(files_name,path):
 
 def test_import_raw_data_list():
     path = '/Users/yifeng/PycharmProjects/ebaogi-data-collection/collection_data/PGA'
-
     files_name = os.listdir(path)
     json_list = __build_json_list(files_name,path)
-
     model_schema_set = generate_basic_schema_for_list_data("4.5-sit-policy",json_list,Domain.INSURANCE)
     assert model_schema_set is not None
 

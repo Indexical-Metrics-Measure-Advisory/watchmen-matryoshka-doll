@@ -6,7 +6,7 @@ class Topic(BaseModel):
     name: str=None
     topic_type: str=None
     factors: list =[]
-    alias: List[str] = None
+    # alias: List[str] = None
     is_aggregate: bool = False
     businessKey: list = []
 

@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 from watchmen.topic.storage import get_topic_instances
 from watchmen.topic.topic import Topic
-from watchmen.space.factor.factor import Factor
+from watchmen.topic.factor.factor import Factor
 from watchmen.space.subject.filter import Filter
 from watchmen.space.subject.join import Join
 from watchmen.space.subject.subject import Subject

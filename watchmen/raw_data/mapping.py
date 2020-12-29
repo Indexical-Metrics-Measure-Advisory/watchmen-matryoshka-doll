@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from watchmen.space.factor.factor import Factor
+from watchmen.topic.factor.factor import Factor
 from watchmen.raw_data.data_entity import Attribute
 
 

@@ -3,7 +3,7 @@ import json
 from bson import ObjectId as BsonObjectId
 import decamelize
 
-from watchmen.common.event import Event
+from watchmen.common.event.event import Event
 from watchmen.raw_data_back.entity.data_entity import DataEntity
 from watchmen.raw_data_back.entity.data_entity_set import DataEntitySet
 from watchmen.raw_data_back.entity.data_relationship import DataRelationship

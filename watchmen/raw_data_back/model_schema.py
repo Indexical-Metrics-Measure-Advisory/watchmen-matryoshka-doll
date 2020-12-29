@@ -3,7 +3,7 @@ from typing import Optional, Dict
 
 from pydantic import BaseModel
 
-from watchmen.common.event import Event
+from watchmen.common.event.event import Event
 from watchmen.raw_data_back.context import Context
 from watchmen.raw_data_back.model_field import ModelField
 from watchmen.raw_data_back.model_relationship import ModelRelationship

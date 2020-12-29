@@ -13,7 +13,7 @@ from watchmen.raw_data_back.model_schema import ModelSchema
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
 
 
-from watchmen.space.factor.factor import Factor
+from watchmen.topic.factor.factor import Factor
 from watchmen.space.index import create_space_by_domain_template, add_topic_list_to_master, get_summary_for_master_space, \
     add_topic_to_master_space, load_master_space
 from watchmen.space.space import Space

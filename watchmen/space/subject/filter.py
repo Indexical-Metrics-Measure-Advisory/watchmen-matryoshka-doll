@@ -1,6 +1,5 @@
 
 from pydantic import BaseModel
-from watchmen.space.factor.factor import Factor
 
 
 class Filter(BaseModel):
