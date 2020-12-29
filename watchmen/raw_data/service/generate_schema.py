@@ -10,10 +10,6 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.raw_data.data_entity import DataEntity, Attribute
 from watchmen.raw_data import crate_topic_by_raw_data_schema
 
-os.chdir('D:/')
-
-
-
 
 def generate_schema(schema_name, data: json):
     tree = Tree()
