@@ -3,13 +3,13 @@ import json
 from bson import ObjectId as BsonObjectId
 import decamelize
 
-from watchmen.event.event import Event
-from watchmen.raw_data.entity.data_entity import DataEntity
-from watchmen.raw_data.entity.data_entity_set import DataEntitySet
-from watchmen.raw_data.entity.data_relationship import DataRelationship
-from watchmen.raw_data.model_schema import ModelSchema
-from watchmen.raw_data.model_schema_set import ModelSchemaSet
-from watchmen.raw_data.storage.row_data_storage import save_entity_set
+from watchmen.common.event import Event
+from watchmen.raw_data_back.entity.data_entity import DataEntity
+from watchmen.raw_data_back.entity.data_entity_set import DataEntitySet
+from watchmen.raw_data_back.entity.data_relationship import DataRelationship
+from watchmen.raw_data_back.model_schema import ModelSchema
+from watchmen.raw_data_back.model_schema_set import ModelSchemaSet
+from watchmen.raw_data_back.storage.row_data_storage import save_entity_set
 
 from watchmen.common.utils.data_utils import get_dict_schema_set, get_dict_relationship, is_field_value
 
@@ -106,15 +106,15 @@ def import_raw_data(data: json, schema_set: ModelSchemaSet, event: Event):
     entity_set.entities.append(entity)
     return entity_set
 
-    # find sub raw_data in relationship raw_data
+    # find sub raw_data_back in relationship raw_data_back
     # process attr
-    # generate ID   for sub raw_data`s relationship
+    # generate ID   for sub raw_data_back`s relationship
 
 
 def batch_import_data():
-    # find raw_data
+    # find raw_data_back
 
-    # extract data topic base on raw_data
+    # extract data topic base on raw_data_back
 
     # TODO[future] use dark for parallel run
     pass

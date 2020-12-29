@@ -9,7 +9,7 @@ from watchmen.auth.user import User
 from watchmen.pipeline.mapping.suggestion.generate_suggestion import generate_topic_suggestion, \
     generate_factor_suggestion
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.raw_data.model_schema import ModelSchema
+from watchmen.raw_data_back.model_schema import ModelSchema
 from watchmen.knowledge.knowledge_loader import find_template_by_domain
 
 
@@ -20,9 +20,9 @@ from watchmen.space.space import Space
 from watchmen.pipeline.pipeline import build_default_pipeline
 from watchmen.pipeline.mapping.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
 # auth
-from watchmen.space.topic.storage.topic_schema_storage import get_topic_list_by_ids
+from watchmen.topic.storage import get_topic_list_by_ids
 
-from watchmen.space.topic.topic import Topic
+from watchmen.topic.topic import Topic
 
 
 class SpaceOut(BaseModel):
@@ -75,6 +75,14 @@ def generate_raw_data_schema(json_files, name):
 
 
 # CRUD for pipeline
+
+
+
+
+
+
+
+
 
 
 def generate_suggestion_topic_service(lake_schema, master_schema):

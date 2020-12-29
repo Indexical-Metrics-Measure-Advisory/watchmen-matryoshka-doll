@@ -1,7 +1,7 @@
 import pandas
 
 from watchmen.pipeline.stage_constants import SPILT_FACTOR, SPILT_FACTOR_VALUE, DATA, FILTER
-from watchmen.raw_data.entity.data_entity_set import DataEntitySet
+from watchmen.raw_data_back.entity.data_entity_set import DataEntitySet
 
 
 def init(**kwargs):

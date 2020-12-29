@@ -1,11 +1,9 @@
 import json
 
-from bson import ObjectId as BsonObjectId
-
-from watchmen.snowflake.snowflake import get_surrogate_key
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.space.factor.factor import Factor
-from watchmen.space.raw_data.mapping import Mapping, MappingDetail
-from watchmen.space.topic.topic import Topic
+from watchmen.raw_data import Mapping, MappingDetail
+from watchmen.topic.topic import Topic
 
 
 def create_raw_data_schema(domain_code, data: json):
@@ -15,9 +13,9 @@ def create_raw_data_schema(domain_code, data: json):
 def import_raw_data(domain_code, data: json, is_create_schema):
     pass
     # TODO[next] one to one default merge to main topic
-    # find sub raw_data in relationship raw_data
+    # find sub raw_data_back in relationship raw_data_back
     # process attr
-    # generate ID   for sub raw_data`s relationship
+    # generate ID   for sub raw_data_back`s relationship
 
 
 def mapping_raw_data(raw_data, mapping_list):
@@ -69,7 +67,7 @@ def crate_topic_by_raw_data_schema(schema, topic_list, mapping_list):
 def batch_import_data(domain_code, data):
     # find schema
 
-    # extract data topic base on raw_data
+    # extract data topic base on raw_data_back
 
     # TODO[future] use dark for parallel run
     pass

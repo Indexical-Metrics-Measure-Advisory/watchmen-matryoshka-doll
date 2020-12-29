@@ -1,8 +1,6 @@
 from enum import Enum
-from watchmen.space.topic.topic import Topic
 
 from pydantic import BaseModel
-import uuid
 
 
 class FactorType(str, Enum):

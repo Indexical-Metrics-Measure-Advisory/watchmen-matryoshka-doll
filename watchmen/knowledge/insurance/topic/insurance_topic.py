@@ -33,8 +33,6 @@
 from pydantic import BaseModel
 from pydantic.schema import datetime
 
-from watchmen.event.event import Event
-
 
 class InsuranceTopics(BaseModel):
     id: str = None

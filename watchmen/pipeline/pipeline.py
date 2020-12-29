@@ -1,9 +1,9 @@
 from watchmen.pipeline.stage.generate_schema import GenerateLakeSchema
 from watchmen.pipeline.stage.save_lake_schema_to_mongo import SaveSchemaToMongo
 from watchmen.pipeline.stage.save_to_mongo import SaveToMongo
-from watchmen.raw_data.storage.row_schema_storage import insert_data_schema, update_data_schema
-from watchmen.service.generate_schema import generate_basic_schema
-from watchmen.raw_data.service.import_data import import_raw_data
+from watchmen.raw_data_back.storage.row_schema_storage import insert_data_schema, update_data_schema
+from watchmen.raw_data_back.service.generate_schema import generate_basic_schema
+from watchmen.raw_data_back.service.import_data import import_raw_data
 
 
 def basic_schema(json,domain=None):
@@ -32,7 +32,7 @@ def process_factor_results():
     pass
 
 
-    # generate import raw_data
+    # generate import raw_data_back
     # generate data statistics
     # return data basic explore
 

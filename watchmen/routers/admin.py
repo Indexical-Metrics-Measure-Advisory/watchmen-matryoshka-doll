@@ -4,14 +4,14 @@ from pydantic import BaseModel
 from watchmen.index import select_domain, generate_suggestion_topic_service, generate_suggestion_factor, \
     save_topic_mapping, load_topic_mapping, SpaceOut, load_space_topic_list
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.raw_data.model_schema import ModelSchema
+from watchmen.raw_data_back.model_schema import ModelSchema
 
-from watchmen.raw_data.model_schema_set import ModelSchemaSet
+from watchmen.raw_data_back.model_schema_set import ModelSchemaSet
 
 from watchmen.space.space import Space
-from watchmen.service.master_space_service import save_master_space
-from watchmen.space.topic.topic import Topic
-from fastapi import  File, UploadFile
+from watchmen.raw_data_back.service.master_space_service import save_master_space
+from watchmen.topic.topic import Topic
+from fastapi import  File
 
 router = APIRouter()
 

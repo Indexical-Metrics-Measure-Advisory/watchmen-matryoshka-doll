@@ -1,15 +1,15 @@
 # 1. select basic domain for example insurance product ,marketing
 # 2. read json from connector
-# 3. generate basic raw_data base on json data
-# 4. match raw_data with domain  knowledge dataset and provide suggestions
-# 5. link knowledge domain to raw_data
+# 3. generate basic raw_data_back base on json data
+# 4. match raw_data_back with domain  knowledge dataset and provide suggestions
+# 5. link knowledge domain to raw_data_back
 
 
 from watchmen.connector.local_connector import raw_data_load
 
 from watchmen.pipeline.stage.generate_schema import GenerateLakeSchema
-from watchmen.raw_data.model_schema import Domain
-from watchmen.service.generate_schema import generate_basic_schema
+from watchmen.raw_data_back.model_schema import Domain
+from watchmen.raw_data_back.service.generate_schema import generate_basic_schema
 
 
 def test_generate_schema():
@@ -24,7 +24,7 @@ def test_generate_schema_for_list_data():
 
 # def test_generate_schema_for_list_data():
 
-# TODO[next] batch import data and get raw_data
+# TODO[next] batch import data and get raw_data_back
 
 # rule = "if the customer’s gender is male, the age is over 60,
 # and the main clause limit exceeds 100W,

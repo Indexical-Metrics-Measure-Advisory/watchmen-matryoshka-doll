@@ -1,5 +1,5 @@
-from watchmen.space.topic.storage.topic_data_storage import save_topic_instances
-from watchmen.space.topic.topic import Topic
+from watchmen.topic.storage import save_topic_instances
+from watchmen.topic.topic import Topic
 from watchmen.space.factor.factor import Factor
 from watchmen.space.subject.join import Join
 from watchmen.space.subject.filter import Filter

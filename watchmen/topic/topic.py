@@ -2,10 +2,13 @@ from pydantic import BaseModel
 
 
 class Topic(BaseModel):
-    topic_id: int
-    name: str
-    topic_type: str
-    factors: list
+    topic_id: int=None
+    name: str=None
+    topic_type: str=None
+    factors: list =[]
+    alias: List[str] = None
+    is_aggregate: bool = False
+    businessKey: list = []
 
     '''
     topic_id: str = None

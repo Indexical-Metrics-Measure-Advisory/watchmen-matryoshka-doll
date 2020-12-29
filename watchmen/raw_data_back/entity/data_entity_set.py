@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from watchmen.event.event import Event
+from watchmen.common.event import Event
 
 
 class DataEntitySet(BaseModel):

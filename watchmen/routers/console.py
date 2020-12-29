@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from watchmen.auth.index import get_current_user
 from watchmen.common.pagination import Pagination
+from watchmen.common.event import Event
 from watchmen.space.storage.space_storage import load_space_list_by_user_id_with_pagination
 
 router = APIRouter()
@@ -18,6 +19,22 @@ async def load_space_list_by_user(pagination: Pagination):
     current_user = get_current_user()
     user_id = current_user.user_id
     return load_space_list_by_user_id_with_pagination(user_id, pagination)
+
+
+@router.post("/collection/data", tags=["console"])
+async def collection_raw_data(raw_data ,event:Event):
+    ## find org
+    ## find data_source
+    ## save raw data
+    ## trigger event
+
+
+    # TODO
+
+
+
+
+    pass
 
 
 async def load_space_by_id(id: str):
@@ -84,8 +101,10 @@ async def share_dashboard_url(to: str):
     pass
 
 
-async def collection_raw_data():
-    pass
+
+
+
+
 
 
 

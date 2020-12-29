@@ -3,10 +3,10 @@ from typing import Optional, Dict
 
 from pydantic import BaseModel
 
-from watchmen.event.event import Event
-from watchmen.raw_data.context import Context
-from watchmen.raw_data.model_field import ModelField
-from watchmen.raw_data.model_relationship import ModelRelationship
+from watchmen.common.event import Event
+from watchmen.raw_data_back.context import Context
+from watchmen.raw_data_back.model_field import ModelField
+from watchmen.raw_data_back.model_relationship import ModelRelationship
 
 
 class FieldType(str, Enum):

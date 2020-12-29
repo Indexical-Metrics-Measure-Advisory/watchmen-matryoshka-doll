@@ -1,7 +1,7 @@
 
 from watchmen.pipeline.stage.stage import PipelineStage
-from watchmen.raw_data.model_schema import Domain
-from watchmen.service.generate_schema import generate_basic_schema, generate_basic_schema_for_list_data
+from watchmen.raw_data_back.model_schema import Domain
+from watchmen.raw_data_back.service.generate_schema import generate_basic_schema_for_list_data
 
 
 class GenerateLakeSchema(PipelineStage):

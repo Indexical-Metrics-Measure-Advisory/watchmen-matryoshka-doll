@@ -1,11 +1,11 @@
 import json
 
-from watchmen.raw_data.rule_context import RuleContext
-from watchmen.raw_data.rule_schema import RuleType
-from watchmen.service.import_rule import import_single_rule
+from watchmen.raw_data_back.rule_context import RuleContext
+from watchmen.raw_data_back.rule_schema import RuleType
+from watchmen.common.rule.import_rule import import_single_rule
 
 
-# TODO[next] add raw_data in parameter
+# TODO[next] add raw_data_back in parameter
 
 
 def test_import_rule():

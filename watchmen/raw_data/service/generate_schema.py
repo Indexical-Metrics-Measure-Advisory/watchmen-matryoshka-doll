@@ -6,11 +6,13 @@ import os
 
 from pydantic import BaseModel
 
-from watchmen.snowflake.snowflake import get_surrogate_key
-from watchmen.space.raw_data.data_entity import DataEntity, Attribute
-from watchmen.space.raw_data.service.import_raw_data import crate_topic_by_raw_data_schema
+from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.raw_data.data_entity import DataEntity, Attribute
+from watchmen.raw_data import crate_topic_by_raw_data_schema
 
 os.chdir('D:/')
+
+
 
 
 def generate_schema(schema_name, data: json):
