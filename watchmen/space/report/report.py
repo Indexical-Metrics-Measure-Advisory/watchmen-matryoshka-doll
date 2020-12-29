@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from watchmen.topic.storage import get_topic_instances
+from watchmen.topic.storage.topic_data_storage import get_topic_instances
 from watchmen.topic.topic import Topic
 from watchmen.topic.factor.factor import Factor
 from watchmen.space.subject.filter import Filter
@@ -9,7 +9,7 @@ from watchmen.space.subject.subject import Subject
 import pandas as pd
 
 
-def merge_dataset(topics: [Topic], dataframes: dict, joins: [Join]) -> object:
+def merge_dataset(topics: [Topic], data_frames: dict, joins: [Join]) -> object:
     # create graph for joins
     join_graph = {}
     for topic in topics:
@@ -25,36 +25,36 @@ def merge_dataset(topics: [Topic], dataframes: dict, joins: [Join]) -> object:
     dfs_searched = set()
     merged_dataset = None
 
-    def graph_traversal_by_dfs(graph: dict, start: str, datasets: dict):
+    def graph_traversal_by_dfs(graph: dict, start: str, dataset: dict):
         nonlocal merged_dataset
         if start not in dfs_searched:
             if merged_dataset is None:
-                merged_dataset = datasets[start]
+                merged_dataset = dataset[start]
             else:
-                merged_dataset = merged_dataset.merge(datasets[start], on='@pk')
+                merged_dataset = merged_dataset.merge(dataset[start], on='@pk')
             dfs_searched.add(start)
         for node in graph[start]:
             if node not in dfs_searched:
-                graph_traversal_by_dfs(graph, node, datasets)
+                graph_traversal_by_dfs(graph, node, dataset)
 
-    graph_traversal_by_dfs(join_graph, topics[0].name, dataframes)
+    graph_traversal_by_dfs(join_graph, topics[0].name, data_frames)
     print(merged_dataset)
     del merged_dataset['_id_x']
     return merged_dataset
 
 
 def get_report_dataset(topics: [Topic], factors: [Factor], joins: [Join], filters: [Filter]):
-    topic_datasets = {}
+    topic_dataset = {}
     for topic in topics:
         docs = get_topic_instances(topic.name)
-        topic_datasets[topic.name] = pd.DataFrame(list(docs)).set_index('@pk')
-    data_master = merge_dataset(topics, topic_datasets, joins)
+        topic_dataset[topic.name] = pd.DataFrame(list(docs)).set_index('@pk')
+    data_master = merge_dataset(topics, topic_dataset, joins)
     query_str = ''
-    for filter in filters:
+    for filter_condition in filters:
         if query_str == '':
-            query_str = filter.key + '== ' + '\'' + filter.value + '\''
+            query_str = filter_condition.key + '== ' + '\'' + filter_condition.value + '\''
         else:
-            query_str = query_str + '&' + filter.key + '== ' + '\'' + filter.value + '\''
+            query_str = query_str + '&' + filter_condition.key + '== ' + '\'' + filter_condition.value + '\''
     filter_data = data_master.query(query_str)
     columns = []
     for factor in factors:
