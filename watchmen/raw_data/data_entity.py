@@ -11,4 +11,5 @@ class DataEntity(BaseModel):
 class Attribute(BaseModel):
     name: str
     type: int
+    values:list=[]
 
