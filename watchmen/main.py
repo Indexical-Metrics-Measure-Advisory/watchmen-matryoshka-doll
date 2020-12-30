@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 
 from watchmen.routers import admin,console,common
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
