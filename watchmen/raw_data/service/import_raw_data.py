@@ -23,6 +23,7 @@ def mapping_raw_data(raw_data, mapping_list):
     pass
 
 
+## TODO remove
 def crate_topic_by_raw_data_schema(schema, topic_list, mapping_list):
     factor_list = []
     node: schema
