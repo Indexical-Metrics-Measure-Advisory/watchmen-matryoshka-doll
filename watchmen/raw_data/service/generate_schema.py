@@ -92,7 +92,7 @@ def create_raw_data_model_set(code, data):
             relationships[key]= relationship
         return model_filed
 
-    model_schema_set: ModelSchemaSet= ModelSchemaSet()
+    model_schema_set: ModelSchemaSet = ModelSchemaSet()
     model_schema_set.code = code
     schema_set: Dict[str, ModelSchema] = {}
     relationships: Dict[str, ModelRelationship] = {}
