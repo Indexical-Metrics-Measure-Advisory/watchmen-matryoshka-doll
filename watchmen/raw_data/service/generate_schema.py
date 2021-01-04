@@ -7,7 +7,7 @@ from watchmen.raw_data.model_field import ModelField
 from watchmen.raw_data.model_relationship import ModelRelationship
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
-from watchmen.raw_data.storage.row_data_schema_storage import load_raw_schema_by_code
+from watchmen.raw_data.storage.row_data_schema_storage import load_raw_schema_by_code, insert_data_schema
 
 
 def convert_value(value):
@@ -93,6 +93,9 @@ def create_raw_data_model_set(code, data):
     schema_set: Dict[str, ModelSchema] = {}
     relationships: Dict[str, ModelRelationship] = {}
     create_schema(code, data, True)
+    model_schema_set.schemas = schema_set
+    model_schema_set.relationships = relationships
+    insert_data_schema(model_schema_set)
 
 
 def get_model_schema_by_name(name):
