@@ -4,7 +4,8 @@ from bson import ObjectId
 from fastapi import HTTPException
 from pydantic import BaseModel
 
-from watchmen.auth.index import get_current_user, check_promise
+# TODO replace mock service for user
+from watchmen.auth.service.user import get_current_user, check_promise
 from watchmen.auth.user import User
 from watchmen.pipeline.mapping.suggestion.generate_suggestion import generate_topic_suggestion, \
     generate_factor_suggestion

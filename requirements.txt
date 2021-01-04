@@ -1,4 +1,6 @@
+passlib
 pypika
+python-jose
 dask
 pandas
 aiofiles==0.5.0
