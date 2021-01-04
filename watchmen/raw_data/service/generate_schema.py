@@ -74,6 +74,10 @@ def create_raw_data_model_set(code, data):
                 model_schema.businessFields[model_field.name] = model_field
         schema_set[model_schema.name] = model_schema
 
+    def get_model_schema_by_name(name):
+        model_schema_set: ModelSchemaSet = load_raw_schema_by_code(code)
+        return model_schema_set.schemas[name]
+
     def create_model_field(key, value):
         model_filed = ModelField(**{
             'field_id': get_surrogate_key(),
@@ -96,11 +100,6 @@ def create_raw_data_model_set(code, data):
     model_schema_set.schemas = schema_set
     model_schema_set.relationships = relationships
     insert_data_schema(model_schema_set)
-
-
-def get_model_schema_by_name(name):
-    model_schema_set: ModelSchemaSet= load_raw_schema_by_code()
-    return model_schema_set.schemas[name]
 
 
 def check_model_field_in_schema(name, model_schema: ModelSchema):
