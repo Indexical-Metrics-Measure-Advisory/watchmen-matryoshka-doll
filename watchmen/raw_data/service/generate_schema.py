@@ -1,35 +1,13 @@
 import datetime
-import json
-import typing
 from enum import Enum
-
+from typing import Optional, Dict
 from bson import ObjectId
-from pydantic import BaseModel
-
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-
-from watchmen.raw_data.data_entity import DataEntity, Attribute
-from watchmen.raw_data.service.import_raw_data import crate_topic_by_raw_data_schema
-
-
-NODE = "NODE_"
-ATTR = "ATTR_"
-
-
-def generate_schema(schema_name, data: json):
-    # tree = Tree()
-    return create_tree(0, schema_name, data,{})
-
-
-def generate_schema_for_list_data(schema_name: str, data_list: []):
-
-    context = {}
-    node ={}
-    for data in data_list:
-         node= create_tree(0, schema_name, data, context)
-
-    return node
-
+from watchmen.raw_data.model_field import ModelField
+from watchmen.raw_data.model_relationship import ModelRelationship
+from watchmen.raw_data.model_schema import ModelSchema
+from watchmen.raw_data.model_schema_set import ModelSchemaSet
+from watchmen.raw_data.storage.row_data_schema_storage import load_raw_schema_by_code
 
 
 def convert_value(value):
@@ -65,65 +43,75 @@ class ValueType(Enum):
     ANY = 8
 
 
-class Node(BaseModel):
-    id: int
-    pid: int
-    name: str
-    data_entity: DataEntity = {}
-    child_list: typing.List = []
+def create_raw_data_model_set(code, data):
 
+    def create_schema(name, data, is_root):
+        if is_root is None:
+            is_root = False
 
-def get_exist_or_create_node(pid,name,context:dict):
-    key = build_data_node_key(name)
-    if key in context.keys():
-        return context[key]
-    else:
-        node = Node(**{'id': get_surrogate_key(), 'pid': pid, 'name': name, 'data_entity': {}, 'childs': []})
-        data_entity = DataEntity()
-        data_entity.entity_id = get_surrogate_key()
-        data_entity.name = name
-        node.data_entity = data_entity
-        context[key] = node
-        return node
+        if type(data) == list:
+            for item in data:
+                create_model_schema(name, item, is_root)
+        else:
+            create_model_schema(name, data, is_root)
 
+    def create_model_schema(name, record, is_root):
+        model_schema = get_model_schema_by_name(name)
+        if model_schema is not None:
+            for key, value in record.items():
+                if check_model_field_in_schema(key, model_schema):
+                    model_schema.businessFields[key].values.append(value)
+                else:
+                    model_field = create_model_field(key, value);
+                    model_schema.businessFields[model_field.name] = model_field
+        else:
+            model_schema = ModelSchema()
+            model_schema.model_id = get_surrogate_key()
+            model_schema.name = name
+            model_schema.isRoot=is_root
+            for key, value in record.items():
+                model_field = create_model_field(key, value)
+                model_schema.businessFields[model_field.name] = model_field
+        schema_set[model_schema.name] = model_schema
 
-def get_exist_or_create_attr(name, value, context):
-    key = build_data_attr_key(name)
-    if key in context.keys():
-        attr = context[key]
-        if value not in attr.values():
-            attr.values().append(convert_value(value))
-    else:
-        attr = Attribute(**{
-            'name': name,
-            'type': check_value_type(value).value
-
+    def create_model_field(key, value):
+        model_filed = ModelField(**{
+            'field_id': get_surrogate_key(),
+            'name': key,
+            'type': check_value_type(value).value,
+            'values': [value]
         })
+        if model_filed.type == ValueType.LIST.value or model_filed.type == ValueType.DICT.value:
+            relationship = ModelRelationship()
+            create_schema(key, value)
+            relationship.childId=schema_set[key].model_id
+            relationships[key]= relationship
+        return model_filed
 
-        attr.values.append(convert_value(value))
-        return attr
+    model_schema_set: ModelSchemaSet= ModelSchemaSet()
+    model_schema_set.code = code
+    schema_set: Dict[str, ModelSchema] = {}
+    relationships: Dict[str, ModelRelationship] = {}
+    create_schema(code, data, True)
 
 
-def build_data_attr_key(name):
-    return ATTR + name
+def get_model_schema_by_name(name):
+    model_schema_set: ModelSchemaSet= load_raw_schema_by_code()
+    return model_schema_set.schemas[name]
 
 
-def build_data_node_key(name):
-    return NODE+name
-
-
-def create_tree( pid, name, data,context: dict):
-    if type(data) == list:
-        return create_tree(pid, name, data[0],context)
+def check_model_field_in_schema(name, model_schema: ModelSchema):
+    if model_schema.businessFields[name] is not None:
+        return True
     else:
-        node = get_exist_or_create_node(pid,name,context)
-        for key, value in data.items():
-            attr = get_exist_or_create_attr(key,value,context)
+        return False
 
-            if attr.type == ValueType.LIST.value or attr.type == ValueType.DICT.value:
-                node.child_list.append(create_tree(pid + 1, attr.name, value, context))
-            node.data_entity.attrs.append(attr)
-        return node
+#class Node(BaseModel):
+#    id: int
+#    pid: int
+#    name: str
+#    data_entity: DataEntity = {}
+#    child_list: typing.List = []
 
 
 # class Tree(BaseModel):

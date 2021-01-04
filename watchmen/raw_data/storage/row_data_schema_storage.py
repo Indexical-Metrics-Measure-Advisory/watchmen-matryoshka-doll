@@ -1,29 +1,9 @@
-from bson.codec_options import CodecOptions
-from bson.codec_options import TypeEncoder
-from bson.codec_options import TypeRegistry
+from watchmen.common.storage.engine.storage_engine import get_client
+from watchmen.common.utils.data_utils import WATCHMEN
 
-from watchmen.raw_data_back.model_schema_set import ModelSchemaSet
-from watchmen.storage.engine.storage_engine import get_client
-from watchmen.utils.data_utils import RelationshipType, WATCHMEN
-# client = MongoClient('localhost', 27017)
-# db = client['watchmen']
-from watchmen.utils.pickle_wrapper import pickle_wrapper
 
 db = get_client(WATCHMEN)
-
-
-class EnumCodec(TypeEncoder):
-    python_type = RelationshipType
-
-    def transform_python(self, value):
-        # print(value.value)ßß
-        return value.value
-
-
-codec = EnumCodec()
-type_registry = TypeRegistry([codec])
-codec_options = CodecOptions(type_registry=type_registry)
-collection = db.get_collection('raw_schema', codec_options=codec_options)
+collection = db.get_collection('raw_schema')
 
 
 def insert_data_schema(data):
@@ -35,8 +15,7 @@ def update_data_schema(id, data):
 
 
 def load_raw_schema_by_code(code):
-    data = collection.find_one({"code": code})
-    return pickle_wrapper(data, ModelSchemaSet)
+    return collection.find_one({"code": code})
 
 
 def delete_data_schema_by_id(id):
