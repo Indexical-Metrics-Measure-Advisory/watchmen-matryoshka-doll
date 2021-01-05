@@ -1,3 +1,4 @@
+from bson import regex
 
 from watchmen.common.storage.engine.storage_engine import get_client
 
@@ -33,4 +34,4 @@ def topic_dict_to_object(topic_schema_dict):
 
 
 def get_topic_list_like_topic_name(query_name:str):
-    return topic_col.find({"topic_name": {"$regex": "/"+query_name+"/"}})
+    return topic_col.find({"name": regex.Regex(query_name)})

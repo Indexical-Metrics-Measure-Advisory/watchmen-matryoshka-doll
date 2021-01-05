@@ -2,9 +2,9 @@ from pydantic import BaseModel
 
 
 class Topic(BaseModel):
-    topic_id: int=None
+    topicId: int=None
     name: str=None
-    topic_type: str=None
+    type: str=None
     factors: list =[]
     # alias: List[str] = None
     is_aggregate: bool = False

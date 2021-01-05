@@ -41,7 +41,7 @@ def crate_topic_by_raw_data_schema(schema, topic_list, mapping_list):
         'mapping_id': get_surrogate_key(),
         'source_entity_id': entity.entity_id,
         'source_entity_name': entity.name,
-        'target_topic_id': topic.topic_id,
+        'target_topic_id': topic.topicId,
         'target_topic_name': entity.name,
         'mapping_detail_list': []
     })

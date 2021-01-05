@@ -1,15 +1,22 @@
+from watchmen.common.log import log
 from watchmen.connector.local_connector import raw_data_load
 from watchmen.pipeline.single.pipeline_service import run_pipeline, build_pipeline
-from watchmen.raw_data.service.generate_schema import generate_schema_for_list_data
 from watchmen.raw_data_back.model_schema import Domain
 from watchmen.raw_data_back.service.import_data import process_raw_data, import_raw_data
 from watchmen.raw_data_back.storage.row_schema_storage import load_raw_schema_by_code
 from watchmen.raw_data_back.service.generate_schema import generate_basic_schema_for_list_data
+from watchmen.routers.admin import create_topic
 from watchmen.space.service.admin import save_space, load_space, add_topic_to_space, update_topic_in_space
 from watchmen.space.space import Space
 from watchmen.common.utils.copy import direct_copy_raw_schema_to_topic
 import logging
 import os
+
+from watchmen.topic.service.topic_service import create_topic_schema, query_topic_schema
+from watchmen.topic.storage.topic_schema_storage import get_topic_list_like_topic_name
+from watchmen.topic.topic import Topic
+
+
 
 
 def test_create_space():
@@ -33,10 +40,10 @@ def test_import_raw_data_list():
     path = '/Users/yifeng/PycharmProjects/ebaogi-data-collection/collection_data/PGA'
     files_name = os.listdir(path)
     json_list = __build_json_list(files_name,path)
-    node = generate_schema_for_list_data("4.5-sit-policy",json_list)
-    print(node)
-
-    assert node is not None
+    # node = generate_schema_for_list_data("4.5-sit-policy",json_list)
+    # print(node)
+    #
+    # assert node is not None
 
 
 def export_http_api_for_raw_data():
@@ -130,6 +137,38 @@ def test_run_report():
     # save to space
 
 
+def test_create_topic():
+    log.init()
+    topic = {
+        "topicId": '1', "code": 'quotation', "name": 'Quota', "type": "distinct",
+        "raw": False,
+
+        "factors": [
+            {
+                "factorId": '101',
+                "name": 'quotationId',
+                "label": 'Quotation Sequence',
+                "type": "sequence"
+            },
+
+            {
+                "factorId": '103',
+                "name": 'quoteDate',
+                "label": 'Quotation Create Date',
+                "type": "datetime"
+            }
+        ]
+    }
+
+    topic = Topic.parse_obj(topic)
+    result = create_topic_schema(topic)
+
+    assert result["_id"] is not None
+    # return result
 
 
+def test_query_topic_list():
+    query_name = "Quota"
+    data_list = query_topic_schema(query_name)
+    print(data_list)
 

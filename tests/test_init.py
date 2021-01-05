@@ -18,11 +18,11 @@ def test_init():
     logging.getLogger().addHandler(console)
 
     # Add file rotating handler, with level DEBUG
-    rotatingHandler = logging.handlers.RotatingFileHandler(filename='rotating.log', maxBytes=1000, backupCount=5)
-    rotatingHandler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    rotatingHandler.setFormatter(formatter)
-    logging.getLogger().addHandler(rotatingHandler)
+    # rotatingHandler = logging.handlers.RotatingFileHandler(filename='rotating.log', maxBytes=1000, backupCount=5)
+    # rotatingHandler.setLevel(logging.DEBUG)
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # rotatingHandler.setFormatter(formatter)
+    # logging.getLogger().addHandler(rotatingHandler)
 
     log = logging.getLogger("app." + __name__)
 
