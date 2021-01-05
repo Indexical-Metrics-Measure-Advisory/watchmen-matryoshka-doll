@@ -11,7 +11,7 @@ def insert_data_schema(data):
 
 
 def update_data_schema(id, data):
-    return collection.update_one({"_id": id}, {"$set": data})
+    return collection.update_one({"id": id}, {"$set": data})
 
 
 def load_raw_schema_by_code(code):

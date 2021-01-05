@@ -8,6 +8,7 @@
 from watchmen.connector.local_connector import raw_data_load
 
 from watchmen.pipeline.stage.generate_schema import GenerateLakeSchema
+from watchmen.raw_data.service.generate_schema import create_raw_data_model_set
 from watchmen.raw_data_back.model_schema import Domain
 from watchmen.raw_data_back.service.generate_schema import generate_basic_schema
 
@@ -30,3 +31,7 @@ def test_generate_schema_for_list_data():
 # and the main clause limit exceeds 100W,
 # then the underwriting level is set to advanced"
 
+def test_raw_data_create_schema():
+    create_raw_data_model_set('policy', raw_data_load('../assert/data/policy.json'))
+
+test_raw_data_create_schema()

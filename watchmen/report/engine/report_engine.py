@@ -43,7 +43,6 @@ def report(topics: [Topic], joins: [Join], filters, factors):
         docs = get_topic_instances(topic.name)
         dataframes[topic.name] = pd.DataFrame(list(docs)).set_index('@pk')
     data_master = join_dataframe(topics, dataframes, joins)
-
     query_str = ''
     for filter in filters:
         if query_str == '':
