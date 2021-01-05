@@ -15,7 +15,7 @@ def save_topic(topic):
 
 
 def get_topic_by_name(topic_name):
-    return topic_col.find_one("topißcName", topic_name)
+    return topic_col.find_one("topic_name", topic_name)
 
 
 def get_topic_by_id(topic_id):
@@ -32,3 +32,5 @@ def topic_dict_to_object(topic_schema_dict):
     return topic
 
 
+def get_topic_list_like_topic_name(query_name:str):
+    return topic_col.find({"topic_name": {"$regex": "/"+query_name+"/"}})

@@ -10,6 +10,7 @@ from watchmen.raw_data_back.model_schema_set import ModelSchemaSet
 
 from watchmen.space.space import Space
 from watchmen.raw_data_back.service.master_space_service import save_master_space
+from watchmen.topic.service.topic_service import create_topic_schema
 from watchmen.topic.topic import Topic
 from fastapi import  File
 
@@ -100,8 +101,8 @@ async def create_space(space):
 
 
 @router.post("/space/topic", tags=["admin"])
-async def create_topic(topic,space_id):
-    pass
+async def create_topic(topic):
+    return create_topic_schema(topic)
 
 
 async def query_topic_list_by_name(topic_name:str):

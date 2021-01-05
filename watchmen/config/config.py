@@ -28,13 +28,11 @@ class Settings(BaseSettings):
     MONGO_HOST:str = ""
     MONGO_PORT: int = 0
 
-    # SENTRY_DSN: Optional[HttpUrl] = None
-    #
-    # @validator("SENTRY_DSN", pre=True)
-    # def sentry_dsn_can_be_blank(cls, v: str) -> Optional[str]:
-    #     if len(v) == 0:
-    #         return None
-    #     return v
+    class Config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
+        case_sensitive = True
+
 
     # POSTGRES_SERVER: str
     # POSTGRES_USER: str
@@ -85,10 +83,8 @@ class Settings(BaseSettings):
     # FIRST_SUPERUSER_PASSWORD: str
     # USERS_OPEN_REGISTRATION: bool = False
     #
-    class Config:
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
-        case_sensitive = True
+
+
 
 
 settings = Settings()
