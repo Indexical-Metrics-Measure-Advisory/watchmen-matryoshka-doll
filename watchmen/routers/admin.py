@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
 from watchmen.index import select_domain, generate_suggestion_topic_service, generate_suggestion_factor, \
@@ -10,7 +10,7 @@ from watchmen.raw_data_back.model_schema_set import ModelSchemaSet
 
 from watchmen.space.space import Space
 from watchmen.raw_data_back.service.master_space_service import save_master_space
-from watchmen.topic.service.topic_service import create_topic_schema
+from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, query_topic_schema
 from watchmen.topic.topic import Topic
 from fastapi import  File
 
@@ -100,9 +100,20 @@ async def create_space(space):
     return save_master_space(master_space)
 
 
-@router.post("/space/topic", tags=["admin"])
-async def create_topic(topic):
+@router.post("/topic", tags=["admin"])
+async def create_topic(topic:Topic):
     return create_topic_schema(topic)
+
+
+@router.post("/update/topic", tags=["admin"])
+async def update_topic(topic_id,topic:Topic=Body(...)):
+    topic = Topic.parse_obj(topic)
+    return update_topic_schema(topic_id,topic)
+
+
+@router.post("/topic/name", tags=["admin"])
+async def query_topic_list_by_name(query_name:str):
+    return query_topic_schema(query_name)
 
 
 async def query_topic_list_by_name(topic_name:str):
@@ -115,3 +126,6 @@ async def query_space_list_by_name(space_name:str):
 
 async def query_report_list_by_name(report_name:str):
     pass
+
+
+

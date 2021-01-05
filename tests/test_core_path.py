@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from watchmen.common.log import log
 from watchmen.connector.local_connector import raw_data_load
 from watchmen.pipeline.single.pipeline_service import run_pipeline, build_pipeline
@@ -12,8 +14,8 @@ from watchmen.common.utils.copy import direct_copy_raw_schema_to_topic
 import logging
 import os
 
-from watchmen.topic.service.topic_service import create_topic_schema, query_topic_schema
-from watchmen.topic.storage.topic_schema_storage import get_topic_list_like_topic_name
+from watchmen.topic.service.topic_service import query_topic_schema, create_topic_schema, update_topic_schema
+from watchmen.topic.storage.topic_schema_storage import get_topic_list_like_topic_name, update_topic
 from watchmen.topic.topic import Topic
 
 
@@ -161,6 +163,7 @@ def test_create_topic():
     }
 
     topic = Topic.parse_obj(topic)
+    print(topic.json())
     result = create_topic_schema(topic)
 
     assert result["_id"] is not None
@@ -171,4 +174,41 @@ def test_query_topic_list():
     query_name = "Quota"
     data_list = query_topic_schema(query_name)
     print(data_list)
+
+
+def test_update_topic():
+    topic = {
+        "topicId": 796064005360713728, "code": 'quotation', "name": 'Quota2222', "type": "distinct",
+        "raw": False,
+
+        "factors": [
+            {
+                "factorId": '101',
+                "name": 'quotationId',
+                "label": 'Quotation Sequence',
+                "type": "sequence"
+            },
+
+            {
+                "factorId": '103',
+                "name": 'quoteDate',
+                "label": 'Quotation Create Date',
+                "type": "datetime"
+            }
+        ]
+    }
+
+    topic = Topic.parse_obj(topic)
+    # data = topic.dict()
+
+    # data["_id"]= ObjectId("5ff415ce2be5eaebbdd08b95")
+
+    topicId = 796064005360713728
+    update_topic_schema(topicId,topic)
+    # create_topic_schema(data)
+
+
+
+
+
 

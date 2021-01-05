@@ -35,3 +35,7 @@ def topic_dict_to_object(topic_schema_dict):
 
 def get_topic_list_like_topic_name(query_name:str):
     return topic_col.find({"name": regex.Regex(query_name)})
+
+
+def update_topic(topic_id,topic:Topic):
+    return topic_col.update_one({"topicId": topic_id}, {"$set": topic})

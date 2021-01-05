@@ -1,30 +1,36 @@
 import logging
 
-from watchmen.topic.storage.topic_schema_storage import save_topic, get_topic_list_like_topic_name, get_topic_by_id
+
+from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.topic.storage.topic_schema_storage import save_topic, get_topic_list_like_topic_name, get_topic_by_id, \
+    update_topic
 from watchmen.topic.topic import Topic
+from bson import json_util
 
 log = logging.getLogger("app." + __name__)
 
 
-def create_topic_schema(topic:Topic):
-    if topic is not dict:
+def create_topic_schema(topic):
+    if type(topic) is not dict:
         topic = topic.dict()
-    insert_topic = save_topic(topic)
-    topic["_id"]=insert_topic.inserted_id
+    topic["topicId"] = get_surrogate_key()
+    save_topic(topic)
+    return topic["topicId"]
+
+
+def update_topic_schema(
+        topicId,
+        topic:Topic):
+    if type(topic) is not dict:
+        topic = topic.dict()
+    update_topic(topicId,topic)
+    # print(update_result)
     return topic
-
-
-def update_topic_schema(topic_id,topic:Topic):
-    topic = get_topic_by_id(topic_id)
-    if topic is not None:
-        pass
-
-    pass
 
 
 def query_topic_schema(query_name:str):
     data_list = get_topic_list_like_topic_name(query_name)
-    return list(data_list)
+    return json_util.dumps(data_list)
 
 
 
