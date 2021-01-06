@@ -1,5 +1,6 @@
 from bson import regex
 
+from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine.storage_engine import get_client
 
 
@@ -33,8 +34,9 @@ def topic_dict_to_object(topic_schema_dict):
     return topic
 
 
-def get_topic_list_like_topic_name(query_name:str):
-    return topic_col.find({"name": regex.Regex(query_name)})
+def query_topic_list_with_pagination(query_name:str,pagination: Pagination):
+    skips = pagination.pageSize * (pagination.pageNumber - 1)
+    return topic_col.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
 
 
 def update_topic(topic_id,topic:Topic):

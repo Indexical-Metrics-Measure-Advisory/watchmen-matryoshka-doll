@@ -1,3 +1,5 @@
+from bson import regex
+
 from watchmen.common.pagination import Pagination
 from watchmen.space.space import Space
 from watchmen.common.storage.engine.storage_engine import get_client
@@ -10,17 +12,16 @@ collection = db.get_collection('space')
 
 
 def insert_space_to_storage(space):
-    if type(space) is not dict:
-        space = space.dict()
     return collection.insert_one(space)
 
 
-def update_space_to_storage(space:Space):
-    if type(space) is not dict:
-        space = space.dict()
-    query = {"name": space["name"]}
-    new_values = {"$set": {"topic_list": space["topic_list"]}}
-    collection.update_one(query,new_values)
+def update_space_to_storage(space_id:int,space:Space):
+    return collection.update_one({"spaceId": space_id}, {"$set": space})
+
+
+def query_space_with_pagination(query_name:str, pagination:Pagination):
+    skips = pagination.pageSize * (pagination.pageNumber - 1)
+    return collection.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
 
 
 def load_space_by_user(user):

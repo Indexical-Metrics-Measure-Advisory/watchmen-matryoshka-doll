@@ -3,7 +3,7 @@ from watchmen.raw_data_back.model_schema import Domain
 from watchmen.topic.factor.factor import Factor, FactorType
 from watchmen.pipeline.pipeline import basic_schema, update_schema
 
-from watchmen.space.storage.factor_storage import save_factor
+from watchmen.topic.storage.factor_storage import save_factor
 
 
 

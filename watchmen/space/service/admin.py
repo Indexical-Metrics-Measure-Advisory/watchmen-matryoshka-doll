@@ -1,12 +1,24 @@
+from bson import json_util
+
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.topic.topic import Topic
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import insert_space_to_storage, load_space_by_name, update_space_to_storage
-import logging
 
 
-def save_space(space: Space):
-    logging.info(space.json())
-    return insert_space_to_storage(space)
+def create_space(space: Space):
+    if type(space) is not dict:
+        space = space.dict()
+    space["spaceId"] = get_surrogate_key()
+    return insert_space_to_storage(space).inserted_id
+
+
+def update_space_by_id(space_id:int,space:Space):
+    if type(space) is not dict:
+        space = space.dict()
+    update_space_to_storage(space_id,space)
+    return space
+
 
 
 def load_space(name: str):

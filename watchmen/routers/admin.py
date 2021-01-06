@@ -1,16 +1,20 @@
+from bson import json_util
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
+from watchmen.common.pagination import Pagination
 from watchmen.index import select_domain, generate_suggestion_topic_service, generate_suggestion_factor, \
     save_topic_mapping, load_topic_mapping, SpaceOut, load_space_topic_list
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.raw_data_back.model_schema import ModelSchema
 
 from watchmen.raw_data_back.model_schema_set import ModelSchemaSet
+from watchmen.space.service.admin import create_space, update_space_by_id
 
 from watchmen.space.space import Space
-from watchmen.raw_data_back.service.master_space_service import save_master_space
-from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, query_topic_schema
+from watchmen.space.storage.space_storage import  query_space_with_pagination
+from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema
+from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination
 from watchmen.topic.topic import Topic
 from fastapi import  File
 
@@ -34,10 +38,7 @@ async def create_space_from_domain_template(name: str):
     return select_domain(name)
 
 
-@router.post("/admin/space", tags=["admin"])
-async def create_empty_space(space):
-    master_space = Space(space)
-    return save_master_space(master_space)
+
 
 
 @router.post("/upload/files/", tags=["admin"])
@@ -94,10 +95,22 @@ async def load_space_topic_list_http(space_name: str):
     return load_space_topic_list(space_name)
 
 
+### NEW
+
 @router.post("/space", tags=["admin"])
-async def create_space(space):
-    master_space = Space(space)
-    return save_master_space(master_space)
+async def create_empty_space(space:Space):
+    return create_space(space)
+
+
+@router.post("/update/space", tags=["admin"])
+async def update_space(space_id:int,space:Space= Body(...)):
+    return update_space_by_id(space_id,space)
+
+
+@router.post("/space/name", tags=["admin"])
+async def query_space_list(query_name:str,pagination: Pagination= Body(...)):
+    space_list= query_space_with_pagination(query_name,pagination)
+    return json_util.dumps(space_list)
 
 
 @router.post("/topic", tags=["admin"])
@@ -112,20 +125,10 @@ async def update_topic(topic_id,topic:Topic=Body(...)):
 
 
 @router.post("/topic/name", tags=["admin"])
-async def query_topic_list_by_name(query_name:str):
-    return query_topic_schema(query_name)
+async def query_topic_list_by_name(query_name: str, pagination: Pagination= Body(...)):
+    result = query_topic_list_with_pagination(query_name,pagination)
+    return json_util.dumps(result)
 
-
-async def query_topic_list_by_name(topic_name:str):
-    pass
-
-
-async def query_space_list_by_name(space_name:str):
-    pass
-
-
-async def query_report_list_by_name(report_name:str):
-    pass
 
 
 

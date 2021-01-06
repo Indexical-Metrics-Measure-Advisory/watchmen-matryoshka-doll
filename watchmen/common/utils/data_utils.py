@@ -1,6 +1,19 @@
 from enum import Enum
 
+from watchmen.connector.local_connector import raw_data_load
+import os
+
 WATCHMEN = "watchmen"
+
+
+def build_json_list(files_name,path):
+    json_list = []
+    for filename in files_name:
+        full_path = path+"/"+filename
+        if os.path.isfile(full_path):
+            json_list.append(raw_data_load(full_path))
+
+    return json_list
 
 
 def is_field_value(value):

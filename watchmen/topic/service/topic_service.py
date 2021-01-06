@@ -2,10 +2,9 @@ import logging
 
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.topic.storage.topic_schema_storage import save_topic, get_topic_list_like_topic_name, get_topic_by_id, \
-    update_topic
+from watchmen.topic.storage.topic_schema_storage import save_topic, update_topic
 from watchmen.topic.topic import Topic
-from bson import json_util
+
 
 log = logging.getLogger("app." + __name__)
 
@@ -27,10 +26,10 @@ def update_topic_schema(
     # print(update_result)
     return topic
 
-
-def query_topic_schema(query_name:str):
-    data_list = get_topic_list_like_topic_name(query_name)
-    return json_util.dumps(data_list)
+#
+# def query_topic_schema(query_name:str):
+#     data_list = get_topic_list_like_topic_name(query_name)
+#     return json_util.dumps(data_list)
 
 
 

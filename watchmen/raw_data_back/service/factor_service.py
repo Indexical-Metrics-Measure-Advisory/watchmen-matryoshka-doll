@@ -1,5 +1,5 @@
 from watchmen.space.factors.engine.factor_engine import run_factors_on_topic_data
-from watchmen.space.storage.factor_storage import load_factors_by_topic_id
+from watchmen.topic.storage.factor_storage import load_factors_by_topic_id
 
 
 def __find_root_entity(entity_set):

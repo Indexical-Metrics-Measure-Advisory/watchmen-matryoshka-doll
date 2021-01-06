@@ -14,7 +14,6 @@ def build_collection_name(topic_name):
 
 
 def save_topic_instance(topic_name, instance):
-    print(topic_name)
     topic_instance_col = client.get_collection(build_collection_name(topic_name))
     topic_instance_col.insert_one(instance)
 
