@@ -7,8 +7,9 @@ from watchmen.common.pagination import Pagination
 from watchmen.index import select_domain, generate_suggestion_topic_service, generate_suggestion_factor, \
     save_topic_mapping, load_topic_mapping
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.raw_data_back.model_schema import ModelSchema
-from watchmen.raw_data_back.model_schema_set import ModelSchemaSet
+from watchmen.raw_data.model_schema import ModelSchema
+from watchmen.raw_data.model_schema_set import ModelSchemaSet
+
 from watchmen.space.service.admin import create_space, update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination

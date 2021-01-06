@@ -1,8 +1,8 @@
 import decamelize
 import spacy
 
-from watchmen.raw_data_back.model_schema import ModelSchema
-from watchmen.raw_data_back.model_schema_set import ModelSchemaSet
+from watchmen.raw_data.model_schema import ModelSchema
+from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.topic.topic import Topic
 
 nlp = spacy.load('en_core_web_md')
