@@ -1,24 +1,16 @@
-from bson import ObjectId
-
-from watchmen.common.log import log
-from watchmen.connector.local_connector import raw_data_load
-from watchmen.pipeline.single.pipeline_service import run_pipeline, build_pipeline
-from watchmen.raw_data_back.model_schema import Domain
-from watchmen.raw_data_back.service.import_data import process_raw_data, import_raw_data
-from watchmen.raw_data_back.storage.row_schema_storage import load_raw_schema_by_code
-from watchmen.raw_data_back.service.generate_schema import generate_basic_schema_for_list_data
-from watchmen.routers.admin import create_topic
-from watchmen.space.service.admin import save_space, load_space, add_topic_to_space, update_topic_in_space
-from watchmen.space.space import Space
-from watchmen.common.utils.copy import direct_copy_raw_schema_to_topic
 import logging
 import os
 
+from watchmen.common.log import log
+from watchmen.common.utils.copy import direct_copy_raw_schema_to_topic
+from watchmen.connector.local_connector import raw_data_load
+from watchmen.pipeline.single.pipeline_service import run_pipeline, build_pipeline
+from watchmen.raw_data_back.service.import_data import process_raw_data, import_raw_data
+from watchmen.raw_data_back.storage.row_schema_storage import load_raw_schema_by_code
+from watchmen.space.service.admin import save_space, load_space, add_topic_to_space, update_topic_in_space
+from watchmen.space.space import Space
 from watchmen.topic.service.topic_service import query_topic_schema, create_topic_schema, update_topic_schema
-from watchmen.topic.storage.topic_schema_storage import get_topic_list_like_topic_name, update_topic
 from watchmen.topic.topic import Topic
-
-
 
 
 def test_create_space():

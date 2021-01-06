@@ -60,6 +60,8 @@ def create_raw_data_model_set(code, data):
         create_schema(model_schema_set, code, data, True)
         insert_data_schema(model_schema_set.dict())
 
+    return model_schema_set
+
 
 def create_schema(model_schema_set, name, data, is_root):
     if is_root is None:
