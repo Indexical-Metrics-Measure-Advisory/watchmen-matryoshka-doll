@@ -26,7 +26,6 @@ def query_space_with_pagination(query_name:str, pagination:Pagination):
 
 def load_space_by_user(user):
     data = collection.find_one({"user": user})
-    print(data)
     return pickle_wrapper(data, Space)
 
 
