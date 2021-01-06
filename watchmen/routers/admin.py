@@ -3,6 +3,10 @@ from fastapi import APIRouter, Body
 from fastapi import File
 from pydantic import BaseModel
 
+from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination
+from watchmen.auth.storage.user_group import create_user_group_storage, query_user_groups_by_name_with_paginate
+from watchmen.auth.user import User
+from watchmen.auth.user_group import UserGroup
 from watchmen.common.pagination import Pagination
 from watchmen.index import select_domain, generate_suggestion_topic_service, generate_suggestion_factor, \
     save_topic_mapping, load_topic_mapping
@@ -30,17 +34,17 @@ class FactorSuggestionIn(BaseModel):
     topic: Topic = None
 
 
-# CORE ADMIN PATH
-
-@router.get("/admin/space/domain", tags=["admin"], response_model=Space)
-async def create_space_from_domain_template(name: str):
-    return select_domain(name)
-
-
-@router.post("/upload/files/", tags=["admin"])
-async def import_raw_data(file: bytes = File(...)):
-    # unzip_file()
-    return {"file_size": len(file)}
+# # CORE ADMIN PATH
+#
+# @router.get("/admin/space/domain", tags=["admin"], response_model=Space)
+# async def create_space_from_domain_template(name: str):
+#     return select_domain(name)
+#
+#
+# @router.post("/upload/files/", tags=["admin"])
+# async def import_raw_data(file: bytes = File(...)):
+#     # unzip_file()
+#     return {"file_size": len(file)}
 
 
 async def add_topic_to_space():
@@ -72,15 +76,15 @@ async def add_stage_to_pipeline():
 async def save_stage():
     pass
 
-
-@router.post("/mapping/topic", tags=["admin"])
-async def save_topic_mapping_http(topic_mapping_rule: TopicMappingRule):
-    return save_topic_mapping(topic_mapping_rule)
-
-
-@router.get("/mapping/topic", tags=["admin"], response_model=TopicMappingRule)
-async def load_topic_mapping_http(temp_topic_name: str, topic_name: str):
-    return load_topic_mapping(temp_topic_name, topic_name)
+#
+# @router.post("/mapping/topic", tags=["admin"])
+# async def save_topic_mapping_http(topic_mapping_rule: TopicMappingRule):
+#     return save_topic_mapping(topic_mapping_rule)
+#
+#
+# @router.get("/mapping/topic", tags=["admin"], response_model=TopicMappingRule)
+# async def load_topic_mapping_http(temp_topic_name: str, topic_name: str):
+#     return load_topic_mapping(temp_topic_name, topic_name)
 
 
 ### NEW
@@ -115,3 +119,27 @@ async def update_topic(topic_id, topic: Topic = Body(...)):
 async def query_topic_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     result = query_topic_list_with_pagination(query_name, pagination)
     return json_util.dumps(result)
+
+
+@router.post("/user", tags=["admin"])
+async def create_user(user: User):
+    return create_user_storage(user)
+
+
+@router.post("/user_group", tags=["admin"])
+async def create_user_group(user_group:UserGroup):
+    return create_user_group_storage(user_group)
+
+
+@router.post("/user/name", tags=["admin"])
+async def query_user_list_by_name(query_name: str, pagination: Pagination = Body(...)):
+    result = query_users_by_name_with_pagination(query_name, pagination)
+    return json_util.dumps(result)
+
+
+@router.post("/user_group/name", tags=["admin"])
+async def query_user_groups_list_by_name(query_name: str, pagination: Pagination = Body(...)):
+    result = query_user_groups_by_name_with_paginate(query_name, pagination)
+    return json_util.dumps(result)
+
+

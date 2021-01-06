@@ -1,13 +1,15 @@
-from fastapi import APIRouter, Body, Depends, HTTPException
+from datetime import timedelta
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+
 from watchmen.auth.service import security
 from watchmen.auth.service.user import authenticate
 from watchmen.auth.token import Token
 from watchmen.auth.user import User
 from watchmen.common import deps
 from watchmen.config.config import settings
-from datetime import timedelta
-from typing import Any
 
 router = APIRouter()
 
@@ -40,3 +42,9 @@ def test_token(current_user: User = Depends(deps.get_current_user)) -> Any:
     Test access token
     """
     return current_user
+
+
+
+
+
+
