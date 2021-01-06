@@ -3,7 +3,7 @@ import logging
 
 from bson import ObjectId
 
-from watchmen.connector.local_connector import raw_data_load
+from watchmen.collection.connector import raw_data_load
 from watchmen.index import select_domain, save_topic_mapping, generate_raw_data_schema
 from watchmen.pipeline.mapping.mapping_rule import MappingRule
 from watchmen.pipeline.mapping.mapping_rule_storage import load_topic_mapping_by_name, load_topic_mapping_by_id

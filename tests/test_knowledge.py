@@ -1,4 +1,4 @@
-from watchmen.knowledge.knowledge_loader import find_template_by_domain
+from watchmen.common.knowledge.knowledge_loader import find_template_by_domain
 
 
 def test_load_template():

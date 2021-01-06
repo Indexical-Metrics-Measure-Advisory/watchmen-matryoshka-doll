@@ -1,8 +1,6 @@
-import logging
-
 from watchmen.common.log import log
 from watchmen.common.utils.copy import direct_copy_raw_schema_to_topic
-from watchmen.connector.local_connector import raw_data_load
+from watchmen.collection.connector import raw_data_load
 from watchmen.pipeline.single.pipeline_service import run_pipeline, build_pipeline
 from watchmen.raw_data_back.service.import_data import process_raw_data, import_raw_data
 from watchmen.raw_data_back.storage.row_schema_storage import load_raw_schema_by_code

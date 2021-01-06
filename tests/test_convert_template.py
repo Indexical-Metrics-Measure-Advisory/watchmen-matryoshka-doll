@@ -1,6 +1,6 @@
 from watchmen.space.factors.factor import Factor
 
-from watchmen.knowledge.knowledge_loader import find_template_by_domain
+from watchmen.common.knowledge.knowledge_loader import find_template_by_domain
 from watchmen.space.factors.topic import Topic
 from watchmen.topic.storage import save_topic
 

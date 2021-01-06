@@ -5,9 +5,8 @@
 # 5. link knowledge domain to raw_data_back
 
 
-from watchmen.connector.local_connector import raw_data_load
+from watchmen.collection.connector import raw_data_load
 
-from watchmen.pipeline.stage.generate_schema import GenerateLakeSchema
 from watchmen.raw_data.service.generate_schema import create_raw_data_model_set
 from watchmen.raw_data_back.model_schema import Domain
 from watchmen.raw_data_back.service.generate_schema import generate_basic_schema

@@ -11,7 +11,7 @@ from watchmen.pipeline.mapping.suggestion.generate_suggestion import generate_to
     generate_factor_suggestion
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
 from watchmen.raw_data_back.model_schema import ModelSchema
-from watchmen.knowledge.knowledge_loader import find_template_by_domain
+from watchmen.common.knowledge.knowledge_loader import find_template_by_domain
 
 
 from watchmen.topic.factor.factor import Factor

@@ -1,8 +1,7 @@
-from watchmen.knowledge.knowledge_loader import load_lexicon
+from watchmen.common.knowledge.knowledge_loader import load_lexicon
 from watchmen.lake.model_schema import ModelSchema
 import spacy;
 nlp = spacy.load('en_core_web_sm')
-import decamelize
 
 
 # TODO[next] add ref id to filed_schema

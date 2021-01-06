@@ -1,6 +1,6 @@
 from enum import Enum
 
-from watchmen.connector.local_connector import raw_data_load
+from watchmen.collection.connector import raw_data_load
 import os
 
 WATCHMEN = "watchmen"
