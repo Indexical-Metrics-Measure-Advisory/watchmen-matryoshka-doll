@@ -1,7 +1,9 @@
 from pydantic import BaseModel
 
+from watchmen.common.mongo_model import MongoModel
 
-class Topic(BaseModel):
+
+class Topic(MongoModel):
     topicId: int = None
     name: str = None
     type: str = None

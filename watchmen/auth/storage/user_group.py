@@ -20,4 +20,5 @@ def create_user_group_storage(user_group: UserGroup):
 
 def query_user_groups_by_name_with_paginate(query_name: str, pagination: Pagination):
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    return user_groups.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    result = user_groups.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    return list(result)

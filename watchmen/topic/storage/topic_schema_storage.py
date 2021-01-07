@@ -34,7 +34,8 @@ def topic_dict_to_object(topic_schema_dict):
 
 def query_topic_list_with_pagination(query_name: str, pagination: Pagination):
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    return topic_col.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    result = topic_col.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    return list(result)
 
 
 def update_topic(topic_id, topic: Topic):

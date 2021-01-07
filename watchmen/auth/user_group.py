@@ -1,7 +1,9 @@
-from pydantic import BaseModel
 
 
-class UserGroup(BaseModel):
+from watchmen.common.mongo_model import MongoModel
+
+
+class UserGroup(MongoModel):
     userGroupId: int
     name: str = None
     description: str = None

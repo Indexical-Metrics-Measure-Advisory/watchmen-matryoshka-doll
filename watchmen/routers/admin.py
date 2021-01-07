@@ -6,6 +6,7 @@ from watchmen.auth.storage.user import create_user_storage, query_users_by_name_
 from watchmen.auth.storage.user_group import create_user_group_storage, query_user_groups_by_name_with_paginate
 from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
+from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.index import generate_suggestion_topic_service, generate_suggestion_factor
 from watchmen.raw_data.model_schema import ModelSchema
@@ -85,56 +86,88 @@ async def save_stage():
 
 
 ### NEW
-@router.post("/space", tags=["admin"])
+@router.post("/space", tags=["admin"],response_model=Space)
 async def create_empty_space(space: Space):
     return create_space(space)
 
 
-@router.post("/update/space", tags=["admin"])
+@router.post("/update/space", tags=["admin"],response_model=Space)
 async def update_space(space_id: int, space: Space = Body(...)):
     return update_space_by_id(space_id, space)
 
 
-@router.post("/space/name", tags=["admin"])
+@router.post("/space/name", tags=["admin"], response_model=DataPage)
 async def query_space_list(query_name: str, pagination: Pagination = Body(...)):
     space_list = query_space_with_pagination(query_name, pagination)
-    return json_util.dumps(space_list)
+    data_page = DataPage()
+    if len(space_list) > 0:
+        data_page.data = space_list
+        data_page.itemCount = len(space_list)
+        data_page.pageSize = pagination.pageSize
+        data_page.pageNumber = pagination.pageNumber
+        return data_page
+    else:
+        return data_page
 
 
-@router.post("/topic", tags=["admin"])
+@router.post("/topic", tags=["admin"],response_model=Topic)
 async def create_topic(topic: Topic):
     return create_topic_schema(topic)
 
 
-@router.post("/update/topic", tags=["admin"])
+@router.post("/update/topic", tags=["admin"],response_model=Topic)
 async def update_topic(topic_id, topic: Topic = Body(...)):
     topic = Topic.parse_obj(topic)
     return update_topic_schema(topic_id, topic)
 
 
-@router.post("/topic/name", tags=["admin"])
+@router.post("/topic/name", tags=["admin"],response_model=DataPage)
 async def query_topic_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     result = query_topic_list_with_pagination(query_name, pagination)
-    return json_util.dumps(result)
+    data_page = DataPage()
+    if len(result) > 0:
+        data_page.data = result
+        data_page.itemCount = len(result)
+        data_page.pageSize = pagination.pageSize
+        data_page.pageNumber = pagination.pageNumber
+        return data_page
+    else:
+        return data_page
 
 
-@router.post("/user", tags=["admin"])
+@router.post("/user", tags=["admin"],response_model=User)
 async def create_user(user: User):
     return create_user_storage(user)
 
 
-@router.post("/user_group", tags=["admin"])
+@router.post("/user_group", tags=["admin"],response_model=UserGroup)
 async def create_user_group(user_group: UserGroup):
     return create_user_group_storage(user_group)
 
 
-@router.post("/user/name", tags=["admin"])
+@router.post("/user/name", tags=["admin"],response_model=DataPage)
 async def query_user_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     result = query_users_by_name_with_pagination(query_name, pagination)
-    return json_util.dumps(result)
+    data_page = DataPage()
+    if len(result) > 0:
+        data_page.data = result
+        data_page.itemCount = len(result)
+        data_page.pageSize = pagination.pageSize
+        data_page.pageNumber = pagination.pageNumber
+        return data_page
+    else:
+        return data_page
 
 
-@router.post("/user_group/name", tags=["admin"])
+@router.post("/user_group/name", tags=["admin"],response_model=DataPage)
 async def query_user_groups_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     result = query_user_groups_by_name_with_paginate(query_name, pagination)
-    return json_util.dumps(result)
+    data_page = DataPage()
+    if len(result) > 0:
+        data_page.data = result
+        data_page.itemCount = len(result)
+        data_page.pageSize = pagination.pageSize
+        data_page.pageNumber = pagination.pageNumber
+        return data_page
+    else:
+        return data_page

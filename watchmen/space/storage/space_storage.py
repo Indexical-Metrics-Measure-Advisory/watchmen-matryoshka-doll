@@ -21,7 +21,8 @@ def update_space_to_storage(space_id: int, space: Space):
 
 def query_space_with_pagination(query_name: str, pagination: Pagination):
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    return collection.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    result = collection.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    return list(result)
 
 
 def load_space_by_user(user):

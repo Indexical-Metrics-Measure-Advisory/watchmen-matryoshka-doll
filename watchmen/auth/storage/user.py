@@ -27,4 +27,5 @@ def create_user_storage(user: User):
 
 def query_users_by_name_with_pagination(query_name: str, pagination: Pagination):
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    return users.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    result = users.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    return list(result)

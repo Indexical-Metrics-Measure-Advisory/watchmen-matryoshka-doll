@@ -8,7 +8,8 @@ def create_space(space: Space):
     if type(space) is not dict:
         space = space.dict()
     space["spaceId"] = get_surrogate_key()
-    return insert_space_to_storage(space).inserted_id
+    insert_space_to_storage(space)
+    return space
 
 
 def update_space_by_id(space_id: int, space: Space):
