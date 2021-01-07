@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 from watchmen.common.utils.data_utils import RelationshipType
 
 
@@ -12,4 +13,3 @@ class ModelRelationship(BaseModel):
     childName: str = None
     parentVariable: dict = {}
     childVariable: dict = {}
-

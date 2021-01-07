@@ -1,7 +1,7 @@
 import secrets
-from typing import Any, Dict, List, Optional, Union
+from typing import List
 
-from pydantic import AnyHttpUrl, BaseSettings, EmailStr, HttpUrl, PostgresDsn, validator
+from pydantic import AnyHttpUrl, BaseSettings
 
 
 class Settings(BaseSettings):
@@ -25,14 +25,13 @@ class Settings(BaseSettings):
     #     raise ValueError(v)
 
     PROJECT_NAME: str
-    MONGO_HOST:str = ""
+    MONGO_HOST: str = ""
     MONGO_PORT: int = 0
 
     class Config:
         env_file = '.env'
         env_file_encoding = 'utf-8'
         case_sensitive = True
-
 
     # POSTGRES_SERVER: str
     # POSTGRES_USER: str
@@ -83,8 +82,6 @@ class Settings(BaseSettings):
     # FIRST_SUPERUSER_PASSWORD: str
     # USERS_OPEN_REGISTRATION: bool = False
     #
-
-
 
 
 settings = Settings()

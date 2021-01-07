@@ -6,4 +6,3 @@ class Join(BaseModel):
     left: str
     right: str
     key: str
-

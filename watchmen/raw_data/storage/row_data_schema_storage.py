@@ -1,7 +1,6 @@
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN
 
-
 db = get_client(WATCHMEN)
 collection = db.get_collection('raw_schema')
 
@@ -20,6 +19,3 @@ def load_raw_schema_by_code(code):
 
 def delete_data_schema_by_id(id):
     return collection.delete_one({"_id": id})
-
-
-

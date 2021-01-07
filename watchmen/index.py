@@ -7,19 +7,18 @@ from pydantic import BaseModel
 # TODO replace mock service for user
 from watchmen.auth.service.user import get_current_user, check_promise
 from watchmen.auth.user import User
+from watchmen.common.knowledge.knowledge_loader import find_template_by_domain
+from watchmen.pipeline.mapping.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
 from watchmen.pipeline.mapping.suggestion.generate_suggestion import generate_topic_suggestion, \
     generate_factor_suggestion
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.common.knowledge.knowledge_loader import find_template_by_domain
 from watchmen.raw_data.model_schema import ModelSchema
-
-from watchmen.topic.factor.factor import Factor
-from watchmen.space.index import create_space_by_domain_template, add_topic_list_to_master, get_summary_for_master_space, \
+from watchmen.space.index import create_space_by_domain_template, add_topic_list_to_master, \
+    get_summary_for_master_space, \
     add_topic_to_master_space, load_master_space
 from watchmen.space.space import Space
-from watchmen.pipeline.mapping.mapping_rule_storage import save_topic_mapping_rule, load_topic_mapping_by_name
+from watchmen.topic.factor.factor import Factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_list_by_ids
-
 from watchmen.topic.topic import Topic
 
 
@@ -52,28 +51,6 @@ def select_domain(domain: str):
         return get_summary_for_master_space(master_space)
     else:
         raise HTTPException(status_code=401, detail="NO_PROMISE")
-
-#
-# def generate_raw_data_schema(json_files, name):
-#     current_user = get_current_user()
-#     if check_promise(current_user):
-#         if use_default_pipeline(current_user):
-#             pipeline = build_default_pipeline()
-#             output_param = pipeline.run([json_files, name], {})
-#             # print(output_param)
-#             return output_param
-#         else:
-#             # load  customize_pipeline
-#             pass
-#             # TODO customize_pipeline run
-#
-#         # pass
-#     else:
-#         raise HTTPException(status_code=401, detail="NO_PROMISE")
-#
-
-# CRUD for pipeline
-
 
 
 def generate_suggestion_topic_service(lake_schema, master_schema):
@@ -112,8 +89,6 @@ def load_space_topic_list(space_name) -> SpaceOut:
     # master_space.topic_list = topic_list
     return SpaceOut(master_space, topic_list)
 
-    # TODO user info missing
-
 
 def add_factor_to_master_topic(factor: Factor, master_space):
     # current_user = get_current_user()
@@ -138,9 +113,7 @@ def load_factor_by_id():
 # CRUD for mapping rules
 
 
-
-
-def post_data(data,event):
+def post_data(data, event):
     pass
 
 
@@ -154,7 +127,7 @@ def load_reports():
 
 
 # query for factors
-def query_factor(factor_name:str):
+def query_factor(factor_name: str):
     pass
 
 

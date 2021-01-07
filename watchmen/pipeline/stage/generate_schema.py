@@ -18,7 +18,4 @@
 #         return "SaveToMongo"
 #
 #     def __check_input_param(self, input_param):
-#         return True  # TODO check input
-
-
-
+#         return True

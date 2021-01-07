@@ -1,4 +1,3 @@
-
 def collection_event_data(data):
     pass
 

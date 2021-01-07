@@ -1,12 +1,12 @@
+import pandas as pd
 from pydantic import BaseModel
 
-from watchmen.topic.storage.topic_data_storage import get_topic_instances
-from watchmen.topic.topic import Topic
-from watchmen.topic.factor.factor import Factor
 from watchmen.space.subject.filter import Filter
 from watchmen.space.subject.join import Join
 from watchmen.space.subject.subject import Subject
-import pandas as pd
+from watchmen.topic.factor.factor import Factor
+from watchmen.topic.storage.topic_data_storage import get_topic_instances
+from watchmen.topic.topic import Topic
 
 
 def merge_dataset(topics: [Topic], data_frames: dict, joins: [Join]) -> object:

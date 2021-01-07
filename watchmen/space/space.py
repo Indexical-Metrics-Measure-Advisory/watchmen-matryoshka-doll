@@ -1,4 +1,3 @@
-
 from typing import List
 
 from pydantic import BaseModel
@@ -6,7 +5,7 @@ from pydantic import BaseModel
 
 class Space(BaseModel):
     # id: int = Field( alias='_id')
-    spaceId:int
+    spaceId: int
     topicIds: List = None
 
     name: str = None

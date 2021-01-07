@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from typing import Dict
+
+from pydantic import BaseModel
 
 from watchmen.pipeline.mapping.mapping_rule import MappingRule
 
@@ -10,12 +11,4 @@ class TopicMappingRule(BaseModel):
     sourceTopicName: str = None
     targetTopicId: str = None
     targetTopicName: str = None
-    factor_rules: Dict[ str, MappingRule] = {}
-
-
-
-
-
-
-
-
+    factor_rules: Dict[str, MappingRule] = {}

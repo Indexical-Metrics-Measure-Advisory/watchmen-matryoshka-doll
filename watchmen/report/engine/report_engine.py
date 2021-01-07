@@ -1,4 +1,5 @@
 import pandas as pd
+
 from watchmen.topic.storage import get_topic_instances
 
 
@@ -46,15 +47,14 @@ def report(topics: [Topic], joins: [Join], filters, factors):
     query_str = ''
     for filter in filters:
         if query_str == '':
-            query_str = filter.name + '== ' + '\''+ filter.value +'\''
+            query_str = filter.name + '== ' + '\'' + filter.value + '\''
         else:
-            query_str = query_str + '&' + filter.name + '== ' + '\''+ filter.value + '\''
+            query_str = query_str + '&' + filter.name + '== ' + '\'' + filter.value + '\''
     filter_data = data_master.query(query_str)
     columns = []
     for factor in factors:
         columns.append(factor.name)
     print(filter_data[columns])
-
 
 
 def join_dataframe(topics, dataframes, joins):
@@ -126,7 +126,7 @@ join1.__setattr__('right', 'test_report_customer_data_col')
 join1.__setattr__('key', '@pk')
 joins.append(join1)
 
-filters= []
+filters = []
 filter1 = Filter()
 filter1.__setattr__('name', 'address1')
 filter1.__setattr__('value', '北海道')

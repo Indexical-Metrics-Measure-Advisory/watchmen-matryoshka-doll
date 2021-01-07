@@ -1,7 +1,7 @@
 from pydantic import BaseModel
+from watchmen.raw_data.data_entity import Attribute
 
 from watchmen.topic.factor.factor import Factor
-from watchmen.raw_data.data_entity import Attribute
 
 
 class Mapping(BaseModel):

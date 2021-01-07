@@ -33,6 +33,6 @@ def find_template_by_domain(domain):
 
 
 def dynamic_import_template(name):
-    name = "watchmen.knowledge."+name + ".index"
+    name = "watchmen.knowledge." + name + ".index"
     template = __import__(name, fromlist=[''])
     return template.load_template()

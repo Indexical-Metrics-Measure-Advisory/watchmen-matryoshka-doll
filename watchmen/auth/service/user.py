@@ -9,5 +9,5 @@ def check_promise(current_user):
     pass
 
 
-def authenticate(client,username, password):
+def authenticate(client, username, password):
     return User()

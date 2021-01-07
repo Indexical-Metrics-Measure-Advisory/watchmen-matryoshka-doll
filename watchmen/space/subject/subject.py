@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 import typing
+
+from pydantic import BaseModel
 
 
 class Subject(BaseModel):

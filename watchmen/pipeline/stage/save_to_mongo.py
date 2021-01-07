@@ -16,4 +16,4 @@
 #             return [json_files,name]
 #
 #     def __check_input_param(self, input_param):
-#         return True  # TODO check input
+#         return True

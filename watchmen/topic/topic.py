@@ -2,10 +2,10 @@ from pydantic import BaseModel
 
 
 class Topic(BaseModel):
-    topicId: int=None
-    name: str=None
-    type: str=None
-    factors: list =[]
+    topicId: int = None
+    name: str = None
+    type: str = None
+    factors: list = []
     # alias: List[str] = None
     is_aggregate: bool = False
     businessKey: list = []

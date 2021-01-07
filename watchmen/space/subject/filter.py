@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel
 
 
@@ -7,5 +6,3 @@ class Filter(BaseModel):
     key: str
     operator: str
     value: str
-
-

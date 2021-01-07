@@ -9,6 +9,3 @@ class RuleType(str, Enum):
 class DSLType(str, Enum):
     groovy = "groovy"
     typescript = "typescript"
-
-
-

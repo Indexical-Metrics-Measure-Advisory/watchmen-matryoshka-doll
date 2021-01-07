@@ -26,7 +26,7 @@ def add_factor_to_master_topic():
 def create_space_by_domain_template(user, domain):
     master_space = Space()
     master_space.createUser = user
-    master_space.name = user+"_"+domain
+    master_space.name = user + "_" + domain
     # save_master_space(master_space)
     # master_space.id = inserted_id
     return master_space
@@ -38,10 +38,9 @@ def add_topic_to_master_space(topic, master_space):
 
 
 def add_topic_list_to_master(topic_list, master_space):
-
-    topic_id_list =[]
+    topic_id_list = []
     for topic in topic_list:
-        insert_id =str(save_topic(topic.dict()).inserted_id)
+        insert_id = str(save_topic(topic.dict()).inserted_id)
         topic_id_list.append(insert_id)
 
     print(topic_id_list)

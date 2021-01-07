@@ -1,10 +1,7 @@
-
-
-from pydantic import BaseModel
+from enum import Enum
 from typing import Optional
 
-
-from enum import Enum
+from pydantic import BaseModel
 
 
 class FieldType(str, Enum):
@@ -24,5 +21,3 @@ class ModelField(BaseModel):
     description: Optional[str] = None
     type: int = None
     values: list = []
-    # TODO[next] domain field match list
-

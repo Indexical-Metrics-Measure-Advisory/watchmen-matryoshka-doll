@@ -1,4 +1,5 @@
 from typing import Dict
+
 from pydantic import BaseModel
 
 from watchmen.raw_data.model_relationship import ModelRelationship

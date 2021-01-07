@@ -54,5 +54,3 @@ class Factor(BaseModel):
 
     isTag: bool = False
 '''
-
-

@@ -7,7 +7,7 @@ from watchmen.topic.factor.factor import Factor
 class MappingRule(BaseModel):
     mappingId: str = None
     masterFactor: Factor = None
-    lateField:ModelField = None
+    lateField: ModelField = None
     hasCodeMapping: bool = False
     codeRule: dict = None
     isBucket: bool = False

@@ -1,5 +1,3 @@
-
-
 # claim
 # application
 # broker , agent
@@ -39,21 +37,3 @@ class InsuranceTopics(BaseModel):
     features: dict = None
     event: str = None
     insert_time: datetime = None
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

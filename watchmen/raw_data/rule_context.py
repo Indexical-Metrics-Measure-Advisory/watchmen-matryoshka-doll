@@ -10,5 +10,5 @@ class RuleContext(BaseModel):
     orgName: str = None
     productId: int = None
     productName: str = None
-    ruleId:int = None
+    ruleId: int = None
     ruleName: str = None

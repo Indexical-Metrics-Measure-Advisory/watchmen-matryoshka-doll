@@ -1,6 +1,5 @@
 from bson import json_util
 from fastapi import APIRouter, Body
-from fastapi import File
 from pydantic import BaseModel
 
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination
@@ -8,12 +7,9 @@ from watchmen.auth.storage.user_group import create_user_group_storage, query_us
 from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.pagination import Pagination
-from watchmen.index import select_domain, generate_suggestion_topic_service, generate_suggestion_factor, \
-    save_topic_mapping, load_topic_mapping
-from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
+from watchmen.index import generate_suggestion_topic_service, generate_suggestion_factor
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
-
 from watchmen.space.service.admin import create_space, update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination
@@ -76,6 +72,7 @@ async def add_stage_to_pipeline():
 async def save_stage():
     pass
 
+
 #
 # @router.post("/mapping/topic", tags=["admin"])
 # async def save_topic_mapping_http(topic_mapping_rule: TopicMappingRule):
@@ -127,7 +124,7 @@ async def create_user(user: User):
 
 
 @router.post("/user_group", tags=["admin"])
-async def create_user_group(user_group:UserGroup):
+async def create_user_group(user_group: UserGroup):
     return create_user_group_storage(user_group)
 
 
@@ -141,5 +138,3 @@ async def query_user_list_by_name(query_name: str, pagination: Pagination = Body
 async def query_user_groups_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     result = query_user_groups_by_name_with_paginate(query_name, pagination)
     return json_util.dumps(result)
-
-

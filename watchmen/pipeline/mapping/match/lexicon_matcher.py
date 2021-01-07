@@ -1,6 +1,8 @@
-from watchmen.common.knowledge.knowledge_loader import load_lexicon
-from watchmen.lake.model_schema import ModelSchema
 import spacy;
+from watchmen.lake.model_schema import ModelSchema
+
+from watchmen.common.knowledge.knowledge_loader import load_lexicon
+
 nlp = spacy.load('en_core_web_sm')
 
 
@@ -15,7 +17,7 @@ def lexicon_match(model_schema: ModelSchema):
 
     tokens = nlp(field_names)
 
-    lexicon_tokens  = nlp(lexicon_str)
+    lexicon_tokens = nlp(lexicon_str)
 
     # TODO[future] need to optimize performance
     # TODO【BUG】 find duplicate tokens
@@ -31,19 +33,3 @@ def lexicon_match(model_schema: ModelSchema):
                         {"source": import_token.text, "target": lexicon_token.text, "similarity": str(similarity)})
 
     return lexicon_match_results
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

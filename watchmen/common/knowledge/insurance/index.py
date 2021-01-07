@@ -1,7 +1,6 @@
-
-import yaml
 import os
 
+import yaml
 from watchmen.space.factors.factor import Factor
 from watchmen.space.factors.topic import Topic
 
@@ -35,8 +34,6 @@ def load_template():
         except yaml.YAMLError as exc:
             print(exc)
 
-
-
 # def load_template_from_db():
 #     current_path = os.path.abspath(os.path.dirname(__file__))
 #     # TODO merge template
@@ -47,4 +44,3 @@ def load_template():
 #             return template
 #         except yaml.YAMLError as exc:
 #             print(exc)
-

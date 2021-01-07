@@ -1,5 +1,3 @@
-
-
 #
 # def basic_schema(json,domain=None):
 #     schema = generate_basic_schema("policy", json, domain)
@@ -72,8 +70,3 @@
 #
 #
 #         return output_param
-
-
-
-
-

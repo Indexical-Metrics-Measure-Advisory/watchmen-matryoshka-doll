@@ -2,13 +2,14 @@ from typing import Dict
 
 from watchmen.raw_data_back.model_field import ModelField
 from watchmen.raw_data_back.model_schema import ModelSchema
+
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
 
-def convert_business_fields_to_factors(business_fields_dict: Dict[str,ModelField]):
+def convert_business_fields_to_factors(business_fields_dict: Dict[str, ModelField]):
     factors = []
-    for key,businessField in business_fields_dict.items():
+    for key, businessField in business_fields_dict.items():
         factor = Factor()
         factor.factorName = businessField.name
         factor.type = businessField.type
@@ -23,5 +24,3 @@ def direct_copy_raw_schema_to_topic(model_schema: ModelSchema, topic: Topic):
     topic.topicName = model_schema.name
     topic.factors = convert_business_fields_to_factors(model_schema.businessFields)
     return topic
-
-

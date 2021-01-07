@@ -1,6 +1,6 @@
 import spacy
 from spacy.matcher import Matcher
-from spacy.symbols import nsubj, CCONJ, nmod, acomp, dobj, prep, pobj, ADJ,xcomp,nsubjpass,attr
+from spacy.symbols import nsubj, CCONJ, nmod, acomp, dobj, prep, pobj, ADJ, xcomp, nsubjpass, attr
 from spacy.tokens import Token
 
 from watchmen.raw_data_back.rule_context import RuleContext
@@ -26,12 +26,12 @@ def spilt_by_cconj(if_docs, index_list):
 
 
 def is_and(cconjs):
-    #TODO[next] check empty
+    # TODO[next] check empty
     return all(x.lemma_ == "and" for x in cconjs)
 
 
 def find_nsubj(children: list):
-    return list(filter(lambda x: x.dep == nsubj or x.dep==nsubjpass, children))
+    return list(filter(lambda x: x.dep == nsubj or x.dep == nsubjpass, children))
 
 
 # def find_value(children:list):
@@ -58,7 +58,8 @@ def _find_factor(root: Token):
 
 
 def _find_value(root: Token):
-    result = list(filter(lambda x: x.dep == acomp or x.dep == dobj or x.dep == pobj or x.dep==xcomp or x.dep ==attr, root.children))
+    result = list(filter(lambda x: x.dep == acomp or x.dep == dobj or x.dep == pobj or x.dep == xcomp or x.dep == attr,
+                         root.children))
     if len(result) is 1:
         return result[0].text
     # value={}
@@ -66,7 +67,7 @@ def _find_value(root: Token):
     return None
 
 
-def is_not_op(op:Token):
+def is_not_op(op: Token):
     return op.dep == acomp and op.pos == ADJ and list(op.children) == []
 
 
@@ -94,7 +95,7 @@ def _find_operate(root: Token):
 
 
 def convent_to_str(operates):
-    result = map(lambda x:x.text,operates)
+    result = map(lambda x: x.text, operates)
 
     # print()
     return list(result)
@@ -143,10 +144,10 @@ def import_single_rule(rule_context: RuleContext, rule: str):
             factor = _find_factor(sent.root)
             # print(factor)
             value = _find_value(operate[-1])
-            result["factor"]=factor
+            result["factor"] = factor
             result["operate"] = convent_to_str(operate)
             result["value"] = value
-            rule_schema["then"]=result
+            rule_schema["then"] = result
 
     # TODO[next] match factor to domain and basic raw_data_back
     # TODO[future] generate report for rules

@@ -3,12 +3,9 @@
 from pydantic import BaseModel
 
 
-
-
-
 class Event(BaseModel):
-    type:str = None
-    description:str = None
+    type: str = None
+    description: str = None
     # time: datetime = None
 
 
@@ -23,7 +20,8 @@ def before(func):
 def after(func):
     def run_after(request):
         result = func(request)
-        print ("run  event ",request)
+        print("run  event ", request)
         ## base on request type switch
         return result
+
     return run_after

@@ -1,16 +1,15 @@
-from enum import Enum
-
 import os
+from enum import Enum
 
 from watchmen.collection.connector.local_connector import raw_data_load
 
 WATCHMEN = "watchmen"
 
 
-def build_json_list(files_name,path):
+def build_json_list(files_name, path):
     json_list = []
     for filename in files_name:
-        full_path = path+"/"+filename
+        full_path = path + "/" + filename
         if os.path.isfile(full_path):
             json_list.append(raw_data_load(full_path))
 
@@ -24,7 +23,7 @@ def is_field_value(value):
 def get_dict_schema_set(model_schema_set):
     result = {}
     for schema in model_schema_set.schemas.values():
-        result[schema.modelId]= schema
+        result[schema.modelId] = schema
     return result
 
 
@@ -34,7 +33,7 @@ def get_dict_relationship(model_schema_set):
         if relationship.parentId in result.keys():
             result[relationship.parentId].append(relationship)
         else:
-            result[relationship.parentId]=[]
+            result[relationship.parentId] = []
             result[relationship.parentId].append(relationship)
     return result
 

@@ -14,14 +14,14 @@ from watchmen.config.config import settings
 router = APIRouter()
 
 
-@router.post("/login/access-token", response_model=Token,tags=["authenticate"])
+@router.post("/login/access-token", response_model=Token, tags=["authenticate"])
 def login_access_token(
-   client = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
+        client=Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    user = authenticate(client,form_data.username,form_data.password)
+    user = authenticate(client, form_data.username, form_data.password)
 
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
@@ -36,15 +36,9 @@ def login_access_token(
     }
 
 
-@router.post("/login/test-token", response_model=User,tags=["authenticate"])
+@router.post("/login/test-token", response_model=User, tags=["authenticate"])
 def test_token(current_user: User = Depends(deps.get_current_user)) -> Any:
     """
     Test access token
     """
     return current_user
-
-
-
-
-
-

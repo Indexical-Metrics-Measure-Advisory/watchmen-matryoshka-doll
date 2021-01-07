@@ -22,17 +22,13 @@ async def load_space_list_by_user(pagination: Pagination):
 
 
 @router.post("/collection/data", tags=["console"])
-async def collection_raw_data(raw_data ,event:Event):
+async def collection_raw_data(raw_data, event: Event):
     ## find org
     ## find data_source
     ## save raw data
     ## trigger event
 
-
-    # TODO
-
-
-
+    # TODO collection_raw_data
 
     pass
 
@@ -99,15 +95,3 @@ async def load_reports_by_subject_id():
 
 async def share_dashboard_url(to: str):
     pass
-
-
-
-
-
-
-
-
-
-
-
-

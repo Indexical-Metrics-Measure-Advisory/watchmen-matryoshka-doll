@@ -3,14 +3,12 @@ import time
 
 
 class InvalidSystemClock(Exception):
-
     pass
 
 
 WORKER_ID_BITS = 5
 DATACENTER_ID_BITS = 5
 SEQUENCE_BITS = 12
-
 
 MAX_WORKER_ID = -1 ^ (-1 << WORKER_ID_BITS)  # 2**5-1 0b11111
 MAX_DATACENTER_ID = -1 ^ (-1 << DATACENTER_ID_BITS)
@@ -22,7 +20,6 @@ TIMESTAMP_LEFT_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS + DATACENTER_ID_BITS
 
 #
 SEQUENCE_MASK = -1 ^ (-1 << SEQUENCE_BITS)
-
 
 TWEPOCH = 1420041600000
 
@@ -51,6 +48,7 @@ class IdWorker(object):
         self.sequence = sequence
 
         self.last_timestamp = -1  #
+
     def _gen_timestamp(self):
         """
         generate a timestamp

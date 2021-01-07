@@ -1,8 +1,6 @@
-
-
 import prestodb
 
-conn=prestodb.dbapi.connect(
+conn = prestodb.dbapi.connect(
     host='coordinator url',
     port=8443,
     user='the-user',
@@ -11,5 +9,3 @@ conn=prestodb.dbapi.connect(
     http_scheme='https',
     auth=prestodb.auth.BasicAuthentication("principal id", "password"),
 )
-
-

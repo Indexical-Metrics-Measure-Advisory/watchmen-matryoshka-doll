@@ -8,7 +8,7 @@
 #         self.name="SaveSchemaToMongo"
 #
 #     def run(self, input_param, context):
-#         #TODO add link index
+#
 #         insert_data_schema(input_param.dict())
 #         return input_param
 #

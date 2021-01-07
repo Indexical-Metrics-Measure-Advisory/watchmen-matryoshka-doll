@@ -1,5 +1,3 @@
-
-
 def trace_data():
     pass
 
@@ -18,4 +16,3 @@ def post_trace_info():
 
 def end_trace():
     pass
-

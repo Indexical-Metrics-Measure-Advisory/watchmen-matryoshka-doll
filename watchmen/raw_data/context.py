@@ -1,6 +1,6 @@
+from typing import Optional
 
 from pydantic import BaseModel
-from typing import Optional
 
 
 class Context(BaseModel):
@@ -8,7 +8,3 @@ class Context(BaseModel):
     description: Optional[str] = None
     context_code: str
     context_type: str
-
-
-
-

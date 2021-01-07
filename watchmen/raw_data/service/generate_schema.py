@@ -1,9 +1,8 @@
 import datetime
-import json
-import os
 from enum import Enum
-from typing import Optional, Dict
+
 from bson import ObjectId
+
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.raw_data.model_field import ModelField
 from watchmen.raw_data.model_relationship import ModelRelationship
@@ -79,7 +78,8 @@ def create_model_schema(model_schema_set, name, record, is_root):
     if model_schema is not None:
         for key, value in record.items():
             if check_model_field_in_schema(key, model_schema):
-                if check_value_type(value).value == ValueType.LIST.value or check_value_type(value).value == ValueType.DICT.value:
+                if check_value_type(value).value == ValueType.LIST.value or check_value_type(
+                        value).value == ValueType.DICT.value:
                     create_schema(model_schema_set, key, value, False)
                 else:
                     if check_value_duplicate(model_schema.businessFields[key].values, value):
@@ -95,7 +95,7 @@ def create_model_schema(model_schema_set, name, record, is_root):
         model_schema.name = name
         model_schema.isRoot = is_root
         for key, value in record.items():
-            model_field = create_model_field(model_schema_set, model_schema,key, value)
+            model_field = create_model_field(model_schema_set, model_schema, key, value)
             model_schema.businessFields[model_field.name] = model_field
     model_schema_set.schemas[model_schema.name] = model_schema
 

@@ -17,4 +17,3 @@ def load_factor_id(factor_id):
 def load_factors_by_topic_id(topic_id):
     return []
     # pass
-

@@ -1,6 +1,7 @@
-import pandas as pd
 import json
 import os
+
+import pandas as pd
 
 os.chdir('D:/')
 
@@ -16,23 +17,23 @@ with open('customer_test.json') as json_data:
 
 print(customer_data)
 
-#df=pd.DataFrame.from_dict(data, orient='index').T.set_index('@pk')
+# df=pd.DataFrame.from_dict(data, orient='index').T.set_index('@pk')
 
-policy_df= pd.DataFrame(policy_data).set_index('@pk')
+policy_df = pd.DataFrame(policy_data).set_index('@pk')
 
 print(policy_df)
 
-customer_df=df=pd.DataFrame.from_dict(customer_data, orient='index').T.set_index('@pk')
+customer_df = df = pd.DataFrame.from_dict(customer_data, orient='index').T.set_index('@pk')
 
 print(customer_df)
 
-join_df=policy_df.merge(customer_df, on='@pk')
+join_df = policy_df.merge(customer_df, on='@pk')
 
-#显示所有列
+# 显示所有列
 pd.set_option('display.max_columns', None)
-#显示所有行
+# 显示所有行
 pd.set_option('display.max_raws', None)
-#设置value的显示长度为100，默认为50
-pd.set_option('max_colwidth',100)
+# 设置value的显示长度为100，默认为50
+pd.set_option('max_colwidth', 100)
 
 print(join_df.values)

@@ -2,8 +2,6 @@ from bson import regex
 
 from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine.storage_engine import get_client
-
-
 from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.topic.topic import Topic
 
@@ -30,14 +28,14 @@ def get_topic_list_by_ids(topic_ids):
 
 
 def topic_dict_to_object(topic_schema_dict):
-    topic =Topic()
+    topic = Topic()
     return topic
 
 
-def query_topic_list_with_pagination(query_name:str,pagination: Pagination):
+def query_topic_list_with_pagination(query_name: str, pagination: Pagination):
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     return topic_col.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
 
 
-def update_topic(topic_id,topic:Topic):
+def update_topic(topic_id, topic: Topic):
     return topic_col.update_one({"topicId": topic_id}, {"$set": topic})
