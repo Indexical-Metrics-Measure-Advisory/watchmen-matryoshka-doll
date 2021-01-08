@@ -25,7 +25,6 @@ from watchmen.topic.topic import Topic
 router = APIRouter()
 
 
-
 class TopicSuggestionIn(BaseModel):
     lake_schema_set: ModelSchemaSet = None
     master_schema: Space = None
