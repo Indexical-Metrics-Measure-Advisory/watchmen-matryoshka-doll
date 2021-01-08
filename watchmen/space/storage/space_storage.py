@@ -19,8 +19,6 @@ def get_space_by_id(space_id: str):
     return collection.find_one({"spaceId": space_id})
 
 
-
-
 def update_space_to_storage(space_id: str, space: Space):
     return collection.update_one({"spaceId": space_id}, {"$set": space})
 
@@ -30,6 +28,11 @@ def query_space_with_pagination(query_name: str, pagination: Pagination):
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = collection.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
     return build_data_pages(pagination,list(result),items_count)
+
+
+def get_space_list_by_ids(space_ids):
+    result = collection.find({"spaceId": {"$in": space_ids}})
+    return list(result)
 
 
 def load_space_by_user(user):

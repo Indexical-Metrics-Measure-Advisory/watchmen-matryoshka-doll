@@ -17,6 +17,11 @@ def get_user(user_id):
     return users.find_one({"userId": user_id})
 
 
+def get_user_list_by_ids(user_ids:list):
+    result = users.find({"userId": {"$in": user_ids}})
+    return list(result)
+
+
 def create_user_storage(user: User):
     user.userId = get_surrogate_key()
     if type(user) is not dict:

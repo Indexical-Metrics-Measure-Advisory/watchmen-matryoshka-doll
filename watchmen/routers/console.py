@@ -29,7 +29,6 @@ async def collection_raw_data(raw_data, event: Event):
     ## trigger event
 
     # TODO collection_raw_data
-
     pass
 
 

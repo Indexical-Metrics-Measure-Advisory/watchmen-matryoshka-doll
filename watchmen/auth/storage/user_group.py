@@ -14,6 +14,14 @@ def get_user_group(user_group_id):
     return user_groups.find_one({"userGroupId": user_group_id})
 
 
+def get_user_group_list_by_ids(user_group_ids:list):
+    result = user_groups.find({"userGroupId":{"$in": user_group_ids}})
+    return list(result)
+
+
+
+
+
 def create_user_group_storage(user_group: UserGroup):
     user_group.userGroupId = get_surrogate_key()
     if type(user_group) is not dict:

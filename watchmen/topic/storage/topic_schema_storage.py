@@ -23,8 +23,8 @@ def get_topic_by_id(topic_id):
 
 
 def get_topic_list_by_ids(topic_ids):
-    # print(topic_ids)
-    return topic_col.find({"_id": {"$in": topic_ids}})
+    result = topic_col.find({"topicId": {"$in": topic_ids}})
+    return list(result)
 
 
 def topic_dict_to_object(topic_schema_dict):
