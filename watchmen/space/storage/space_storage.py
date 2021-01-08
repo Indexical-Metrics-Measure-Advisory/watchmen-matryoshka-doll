@@ -15,6 +15,10 @@ def insert_space_to_storage(space):
     return collection.insert_one(space)
 
 
+def get_space_by_id(space_id:int):
+    return collection.find_one({"spaceId":space_id})
+
+
 def update_space_to_storage(space_id: int, space: Space):
     return collection.update_one({"spaceId": space_id}, {"$set": space})
 

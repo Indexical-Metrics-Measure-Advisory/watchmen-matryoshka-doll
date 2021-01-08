@@ -1,16 +1,18 @@
-from pydantic import BaseModel
+from typing import List
 
 from watchmen.common.mongo_model import MongoModel
+from watchmen.topic.factor.factor import Factor
 
 
 class Topic(MongoModel):
     topicId: int = None
     name: str = None
+    code:str = None
     type: str = None
-    factors: list = []
+    factors: List[Factor] = []
     # alias: List[str] = None
-    is_aggregate: bool = False
-    businessKey: list = []
+    # is_aggregate: bool = False
+    # businessKey: list = []
 
     '''
     topic_id: str = None

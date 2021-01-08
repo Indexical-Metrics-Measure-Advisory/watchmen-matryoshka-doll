@@ -12,17 +12,20 @@ def create_topic_schema(topic):
         topic = topic.dict()
     topic["topicId"] = get_surrogate_key()
     save_topic(topic)
-    return topic["topicId"]
+    return topic
 
 
 def update_topic_schema(
-        topicId,
+        topic_id,
         topic: Topic):
     if type(topic) is not dict:
         topic = topic.dict()
-    update_topic(topicId, topic)
-    # print(update_result)
+    update_topic(topic_id, topic)
     return topic
+
+
+
+
 
 #
 # def query_topic_schema(query_name:str):

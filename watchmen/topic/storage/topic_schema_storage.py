@@ -19,7 +19,7 @@ def get_topic_by_name(topic_name):
 
 
 def get_topic_by_id(topic_id):
-    return topic_col.find_one("_id", topic_id)
+    return topic_col.find_one({"topicId":int(topic_id)})
 
 
 def get_topic_list_by_ids(topic_ids):

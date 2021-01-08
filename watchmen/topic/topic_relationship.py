@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 
 from watchmen.common.mongo_model import MongoModel
 

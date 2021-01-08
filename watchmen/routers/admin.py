@@ -13,9 +13,9 @@ from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.service.admin import create_space, update_space_by_id
 from watchmen.space.space import Space
-from watchmen.space.storage.space_storage import query_space_with_pagination
+from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema
-from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination
+from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id
 from watchmen.topic.topic import Topic
 
 router = APIRouter()
@@ -54,23 +54,7 @@ async def create_pipeline():
     pass
 
 
-async def add_stage_to_pipeline():
-    pass
 
-
-async def save_stage():
-    pass
-
-
-#
-# @router.post("/mapping/topic", tags=["admin"])
-# async def save_topic_mapping_http(topic_mapping_rule: TopicMappingRule):
-#     return save_topic_mapping(topic_mapping_rule)
-#
-#
-# @router.get("/mapping/topic", tags=["admin"], response_model=TopicMappingRule)
-# async def load_topic_mapping_http(temp_topic_name: str, topic_name: str):
-#     return load_topic_mapping(temp_topic_name, topic_name)
 
 
 ### NEW
@@ -79,9 +63,20 @@ async def create_empty_space(space: Space):
     return create_space(space)
 
 
+@router.get("/topic", tags=["admin"], response_model=Topic)
+async def load_topic(topic_id:int):
+    print(topic_id)
+    return get_topic_by_id(topic_id)
+
+
 @router.post("/update/space", tags=["admin"],response_model=Space)
 async def update_space(space_id: int, space: Space = Body(...)):
     return update_space_by_id(space_id, space)
+
+
+@router.get("/space", tags=["admin"], response_model=Space)
+async def load_space(space_id:int):
+    return get_space_by_id(space_id)
 
 
 @router.post("/space/name", tags=["admin"], response_model=DataPage)
@@ -90,8 +85,10 @@ async def query_space_list(query_name: str, pagination: Pagination = Body(...)):
     return await __build_data_pages(pagination, result)
 
 
-@router.post("/topic", tags=["admin"],response_model=Topic)
-async def create_topic(topic: Topic):
+@router.post("/topic", tags=["admin"], response_model=Topic)
+async def create_topic(topic:Topic):
+    # topic = Topic.parse_obj(topic)
+    print(topic)
     return create_topic_schema(topic)
 
 
@@ -139,3 +136,5 @@ async def query_user_list_by_name(query_name: str, pagination: Pagination = Body
 async def query_user_groups_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     result = query_user_groups_by_name_with_paginate(query_name, pagination)
     return await __build_data_pages(pagination, result)
+
+
