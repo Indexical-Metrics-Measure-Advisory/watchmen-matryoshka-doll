@@ -2,7 +2,7 @@ from bson import regex
 
 from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.utils.data_utils import WATCHMEN
+from watchmen.common.utils.data_utils import WATCHMEN, build_data_pages
 from watchmen.topic.topic import Topic
 
 db = get_client(WATCHMEN)
@@ -33,9 +33,10 @@ def topic_dict_to_object(topic_schema_dict):
 
 
 def query_topic_list_with_pagination(query_name: str, pagination: Pagination):
+    item_count = topic_col.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = topic_col.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
-    return list(result)
+    return build_data_pages(pagination, list(result),item_count)
 
 
 def update_topic(topic_id, topic: Topic):

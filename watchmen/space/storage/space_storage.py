@@ -3,7 +3,7 @@ from bson import regex
 from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils import pickle_wrapper
-from watchmen.common.utils.data_utils import WATCHMEN
+from watchmen.common.utils.data_utils import WATCHMEN, build_data_pages
 from watchmen.space.space import Space
 
 db = get_client(WATCHMEN)
@@ -16,7 +16,7 @@ def insert_space_to_storage(space):
 
 
 def get_space_by_id(space_id:int):
-    return collection.find_one({"spaceId":space_id})
+    return collection.find_one({"spaceId":int(space_id)})
 
 
 def update_space_to_storage(space_id: int, space: Space):
@@ -24,9 +24,10 @@ def update_space_to_storage(space_id: int, space: Space):
 
 
 def query_space_with_pagination(query_name: str, pagination: Pagination):
+    items_count = collection.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = collection.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
-    return list(result)
+    return build_data_pages(pagination,list(result),items_count)
 
 
 def load_space_by_user(user):

@@ -1,7 +1,9 @@
 import os
 from enum import Enum
+import math
 
 from watchmen.collection.connector.local_connector import raw_data_load
+from watchmen.common.data_page import DataPage
 
 WATCHMEN = "watchmen"
 
@@ -42,3 +44,15 @@ class RelationshipType(Enum):
     OneToOne = "OneToOne"
     OneToMany = "OneToMany"
     ManyToMany = "ManyToMany"
+
+
+def build_data_pages(pagination, result, item_count):
+    data_page = DataPage()
+    data_page.data = result
+    data_page.itemCount = item_count
+    data_page.pageSize = pagination.pageSize
+    data_page.pageNumber = pagination.pageNumber
+    data_page.pageCount = math.ceil(item_count/pagination.pageSize)
+    return data_page
+
+

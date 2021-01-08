@@ -2,6 +2,8 @@ from enum import Enum
 
 from pydantic import BaseModel
 
+from watchmen.common.mongo_model import MongoModel
+
 
 class FactorType(str, Enum):
     AtomicIndex = "AtomicIndex"
@@ -9,10 +11,15 @@ class FactorType(str, Enum):
     DerivativeIndicators = "DerivativeIndicators"
 
 
-class Factor(BaseModel):
-    id: int
-    name: str
-    type: str
+class Factor(MongoModel):
+    type:str=None
+    factorId:str=None
+    name:str=None
+    label:str=None
+    description:str=None
+
+
+
 
 
 '''
