@@ -19,7 +19,9 @@ def get_user_group_list_by_ids(user_group_ids:list):
     return list(result)
 
 
-
+def load_group_list_by_name(query_name):
+    result = user_groups.find({"name": regex.Regex(query_name)})
+    return list(result)
 
 
 def create_user_group_storage(user_group: UserGroup):

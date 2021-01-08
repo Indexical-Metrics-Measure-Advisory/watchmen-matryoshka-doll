@@ -22,6 +22,11 @@ def get_user_list_by_ids(user_ids:list):
     return list(result)
 
 
+def load_user_list_by_name(query_name):
+    result = users.find({"name": regex.Regex(query_name)})
+    return list(result)
+
+
 def create_user_storage(user: User):
     user.userId = get_surrogate_key()
     if type(user) is not dict:

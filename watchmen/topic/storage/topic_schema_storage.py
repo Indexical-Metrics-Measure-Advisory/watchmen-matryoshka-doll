@@ -14,8 +14,20 @@ def save_topic(topic):
     return topic_col.insert_one(topic)
 
 
+def load_all_topic_list(pagination: Pagination):
+    item_count = topic_col.find().count()
+    skips = pagination.pageSize * (pagination.pageNumber - 1)
+    result = topic_col.find().skip(skips).limit(pagination.pageSize)
+    return  build_data_pages(pagination, list(result), item_count)
+
+
 def get_topic_by_name(topic_name):
     return topic_col.find_one("topic_name", topic_name)
+
+
+def load_topic_list_by_name(topic_name):
+    result = topic_col.find({"name": regex.Regex(topic_name)})
+    return list(result)
 
 
 def get_topic_by_id(topic_id):

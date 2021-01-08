@@ -4,9 +4,9 @@ from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
-    get_user
+    get_user, load_user_list_by_name
 from watchmen.auth.storage.user_group import create_user_group_storage, query_user_groups_by_name_with_paginate, \
-    get_user_group_list_by_ids, get_user_group
+    get_user_group_list_by_ids, get_user_group, load_group_list_by_name
 from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.data_page import DataPage
@@ -19,10 +19,11 @@ from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
-    get_topic_list_by_ids
+    get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name
 from watchmen.topic.topic import Topic
 
 router = APIRouter()
+
 
 
 class TopicSuggestionIn(BaseModel):
@@ -111,6 +112,17 @@ async def query_topic_list_by_name(query_name: str, pagination: Pagination = Bod
     return result
 
 
+@router.post("/topic/all",tags=["admin"],response_model=DataPage)
+async def query_topic_list_for_pipeline(pagination: Pagination):
+    result = load_all_topic_list(pagination)
+    return result
+
+
+@router.get("/query/topic/space", tags=["admin"], response_model=List[Topic])
+async def query_topic_list_for_space(query_name: str):
+    return load_topic_list_by_name(query_name)
+
+
 @router.post("/topic/ids", tags=["admin"], response_model=List[Topic])
 async def query_topic_list_by_ids(topic_ids:List[str]):
     return get_topic_list_by_ids(topic_ids)
@@ -138,11 +150,20 @@ async def load_user(user_id:str):
     return get_user(user_id)
 
 
+@router.get("/query/user/group", tags=["admin"], response_model=List[User])
+async def query_user_list_for_user_group(query_name):
+    return load_user_list_by_name(query_name)
+
 
 ## User Group
 @router.post("/user_group", tags=["admin"], response_model=UserGroup)
 async def create_user_group(user_group: UserGroup):
     return create_user_group_storage(user_group)
+
+
+@router.get("/query/user_group/space", tags=["admin"], response_model=List[UserGroup])
+async def query_group_list_for_space(query_name: str):
+    return load_group_list_by_name(query_name)
 
 
 @router.get("/user_group", tags=["admin"], response_model=UserGroup)
