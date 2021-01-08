@@ -4,6 +4,7 @@ from typing import Optional, Dict
 from pydantic import BaseModel
 
 from watchmen.common.event.event import Event
+from watchmen.common.mongo_model import MongoModel
 from watchmen.raw_data.context import Context
 from watchmen.raw_data.model_field import ModelField
 from watchmen.raw_data.model_relationship import ModelRelationship
@@ -17,7 +18,7 @@ class SubDomain(str, Enum):
     POLICY = "policy"
 
 
-class ModelSchema(BaseModel):
+class ModelSchema(MongoModel):
     model_id: str = None
     event: Event = None
     domain: Domain = None

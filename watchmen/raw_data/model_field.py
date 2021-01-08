@@ -3,6 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from watchmen.common.mongo_model import MongoModel
+
 
 class FieldType(str, Enum):
     NUM = "num"
@@ -15,7 +17,7 @@ class FieldType(str, Enum):
     IdCard = "IDCard"
 
 
-class ModelField(BaseModel):
+class ModelField(MongoModel):
     field_id: int = None
     name: str = None
     description: Optional[str] = None

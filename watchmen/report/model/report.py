@@ -1,8 +1,7 @@
-## report definition includes layerout info , factor info , daigram type, filter info, report components info
-from pydantic import BaseModel
+from watchmen.common.mongo_model import MongoModel
 
 
-class Report(BaseModel):
+class Report(MongoModel):
     name: str = None
     question: str = None
     alias: List[str] = None

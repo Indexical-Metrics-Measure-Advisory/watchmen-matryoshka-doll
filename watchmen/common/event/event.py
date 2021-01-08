@@ -1,9 +1,7 @@
-# import datetime
-
-from pydantic import BaseModel
+from watchmen.common.mongo_model import MongoModel
 
 
-class Event(BaseModel):
+class Event(MongoModel):
     type: str = None
     description: str = None
     # time: datetime = None

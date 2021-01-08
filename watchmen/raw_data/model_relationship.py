@@ -1,9 +1,10 @@
 from pydantic import BaseModel
 
+from watchmen.common.mongo_model import MongoModel
 from watchmen.common.utils.data_utils import RelationshipType
 
 
-class ModelRelationship(BaseModel):
+class ModelRelationship(MongoModel):
     relationshipId: int = None
     name: str = None
     type: RelationshipType = None

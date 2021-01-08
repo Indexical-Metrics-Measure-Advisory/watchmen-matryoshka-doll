@@ -1,7 +1,9 @@
 from pydantic import BaseModel
 
+from watchmen.common.mongo_model import MongoModel
 
-class TopicRelationship(BaseModel):
+
+class TopicRelationship(MongoModel):
     topicRefId: str = None
     topicId: str = None
     businessKey: str = None

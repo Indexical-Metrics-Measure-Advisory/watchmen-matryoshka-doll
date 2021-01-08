@@ -31,18 +31,6 @@ class FactorSuggestionIn(BaseModel):
     topic: Topic = None
 
 
-# # CORE ADMIN PATH
-#
-# @router.get("/admin/space/domain", tags=["admin"], response_model=Space)
-# async def create_space_from_domain_template(name: str):
-#     return select_domain(name)
-#
-#
-# @router.post("/upload/files/", tags=["admin"])
-# async def import_raw_data(file: bytes = File(...)):
-#     # unzip_file()
-#     return {"file_size": len(file)}
-
 
 async def add_topic_to_space():
     pass
@@ -98,16 +86,8 @@ async def update_space(space_id: int, space: Space = Body(...)):
 
 @router.post("/space/name", tags=["admin"], response_model=DataPage)
 async def query_space_list(query_name: str, pagination: Pagination = Body(...)):
-    space_list = query_space_with_pagination(query_name, pagination)
-    data_page = DataPage()
-    if len(space_list) > 0:
-        data_page.data = space_list
-        data_page.itemCount = len(space_list)
-        data_page.pageSize = pagination.pageSize
-        data_page.pageNumber = pagination.pageNumber
-        return data_page
-    else:
-        return data_page
+    result = query_space_with_pagination(query_name, pagination)
+    return await __build_data_pages(pagination, result)
 
 
 @router.post("/topic", tags=["admin"],response_model=Topic)
@@ -124,6 +104,10 @@ async def update_topic(topic_id, topic: Topic = Body(...)):
 @router.post("/topic/name", tags=["admin"],response_model=DataPage)
 async def query_topic_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     result = query_topic_list_with_pagination(query_name, pagination)
+    return await __build_data_pages(pagination, result)
+
+
+async def __build_data_pages(pagination, result):
     data_page = DataPage()
     if len(result) > 0:
         data_page.data = result
@@ -148,26 +132,10 @@ async def create_user_group(user_group: UserGroup):
 @router.post("/user/name", tags=["admin"],response_model=DataPage)
 async def query_user_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     result = query_users_by_name_with_pagination(query_name, pagination)
-    data_page = DataPage()
-    if len(result) > 0:
-        data_page.data = result
-        data_page.itemCount = len(result)
-        data_page.pageSize = pagination.pageSize
-        data_page.pageNumber = pagination.pageNumber
-        return data_page
-    else:
-        return data_page
+    return await __build_data_pages(pagination, result)
 
 
 @router.post("/user_group/name", tags=["admin"],response_model=DataPage)
 async def query_user_groups_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     result = query_user_groups_by_name_with_paginate(query_name, pagination)
-    data_page = DataPage()
-    if len(result) > 0:
-        data_page.data = result
-        data_page.itemCount = len(result)
-        data_page.pageSize = pagination.pageSize
-        data_page.pageNumber = pagination.pageNumber
-        return data_page
-    else:
-        return data_page
+    return await __build_data_pages(pagination, result)
