@@ -13,7 +13,7 @@ db = get_client(WATCHMEN)
 users = db.get_collection('users')
 
 
-def get_user(user_id: int):
+def get_user(user_id):
     return users.find_one({"userId": user_id})
 
 

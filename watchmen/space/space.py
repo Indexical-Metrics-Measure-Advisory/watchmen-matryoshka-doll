@@ -9,7 +9,7 @@ from watchmen.common.mongo_model import MongoModel
 class Space(MongoModel):
 
     # id: int = Field( alias='_id')
-    spaceId: int=None
+    spaceId: str=None
     topicIds: List = None
     groupIds:List=None
     name: str = None

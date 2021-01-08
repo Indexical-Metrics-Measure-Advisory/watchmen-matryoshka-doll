@@ -4,7 +4,7 @@ from watchmen.common.mongo_model import MongoModel
 
 
 class User(MongoModel):
-    userId: int = None
+    userId: str = None
     name: str = None
     nickName: str = None
     password: str = None

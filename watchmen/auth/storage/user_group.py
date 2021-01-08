@@ -10,6 +10,10 @@ db = get_client(WATCHMEN)
 user_groups = db.get_collection('user_groups')
 
 
+def get_user_group(user_group_id):
+    return user_groups.find_one({"userGroupId": user_group_id})
+
+
 def create_user_group_storage(user_group: UserGroup):
     user_group.userGroupId = get_surrogate_key()
     if type(user_group) is not dict:

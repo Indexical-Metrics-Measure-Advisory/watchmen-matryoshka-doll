@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
@@ -14,7 +16,8 @@ from watchmen.space.service.admin import create_space, update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema
-from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id
+from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
+    get_topic_list_by_ids
 from watchmen.topic.topic import Topic
 
 router = APIRouter()
@@ -59,18 +62,18 @@ async def create_empty_space(space: Space):
 
 
 @router.get("/topic", tags=["admin"], response_model=Topic)
-async def load_topic(topic_id: int):
+async def load_topic(topic_id):
     # print(topic_id)
     return get_topic_by_id(topic_id)
 
 
 @router.post("/update/space", tags=["admin"], response_model=Space)
-async def update_space(space_id: int, space: Space = Body(...)):
+async def update_space(space_id, space: Space = Body(...)):
     return update_space_by_id(space_id, space)
 
 
 @router.get("/space", tags=["admin"], response_model=Space)
-async def load_space(space_id: int):
+async def load_space(space_id):
     return get_space_by_id(space_id)
 
 
@@ -99,6 +102,11 @@ async def query_topic_list_by_name(query_name: str, pagination: Pagination = Bod
     return result
 
 
+@router.post("/topic/ids", tags=["admin"], response_model=List[Topic])
+async def query_topic_list_by_ids(topic_ids:list):
+    return get_topic_list_by_ids(topic_ids)
+
+
 @router.post("/user", tags=["admin"], response_model=User)
 async def create_user(user: User):
     return create_user_storage(user)
@@ -107,6 +115,10 @@ async def create_user(user: User):
 @router.post("/user_group", tags=["admin"], response_model=UserGroup)
 async def create_user_group(user_group: UserGroup):
     return create_user_group_storage(user_group)
+
+
+async def query_user_groups_by_ids(user_group_ids:list):
+    pass
 
 
 @router.post("/user/name", tags=["admin"], response_model=DataPage)

@@ -5,7 +5,7 @@ from watchmen.topic.factor.factor import Factor
 
 
 class Topic(MongoModel):
-    topicId: int = None
+    topicId: str = None
     name: str = None
     code:str = None
     type: str = None

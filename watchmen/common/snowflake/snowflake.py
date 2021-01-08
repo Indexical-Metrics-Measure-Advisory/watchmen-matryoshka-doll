@@ -94,7 +94,7 @@ worker = IdWorker(0, 0)
 
 
 def get_surrogate_key():
-    return worker.get_id()
+    return str(worker.get_id())
 
 
 if __name__ == '__main__':
