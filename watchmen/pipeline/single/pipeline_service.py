@@ -25,5 +25,4 @@ def run_pipeline(pipeline, data):
             parent_node = dask.delayed(stage)(data)
         else:
             parent_node = dask.delayed(stage)(parent_node)
-    # parent_node.visualize(filename='transpose.svg',optimize_graph=True)
     parent_node.compute()
