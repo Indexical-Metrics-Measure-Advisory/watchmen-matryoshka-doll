@@ -15,13 +15,12 @@ router = APIRouter()
 
 
 @router.post("/login/access-token", response_model=Token, tags=["authenticate"])
-def login_access_token(
-        client=Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
+def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    user = authenticate(client, form_data.username, form_data.password)
+    user = authenticate(form_data.username, form_data.password)
 
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
@@ -30,7 +29,7 @@ def login_access_token(
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return {
         "access_token": security.create_access_token(
-            user.id, expires_delta=access_token_expires
+            user.userId, expires_delta=access_token_expires
         ),
         "token_type": "bearer",
     }

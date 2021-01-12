@@ -1,12 +1,11 @@
 from bson import regex
 
+from watchmen.auth.service.security import get_password_hash
 from watchmen.auth.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN, build_data_pages
-
-# from watchmen.common.utils import pickle_wrapper
 
 db = get_client(WATCHMEN)
 
@@ -27,8 +26,13 @@ def load_user_list_by_name(query_name):
     return list(result)
 
 
+def load_user_by_name(user_name):
+    return users.find_one({"name": user_name})
+
+
 def create_user_storage(user: User):
     user.userId = get_surrogate_key()
+    user.password = get_password_hash(user.password)
     if type(user) is not dict:
         user = user.dict()
     users.insert_one(user)

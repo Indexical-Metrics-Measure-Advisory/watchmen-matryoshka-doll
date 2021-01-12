@@ -156,8 +156,6 @@ async def save_user(user: User):
 
 
 
-
-
 @router.post("/user/name", tags=["admin"], response_model=DataPage)
 async def query_user_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     return query_users_by_name_with_pagination(query_name, pagination)
