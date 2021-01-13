@@ -20,6 +20,10 @@ def update_pipeline(pipeline: Pipeline) -> Pipeline:
     return pipeline
 
 
+def convert_to_object(x):
+    return  Pipeline.parse_obj(x)
+
+
 def load_pipeline_by_topic_id(topic_id):
     result = pipeline_collection.find({"topicId": topic_id})
-    return list(result)
+    return list(map(convert_to_object, list(result)))

@@ -7,10 +7,19 @@ from watchmen.topic.storage.topic_schema_storage import get_raw_topic
 def trigger_pipeline(topic_name,instance):
     topic = get_raw_topic(topic_name)
     # TODO validate data with topic schema
+    print("topic.topicId:", topic.topicId)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
     # flow = None
     for pipeline in pipeline_list:
-        print("run:",pipeline)
+        # print("run:",pipeline.json())
+
+        print(pipeline.name)
+
+        for stage in pipeline.stages:
+            print (stage.name)
+            print(stage.json())
+
+
     #     flow = dask.delayed(pipeline)(pipeline_event.data)
     #
     # flow.compute()

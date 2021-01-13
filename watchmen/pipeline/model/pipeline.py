@@ -5,8 +5,20 @@ from pydantic import BaseModel
 from watchmen.common.mongo_model import MongoModel
 
 
+# class SimpleFuncArithmetic(BaseModel):
+
+class SimpleFuncValue(BaseModel):
+    arithmetic: str = None
+    type: str = None
+    name: str = None
+    topicId:str = None
+    topicId:str = None
+
+
 class Condition(BaseModel):
-    pass
+    left: SimpleFuncValue=None;
+    operator: str=None;
+    right: SimpleFuncValue=None;
 
 
 class CompositeCondition(BaseModel):
@@ -19,10 +31,6 @@ class Trigger(BaseModel):
     relatedTopicName: str = None
 
 
-class SimpleFuncValue(BaseModel):
-    arithmetic: str = None
-    type: str = None
-    name: str = None
 
 
 # class MappingFactor(BaseModel):
