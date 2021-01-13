@@ -2,6 +2,7 @@ import json
 
 from watchmen.raw_data_back.rule_context import RuleContext
 from watchmen.raw_data_back.rule_schema import RuleType
+
 from watchmen.common.rule.import_rule import import_single_rule
 
 
@@ -21,5 +22,3 @@ def test_import_rule():
     print(json.dumps(result))
     result = import_single_rule(rule_context, rule)
     print(json.dumps(result))
-
-

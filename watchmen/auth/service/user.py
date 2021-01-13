@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from watchmen.auth.service.security import verify_password, get_password_hash
+from watchmen.auth.service.security import verify_password
 from watchmen.auth.storage.user import load_user_by_name
 from watchmen.auth.user import User
 
@@ -19,8 +19,7 @@ def authenticate(username, password):
         raise HTTPException(401)
     else:
         user = User.parse_obj(user)
-        if verify_password(password,user.password):
+        if verify_password(password, user.password):
             return User.parse_obj(user)
         else:
             raise HTTPException(401)
-

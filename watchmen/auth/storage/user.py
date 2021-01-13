@@ -16,7 +16,7 @@ def get_user(user_id):
     return users.find_one({"userId": user_id})
 
 
-def get_user_list_by_ids(user_ids:list):
+def get_user_list_by_ids(user_ids: list):
     result = users.find({"userId": {"$in": user_ids}})
     return list(result)
 
@@ -40,7 +40,7 @@ def create_user_storage(user: User):
 
 
 def query_users_by_name_with_pagination(query_name: str, pagination: Pagination):
-    items_count= users.find({"name": regex.Regex(query_name)}).count()
+    items_count = users.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = users.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
-    return build_data_pages(pagination,list(result),items_count)
+    return build_data_pages(pagination, list(result), items_count)

@@ -18,20 +18,33 @@ def load_all_topic_list(pagination: Pagination):
     item_count = topic_col.find().count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = topic_col.find().skip(skips).limit(pagination.pageSize)
-    return  build_data_pages(pagination, list(result), item_count)
+    return build_data_pages(pagination, list(result), item_count)
 
 
 def get_topic_by_name(topic_name):
-    return topic_col.find_one("topic_name", topic_name)
+    return topic_col.find_one("code", topic_name)
+
+
+def get_raw_topic(topic_name)->Topic:
+    result =topic_col.find_one({"code": topic_name,"type": "raw"})
+    return  Topic.parse_obj(result)
 
 
 def load_topic_list_by_name(topic_name):
-    result = topic_col.find({"name": regex.Regex(topic_name)})
+    result = topic_col.find({"code": regex.Regex(topic_name)})
     return list(result)
 
 
+def check_topic_exist(topic_name, topic_type) -> bool:
+    result = topic_col.find_one({"code", topic_name, "type", topic_type})
+    if result is None:
+        return False
+    else:
+        return True
+
+
 def get_topic_by_id(topic_id):
-    return topic_col.find_one({"topicId":topic_id})
+    return topic_col.find_one({"topicId": topic_id})
 
 
 def get_topic_list_by_ids(topic_ids):
@@ -48,7 +61,7 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination):
     item_count = topic_col.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = topic_col.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
-    return build_data_pages(pagination, list(result),item_count)
+    return build_data_pages(pagination, list(result), item_count)
 
 
 def update_topic(topic_id, topic: Topic):

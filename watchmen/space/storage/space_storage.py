@@ -27,7 +27,7 @@ def query_space_with_pagination(query_name: str, pagination: Pagination):
     items_count = collection.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = collection.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
-    return build_data_pages(pagination,list(result),items_count)
+    return build_data_pages(pagination, list(result), items_count)
 
 
 def get_space_list_by_ids(space_ids):

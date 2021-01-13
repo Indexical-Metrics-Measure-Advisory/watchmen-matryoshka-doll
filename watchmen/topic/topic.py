@@ -7,10 +7,10 @@ from watchmen.topic.factor.factor import Factor
 class Topic(MongoModel):
     topicId: str = None
     name: str = None
-    code:str = None
+    code: str = None
     type: str = None
     factors: List[Factor] = []
-    description:str=None
+    description: str = None
     # alias: List[str] = None
     # is_aggregate: bool = False
     # businessKey: list = []

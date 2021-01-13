@@ -1,10 +1,9 @@
-from watchmen.collection.connector import raw_data_load
-from watchmen.raw_data_back.model_schema import Domain
-from watchmen.topic.factor.factor import Factor, FactorType
 from watchmen.pipeline.pipeline import basic_schema, update_schema
+from watchmen.raw_data_back.model_schema import Domain
 
+from watchmen.collection.connector import raw_data_load
+from watchmen.topic.factor.factor import Factor, FactorType
 from watchmen.topic.storage.factor_storage import save_factor
-
 
 
 def test_basic_schema():

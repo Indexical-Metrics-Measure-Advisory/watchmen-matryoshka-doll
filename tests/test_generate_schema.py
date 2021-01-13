@@ -5,21 +5,23 @@
 # 5. link knowledge domain to raw_data_back
 
 
-from watchmen.collection.connector import raw_data_load
+import os
 
-from watchmen.raw_data.service.generate_schema import create_raw_data_model_set
 from watchmen.raw_data_back.model_schema import Domain
 from watchmen.raw_data_back.service.generate_schema import generate_basic_schema
-import os
+
+from watchmen.collection.connector import raw_data_load
+from watchmen.raw_data.service.generate_schema import create_raw_data_model_set
 
 
 def test_generate_schema():
-    print(generate_basic_schema("policy",raw_data_load('../assert/data/policy.json'),Domain.INSURANCE))
+    print(generate_basic_schema("policy", raw_data_load('../assert/data/policy.json'), Domain.INSURANCE))
 
-def __build_json_list(files_name,path):
+
+def __build_json_list(files_name, path):
     json_list = []
     for filename in files_name:
-        full_path = path+"/"+filename
+        full_path = path + "/" + filename
         if os.path.isfile(full_path):
             json_list.append(raw_data_load(full_path))
 
@@ -31,7 +33,7 @@ def test_generate_schema_for_list_data():
     files_name = os.listdir(path)
     json_list = __build_json_list(files_name, path)
     print(json_list)
-    result =create_raw_data_model_set('policy—2', json_list)
+    result = create_raw_data_model_set('policy—2', json_list)
     print(result.json())
 
     # GenerateLakeSchema().run([[raw_data_load('../../test/data/policy.json'),raw_data_load('../../test/data/policy.json')],"policy"],{})
@@ -49,10 +51,6 @@ def test_generate_schema_for_list_data():
 def test_raw_data_create_schema():
     result = create_raw_data_model_set('policy', raw_data_load('../assert/data/policy.json'))
 
-
     print(result.json())
-
-
-
 
 # test_raw_data_create_schema()

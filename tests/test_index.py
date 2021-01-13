@@ -2,6 +2,8 @@ import json
 import logging
 
 from bson import ObjectId
+from watchmen.raw_data_back.model_field import ModelField
+from watchmen.raw_data_back.storage.row_schema_storage import load_raw_schema_by_code
 
 from watchmen.collection.connector import raw_data_load
 from watchmen.index import select_domain, save_topic_mapping, generate_raw_data_schema
@@ -10,8 +12,6 @@ from watchmen.pipeline.mapping.mapping_rule_storage import load_topic_mapping_by
 from watchmen.pipeline.mapping.suggestion.generate_suggestion import generate_topic_suggestion, \
     generate_factor_suggestion
 from watchmen.pipeline.mapping.topic_mapping_rule import TopicMappingRule
-from watchmen.raw_data_back.model_field import ModelField
-from watchmen.raw_data_back.storage.row_schema_storage import load_raw_schema_by_code
 from watchmen.space.storage.space_storage import load_space_by_name
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_list_by_ids
@@ -115,8 +115,5 @@ def test_object_to_json():
             }
         ]
     }
-
-
-
 
     # print()

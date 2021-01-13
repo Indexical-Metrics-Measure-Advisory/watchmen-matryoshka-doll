@@ -1,12 +1,12 @@
+import json
+
+from watchmen.space.report.report import Report
+from watchmen.space.subject.filter import Filter
+from watchmen.space.subject.join import Join
+from watchmen.space.subject.subject import Subject
+from watchmen.topic.factor.factor import Factor
 from watchmen.topic.storage import save_topic_instances
 from watchmen.topic.topic import Topic
-from watchmen.topic.factor.factor import Factor
-from watchmen.space.subject.join import Join
-from watchmen.space.subject.filter import Filter
-from watchmen.space.subject.subject import Subject
-from watchmen.space.report.report import Report
-
-import json
 
 
 def import_report_data():

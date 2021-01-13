@@ -1,7 +1,5 @@
 from typing import Dict
 
-from pydantic import BaseModel
-
 from watchmen.common.mongo_model import MongoModel
 from watchmen.raw_data.model_relationship import ModelRelationship
 from watchmen.raw_data.model_schema import ModelSchema

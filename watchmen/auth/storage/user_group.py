@@ -14,8 +14,8 @@ def get_user_group(user_group_id):
     return user_groups.find_one({"userGroupId": user_group_id})
 
 
-def get_user_group_list_by_ids(user_group_ids:list):
-    result = user_groups.find({"userGroupId":{"$in": user_group_ids}})
+def get_user_group_list_by_ids(user_group_ids: list):
+    result = user_groups.find({"userGroupId": {"$in": user_group_ids}})
     return list(result)
 
 
@@ -36,4 +36,4 @@ def query_user_groups_by_name_with_paginate(query_name: str, pagination: Paginat
     items_count = user_groups.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = user_groups.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
-    return build_data_pages(pagination,list(result),items_count)
+    return build_data_pages(pagination, list(result), items_count)

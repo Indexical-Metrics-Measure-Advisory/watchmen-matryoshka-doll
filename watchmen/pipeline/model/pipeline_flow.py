@@ -6,7 +6,5 @@ from watchmen.pipeline.model.pipeline import Pipeline
 
 class PipelineFlow(MongoModel):
     topicId: str = None
-    consume: List [Pipeline]
-    produce: List [Pipeline]
-
-
+    consume: List[Pipeline]
+    produce: List[Pipeline]

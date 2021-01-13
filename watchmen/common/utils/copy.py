@@ -1,8 +1,7 @@
 from typing import Dict
 
-from watchmen.raw_data_back.model_field import ModelField
-from watchmen.raw_data_back.model_schema import ModelSchema
-
+from watchmen.raw_data.model_field import ModelField
+from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 

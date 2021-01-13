@@ -5,7 +5,7 @@ from pydantic import BaseModel, BaseConfig
 
 
 class MongoModel(BaseModel):
-    last_modified:datetime = datetime.utcnow()
+    last_modified: datetime = datetime.utcnow()
 
     class Config(BaseConfig):
         json_encoders = {

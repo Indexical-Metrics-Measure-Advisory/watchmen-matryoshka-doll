@@ -1,10 +1,6 @@
-from watchmen import *
 import logging
-import sys
 import logging.handlers
-
-
-
+import sys
 
 
 def test_init():

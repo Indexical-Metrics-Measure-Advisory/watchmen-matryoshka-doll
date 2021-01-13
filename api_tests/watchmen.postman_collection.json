@@ -1,41 +1,41 @@
 {
-	"info": {
-		"_postman_id": "a0f170b9-3667-4250-b952-765c29cab627",
-		"name": "watchmen",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "http://127.0.0.1:8000/topic",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"topicId\": 1,\n  \"name\": \"Quota\",\n  \"type\": \"distinct\",\n  \"factors\": [\n    {\n      \"factorId\": \"101\",\n      \"name\": \"quotationId\",\n      \"label\": \"Quotation Sequence\",\n      \"type\": \"sequence\"\n    },\n    {\n      \"factorId\": \"103\",\n      \"name\": \"quoteDate\",\n      \"label\": \"Quotation Create Date\",\n      \"type\": \"datetime\"\n    }\n  ],\n  \"is_aggregate\": false,\n  \"businessKey\": []\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:8000/topic",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8000",
-					"path": [
-						"topic"
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"protocolProfileBehavior": {}
+  "info": {
+    "_postman_id": "a0f170b9-3667-4250-b952-765c29cab627",
+    "name": "watchmen",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "http://127.0.0.1:8000/topic",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"topicId\": 1,\n  \"name\": \"Quota\",\n  \"type\": \"distinct\",\n  \"factors\": [\n    {\n      \"factorId\": \"101\",\n      \"name\": \"quotationId\",\n      \"label\": \"Quotation Sequence\",\n      \"type\": \"sequence\"\n    },\n    {\n      \"factorId\": \"103\",\n      \"name\": \"quoteDate\",\n      \"label\": \"Quotation Create Date\",\n      \"type\": \"datetime\"\n    }\n  ],\n  \"is_aggregate\": false,\n  \"businessKey\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/topic",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "topic"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "protocolProfileBehavior": {}
 }

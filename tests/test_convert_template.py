@@ -1,7 +1,7 @@
 from watchmen.space.factors.factor import Factor
+from watchmen.space.factors.topic import Topic
 
 from watchmen.common.knowledge.knowledge_loader import find_template_by_domain
-from watchmen.space.factors.topic import Topic
 from watchmen.topic.storage import save_topic
 
 
@@ -14,7 +14,7 @@ def test_convert_template():
 
     for template in insurance_templates:
         # topic.topic_name = template.keys()
-        for key ,value in template.items():
+        for key, value in template.items():
             topic = Topic()
             topic.businessKey = "insurance_template"
             # for x in template.values():
@@ -28,11 +28,9 @@ def test_convert_template():
                 # for key,value in factor_details.items():
                 #     factor[key]=value
 
-
                 # print(factor_details)
 
                 topic.factors.append(factor)
-
 
             # print(topic.json())
 
@@ -41,7 +39,5 @@ def test_convert_template():
 
     for topic in topic_list:
         save_topic(topic.dict())
-
-
 
     ## save to storage

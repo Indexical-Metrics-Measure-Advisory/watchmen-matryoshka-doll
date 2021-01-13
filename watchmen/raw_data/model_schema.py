@@ -1,8 +1,6 @@
 from enum import Enum
 from typing import Optional, Dict
 
-from pydantic import BaseModel
-
 from watchmen.common.event.event import Event
 from watchmen.common.mongo_model import MongoModel
 from watchmen.raw_data.context import Context

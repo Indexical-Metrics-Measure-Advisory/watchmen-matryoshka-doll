@@ -20,9 +20,10 @@ class Trigger(BaseModel):
 
 
 class SimpleFuncValue(BaseModel):
-    arithmetic:str = None
-    type:str = None
+    arithmetic: str = None
+    type: str = None
     name: str = None
+
 
 # class MappingFactor(BaseModel):
 #
@@ -33,23 +34,18 @@ class SimpleFuncValue(BaseModel):
 class UnitAction(BaseModel):
     # unitId: str = None
     type: str = None
-    targetName:str = None
+    targetName: str = None
 
     # UnitActionAlarm
-    severity:str = None
-    message:str = None
+    severity: str = None
+    message: str = None
 
     # topic
-
-    topicId:str = None
-    factorId:str = None
-
-    mapping:list=[]
-
-    by: CompositeCondition=None;
-
-    value:str = None
-
+    topicId: str = None
+    factorId: str = None
+    mapping: list = []
+    by: CompositeCondition = None;
+    value: str = None
 
 
 class ProcessUnit(BaseModel):
@@ -64,7 +60,7 @@ class Stage(BaseModel):
 
 
 class Pipeline(MongoModel):
-    pipelineId:str = None
+    pipelineId: str = None
     topicId: str = None;
     name: str = None;
     type: str = None;

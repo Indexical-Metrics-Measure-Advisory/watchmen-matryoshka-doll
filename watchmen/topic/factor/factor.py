@@ -1,7 +1,5 @@
 from enum import Enum
 
-from pydantic import BaseModel
-
 from watchmen.common.mongo_model import MongoModel
 
 
@@ -12,14 +10,11 @@ class FactorType(str, Enum):
 
 
 class Factor(MongoModel):
-    type:str=None
-    factorId:str=None
-    name:str=None
-    label:str=None
-    description:str=None
-
-
-
+    type: str = None
+    factorId: str = None
+    name: str = None
+    label: str = None
+    description: str = None
 
 
 '''

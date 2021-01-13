@@ -24,5 +24,3 @@
 #     import_raw_data(raw_data_load('../../test/data/policy.json'),model_schema_set,None)
 #
 #     # print(m)
-
-

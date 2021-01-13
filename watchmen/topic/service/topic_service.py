@@ -8,6 +8,8 @@ log = logging.getLogger("app." + __name__)
 
 
 def create_topic_schema(topic):
+
+    # TODO add check topic check
     if type(topic) is not dict:
         topic = topic.dict()
     topic["topicId"] = get_surrogate_key()
@@ -23,11 +25,10 @@ def update_topic_schema(
     update_topic(topic_id, topic)
     return topic
 
-
-
-
-
 #
 # def query_topic_schema(query_name:str):
 #     data_list = get_topic_list_like_topic_name(query_name)
 #     return json_util.dumps(data_list)
+
+
+

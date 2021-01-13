@@ -64,9 +64,9 @@ async def create_space(space: Space):
     return create_space(space)
 
 
-@router.post("/save/space",tags=["admin"],response_model=Space)
+@router.post("/save/space", tags=["admin"], response_model=Space)
 async def save_space(space: Space):
-    if space.spaceId is  None:
+    if space.spaceId is None:
         return create_space(space)
     else:
         return update_space_by_id(space.spaceId, space)
@@ -155,7 +155,6 @@ async def save_user(user: User):
         pass
 
 
-
 @router.post("/user/name", tags=["admin"], response_model=DataPage)
 async def query_user_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     return query_users_by_name_with_pagination(query_name, pagination)
@@ -182,13 +181,12 @@ async def create_user_group(user_group: UserGroup):
     return create_user_group_storage(user_group)
 
 
-@router.post("/save/user_group",tags=["admin"],response_model=UserGroup)
+@router.post("/save/user_group", tags=["admin"], response_model=UserGroup)
 async def save_user_group(user_group: UserGroup):
     if user_group.userGroupId is None:
         pass
     else:
         pass
-
 
 
 @router.get("/query/user_group/space", tags=["admin"], response_model=List[UserGroup])
@@ -226,6 +224,4 @@ async def save_pipeline(pipeline: Pipeline):
 @router.get("/pipeline", tags=["admin"], response_model=PipelineFlow)
 async def load_pipeline(topic_id):
     result = load_pipeline_by_topic_id(topic_id)
-    return {"topicId": topic_id,"consume":result,"produce":result}
-
-
+    return {"topicId": topic_id, "consume": result, "produce": result}
