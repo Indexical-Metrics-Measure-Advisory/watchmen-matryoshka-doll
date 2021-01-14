@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
@@ -30,7 +32,6 @@ def convert_factor_type(value, factor_type):
 
 
 def get_factor(factor_id, target_topic:Topic):
-
     for factor in target_topic.factors:
         if factor.factorId == factor_id:
             return factor
