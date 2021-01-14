@@ -12,7 +12,7 @@ class SimpleFuncValue(BaseModel):
     type: str = None
     name: str = None
     topicId:str = None
-    topicId:str = None
+    factorId:str = None
 
 
 class Condition(BaseModel):
