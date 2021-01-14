@@ -59,13 +59,13 @@ async def generate_suggestion_factor(factor_suggestion: FactorSuggestionIn):
 
 # ADMIN
 
-## Space
+# ## Space
+# @router.post("/space", tags=["admin"], response_model=Space)
+# async def create_space(space: Space):
+#     return create_space(space)
+
+
 @router.post("/space", tags=["admin"], response_model=Space)
-async def create_space(space: Space):
-    return create_space(space)
-
-
-@router.post("/save/space", tags=["admin"], response_model=Space)
 async def save_space(space: Space):
     if space.spaceId is None:
         return create_space(space)
