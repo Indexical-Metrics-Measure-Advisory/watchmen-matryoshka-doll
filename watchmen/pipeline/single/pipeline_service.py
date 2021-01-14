@@ -1,5 +1,6 @@
 import importlib
 
+from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 NAME = "name"
@@ -30,6 +31,10 @@ def convert_action_type(action_type: str):
 def run_pipeline(pipeline, data):
     pipeline_type = pipeline.type
     pipeline_topic = get_topic_by_id(pipeline.topicId)
+
+    run_status = PipelineRunStatus()
+
+    # run_status.name = pipeline.name
 
     for stage in pipeline.stages:
         for unit in stage.units:

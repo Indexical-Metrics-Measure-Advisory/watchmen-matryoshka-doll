@@ -1,6 +1,5 @@
-def generate_quality_report():
-    pass
+from watchmen.pipeline.model.pipeline import Pipeline
 
 
-def generate_quality_report_for_factors():
+def build_pipeline_run_status(pipeline: Pipeline):
     pass

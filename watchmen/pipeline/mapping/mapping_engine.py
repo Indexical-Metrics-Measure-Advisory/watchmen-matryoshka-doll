@@ -1,5 +1,2 @@
-def run():
-    # load mapping rules by master_topic_id and source topic id
-    #
-
+def run_mapping_rules(mapping_rules):
     pass

@@ -18,6 +18,10 @@ def build_json_list(files_name, path):
     return json_list
 
 
+def build_collection_name(topic_name):
+    return "topic_" + topic_name
+
+
 def is_field_value(value):
     return type(value) != dict and type(value) != list
 
