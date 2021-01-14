@@ -32,6 +32,11 @@ def create_user_group_storage(user_group: UserGroup):
     return user_group
 
 
+def update_user_group_storage(user_group:UserGroup):
+    user_groups.update_one({"userGroupId":user_group.userGroupId},{"$set":user_group.dict()})
+    return user_group
+
+
 def query_user_groups_by_name_with_paginate(query_name: str, pagination: Pagination):
     items_count = user_groups.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)

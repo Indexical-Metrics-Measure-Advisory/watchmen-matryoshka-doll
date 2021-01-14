@@ -4,9 +4,9 @@ from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
-    get_user, load_user_list_by_name
+    get_user, load_user_list_by_name, update_user_storage
 from watchmen.auth.storage.user_group import create_user_group_storage, query_user_groups_by_name_with_paginate, \
-    get_user_group_list_by_ids, get_user_group, load_group_list_by_name
+    get_user_group_list_by_ids, get_user_group, load_group_list_by_name, update_user_group_storage
 from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.data_page import DataPage
@@ -19,7 +19,8 @@ from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.service.admin import create_space, update_space_by_id
 from watchmen.space.space import Space
-from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids
+from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
+    load_space_list_by_name
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name
@@ -93,6 +94,11 @@ async def query_space_list_by_ids(space_ids: List[str]):
     return get_space_list_by_ids(space_ids)
 
 
+@router.get("/query/space/group", tags=["admin"], response_model=List[Space])
+async def query_space_list_for_user_group(query_name: str):
+    return load_space_list_by_name(query_name)
+
+
 ## Topic
 @router.get("/topic", tags=["admin"], response_model=Topic)
 async def load_topic(topic_id):
@@ -143,16 +149,16 @@ async def query_topic_list_by_ids(topic_ids: List[str]):
 
 
 ## User
+#
+# async def create_user(user: User):
+#     return create_user_storage(user)
+
 @router.post("/user", tags=["admin"], response_model=User)
-async def create_user(user: User):
-    return create_user_storage(user)
-
-
 async def save_user(user: User):
     if user.userId is None:
-        pass
+        return create_user_storage(user)
     else:
-        pass
+        return update_user_storage(user)
 
 
 @router.post("/user/name", tags=["admin"], response_model=DataPage)
@@ -175,18 +181,18 @@ async def query_user_list_for_user_group(query_name):
     return load_user_list_by_name(query_name)
 
 
-## User Group
+# ## User Group
+# @router.post("/user_group", tags=["admin"], response_model=UserGroup)
+# async def create_user_group(user_group: UserGroup):
+#     return create_user_group_storage(user_group)
+
+
 @router.post("/user_group", tags=["admin"], response_model=UserGroup)
-async def create_user_group(user_group: UserGroup):
-    return create_user_group_storage(user_group)
-
-
-@router.post("/save/user_group", tags=["admin"], response_model=UserGroup)
 async def save_user_group(user_group: UserGroup):
     if user_group.userGroupId is None:
-        pass
+        return create_user_group_storage(user_group)
     else:
-        pass
+        return update_user_group_storage(user_group)
 
 
 @router.get("/query/user_group/space", tags=["admin"], response_model=List[UserGroup])

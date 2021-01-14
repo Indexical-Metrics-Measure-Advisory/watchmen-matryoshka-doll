@@ -42,7 +42,12 @@ def load_space_by_user(user):
 
 def load_space_by_name(name):
     data = collection.find_one({"name": name})
-    return pickle_wrapper(data, Space)
+    return data
+
+
+def load_space_list_by_name(name):
+    result = collection.find({"name": regex.Regex(name)})
+    return list(result)
 
 
 def load_space_list_by_user_id_with_pagination(user_id, pagination: Pagination):

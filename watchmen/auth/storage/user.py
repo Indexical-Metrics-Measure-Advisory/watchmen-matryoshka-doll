@@ -38,6 +38,10 @@ def create_user_storage(user: User):
     users.insert_one(user)
     return user
 
+def update_user_storage(user: User):
+    users.update_one({"userId":user.userId},{"$set":user.dict()})
+    return user
+
 
 def query_users_by_name_with_pagination(query_name: str, pagination: Pagination):
     items_count = users.find({"name": regex.Regex(query_name)}).count()
