@@ -15,4 +15,3 @@ async def health():
 async def save_topic_data(topic_event: TopicEvent):
     save_topic_instance(topic_event.type,topic_event.data)
 
-    # return save_topic(topic)

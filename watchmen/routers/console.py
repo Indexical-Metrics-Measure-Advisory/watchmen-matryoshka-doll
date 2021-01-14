@@ -1,7 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-from watchmen.auth.service.user import get_current_user
-from watchmen.common.event.event import Event
+from watchmen.auth.user import User
+from watchmen.common import deps
 from watchmen.common.pagination import Pagination
 from watchmen.space.storage.space_storage import load_space_list_by_user_id_with_pagination
 
@@ -14,22 +14,11 @@ router = APIRouter()
 # TODO console api
 
 
-@router.get("/space/me", tags=["console"])
-async def load_space_list_by_user(pagination: Pagination):
-    current_user = get_current_user()
-    user_id = current_user.user_id
-    return load_space_list_by_user_id_with_pagination(user_id, pagination)
+@router.post("/space/me", tags=["console"])
+async def load_space_list_by_user(pagination: Pagination,current_user: User = Depends(deps.get_current_user)):
+    return load_space_list_by_user_id_with_pagination(current_user["groupIds"], pagination)
 
 
-@router.post("/collection/data", tags=["console"])
-async def collection_raw_data(raw_data, event: Event):
-    ## find org
-    ## find data_source
-    ## save raw data
-    ## trigger event
-
-    # TODO collection_raw_data
-    pass
 
 
 async def load_space_by_id(id: str):
