@@ -1,4 +1,3 @@
-from functools import lru_cache
 
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic

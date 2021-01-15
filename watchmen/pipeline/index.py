@@ -10,7 +10,7 @@ client = Client()
 def trigger_pipeline(topic_name, instance):
     topic = get_raw_topic(topic_name)
     # TODO validate data with topic schema
-    print("topic.topicId:", topic.topicId)
+    # print("topic.topicId:", topic.topicId)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
     # flow = None
 
@@ -20,20 +20,6 @@ def trigger_pipeline(topic_name, instance):
         future = client.submit(run_pipeline, pipeline, instance)
 
         print(future.result())
-
-        # for stage in pipeline.stages:
-        #     print (stage.name)
-        #     print(stage.json())
-
-    #     flow = dask.delayed(pipeline)(pipeline_event.data)
-    #
-    # flow.compute()
-
-    # TODO  future run
-
-    # load relationship pipeline by topic id
-    # multiple process run pipeline
-    # sent backend task for monitor topic data
 
 
 def trigger_topic(*args, **kwargs):

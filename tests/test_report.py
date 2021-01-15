@@ -1,6 +1,6 @@
 import json
 
-from watchmen.space.report.report import Report
+from watchmen.report.engine.report_engine import Report
 from watchmen.space.subject.filter import Filter
 from watchmen.space.subject.join import Join
 from watchmen.space.subject.subject import Subject

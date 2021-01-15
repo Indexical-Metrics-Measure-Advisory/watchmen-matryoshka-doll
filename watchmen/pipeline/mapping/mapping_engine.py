@@ -1,2 +1,2 @@
-def run_mapping_rules(mapping_rules):
-    pass
+# def run_mapping_rules(mapping_rules):
+#     pass

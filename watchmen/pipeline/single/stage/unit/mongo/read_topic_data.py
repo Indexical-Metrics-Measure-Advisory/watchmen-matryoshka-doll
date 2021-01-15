@@ -7,6 +7,7 @@ db = get_client(WATCHMEN)
 def __build_mongo_condition(where_condition,mode):
 
     if len(where_condition)>1:
+        # TODO multiple conditions
         pass
     else:
         condition = where_condition[0]
@@ -17,12 +18,8 @@ def __build_mongo_condition(where_condition,mode):
 def read_topic_data(where_condition,topic_name,mode):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
-
     condition = __build_mongo_condition(where_condition,mode)
-
-    print(condition)
-
     result = collection.find_one(condition)
-
-    print("target_data:",result)
     return result
+
+
