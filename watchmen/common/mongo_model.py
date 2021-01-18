@@ -12,3 +12,4 @@ class MongoModel(BaseModel):
             datetime: lambda dt: dt.isoformat(),
             ObjectId: lambda oid: str(oid)
         }
+

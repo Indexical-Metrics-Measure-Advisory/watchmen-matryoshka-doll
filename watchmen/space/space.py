@@ -10,6 +10,7 @@ class Space(MongoModel):
     groupIds: List = None
     name: str = None
     description: str = None
+
     # report_list: List = None
     # status: bool = True
     # accessUsers: List[str] = None

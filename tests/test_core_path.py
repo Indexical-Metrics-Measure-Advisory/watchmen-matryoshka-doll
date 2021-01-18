@@ -16,9 +16,9 @@ def test_save_topic_instance():
 
     topic = get_raw_topic("raw_policy")
     # TODO validate data with topic schema
-    # print("topic.topicId:", topic.topicId)
+
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
 
     for pipeline in pipeline_list:
         run_pipeline(pipeline, data)
-    # save_topic_instance("raw_policy", data)
+

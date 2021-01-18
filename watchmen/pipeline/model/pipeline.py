@@ -31,14 +31,6 @@ class Trigger(BaseModel):
     relatedTopicName: str = None
 
 
-
-
-# class MappingFactor(BaseModel):
-#
-# 	from: SimpleFuncValue
-# 	to: SimpleFuncValue
-
-
 class UnitAction(BaseModel):
     # unitId: str = None
     type: str = None

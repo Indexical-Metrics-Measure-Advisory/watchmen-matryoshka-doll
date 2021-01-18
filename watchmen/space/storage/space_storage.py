@@ -16,7 +16,8 @@ def insert_space_to_storage(space):
 
 
 def get_space_by_id(space_id: str):
-    return collection.find_one({"spaceId": space_id})
+    result =  collection.find_one({"spaceId": space_id})
+    return Space.parse_obj(result)
 
 
 def update_space_to_storage(space_id: str, space: Space):
@@ -35,9 +36,9 @@ def get_space_list_by_ids(space_ids):
     return list(result)
 
 
-def load_space_by_user(user):
-    data = collection.find_one({"user": user})
-    return pickle_wrapper(data, Space)
+def load_space_by_user(group_ids):
+    result = collection.find({"groupIds": {"$in": group_ids}})
+    return list(result)
 
 
 def load_space_by_name(name):

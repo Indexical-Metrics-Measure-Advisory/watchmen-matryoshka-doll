@@ -99,7 +99,8 @@ async def query_space_list_for_user_group(query_name: str):
     return load_space_list_by_name(query_name)
 
 
-## Topic
+# Topic
+
 @router.get("/topic", tags=["admin"], response_model=Topic)
 async def load_topic(topic_id):
     # print(topic_id)
@@ -148,10 +149,7 @@ async def query_topic_list_by_ids(topic_ids: List[str]):
     return get_topic_list_by_ids(topic_ids)
 
 
-## User
-#
-# async def create_user(user: User):
-#     return create_user_storage(user)
+# User
 
 @router.post("/user", tags=["admin"], response_model=User)
 async def save_user(user: User):
@@ -181,11 +179,7 @@ async def query_user_list_for_user_group(query_name):
     return load_user_list_by_name(query_name)
 
 
-# ## User Group
-# @router.post("/user_group", tags=["admin"], response_model=UserGroup)
-# async def create_user_group(user_group: UserGroup):
-#     return create_user_group_storage(user_group)
-
+# User Group
 
 @router.post("/user_group", tags=["admin"], response_model=UserGroup)
 async def save_user_group(user_group: UserGroup):
@@ -215,16 +209,15 @@ async def query_user_groups_list_by_name(query_name: str, pagination: Pagination
     return query_user_groups_by_name_with_paginate(query_name, pagination)
 
 
-## pipeline
+# pipeline
 
 @router.post("/pipeline", tags=["admin"], response_model=Pipeline)
 async def save_pipeline(pipeline: Pipeline):
     result = load_pipeline_by_topic_id(pipeline.topicId)
-
-    if len(result) > 0:
-        return update_pipeline(pipeline)
-    else:
+    if not result:
         return create_pipeline(pipeline)
+    else:
+        return update_pipeline(pipeline)
 
 
 @router.get("/pipeline", tags=["admin"], response_model=PipelineFlow)
