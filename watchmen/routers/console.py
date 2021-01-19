@@ -5,6 +5,9 @@ from fastapi import APIRouter, Depends, Body
 
 from watchmen.auth.user import User
 from watchmen.common import deps
+from watchmen.common.data_page import DataPage
+from watchmen.common.pagination import Pagination
+from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject
 from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
     load_console_group_by_id, update_console_group, load_console_group_list_by_ids
@@ -12,6 +15,7 @@ from watchmen.console_space.storage.console_space_storage import save_console_sp
     load_console_space_by_id
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
     load_console_subject_list_by_ids, update_console_subject
+from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id
 from watchmen.space.service.console import load_topic_list_by_space_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import load_space_by_user, get_space_by_id
@@ -122,67 +126,12 @@ async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Bo
 #
 #     pass
 
-
-@router.post("/console_space/subject/save", tags=["console"])
+@router.post("/console_space/subject/save", tags=["console"],response_model=ConsoleSpaceSubject)
 async def save_console_subject(subject: ConsoleSpaceSubject):
     return update_console_subject(subject)
 
 
-
-
-async def sort_space_by_sort_type():
-    pass
-
-
-async def load_dashboard_list_by_user():
-    pass
-
-
-async def load_dashboard_by_id(id: str):
-    pass
-
-
-# async def sort_space_by_sort_type():
-#     pass
-
-
-
-
-async def create_dashboard():
-    pass
-
-
-async def load_subject_by_group():
-    pass
-
-
-async def add_subject_to_group():
-    pass
-
-
-async def load_subject_groups_by_space_id():
-    pass
-
-
-async def load_available_resources_by_space_id():
-    pass
-
-
-async def save_subject_definition():
-    pass
-
-
-async def load_subject_definition():
-    pass
-
-
-async def load_instance_data_by_subject_id():
-    pass
-
-
-async def load_reports_by_subject_id():
-    pass
-
-
-async def share_dashboard_url(to: str):
-    pass
+@router.post("/console_space/subject/dataset", tags=["console"],response_model=DataPage)
+async def load_dataset(subject_id,pagination: Pagination = Body(...)):
+    data = load_dataset_by_subject_id(subject_id)
+    return build_data_pages(pagination, data, 1)
