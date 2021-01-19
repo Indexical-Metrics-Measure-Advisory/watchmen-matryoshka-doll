@@ -11,7 +11,6 @@ from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
-from watchmen.index import generate_suggestion_topic_service, generate_suggestion_factor
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id
@@ -47,14 +46,14 @@ async def add_topic_list_to_space():
     pass
 
 
-@router.post("/admin/suggestion/topic", tags=["admin"])
-async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
-    return generate_suggestion_topic_service(topic_suggestion.lake_schema, topic_suggestion.master_schema)
-
-
-@router.post("/admin/suggestion/factors", tags=["admin"])
-async def generate_suggestion_factor(factor_suggestion: FactorSuggestionIn):
-    return generate_suggestion_factor(factor_suggestion.lake_schema, factor_suggestion.topic)
+# @router.post("/admin/suggestion/topic", tags=["admin"])
+# async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
+#     return generate_suggestion_topic_service(topic_suggestion.lake_schema, topic_suggestion.master_schema)
+#
+#
+# @router.post("/admin/suggestion/factors", tags=["admin"])
+# async def generate_suggestion_factor(factor_suggestion: FactorSuggestionIn):
+#     return generate_suggestion_factor(factor_suggestion.lake_schema, factor_suggestion.topic)
 
 
 # ADMIN
