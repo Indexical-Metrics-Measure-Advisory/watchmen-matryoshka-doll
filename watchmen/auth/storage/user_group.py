@@ -32,8 +32,8 @@ def create_user_group_storage(user_group: UserGroup):
     return user_group
 
 
-def update_user_group_storage(user_group:UserGroup):
-    user_groups.update_one({"userGroupId":user_group.userGroupId},{"$set":user_group.dict()})
+def update_user_group_storage(user_group: UserGroup):
+    user_groups.update_one({"userGroupId": user_group.userGroupId}, {"$set": user_group.dict()})
     return user_group
 
 

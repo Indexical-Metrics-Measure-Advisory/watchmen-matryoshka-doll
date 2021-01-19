@@ -11,14 +11,14 @@ class SimpleFuncValue(BaseModel):
     arithmetic: str = None
     type: str = None
     name: str = None
-    topicId:str = None
-    factorId:str = None
+    topicId: str = None
+    factorId: str = None
 
 
 class Condition(BaseModel):
-    left: SimpleFuncValue=None;
-    operator: str=None;
-    right: SimpleFuncValue=None;
+    left: SimpleFuncValue = None;
+    operator: str = None;
+    right: SimpleFuncValue = None;
 
 
 class CompositeCondition(BaseModel):

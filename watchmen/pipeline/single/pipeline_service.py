@@ -1,6 +1,5 @@
 import importlib
 
-from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 NAME = "name"
@@ -19,9 +18,9 @@ def build_pipeline(stage_list):
     return pipeline
 
 
-def find_action_type_func(action_type, action,pipeline_topic):
+def find_action_type_func(action_type, action, pipeline_topic):
     stage_method = importlib.import_module(STAGE_MODULE_PATH + action_type)
-    return stage_method.init(action,pipeline_topic)
+    return stage_method.init(action, pipeline_topic)
 
 
 def convert_action_type(action_type: str):
@@ -44,7 +43,7 @@ def run_pipeline(pipeline, data):
             actions = unit.do
             out_result = None
             for action in actions:
-                print("action: ",action.json())
+                print("action: ", action.json())
                 func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                 out_result = func(data)
 

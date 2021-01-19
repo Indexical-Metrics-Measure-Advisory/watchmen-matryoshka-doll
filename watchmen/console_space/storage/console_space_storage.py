@@ -12,7 +12,7 @@ def create_console_space(console_space: ConsoleSpace):
     return console_space
 
 
-def update_console_space(console_space:ConsoleSpace):
+def update_console_space(console_space: ConsoleSpace):
     console_space_collection.update_one({"connectId": console_space.connectId}, {"$set": console_space.dict()})
     return console_space
 
@@ -33,5 +33,3 @@ def load_console_space_by_id(connect_id: str):
 def load_console_space_list_by_user(user_id):
     result = console_space_collection.find({"userId": user_id})
     return list(result)
-
-

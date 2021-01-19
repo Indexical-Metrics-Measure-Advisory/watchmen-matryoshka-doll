@@ -139,11 +139,11 @@ async def save_console_subject(subject: ConsoleSpaceSubject):
 
 @router.post("/console_space/subject/dataset", tags=["console"], response_model=DataPage)
 async def load_dataset(subject_id, pagination: Pagination = Body(...)):
-    data = load_dataset_by_subject_id(subject_id)
+    data = load_dataset_by_subject_id(subject_id, pagination)
     return build_data_pages(pagination, data, 1)
 
 
-@router.get("/console_space/dataset/chart", tags=["console"],response_model=ConsoleSpaceSubjectChartDataSet)
+@router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_chart(subject_id, chart_id):
-    result = load_chart_dataset(subject_id,chart_id)
-    return ConsoleSpaceSubjectChartDataSet(meta=[],data=result)
+    result = load_chart_dataset(subject_id, chart_id)
+    return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)

@@ -1,7 +1,5 @@
 from watchmen.pipeline.model.pipeline import UnitAction
-from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import get_target_data
 from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules
-from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import insert_topic_data
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
 

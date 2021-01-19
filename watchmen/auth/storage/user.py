@@ -13,7 +13,7 @@ users = db.get_collection('users')
 
 
 def get_user(user_id):
-    user =  users.find_one({"userId": user_id})
+    user = users.find_one({"userId": user_id})
     return User.parse_obj(user)
 
 
@@ -41,7 +41,7 @@ def create_user_storage(user: User):
 
 
 def update_user_storage(user: User):
-    users.update_one({"userId":user.userId},{"$set":user.dict()})
+    users.update_one({"userId": user.userId}, {"$set": user.dict()})
     return user
 
 

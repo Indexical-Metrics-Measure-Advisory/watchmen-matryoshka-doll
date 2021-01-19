@@ -23,7 +23,7 @@ def build_right_query(condition, pipeline_topic, raw_data, target_topic):
 def filter_condition(where_condition, index):
     filter_conditions = []
     for condition in where_condition:
-        filter_conditon = {"name":condition["name"],"operator":condition["operator"]}
+        filter_conditon = {"name": condition["name"], "operator": condition["operator"]}
         if type(condition["value"]) is list:
             filter_conditon["value"] = condition["value"][index]
         else:
@@ -45,7 +45,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 filter_where_condition = filter_condition(where_condition, index)
                 print("filter_where_condition:", filter_where_condition)
                 target_data = read_topic_data(filter_where_condition, target_topic.name, condition.mode)
-                print("target: ",target_data)
+                print("target: ", target_data)
                 if target_data is None:
                     insert_topic_data(target_topic.name, mapping_results[index])
                 else:

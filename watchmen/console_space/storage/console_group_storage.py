@@ -1,7 +1,7 @@
-from watchmen.console_space.model.console_space import ConsoleSpaceGroup
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN
+from watchmen.console_space.model.console_space import ConsoleSpaceGroup
 
 db = get_client(WATCHMEN)
 console_space_group = db.get_collection('console_space_group')
@@ -24,5 +24,5 @@ def update_console_group(group: ConsoleSpaceGroup):
 
 
 def load_console_group_list_by_ids(group_ids):
-    group  = console_space_group.find({"groupId": {"$in": group_ids}})
+    group = console_space_group.find({"groupId": {"$in": group_ids}})
     return list(group)

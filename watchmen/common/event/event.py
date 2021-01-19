@@ -13,5 +13,3 @@ def before(func):
         return func()
 
     return run_before
-
-

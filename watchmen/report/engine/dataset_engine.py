@@ -1,6 +1,7 @@
 from pypika import Query, Table
 from pypika import functions as fn
 
+from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_client import get_connection
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
@@ -33,38 +34,42 @@ def build_columns(columns):
     return q
 
 
-def build_joins(joins):
+def build_joins(joins, query):
+    return query
 
 
-
-
-    pass
-
-
-def load_dataset_by_subject_id(subject_id):
+def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     console_subject = load_console_subject_by_id(subject_id)
 
     # print(console_subject.json())
     query = build_query_for_subject(console_subject)
 
     conn = get_connection()
-    print("sql:",query.get_sql())
+    print("sql:", query.get_sql())
     cur = conn.cursor()
     cur.execute(query.get_sql())
     rows = cur.fetchall()
-    print("sql result:",rows)
+    print("sql result:", rows)
     return rows
 
 
-def load_chart_dataset(subject_id,chart_id):
-    query = build_query_for_subject_chart(subject_id,chart_id)
+def load_chart_dataset(subject_id, chart_id):
+    query = build_query_for_subject_chart(subject_id, chart_id)
     conn = get_connection()
     print("sql:", query.get_sql())
     cur = conn.cursor()
     cur.execute(query.get_sql())
     rows = cur.fetchall()
     print("sql result:", rows)
-    return  rows
+    return rows
+
+
+def build_where(filters, query):
+    # for filter in filters:
+    #     pas s
+
+
+    return query
 
 
 def build_query_for_subject(console_subject):
@@ -74,48 +79,41 @@ def build_query_for_subject(console_subject):
         # build columns
         if len(dataset.columns) > 0:
             query = build_columns(dataset.columns)
-        # if len(dataset.joins) > 0:
-        #     query = build_joins(dataset.joins)
-
+        if len(dataset.filters) > 0:
+            query = build_where(dataset.filters, query)
+        if len(dataset.joins) > 0:
+            query = build_joins(dataset.joins, query)
     return query
 
 
 def get_graphic(graphics, chart_id):
     for chart in graphics:
-        if chart.chartId ==chart_id:
+        if chart.chartId == chart_id:
             return chart
 
 
-def build_query_for_subject_chart(subject_id,chart_id):
+def build_query_for_subject_chart(subject_id, chart_id):
     console_subject = load_console_subject_by_id(subject_id)
-    chart = get_graphic(console_subject.graphics,chart_id)
+    chart = get_graphic(console_subject.graphics, chart_id)
 
-    # query = build_query_for_subject(console_subject)
-    query =Query._builder()
+    query = Query._builder()
     for indicator in chart.indicators:
         topic = get_topic_by_id(indicator.topicId)
         factor = get_factor(indicator.factorId, topic)
         t = Table(build_collection_name(topic.name))
         q = query.from_(t)
-        if indicator.aggregator =="sum":
+        if indicator.aggregator == "sum":
             q = q.select(fn.Sum(t[factor.name]))
+        elif indicator.aggregator == "avg":
+            q = q.select(fn.Avg(t[factor.name]))
+        elif indicator.aggregator == "max":
+            q = q.select(fn.Max(t[factor.name]))
+        elif indicator.aggregator == "min":
+            q = q.select(fn.Min(t[factor.name]))
 
-
-    for dimension in  chart.dimensions:
+    for dimension in chart.dimensions:
         topic = get_topic_by_id(dimension.topicId)
         factor = get_factor(dimension.factorId, topic)
-        q= q.groupby(t[factor.name])
+        q = q.groupby(t[factor.name])
+
     return q
-
-
-
-
-
-
-
-
-
-
-
-
-

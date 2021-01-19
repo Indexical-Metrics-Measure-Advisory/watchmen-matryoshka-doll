@@ -21,7 +21,7 @@ def update_pipeline(pipeline: Pipeline) -> Pipeline:
 
 
 def convert_to_object(x):
-    return  Pipeline.parse_obj(x)
+    return Pipeline.parse_obj(x)
 
 
 def load_pipeline_by_topic_id(topic_id):

@@ -16,7 +16,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
     mapping_results = []
 
     for mapping in mapping_list:
-        result =[]
+        result = []
         source = mapping["from"]
         source_factor = get_factor(source["factorId"], pipeline_topic)
 
@@ -25,11 +25,11 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         target = mapping["to"]
         target_factor = get_factor(target["factorId"], target_topic)
         ## TODO func convert
-        mapping_results.append({target_factor.name:source_value_list})
+        mapping_results.append({target_factor.name: source_value_list})
 
     mapping_data_list = merge_mapping_data(mapping_results)
 
-    print("mapping_data_list :",mapping_data_list)
+    print("mapping_data_list :", mapping_data_list)
     return mapping_data_list
 
 
@@ -62,7 +62,7 @@ def merge_mapping_data(mapping_results):
 def get_max_value_size(mapping_results):
     index = 0
     for mapping_result in mapping_results:
-        for key ,value in mapping_result.items():
+        for key, value in mapping_result.items():
             if type(value) is list:
                 # index = len(value)
                 if len(value) > index:
@@ -81,13 +81,11 @@ def get_factor_value(index, factor_list, raw_data, result):
     data = get_value(factor, raw_data)
     if type(data) is list:
         for raw in data:
-             get_factor_value(index + 1, factor_list, raw, result)
-            # result.append({"raw": raw, "value": value})
+            get_factor_value(index + 1, factor_list, raw, result)
+        # result.append({"raw": raw, "value": value})
     elif type(data) is dict:
-             get_factor_value(index + 1, factor_list, data, result)
-        # result.append({"raw": data, "value": value})
+        get_factor_value(index + 1, factor_list, data, result)
+    # result.append({"raw": data, "value": value})
     else:
         result.append(data)
     return result
-
-

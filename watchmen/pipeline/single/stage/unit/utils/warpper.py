@@ -1,6 +1,7 @@
-from collections import namedtuple
 import functools
 import json
+from collections import namedtuple
+
 import six
 
 Serialized = namedtuple('Serialized', 'json')
@@ -34,6 +35,7 @@ def hashable_cache(cache):
                 for k, v in kwargs.items()
             }
             return cached_func(*_args, **_kwargs)
+
         hashable_cached_func.cache_info = cached_func.cache_info
         hashable_cached_func.cache_clear = cached_func.cache_clear
         return hashable_cached_func

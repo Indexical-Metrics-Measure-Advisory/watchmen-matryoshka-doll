@@ -1,4 +1,3 @@
-
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN, build_collection_name
 from watchmen.topic.trigger import topic_event_trigger

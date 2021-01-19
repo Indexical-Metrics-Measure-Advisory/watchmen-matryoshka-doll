@@ -1,4 +1,3 @@
-
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
@@ -9,9 +8,9 @@ def check_condition(operator, left_value, right_value):
     elif operator == "not-equals":
         return left_value != right_value
     elif operator == "less":
-        return left_value<right_value
+        return left_value < right_value
     elif operator == "less-equals":
-        return left_value<=right_value
+        return left_value <= right_value
     elif operator == "more":
         return left_value > right_value
     elif operator == "more-equals":
@@ -30,12 +29,12 @@ def convert_factor_type(value, factor_type):
         return value
 
 
-def get_factor(factor_id, target_topic:Topic):
+def get_factor(factor_id, target_topic: Topic):
     for factor in target_topic.factors:
         if factor.factorId == factor_id:
             return factor
 
 
-def get_value(factor: Factor,data):
+def get_value(factor: Factor, data):
     value = data[factor.name]
     return convert_factor_type(value, factor.type)

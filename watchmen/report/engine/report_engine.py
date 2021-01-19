@@ -2,10 +2,10 @@ from typing import List
 
 import pandas as pd
 from pydantic import BaseModel
-
 from watchmen.space.subject.filter import Filter
 from watchmen.space.subject.join import Join
 from watchmen.space.subject.subject import Subject
+
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.storage.topic_data_storage import get_topic_instances
 from watchmen.topic.topic import Topic
