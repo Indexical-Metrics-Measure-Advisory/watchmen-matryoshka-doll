@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Body
+from pydantic import BaseModel
 
 from watchmen.auth.user import User
 from watchmen.common import deps
@@ -15,10 +16,10 @@ from watchmen.console_space.storage.console_space_storage import save_console_sp
     load_console_space_by_id
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
     load_console_subject_list_by_ids, update_console_subject
-from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id
+from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, load_chart_dataset
 from watchmen.space.service.console import load_topic_list_by_space_id
 from watchmen.space.space import Space
-from watchmen.space.storage.space_storage import load_space_by_user, get_space_by_id
+from watchmen.space.storage.space_storage import load_space_by_user
 from watchmen.topic.storage.topic_schema_storage import get_topic_list_by_ids
 from watchmen.topic.topic import Topic
 
@@ -33,6 +34,11 @@ router = APIRouter()
 
 class AvailableSpace(Space):
     topics: List[Topic] = []
+
+
+class ConsoleSpaceSubjectChartDataSet(BaseModel):
+    meta: List[str] = [];
+    data: list = [];
 
 
 @router.get("/space/available", tags=["console"], response_model=List[AvailableSpace])
@@ -73,7 +79,7 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
     for data in console_space_list:
         console_space = ConsoleSpace.parse_obj(data)
         topic_list = load_topic_list_by_space_id(console_space.spaceId)
-        console_space.topics=topic_list
+        console_space.topics = topic_list
 
         if console_space.subjectIds is not None:
             subjects = load_console_subject_list_by_ids(console_space.subjectIds)
@@ -95,7 +101,7 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
 async def create_console_subject(connect_id, group_id: Optional[str], subject: ConsoleSpaceSubject = Body(...)):
     console_space = load_console_space_by_id(connect_id)
     subject = create_console_subject_to_storage(subject)
-    if group_id is not None and  group_id != "undefined":
+    if group_id is not None and group_id != "undefined":
         print("group:", group_id)
         group = load_console_group_by_id(group_id)
         group.subjectIds.append(subject.subjectId)
@@ -126,12 +132,18 @@ async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Bo
 #
 #     pass
 
-@router.post("/console_space/subject/save", tags=["console"],response_model=ConsoleSpaceSubject)
+@router.post("/console_space/subject/save", tags=["console"], response_model=ConsoleSpaceSubject)
 async def save_console_subject(subject: ConsoleSpaceSubject):
     return update_console_subject(subject)
 
 
-@router.post("/console_space/subject/dataset", tags=["console"],response_model=DataPage)
-async def load_dataset(subject_id,pagination: Pagination = Body(...)):
+@router.post("/console_space/subject/dataset", tags=["console"], response_model=DataPage)
+async def load_dataset(subject_id, pagination: Pagination = Body(...)):
     data = load_dataset_by_subject_id(subject_id)
     return build_data_pages(pagination, data, 1)
+
+
+@router.get("/console_space/dataset/chart", tags=["console"],response_model=ConsoleSpaceSubjectChartDataSet)
+async def load_chart(subject_id, chart_id):
+    result = load_chart_dataset(subject_id,chart_id)
+    return ConsoleSpaceSubjectChartDataSet(meta=[],data=result)

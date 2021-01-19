@@ -1,4 +1,5 @@
 from pypika import Query, Table
+from pypika import functions as fn
 
 from watchmen.common.presto.presto_client import get_connection
 from watchmen.common.utils.data_utils import build_collection_name
@@ -32,19 +33,89 @@ def build_columns(columns):
     return q
 
 
+def build_joins(joins):
+
+
+
+
+    pass
+
+
 def load_dataset_by_subject_id(subject_id):
     console_subject = load_console_subject_by_id(subject_id)
+
+    # print(console_subject.json())
+    query = build_query_for_subject(console_subject)
+
+    conn = get_connection()
+    print("sql:",query.get_sql())
+    cur = conn.cursor()
+    cur.execute(query.get_sql())
+    rows = cur.fetchall()
+    print("sql result:",rows)
+    return rows
+
+
+def load_chart_dataset(subject_id,chart_id):
+    query = build_query_for_subject_chart(subject_id,chart_id)
+    conn = get_connection()
+    print("sql:", query.get_sql())
+    cur = conn.cursor()
+    cur.execute(query.get_sql())
+    rows = cur.fetchall()
+    print("sql result:", rows)
+    return  rows
+
+
+def build_query_for_subject(console_subject):
     dataset = console_subject.dataset
     # query =None
     if dataset is not None:
         # build columns
         if len(dataset.columns) > 0:
             query = build_columns(dataset.columns)
+        # if len(dataset.joins) > 0:
+        #     query = build_joins(dataset.joins)
 
-    conn = get_connection()
-    print(query.get_sql())
-    cur = conn.cursor()
-    cur.execute(query.get_sql())
-    rows = cur.fetchall()
-    print(rows)
-    return rows
+    return query
+
+
+def get_graphic(graphics, chart_id):
+    for chart in graphics:
+        if chart.chartId ==chart_id:
+            return chart
+
+
+def build_query_for_subject_chart(subject_id,chart_id):
+    console_subject = load_console_subject_by_id(subject_id)
+    chart = get_graphic(console_subject.graphics,chart_id)
+
+    # query = build_query_for_subject(console_subject)
+    query =Query._builder()
+    for indicator in chart.indicators:
+        topic = get_topic_by_id(indicator.topicId)
+        factor = get_factor(indicator.factorId, topic)
+        t = Table(build_collection_name(topic.name))
+        q = query.from_(t)
+        if indicator.aggregator =="sum":
+            q = q.select(fn.Sum(t[factor.name]))
+
+
+    for dimension in  chart.dimensions:
+        topic = get_topic_by_id(dimension.topicId)
+        factor = get_factor(dimension.factorId, topic)
+        q= q.groupby(t[factor.name])
+    return q
+
+
+
+
+
+
+
+
+
+
+
+
+

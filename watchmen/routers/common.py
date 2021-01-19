@@ -13,5 +13,5 @@ async def health():
 
 @router.post("/topic/data")
 async def save_topic_data(topic_event: TopicEvent):
-    save_topic_instance(topic_event.type,topic_event.data)
+    save_topic_instance(topic_event.code,topic_event.data)
 

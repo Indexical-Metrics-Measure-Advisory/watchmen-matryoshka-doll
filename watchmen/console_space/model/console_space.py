@@ -20,7 +20,11 @@ class ConsoleSpaceSubjectDataSetColumn(BaseModel):
 
 
 class ConsoleSpaceSubjectDataSetJoin(BaseModel):
-    relationId: str = None
+    topicId: str = None;
+    factorId: str = None;
+    secondaryTopicId: str = None;
+    secondaryFactorId: str = None;
+    type: str = None;
 
 
 class ConsoleDataSet(BaseModel):
