@@ -10,6 +10,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject
+from watchmen.console_space.service.console_space_service import delete_console_subject
 from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
     load_console_group_by_id, update_console_group, load_console_group_list_by_ids
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
@@ -121,6 +122,10 @@ async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Bo
     save_console_space(console_space)
     return console_group
 
+
+@router.get("/console_space/subject/delete",tags=["console"])
+async def delete_subject(subject_id):
+    delete_console_subject(subject_id)
 
 # @router.post("/space/group", tags=["console"])
 # async def save_subject_group(space_id: str, console_space_group: ConsoleSpaceGroup):

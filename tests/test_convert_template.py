@@ -5,6 +5,9 @@ from watchmen.common.knowledge.knowledge_loader import find_template_by_domain
 from watchmen.topic.storage import save_topic
 
 
+
+
+
 def test_convert_template():
     ## read insureance template
 

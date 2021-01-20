@@ -20,29 +20,31 @@ def convert_value(value):
 
 def check_value_type(value):
     if isinstance(value, int):
-        return ValueType.INT
+        return ValueType.INT.value
+    if isinstance(value, float):
+        return ValueType.INT.value
     if isinstance(value, str):
-        return ValueType.STR
+        return ValueType.STR.value
     if isinstance(value, type(True)) or isinstance(value, type(False)):
-        return ValueType.BOOLEAN
+        return ValueType.BOOLEAN.value
     if isinstance(value, datetime.datetime):
-        return ValueType.DATE
+        return ValueType.DATE.value
     if isinstance(value, list):
-        return ValueType.LIST
+        return ValueType.LIST.value
     if isinstance(value, dict):
-        return ValueType.DICT
-    return ValueType.ANY
+        return ValueType.DICT.value
+    return ValueType.ANY.value
 
 
 class ValueType(Enum):
-    INT = 1
-    STR = 2
-    BOOLEAN = 3
-    DATE = 4
-    LIST = 5
-    DICT = 6
-    REF = 7
-    ANY = 8
+    INT = "number"
+    STR = "text"
+    BOOLEAN = "boolean"
+    DATE = "datetime"
+    LIST = "array"
+    DICT = "dict"
+    REF = "ref"
+    ANY = "any"
 
 
 def create_raw_data_model_set(code, data):
@@ -78,8 +80,8 @@ def create_model_schema(model_schema_set, name, record, is_root):
     if model_schema is not None:
         for key, value in record.items():
             if check_model_field_in_schema(key, model_schema):
-                if check_value_type(value).value == ValueType.LIST.value or check_value_type(
-                        value).value == ValueType.DICT.value:
+                if check_value_type(value) == ValueType.LIST.value or check_value_type(
+                        value) == ValueType.DICT.value:
                     create_schema(model_schema_set, key, value, False)
                 else:
                     if check_value_duplicate(model_schema.businessFields[key].values, value):
@@ -104,7 +106,7 @@ def create_model_field(model_schema_set, model_schema, key, value):
     model_filed = ModelField(**{
         'field_id': get_surrogate_key(),
         'name': key,
-        'type': check_value_type(value).value,
+        'type': check_value_type(value),
         'values': [value]
     })
     if model_filed.type == ValueType.LIST.value or model_filed.type == ValueType.DICT.value:

@@ -19,5 +19,5 @@ class ModelField(MongoModel):
     field_id: int = None
     name: str = None
     description: Optional[str] = None
-    type: int = None
+    type: str = None
     values: list = []

@@ -33,3 +33,9 @@ def load_console_space_by_id(connect_id: str):
 def load_console_space_list_by_user(user_id):
     result = console_space_collection.find({"userId": user_id})
     return list(result)
+
+
+def load_console_space_by_subject_id(subject_id):
+    result = console_space_collection.find_one({"subjectIds":subject_id})
+    return ConsoleSpace.parse_obj(result)
+

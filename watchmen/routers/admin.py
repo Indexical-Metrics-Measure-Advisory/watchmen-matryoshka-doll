@@ -38,14 +38,6 @@ class FactorSuggestionIn(BaseModel):
     topic: Topic = None
 
 
-async def add_topic_to_space():
-    pass
-
-
-async def add_topic_list_to_space():
-    pass
-
-
 # @router.post("/admin/suggestion/topic", tags=["admin"])
 # async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
 #     return generate_suggestion_topic_service(topic_suggestion.lake_schema, topic_suggestion.master_schema)
@@ -223,3 +215,8 @@ async def save_pipeline(pipeline: Pipeline):
 async def load_pipeline(topic_id):
     result = load_pipeline_by_topic_id(topic_id)
     return {"topicId": topic_id, "consume": result, "produce": result}
+
+
+# Report
+
+# async def
