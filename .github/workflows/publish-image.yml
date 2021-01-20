@@ -10,10 +10,10 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Push to GitHub Packages
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
-          repository: Indexical-Metrics-Measure-Advisory/watchmen-data-processor/watchmen-data-processor
+          repository: indexical-metrics-measure-advisory/watchmen-data-processor/watchmen-data-processor
           tag_with_ref: true
