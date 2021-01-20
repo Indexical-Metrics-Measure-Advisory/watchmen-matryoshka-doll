@@ -15,5 +15,5 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
-          repository: Indexical-Metrics-Measure-Advisory/watchmen-data-processor/watchmen
+          repository: Indexical-Metrics-Measure-Advisory/watchmen-data-processor/watchmen-data-processor
           tag_with_ref: true
