@@ -19,7 +19,7 @@ def trigger_pipeline(topic_name, instance):
         # print("run:",pipeline.json())
         future = client.submit(run_pipeline, pipeline, instance)
 
-        print(future.result())
+        # print(future.result())
 
 
 def trigger_topic(*args, **kwargs):

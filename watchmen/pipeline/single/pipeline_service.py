@@ -1,4 +1,6 @@
 import importlib
+from datetime import datetime
+import time
 
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
@@ -35,7 +37,11 @@ def run_pipeline(pipeline, data):
     # run_status.status = run_status.status
 
     # run_status.name = pipeline.name
+    # now =datetime.now()
 
+    start_time = datetime.now()
+
+    # time.time
     for stage in pipeline.stages:
         for unit in stage.units:
             if unit.on is not None:
@@ -43,12 +49,17 @@ def run_pipeline(pipeline, data):
             actions = unit.do
             out_result = None
             for action in actions:
-                print("action: ", action.json())
+                # print("action: ", action.json())
                 func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                 out_result = func(data)
 
     # TODO create pipeline status topic
     # TODO set max limit for monitor topic
+
+    time_elapsed = datetime.now() - start_time
+
+    print('Time elapsed ',time_elapsed.microseconds/1000)
+
     return data
     # parent_node = None
     # for stage in pipeline:

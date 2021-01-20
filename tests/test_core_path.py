@@ -20,5 +20,5 @@ def test_save_topic_instance():
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
 
     for pipeline in pipeline_list:
-        run_pipeline(pipeline, data)
+         run_pipeline(pipeline, data)
 

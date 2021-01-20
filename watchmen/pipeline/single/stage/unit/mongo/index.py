@@ -29,7 +29,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
 
     mapping_data_list = merge_mapping_data(mapping_results)
 
-    print("mapping_data_list :", mapping_data_list)
+    # print("mapping_data_list :", mapping_data_list)
     return mapping_data_list
 
 
