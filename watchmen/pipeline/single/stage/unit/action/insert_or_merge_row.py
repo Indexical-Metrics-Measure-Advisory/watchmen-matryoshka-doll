@@ -15,7 +15,7 @@ def build_right_query(condition, pipeline_topic, raw_data, target_topic):
         # right_value = get_value(right_factor, raw_data)
         right_value_list = get_source_factor_value(raw_data, [], right_factor)
         where_condition.append(
-            {"name": left_factor.name, "value": right_value_list, "operator": sub_condition.operator})
+            {"name": left_factor.name, "value": right_value_list, "operator": sub_condition.operator,"right_factor": right_factor})
         # left_value = get_value(sub_condition.left,target_topic_data,target_topic)
     return where_condition
 
@@ -23,13 +23,13 @@ def build_right_query(condition, pipeline_topic, raw_data, target_topic):
 def filter_condition(where_condition, index):
     filter_conditions = []
     for condition in where_condition:
-        filter_conditon = {"name": condition["name"], "operator": condition["operator"]}
+        filter_condition = {"name": condition["name"], "operator": condition["operator"]}
         if type(condition["value"]) is list:
-            filter_conditon["value"] = condition["value"][index]
+            filter_condition["value"] = condition["value"][index]
         else:
-            filter_conditon["value"] = condition["value"]
+            filter_condition["value"] = condition["value"]
 
-        filter_conditions.append(filter_conditon)
+        filter_conditions.append(filter_condition)
     return filter_conditions
 
 

@@ -6,8 +6,6 @@ from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
 
-
-
 def check_condition(operator, left_value, right_value):
     if operator == "equals":
         return left_value == right_value

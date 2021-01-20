@@ -25,8 +25,8 @@ def get_topic_by_name(topic_name):
     return topic_col.find_one("code", topic_name)
 
 
-def get_raw_topic(topic_name) -> Topic:
-    result = topic_col.find_one({"code": topic_name, "type": "raw"})
+def get_topic(topic_name) -> Topic:
+    result = topic_col.find_one({"code": topic_name})
     return Topic.parse_obj(result)
 
 
@@ -44,6 +44,7 @@ def check_topic_exist(topic_name, topic_type) -> bool:
 
 
 # TODO topic cache
+
 def get_topic_by_id(topic_id):
     result = topic_col.find_one({"topicId": topic_id})
     return Topic.parse_obj(result)

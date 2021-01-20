@@ -45,7 +45,7 @@ class UnitAction(BaseModel):
     factorId: str = None
     mapping: list = []
     by: CompositeCondition = None;
-    value: str = None
+    value: SimpleFuncValue = None
 
 
 class ProcessUnit(BaseModel):

@@ -47,10 +47,13 @@ def run_pipeline(pipeline, data):
             if unit.on is not None:
                 pass  # TODO check when condition
             actions = unit.do
-            out_result = None
+            # out_result = None
+
+            print("len ",len(actions))
             for action in actions:
-                # print("action: ", action.json())
+                print("action: ", action.json())
                 func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
+                print("func: ", func)
                 out_result = func(data)
 
     # TODO create pipeline status topic
