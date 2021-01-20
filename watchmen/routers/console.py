@@ -17,6 +17,9 @@ from watchmen.console_space.storage.console_space_storage import save_console_sp
     load_console_space_by_id
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
     load_console_subject_list_by_ids, update_console_subject
+from watchmen.dashborad.model.dashborad import ConsoleDashboard
+from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
+    load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, load_chart_dataset
 from watchmen.space.service.console import load_topic_list_by_space_id
 from watchmen.space.space import Space
@@ -103,7 +106,7 @@ async def create_console_subject(connect_id, group_id: Optional[str], subject: C
     console_space = load_console_space_by_id(connect_id)
     subject = create_console_subject_to_storage(subject)
     if group_id is not None and group_id != "undefined":
-        print("group:", group_id)
+        # print("group:", group_id)
         group = load_console_group_by_id(group_id)
         group.subjectIds.append(subject.subjectId)
         update_console_group(group)
@@ -127,15 +130,6 @@ async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Bo
 async def delete_subject(subject_id):
     delete_console_subject(subject_id)
 
-# @router.post("/space/group", tags=["console"])
-# async def save_subject_group(space_id: str, console_space_group: ConsoleSpaceGroup):
-#     # load space by space_id
-#
-#     # save ConsoleSpaceGroup
-#
-#     # update space_group_ids
-#
-#     pass
 
 @router.post("/console_space/subject/save", tags=["console"], response_model=ConsoleSpaceSubject)
 async def save_console_subject(subject: ConsoleSpaceSubject):
@@ -152,3 +146,35 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...)):
 async def load_chart(subject_id, chart_id):
     result = load_chart_dataset(subject_id, chart_id)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
+
+
+## Dashboard
+
+@router.get("/dashboard/create", tags=["console"], response_model=ConsoleDashboard)
+async  def create_dashboard(name:str,current_user: User = Depends(deps.get_current_user)):
+    dashboard = ConsoleDashboard()
+    dashboard.name=name
+    dashboard.lastVisitTime = datetime.now()
+    dashboard.userId= current_user.userId
+    return create_dashboard_to_storage(dashboard)
+
+
+@router.post("/dashboard/save", tags=["console"], response_model=ConsoleDashboard)
+async  def save_dashboard(dashboard:ConsoleDashboard,current_user: User = Depends(deps.get_current_user)):
+    dashboard.userId= current_user.userId
+    return update_dashboard_to_storage(dashboard)
+
+
+@router.get("/dashboard/me", tags=["console"], response_model=List[ConsoleDashboard])
+async  def load_dashboard(current_user: User = Depends(deps.get_current_user)):
+    return load_dashboard_by_user_id(current_user.userId)
+
+
+@router.get("/dashboard/delete", tags=["console"])
+async def delete_dashboard(dashboard_id,current_user:User = Depends(deps.get_current_user)):
+    delete_dashboard_by_id(dashboard_id)
+
+
+@router.get("/dashboard/rename", tags=["console"])
+async def delete_dashboard(dashboard_id,name:str,current_user:User = Depends(deps.get_current_user)):
+    rename_dashboard_by_id(dashboard_id,name)
