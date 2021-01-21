@@ -11,7 +11,7 @@ from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
-def build_columns(columns):
+def build_columns(columns, isCount):
     topic_dict = {}
 
     table_dict = {}
@@ -31,12 +31,17 @@ def build_columns(columns):
 
     q = Query._builder()
     q = q.from_(Table(key))
-    for key, items in topic_dict.items():
-        t = Table(key)
-        table_dict[key] = t
-        for item in items:
-            q = q.select(t[item])
-
+    if isCount:
+        q= q.select(fn.Count("*"))
+        for key, items in topic_dict.items():
+            t = Table(key)
+            table_dict[key] = t
+    else:
+        for key, items in topic_dict.items():
+            t = Table(key)
+            table_dict[key] = t
+            for item in items:
+                q = q.select(t[item])
     return q, table_dict
 
 
@@ -67,23 +72,40 @@ def build_joins(joins, query, table_dict):
         secondary_table = table_dict[build_collection_name(secondary_topic.name)]
         secondary_factor = get_factor(join.secondaryFactorId, secondary_topic)
         join_type = get_join_type(join.type)
-        joins_data_list.append((table,operator.eq(secondary_table[secondary_factor.name],table[factor.name]),join_type))
+        joins_data_list.append(
+            (table, operator.eq(secondary_table[secondary_factor.name], table[factor.name]), join_type))
 
-    print(joins_data_list)
-    return _add_joins(joins_data_list,query)
+    # print(joins_data_list)
+    return _add_joins(joins_data_list, query)
+
+
+def build_pagination(pagination):
+    offset_num = pagination.pageSize*pagination.pageNumber+1
+
+    return "OFFSET {0} LIMIT {1}".format(offset_num,pagination.pageSize)
 
 
 def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     console_subject = load_console_subject_by_id(subject_id)
 
     query = build_query_for_subject(console_subject)
+    count_query = build_count_query_for_subject(console_subject)
+
     conn = get_connection()
+    cur = conn.cursor()
+    print("sql count:", count_query.get_sql())
+    cur.execute(count_query.get_sql())
+    count_rows = cur.fetchone()
+    print("sql result:", count_rows)
+
     print("sql:", query.get_sql())
     cur = conn.cursor()
-    cur.execute(query.get_sql())
+    cur.execute(query.get_sql()+build_pagination(pagination))
+    # count =cur.
     rows = cur.fetchall()
     print("sql result:", rows)
-    return rows
+    # print("sql count:", count)
+    return rows,count_rows[0]
 
 
 def load_chart_dataset(subject_id, chart_id):
@@ -141,11 +163,24 @@ def build_query_for_subject(console_subject):
     # query =None
     if dataset is not None:
         # build columns
-        if  dataset.columns:
-            query, table_dict = build_columns(dataset.columns)
-        if  dataset.filters:
+        if dataset.columns:
+            query, table_dict = build_columns(dataset.columns, False)
+        if dataset.filters:
             query = build_where(dataset.filters, query, table_dict)
-        if  dataset.joins :
+        if dataset.joins:
+            query = build_joins(dataset.joins, query, table_dict)
+    return query
+
+
+def build_count_query_for_subject(console_subject):
+    dataset = console_subject.dataset
+    # query =None
+    if dataset is not None:
+        if dataset.columns:
+            query, table_dict = build_columns(dataset.columns, True)
+        if dataset.filters:
+            query = build_where(dataset.filters, query, table_dict)
+        if dataset.joins:
             query = build_joins(dataset.joins, query, table_dict)
     return query
 
@@ -181,4 +216,3 @@ def build_query_for_subject_chart(subject_id, chart_id):
         q = q.groupby(t[factor.name])
 
     return q
-

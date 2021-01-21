@@ -162,8 +162,8 @@ async def save_console_subject(subject: ConsoleSpaceSubject):
 
 @router.post("/console_space/subject/dataset", tags=["console"], response_model=DataPage)
 async def load_dataset(subject_id, pagination: Pagination = Body(...)):
-    data = load_dataset_by_subject_id(subject_id, pagination)
-    return build_data_pages(pagination, data, 1)
+    data,count = load_dataset_by_subject_id(subject_id, pagination)
+    return build_data_pages(pagination, data, count)
 
 
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
