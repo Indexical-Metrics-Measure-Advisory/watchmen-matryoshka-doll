@@ -1,3 +1,4 @@
+presto-python-client
 passlib
 pypika
 python-jose
