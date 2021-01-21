@@ -97,7 +97,6 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     cur.execute(count_query.get_sql())
     count_rows = cur.fetchone()
     print("sql result:", count_rows)
-
     print("sql:", query.get_sql())
     cur = conn.cursor()
     cur.execute(query.get_sql()+build_pagination(pagination))
