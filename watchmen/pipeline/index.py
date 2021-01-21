@@ -5,7 +5,7 @@ from watchmen.topic.storage.topic_schema_storage import get_topic
 
 
 def trigger_pipeline(topic_name, instance):
-    print("topic_name :",topic_name)
+    print("topic_name :", topic_name)
     topic = get_topic(topic_name)
     # TODO validate data with topic schema
     # print("topic.topicId:", topic.topicId)
@@ -14,7 +14,7 @@ def trigger_pipeline(topic_name, instance):
 
     for pipeline in pipeline_list:
         # TODO  use dask task submit for pipeline
-        print("run:",pipeline.json())
+        print("run:", pipeline.json())
         get_dask_client().submit(run_pipeline, pipeline, instance)
 
         # print(future.result())

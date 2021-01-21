@@ -17,7 +17,7 @@ def suggestions_match_rule_for_master_topics():
     pass
 
 
-# mapping to exist domain model
+# feature to exist domain model
 def test_confirm_schema():
     json = raw_data_load('../assert/data/policy.json')
     id = basic_schema(json, Domain.INSURANCE)

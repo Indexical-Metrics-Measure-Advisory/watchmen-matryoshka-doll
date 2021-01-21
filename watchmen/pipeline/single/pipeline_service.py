@@ -1,6 +1,5 @@
 import importlib
 from datetime import datetime
-import time
 
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
@@ -49,7 +48,7 @@ def run_pipeline(pipeline, data):
             actions = unit.do
             # out_result = None
 
-            print("len ",len(actions))
+            print("len ", len(actions))
             for action in actions:
                 print("action: ", action.json())
                 func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
@@ -61,7 +60,7 @@ def run_pipeline(pipeline, data):
 
     time_elapsed = datetime.now() - start_time
 
-    print('Time elapsed ',time_elapsed.microseconds/1000)
+    print('Time elapsed ', time_elapsed.microseconds / 1000)
 
     return data
     # parent_node = None

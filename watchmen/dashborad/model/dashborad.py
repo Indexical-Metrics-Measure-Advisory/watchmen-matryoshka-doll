@@ -17,7 +17,7 @@ class ConsoleDashboardChart(BaseModel):
 class ConsoleDashboard(MongoModel):
     dashboardId: str = None
     name: str = None
-    lastVisitTime: datetime=None
-    current: bool=None
+    lastVisitTime: datetime = None
+    current: bool = None
     userId: str = None
-    graphics: List[ConsoleDashboardChart]=[]
+    graphics: List[ConsoleDashboardChart] = []

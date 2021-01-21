@@ -10,13 +10,14 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject
-from watchmen.console_space.service.console_space_service import delete_console_subject
+from watchmen.console_space.service.console_space_service import delete_console_subject, \
+    delete_console_space_and_sub_data
 from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
-    load_console_group_by_id, update_console_group, load_console_group_list_by_ids
+    load_console_group_by_id, update_console_group, load_console_group_list_by_ids, rename_console_group_by_id
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
-    load_console_space_by_id
+    load_console_space_by_id, rename_console_space_by_id
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
-    load_console_subject_list_by_ids, update_console_subject
+    load_console_subject_list_by_ids, update_console_subject, rename_console_subject_by_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
     load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id
@@ -75,6 +76,11 @@ async def connect_to_space(space_id, name, current_user: User = Depends(deps.get
     return save_console_space(console_space)
 
 
+@router.get("/console_space/rename", tags=["console"])
+async def rename_console_space(connect_id: str, name: str):
+    rename_console_space_by_id(connect_id, name)
+
+
 @router.get("/console_space/connected/me", tags=["console"], response_model=List[ConsoleSpace])
 async def load_connected_space(current_user: User = Depends(deps.get_current_user)):
     user_id = current_user.userId
@@ -101,6 +107,9 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
     return result
 
 
+## SUBJECT
+
+
 @router.post("/console_space/subject", tags=["console"], response_model=ConsoleSpaceSubject)
 async def create_console_subject(connect_id, group_id: Optional[str], subject: ConsoleSpaceSubject = Body(...)):
     console_space = load_console_space_by_id(connect_id)
@@ -117,6 +126,21 @@ async def create_console_subject(connect_id, group_id: Optional[str], subject: C
     return subject
 
 
+@router.get("/console_space/delete", tags=["console"])
+async def delete_console_space(connect_id):
+    delete_console_space_and_sub_data(connect_id)
+
+
+@router.get("/console_space/subject/rename", tags=["console"])
+async def rename_console_space_subject(subject_id: str, name: str):
+    rename_console_subject_by_id(subject_id, name)
+
+
+@router.get("/console_space/group/rename", tags=["console"])
+async def rename_console_group_subject(group_id: str, name: str):
+    rename_console_group_by_id(group_id, name)
+
+
 @router.post("/console_space/group", tags=["console"], response_model=ConsoleSpaceGroup)
 async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Body(...)):
     console_space = load_console_space_by_id(connect_id)
@@ -126,7 +150,7 @@ async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Bo
     return console_group
 
 
-@router.get("/console_space/subject/delete",tags=["console"])
+@router.get("/console_space/subject/delete", tags=["console"])
 async def delete_subject(subject_id):
     delete_console_subject(subject_id)
 
@@ -138,8 +162,8 @@ async def save_console_subject(subject: ConsoleSpaceSubject):
 
 @router.post("/console_space/subject/dataset", tags=["console"], response_model=DataPage)
 async def load_dataset(subject_id, pagination: Pagination = Body(...)):
-    data = load_dataset_by_subject_id(subject_id, pagination)
-    return build_data_pages(pagination, data, 1)
+    data,count = load_dataset_by_subject_id(subject_id, pagination)
+    return build_data_pages(pagination, data, count)
 
 
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
@@ -151,30 +175,30 @@ async def load_chart(subject_id, chart_id):
 ## Dashboard
 
 @router.get("/dashboard/create", tags=["console"], response_model=ConsoleDashboard)
-async  def create_dashboard(name:str,current_user: User = Depends(deps.get_current_user)):
+async def create_dashboard(name: str, current_user: User = Depends(deps.get_current_user)):
     dashboard = ConsoleDashboard()
-    dashboard.name=name
+    dashboard.name = name
     dashboard.lastVisitTime = datetime.now()
-    dashboard.userId= current_user.userId
+    dashboard.userId = current_user.userId
     return create_dashboard_to_storage(dashboard)
 
 
 @router.post("/dashboard/save", tags=["console"], response_model=ConsoleDashboard)
-async  def save_dashboard(dashboard:ConsoleDashboard,current_user: User = Depends(deps.get_current_user)):
-    dashboard.userId= current_user.userId
+async def save_dashboard(dashboard: ConsoleDashboard, current_user: User = Depends(deps.get_current_user)):
+    dashboard.userId = current_user.userId
     return update_dashboard_to_storage(dashboard)
 
 
 @router.get("/dashboard/me", tags=["console"], response_model=List[ConsoleDashboard])
-async  def load_dashboard(current_user: User = Depends(deps.get_current_user)):
+async def load_dashboard(current_user: User = Depends(deps.get_current_user)):
     return load_dashboard_by_user_id(current_user.userId)
 
 
 @router.get("/dashboard/delete", tags=["console"])
-async def delete_dashboard(dashboard_id,current_user:User = Depends(deps.get_current_user)):
+async def delete_dashboard(dashboard_id, current_user: User = Depends(deps.get_current_user)):
     delete_dashboard_by_id(dashboard_id)
 
 
 @router.get("/dashboard/rename", tags=["console"])
-async def delete_dashboard(dashboard_id,name:str,current_user:User = Depends(deps.get_current_user)):
-    rename_dashboard_by_id(dashboard_id,name)
+async def delete_dashboard(dashboard_id, name: str, current_user: User = Depends(deps.get_current_user)):
+    rename_dashboard_by_id(dashboard_id, name)

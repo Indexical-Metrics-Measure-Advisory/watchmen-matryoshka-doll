@@ -14,6 +14,11 @@ class ConsoleSpaceSubjectDataSetFilter(BaseModel):
     value: str = None
 
 
+class ConsoleSpaceSubjectDataSetFilterJoint(BaseModel):
+    jointType: str = None;
+    filters: List[ConsoleSpaceSubjectDataSetFilter]=[];
+
+
 class ConsoleSpaceSubjectDataSetColumn(BaseModel):
     topicId: str = None
     factorId: str = None;
@@ -28,7 +33,7 @@ class ConsoleSpaceSubjectDataSetJoin(BaseModel):
 
 
 class ConsoleDataSet(BaseModel):
-    filters: List[ConsoleSpaceSubjectDataSetFilter] = []
+    filters: List[ConsoleSpaceSubjectDataSetFilterJoint] = []
     columns: List[ConsoleSpaceSubjectDataSetColumn] = []
     joins: List[ConsoleSpaceSubjectDataSetJoin] = []
 

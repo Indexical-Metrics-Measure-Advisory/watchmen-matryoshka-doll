@@ -1,19 +1,19 @@
+from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import build_right_query, filter_condition
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import update_topic_data, insert_topic_data
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
-from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.topic.topic import Topic
 
 
-def get_condition_factor_value( raw_data, where_conditions):
-    factor_value={}
+def get_condition_factor_value(raw_data, where_conditions):
+    factor_value = {}
     for condition in where_conditions:
-        right_factor =condition["right_factor"]
-        value =get_value(right_factor,raw_data)
+        right_factor = condition["right_factor"]
+        value = get_value(right_factor, raw_data)
 
-        factor_value[right_factor.name]=value
+        factor_value[right_factor.name] = value
 
     return factor_value
 
@@ -33,7 +33,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             source_factor = get_factor(some_value.factorId, pipeline_topic)
             target_factor = get_factor(action.factorId, target_topic)
             value = get_value(source_factor, raw_data)
-            condition_factors =get_condition_factor_value(raw_data,where_condition)
+            condition_factors = get_condition_factor_value(raw_data, where_condition)
 
             if some_value.arithmetic == "sum":
                 if target_data is None:
@@ -41,7 +41,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
                     insert_data = {**{target_factor.name: value}, **condition_factors}
                     # print
-                    insert_topic_data(target_topic.name,insert_data)
+                    insert_topic_data(target_topic.name, insert_data)
                 else:
                     if target_factor.name in target_data:
                         source_value = target_data[target_factor.name]
@@ -55,12 +55,12 @@ def init(action: UnitAction, pipeline_topic: Topic):
             if some_value.arithmetic == "count":
                 if target_data is None:
                     insert_data = {**{target_factor.name: 1}, **condition_factors}
-                    insert_topic_data(target_topic.name,insert_data)
+                    insert_topic_data(target_topic.name, insert_data)
                 else:
                     if target_factor.name in target_data:
                         source_value = target_data[target_factor.name]
                     else:
-                        source_value =0
+                        source_value = 0
                     value = source_value + 1
                     update_data = {target_factor.name: value}
                     update_topic_data(target_topic.name, update_data, target_data)

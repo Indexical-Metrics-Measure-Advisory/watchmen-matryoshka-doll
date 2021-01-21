@@ -1,7 +1,8 @@
 from enum import Enum
 from typing import Optional, Dict
 
-from watchmen.common.event.event import Event
+#
+# from watchmen.common.event.event import Event
 from watchmen.common.mongo_model import MongoModel
 from watchmen.raw_data.context import Context
 from watchmen.raw_data.model_field import ModelField
@@ -18,7 +19,6 @@ class SubDomain(str, Enum):
 
 class ModelSchema(MongoModel):
     model_id: str = None
-    event: Event = None
     domain: Domain = None
     subDomain: SubDomain = None
     name: str = None
