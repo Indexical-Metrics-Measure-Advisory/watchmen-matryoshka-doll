@@ -16,7 +16,7 @@ class ConsoleSpaceSubjectDataSetFilter(BaseModel):
 
 class ConsoleSpaceSubjectDataSetFilterJoint(BaseModel):
     jointType: str = None;
-    filters: List[ConsoleSpaceSubjectDataSetFilter];
+    filters: List[ConsoleSpaceSubjectDataSetFilter]=[];
 
 
 class ConsoleSpaceSubjectDataSetColumn(BaseModel):

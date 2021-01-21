@@ -1,6 +1,5 @@
 from pypika import Query, Table
 
-from watchmen.common.mongo.index import check_collection_if_exist
 import prestodb
 
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, \
@@ -22,7 +21,15 @@ def test_presto_connection():
     # q = Query.from_(t).select(t["premium"])
 
     # print(q.get_sql())
-    cur.execute("select sum(premium) from topic_policy group by number")
+
+    s1 ="SELECT topic_gi_policy.beforeVatPremium,topic_gi_policy.agentCode,topic_gi_risk.vehicleModel FROM topic_gi_policy JOIN topic_gi_risk ON topic_gi_risk.policyId=topic_gi_policy.policyId WHERE topic_gi_policy.beforeVatPremium>=1000"
+    s2 = "SELECT topic_gi_policy.policyNo,topic_gi_policy.policyId,topic_gi_policy.orgCode FROM topic_gi_policy"
+    s3 = "SELECT topic_gi_customer.city FROM topic_gi_customer"
+    s4 = "SELECT * FROM topic_gi_risk"
+    t =Table('topic_gi_policy')
+    q = Query.from_(t).select(t['orgCode'])
+    print(s4)
+    cur.execute(s4)
     rows = cur.fetchall()
 
     print(rows)
@@ -34,7 +41,7 @@ def test_sql_generator():
 
 
 
-    q = Query.from_('topic_customers').select('name')
+
 
 
     print(q.get_sql())
@@ -43,7 +50,7 @@ def test_sql_generator():
 
 
 def test_sql_generator_subject():
-   load_dataset_by_subject_id("800799662100447232")
+   load_dataset_by_subject_id("801785069239795712",None)
 
 
 def test_sql_generator_chart():

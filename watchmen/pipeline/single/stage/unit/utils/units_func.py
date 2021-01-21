@@ -40,7 +40,7 @@ def get_value(factor: Factor, data):
         return convert_factor_type(value, factor.type)
     elif factor.type == "number":
         return 0
-    # elif factor.type == "text":
-    #     return None
+    elif factor.type == "text":
+        return ""
     else:
-        return None
+        return ""
