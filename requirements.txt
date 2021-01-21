@@ -1,4 +1,7 @@
 presto-python-client
+distributed
+jsonschema
+python-dotenv
 passlib
 pypika
 python-jose
