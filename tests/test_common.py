@@ -49,7 +49,7 @@ def test_sql_generator():
 
 def test_sql_generator_subject():
     pagination = Pagination(pageSize=100,pageNumber=1)
-    load_dataset_by_subject_id("801407229998661632",pagination)
+    load_dataset_by_subject_id("801785069239795712",pagination)
 
 
 def test_sql_generator_chart():
