@@ -13,7 +13,6 @@ def trigger_pipeline(topic_name, instance):
     # flow = None
 
     for pipeline in pipeline_list:
-        # TODO  use dask task submit for pipeline
         print("run:", pipeline.json())
         get_dask_client().submit(run_pipeline, pipeline, instance)
 
@@ -23,6 +22,5 @@ def trigger_pipeline(topic_name, instance):
 def trigger_topic(*args, **kwargs):
     topic_name = args[0]
     instance = args[1]
-
     trigger_pipeline(topic_name, instance)
     # print(instance)

@@ -34,7 +34,7 @@ router = APIRouter()
 # Console API
 
 
-# TODO console api
+
 
 
 class AvailableSpace(Space):

@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from bson import regex
 
 from watchmen.common.pagination import Pagination
@@ -11,6 +13,8 @@ topic_col = db.get_collection('topic')
 
 
 def save_topic(topic):
+    # print(get_topic_by_id.cache_info())
+    get_topic_by_id.cache_clear()
     return topic_col.insert_one(topic)
 
 
@@ -43,8 +47,7 @@ def check_topic_exist(topic_name, topic_type) -> bool:
         return True
 
 
-# TODO topic cache
-
+@lru_cache(maxsize=100)
 def get_topic_by_id(topic_id):
     result = topic_col.find_one({"topicId": topic_id})
     return Topic.parse_obj(result)
