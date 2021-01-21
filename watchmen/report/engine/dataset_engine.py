@@ -35,6 +35,13 @@ def build_columns(columns):
 
 
 def build_joins(joins, query):
+
+
+
+
+
+
+
     return query
 
 
@@ -65,6 +72,10 @@ def load_chart_dataset(subject_id, chart_id):
 
 
 def build_where(filters, query):
+
+
+
+
     # for filter in filters:
     #     pas s
 
