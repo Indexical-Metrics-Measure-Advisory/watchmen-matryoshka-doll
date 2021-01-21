@@ -41,10 +41,10 @@ def get_factor(factor_id, target_topic):
         if factor.factorId == factor_id:
             return factor
 
-def get_factor_func(factor:Factor,data):
+
+def get_factor_func(factor: Factor, data):
     # factor.
     pass
-
 
 
 def get_value(factor: Factor, data):

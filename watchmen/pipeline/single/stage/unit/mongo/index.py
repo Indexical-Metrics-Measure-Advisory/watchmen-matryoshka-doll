@@ -21,12 +21,12 @@ def __convert_value_to_datetime(value):
         return datetime.fromisoformat(value)
 
 
-def __run_arithmetic(arithmetic,value):
-    if arithmetic=="no-func":
+def __run_arithmetic(arithmetic, value):
+    if arithmetic == "no-func":
         return value
     elif arithmetic == "year-of":
         return __convert_value_to_datetime(value).year
-    elif arithmetic=="month-of":
+    elif arithmetic == "month-of":
         return __convert_value_to_datetime(value).month
     elif arithmetic == "week-of":
         return __convert_value_to_datetime(value).isocalendar()[1]
@@ -34,14 +34,14 @@ def __run_arithmetic(arithmetic,value):
         return __convert_value_to_datetime(value).weekday()
 
 
-def run_arithmetic_value_list(arithmetic,source_value_list):
-    if type(source_value_list)==list:
-        results=[]
+def run_arithmetic_value_list(arithmetic, source_value_list):
+    if type(source_value_list) == list:
+        results = []
         for source_value in source_value_list:
-            results.append(__run_arithmetic(arithmetic,source_value))
+            results.append(__run_arithmetic(arithmetic, source_value))
         return results
     else:
-        return __run_arithmetic(arithmetic,source_value_list)
+        return __run_arithmetic(arithmetic, source_value_list)
 
 
 def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
@@ -50,14 +50,14 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         result = []
         source = mapping["from"]
         source_factor = get_factor(source["factorId"], pipeline_topic)
-        source_value_list = run_arithmetic_value_list(source["arithmetic"],get_source_factor_value(raw_data, result, source_factor))
+        source_value_list = run_arithmetic_value_list(source["arithmetic"],
+                                                      get_source_factor_value(raw_data, result, source_factor))
         target = mapping["to"]
         target_factor = get_factor(target["factorId"], target_topic)
         mapping_results.append({target_factor.name: source_value_list})
 
     mapping_data_list = merge_mapping_data(mapping_results)
 
-    # print("mapping_data_list :", mapping_data_list)
     return mapping_data_list
 
 
@@ -110,10 +110,8 @@ def get_factor_value(index, factor_list, raw_data, result):
     if type(data) is list:
         for raw in data:
             get_factor_value(index + 1, factor_list, raw, result)
-        # result.append({"raw": raw, "value": value})
     elif type(data) is dict:
         get_factor_value(index + 1, factor_list, data, result)
-    # result.append({"raw": data, "value": value})
     else:
         result.append(data)
     return result

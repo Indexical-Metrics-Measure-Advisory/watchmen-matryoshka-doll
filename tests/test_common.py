@@ -9,6 +9,26 @@ from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, \
      load_chart_dataset
 
 
+from watchmen.common.storage.engine.storage_engine import get_client
+from watchmen.common.utils.data_utils import WATCHMEN
+
+client = get_client(WATCHMEN)
+
+collection_list_name = client.list_collection_names()
+
+client.get_collection("_schema")
+
+
+def test_list_collection():
+    print(collection_list_name)
+
+    data =client.get_collection("_schema")
+
+    print(data.find_one())
+
+
+
+
 def test_presto_connection():
 
     conn = prestodb.dbapi.connect(

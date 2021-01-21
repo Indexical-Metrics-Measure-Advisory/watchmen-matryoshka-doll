@@ -8,6 +8,7 @@ class User(MongoModel):
     password: str = None
     is_active: bool = True
     groupIds: list = None
+    role:str = None
 
     # userId?: string;
     # name?: string;

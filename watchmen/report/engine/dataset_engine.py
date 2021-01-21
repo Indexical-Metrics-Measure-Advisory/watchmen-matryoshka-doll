@@ -32,7 +32,7 @@ def build_columns(columns, isCount):
     q = Query._builder()
     q = q.from_(Table(key))
     if isCount:
-        q= q.select(fn.Count("*"))
+        q = q.select(fn.Count("*"))
         for key, items in topic_dict.items():
             t = Table(key)
             table_dict[key] = t
@@ -80,9 +80,9 @@ def build_joins(joins, query, table_dict):
 
 
 def build_pagination(pagination):
-    offset_num = pagination.pageSize*(pagination.pageNumber-1)+1
+    offset_num = pagination.pageSize * (pagination.pageNumber - 1) + 1
 
-    return "OFFSET {0} LIMIT {1}".format(offset_num,pagination.pageSize)
+    return "OFFSET {0} LIMIT {1}".format(offset_num, pagination.pageSize)
 
 
 def load_dataset_by_subject_id(subject_id, pagination: Pagination):
@@ -99,12 +99,12 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     print("sql result:", count_rows)
     print("sql:", query.get_sql())
     cur = conn.cursor()
-    cur.execute(query.get_sql()+" "+build_pagination(pagination))
+    cur.execute(query.get_sql() + " " + build_pagination(pagination))
     # count =cur.
     rows = cur.fetchall()
     print("sql result:", rows)
     # print("sql count:", count)
-    return rows,count_rows[0]
+    return rows, count_rows[0]
 
 
 def load_chart_dataset(subject_id, chart_id):
