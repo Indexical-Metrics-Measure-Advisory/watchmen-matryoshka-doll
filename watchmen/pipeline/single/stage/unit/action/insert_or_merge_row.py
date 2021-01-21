@@ -1,5 +1,6 @@
 from watchmen.pipeline.model.pipeline import UnitAction
-from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules, get_source_factor_value
+from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules, get_source_factor_value, \
+    run_arithmetic_value_list
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import insert_topic_data, update_topic_data
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
@@ -13,7 +14,7 @@ def build_right_query(condition, pipeline_topic, raw_data, target_topic):
         right_factor = get_factor(sub_condition.right.factorId, pipeline_topic)
         left_factor = get_factor(sub_condition.left.factorId, target_topic)
         # right_value = get_value(right_factor, raw_data)
-        right_value_list = get_source_factor_value(raw_data, [], right_factor)
+        right_value_list = run_arithmetic_value_list(sub_condition.right.arithmetic, get_source_factor_value(raw_data, [], right_factor))
         where_condition.append(
             {"name": left_factor.name, "value": right_value_list, "operator": sub_condition.operator,
              "right_factor": right_factor})

@@ -213,9 +213,22 @@ async def save_pipeline(pipeline: Pipeline):
 
 @router.get("/pipeline", tags=["admin"], response_model=PipelineFlow)
 async def load_pipeline(topic_id):
+    # pipeline_list_produce = []
     result = load_pipeline_by_topic_id(topic_id)
-    return {"topicId": topic_id, "consume": result, "produce": result}
+    pipeline_list_produce=[*result]
+    for pipeline in result:
+        for stage in pipeline.stages:
+            for unit in stage.units:
+                for action in unit.do:
+                    result = load_pipeline_by_topic_id(action.topicId)
+                    pipeline_list_produce = [*pipeline_list_produce, *result]
+
+
+    return {"topicId": topic_id, "consume": [], "produce": pipeline_list_produce}
+
+
+
 
 # Report
 
-# async def
+# TODO report API

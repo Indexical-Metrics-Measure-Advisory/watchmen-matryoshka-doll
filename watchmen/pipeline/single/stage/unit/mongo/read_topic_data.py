@@ -5,9 +5,14 @@ db = get_client(WATCHMEN)
 
 
 def __build_mongo_condition(where_condition, mode):
+    result = {}
     if len(where_condition) > 1:
-        # TODO multiple conditions
-        pass
+        for condition in where_condition:
+            if condition["operator"] == "equals":
+                name = condition["name"]
+                value = condition["value"]
+                result[name] = value
+        return result
     else:
         condition = where_condition[0]
         if condition["operator"] == "equals":
