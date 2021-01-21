@@ -1,7 +1,6 @@
 from typing import Dict
 
 from pydantic import BaseModel
-
 from watchmen.pipeline.mapping.mapping_rule import MappingRule
 
 

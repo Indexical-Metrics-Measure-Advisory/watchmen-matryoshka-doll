@@ -32,6 +32,6 @@ def delete_dashboard_by_id(dashboard_id):
     console_dashboard_collection.delete_one({"dashboardId": dashboard_id})
 
 
-def rename_dashboard_by_id(dashboard_id,name):
-    console_dashboard_collection.update_one({"dashboardId":dashboard_id }, {"$set": {"name":name}})
+def rename_dashboard_by_id(dashboard_id, name):
+    console_dashboard_collection.update_one({"dashboardId": dashboard_id}, {"$set": {"name": name}})
     # return ConsoleDashboard.parse_obj(dashboard)

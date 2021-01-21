@@ -26,3 +26,7 @@ def update_console_group(group: ConsoleSpaceGroup):
 def load_console_group_list_by_ids(group_ids):
     group = console_space_group.find({"groupId": {"$in": group_ids}})
     return list(group)
+
+
+def rename_console_group_by_id(group_id, name):
+    console_space_group.update_one({"groupId": group_id}, {"$set": {"name": name}})

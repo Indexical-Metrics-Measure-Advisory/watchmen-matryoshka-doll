@@ -30,12 +30,19 @@ def load_console_space_by_id(connect_id: str):
     return ConsoleSpace.parse_obj(result)
 
 
+def delete_console_space_storage(connect_id):
+    console_space_collection.delete_one({"connectId": connect_id})
+
+
 def load_console_space_list_by_user(user_id):
     result = console_space_collection.find({"userId": user_id})
     return list(result)
 
 
 def load_console_space_by_subject_id(subject_id):
-    result = console_space_collection.find_one({"subjectIds":subject_id})
+    result = console_space_collection.find_one({"subjectIds": subject_id})
     return ConsoleSpace.parse_obj(result)
 
+
+def rename_console_space_by_id(connect_id, name):
+    console_space_collection.update_one({"connectId": connect_id}, {"$set": {"name": name}})

@@ -216,7 +216,6 @@ async def load_pipeline(topic_id):
     result = load_pipeline_by_topic_id(topic_id)
     return {"topicId": topic_id, "consume": result, "produce": result}
 
-
 # Report
 
 # async def

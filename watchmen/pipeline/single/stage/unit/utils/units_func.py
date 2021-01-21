@@ -1,9 +1,4 @@
-import functools
-
-from cachetools import cached, LRUCache
-
 from watchmen.topic.factor.factor import Factor
-from watchmen.topic.topic import Topic
 
 
 def check_condition(operator, left_value, right_value):
@@ -35,7 +30,7 @@ def convert_factor_type(value, factor_type):
 
 def get_factor(factor_id, target_topic):
     for factor in target_topic.factors:
-        if factor.factorId== factor_id:
+        if factor.factorId == factor_id:
             return factor
 
 
@@ -43,11 +38,9 @@ def get_value(factor: Factor, data):
     if factor.name in data:
         value = data[factor.name]
         return convert_factor_type(value, factor.type)
-    elif factor.type =="number":
+    elif factor.type == "number":
         return 0
     # elif factor.type == "text":
     #     return None
     else:
         return None
-
-

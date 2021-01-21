@@ -30,3 +30,11 @@ def load_console_subject_by_id(subject_id):
 
 def delete_console_subject_by_id(subject_id):
     console_space_subject.delete_one({"subjectId": subject_id})
+
+
+def delete_console_subject_by_ids(subject_ids):
+    console_space_subject.delete({"subjectId": {"$in": subject_ids}})
+
+
+def rename_console_subject_by_id(subject_id, name):
+    console_space_subject.update_one({"subjectId": subject_id}, {"$set": {"name": name}})

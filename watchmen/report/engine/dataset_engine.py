@@ -68,7 +68,6 @@ def build_where(filters, query):
     # for filter in filters:
     #     pas s
 
-
     return query
 
 
