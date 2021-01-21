@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from watchmen.topic.factor.factor import Factor
 
 
@@ -21,9 +23,15 @@ def check_condition(operator, left_value, right_value):
 def convert_factor_type(value, factor_type):
     if factor_type == "text":
         return str(value)
-    if factor_type == "number":
+    elif factor_type == "number":
         # TODO process number type
         return float(value)
+    elif factor_type == "datetime":
+        return datetime.fromisoformat(value)
+    elif factor_type == "boolean":
+        return bool(value)
+    elif factor_type == "sequence":
+        return int(value)
     else:
         return value
 
@@ -32,6 +40,11 @@ def get_factor(factor_id, target_topic):
     for factor in target_topic.factors:
         if factor.factorId == factor_id:
             return factor
+
+def get_factor_func(factor:Factor,data):
+    # factor.
+    pass
+
 
 
 def get_value(factor: Factor, data):

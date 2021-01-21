@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pypika import Query, Table
 
 import prestodb
@@ -56,3 +58,12 @@ def test_sql_generator_chart():
     data = load_chart_dataset("800799662100447232","4789f568-776a-4d06-833f-2e051606bda1")
 
     print(data)
+
+
+
+def test_datetime():
+
+    date =datetime.fromisoformat("2021-12-12")
+
+    print(date.weekday())
+    pass

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor
 from watchmen.topic.factor.factor import Factor
 
@@ -12,19 +14,45 @@ def build_factor_list(factor):
     return factor_list
 
 
+def __convert_value_to_datetime(value):
+    if type(value) == datetime:
+        return value
+    else:
+        return datetime.fromisoformat(value)
+
+
+def __run_arithmetic(arithmetic,value):
+    if arithmetic=="no-func":
+        return value
+    elif arithmetic == "year-of":
+        return __convert_value_to_datetime(value).year
+    elif arithmetic=="month-of":
+        return __convert_value_to_datetime(value).month
+    elif arithmetic == "week-of":
+        return __convert_value_to_datetime(value).isocalendar()[1]
+    elif arithmetic == "weekday":
+        return __convert_value_to_datetime(value).weekday()
+
+
+def run_arithmetic_value_list(arithmetic,source_value_list):
+    if type(source_value_list)==list:
+        results=[]
+        for source_value in source_value_list:
+            results.append(__run_arithmetic(arithmetic,source_value))
+        return results
+    else:
+        return __run_arithmetic(arithmetic,source_value_list)
+
+
 def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
     mapping_results = []
-
     for mapping in mapping_list:
         result = []
         source = mapping["from"]
         source_factor = get_factor(source["factorId"], pipeline_topic)
-
-        source_value_list = get_source_factor_value(raw_data, result, source_factor)
-
+        source_value_list = run_arithmetic_value_list(source["arithmetic"],get_source_factor_value(raw_data, result, source_factor))
         target = mapping["to"]
         target_factor = get_factor(target["factorId"], target_topic)
-        ## TODO func convert
         mapping_results.append({target_factor.name: source_value_list})
 
     mapping_data_list = merge_mapping_data(mapping_results)
