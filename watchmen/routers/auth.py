@@ -35,6 +35,7 @@ def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()
             user.userId, expires_delta=access_token_expires
         ),
         "token_type": "bearer",
+        "role": user.role
     }
 
 

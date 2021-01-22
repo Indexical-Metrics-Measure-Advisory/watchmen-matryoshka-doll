@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Body
-from pydantic import BaseModel
 
 from watchmen.auth.user import User
 from watchmen.common import deps
@@ -34,8 +33,6 @@ router = APIRouter()
 
 
 # Console API
-
-
 
 class AvailableSpace(Space):
     topics: List[Topic] = []
@@ -122,12 +119,12 @@ async def create_console_subject(connect_id, group_id: Optional[str], subject: C
 
 
 @router.get("/console_space/delete", tags=["console"])
-async def delete_console_space(connect_id):
+async def delete_console_space(connect_id,current_user: User = Depends(deps.get_current_user)):
     delete_console_space_and_sub_data(connect_id)
 
 
 @router.get("/console_space/subject/rename", tags=["console"])
-async def rename_console_space_subject(subject_id: str, name: str):
+async def rename_console_space_subject(subject_id: str, name: str,current_user: User = Depends(deps.get_current_user)):
     rename_console_subject_by_id(subject_id, name)
 
 
@@ -137,7 +134,7 @@ async def rename_console_group_subject(group_id: str, name: str):
 
 
 @router.post("/console_space/group", tags=["console"], response_model=ConsoleSpaceGroup)
-async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Body(...)):
+async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Body(...),current_user: User = Depends(deps.get_current_user)):
     console_space = load_console_space_by_id(connect_id)
     console_group = create_console_group_to_storage(console_group)
     console_space.groupIds.append(console_group.groupId)
@@ -146,23 +143,23 @@ async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Bo
 
 
 @router.get("/console_space/subject/delete", tags=["console"])
-async def delete_subject(subject_id):
+async def delete_subject(subject_id,current_user: User = Depends(deps.get_current_user)):
     delete_console_subject(subject_id)
 
 
 @router.post("/console_space/subject/save", tags=["console"], response_model=ConsoleSpaceSubject)
-async def save_console_subject(subject: ConsoleSpaceSubject):
+async def save_console_subject(subject: ConsoleSpaceSubject,current_user: User = Depends(deps.get_current_user)):
     return update_console_subject(subject)
 
 
 @router.post("/console_space/subject/dataset", tags=["console"], response_model=DataPage)
-async def load_dataset(subject_id, pagination: Pagination = Body(...)):
+async def load_dataset(subject_id, pagination: Pagination = Body(...),current_user: User = Depends(deps.get_current_user)):
     data, count = load_dataset_by_subject_id(subject_id, pagination)
     return build_data_pages(pagination, data, count)
 
 
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
-async def load_chart(subject_id, chart_id):
+async def load_chart(subject_id, chart_id,current_user: User = Depends(deps.get_current_user)):
     if is_system_subject(subject_id):
         return load_system_monitor_chart_data(subject_id, chart_id)
     else:
