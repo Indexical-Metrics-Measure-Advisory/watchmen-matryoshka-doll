@@ -1,13 +1,8 @@
 FROM rackspacedot/python37
 
-
-#RUN pip install fastapi
-#RUN pip install uvicorn
-
 WORKDIR /app
-ADD . /app
+ADD . .
 RUN pip install -r requirements.txt
-#RUN pip install pymongo
 RUN python -m spacy download en_core_web_sm
 
 EXPOSE 8000
