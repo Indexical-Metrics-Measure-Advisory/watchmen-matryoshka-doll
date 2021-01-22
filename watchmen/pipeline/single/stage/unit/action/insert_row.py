@@ -8,7 +8,7 @@ log = logging.getLogger("app." + __name__)
 
 def init(action: UnitAction, pipeline_topic: Topic):
     def insert_topic(raw_data):
-        log.info("action: ", action)
+        log.info("action: {0}".format(action))
         if action.topicId is not None:
             target_topic = get_topic_by_id(action.topicId)
             # condition = action.by
@@ -17,5 +17,4 @@ def init(action: UnitAction, pipeline_topic: Topic):
             mapping_result = run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic)
             # if data is None:
             # insert_topic_data(target_topic.name, mapping_result)
-
     return insert_topic

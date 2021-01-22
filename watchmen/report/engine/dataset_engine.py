@@ -94,16 +94,16 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
 
     conn = get_connection()
     cur = conn.cursor()
-    log.info("sql count:", count_query.get_sql())
+    log.info("sql count:{0}".format(count_query.get_sql()))
     cur.execute(count_query.get_sql())
     count_rows = cur.fetchone()
-    log.info("sql result:", count_rows)
-    log.info("sql:", query.get_sql())
+    log.info("sql result: {0}".format(count_rows))
+    log.info("sql:{0}".format(query.get_sql()))
     cur = conn.cursor()
     cur.execute(query.get_sql() + " " + build_pagination(pagination))
     # count =cur.
     rows = cur.fetchall()
-    log.info("sql result:", rows)
+    log.info("sql result: {0}".format(rows))
     # print("sql count:", count)
     return rows, count_rows[0]
 
@@ -111,11 +111,12 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
 def load_chart_dataset(subject_id, chart_id):
     query = build_query_for_subject_chart(subject_id, chart_id)
     conn = get_connection()
-    log.info("sql:", query.get_sql())
+    log.info("sql: {0}".format(query.get_sql()))
     cur = conn.cursor()
     cur.execute(query.get_sql())
     rows = cur.fetchall()
-    log.info("sql result:", rows)
+
+    log.info("sql result: {0}".format(rows))
     return rows
 
 
