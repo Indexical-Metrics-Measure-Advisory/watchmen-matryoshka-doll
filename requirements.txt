@@ -1,4 +1,5 @@
 presto-python-client
+bcrypt
 distributed
 pymongo
 jsonschema
