@@ -1,9 +1,9 @@
-FROM rackspacedot/python37
+FROM python:3.7
 
 WORKDIR /app
 ADD . .
 RUN pip install -r requirements.txt
-RUN python -m spacy download en_core_web_sm
+#RUN python -m spacy download en_core_web_sm
 
 
 EXPOSE 8000

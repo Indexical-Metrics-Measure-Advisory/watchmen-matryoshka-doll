@@ -7,7 +7,7 @@ passlib
 pypika
 python-jose
 dask
-pandas
+# pandas
 aiofiles==0.5.0
 aniso8601==7.0.0
 async-exit-stack==1.0.1
@@ -46,7 +46,7 @@ PyYAML==5.3.1
 requests==2.24.0
 Rx==1.6.1
 six==1.15.0
-spacy==2.3.2
+# spacy==2.3.2
 srsly==1.0.2
 starlette==0.13.6
 thinc==7.4.1
