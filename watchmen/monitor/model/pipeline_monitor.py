@@ -20,8 +20,10 @@ class StageStatus(BaseModel):
 
 class PipelineRunStatus(MongoModel):
     status: str = None
-    name: str = None
+    pipelineId: str = None
     uid: str = None
-    complete_time: datetime = None
-    stages: List[StageStatus] = []
+    topicId:str = None
+    complete_time: str = None
+    # stages: List[StageStatus] = []
     error: str = None
+

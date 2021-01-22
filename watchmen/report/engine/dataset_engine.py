@@ -142,6 +142,7 @@ def build_where(filter_groups, query, table_dict):
     for filter_group in filter_groups:
         if len(filter_group.filters) > 1:
             # TODO  build join group condition
+
             pass
         else:
             if filter_group.filters:
@@ -193,7 +194,6 @@ def get_graphic(graphics, chart_id):
 def build_query_for_subject_chart(subject_id, chart_id):
     console_subject = load_console_subject_by_id(subject_id)
     chart = get_graphic(console_subject.graphics, chart_id)
-
     query = Query._builder()
     for indicator in chart.indicators:
         topic = get_topic_by_id(indicator.topicId)

@@ -21,5 +21,3 @@ async def load_query_status():
         result.append(presto_sql_status)
     return result
 
-
-

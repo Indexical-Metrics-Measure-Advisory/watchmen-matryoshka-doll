@@ -5,7 +5,7 @@ from pypika import Query, Table
 import prestodb
 
 from watchmen.common.pagination import Pagination
-from watchmen.monitor.presto.index import load_query_status
+
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, \
      load_chart_dataset
 
@@ -19,10 +19,10 @@ collection_list_name = client.list_collection_names()
 
 client.get_collection("_schema")
 
-
-
-def test_load_presto():
-    print(load_query_status())
+#
+#
+# def test_load_presto():
+#     print(load_query_status())
 
 
 def test_list_collection():
@@ -54,11 +54,12 @@ def test_presto_connection():
     s1 ="SELECT topic_gi_policy.beforeVatPremium,topic_gi_policy.agentCode,topic_gi_risk.vehicleModel FROM topic_gi_policy JOIN topic_gi_risk ON topic_gi_risk.policyId=topic_gi_policy.policyId "
     s2 = "SELECT count(*) FROM topic_gi_policy"
     s3 = "SELECT topic_gi_customer.city FROM topic_gi_customer"
-    s4 = "SELECT * FROM topic_gi_risk"
+    s4 = "SELECT SUM(beforeVatPremium) FROM topic_gi_policy GROUP BY agentCode"
+
     t =Table('topic_gi_policy')
     q = Query.from_(t).select(t['orgCode'])
     print(s1)
-    cur.execute(s2)
+    cur.execute(s4)
     rows = cur.fetchall()
 
     print(rows)
