@@ -7,6 +7,11 @@ from watchmen.common.mongo_model import MongoModel
 from watchmen.topic.topic import Topic
 
 
+class ConsoleSpaceSubjectChartDataSet(BaseModel):
+    meta: List[str] = [];
+    data: list = [];
+
+
 class ConsoleSpaceSubjectDataSetFilter(BaseModel):
     topicId: str = None
     factorId: str = None

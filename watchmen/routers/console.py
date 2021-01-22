@@ -9,7 +9,8 @@ from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.utils.data_utils import build_data_pages
-from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject
+from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject, \
+    ConsoleSpaceSubjectChartDataSet
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
     delete_console_space_and_sub_data
 from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
@@ -21,6 +22,7 @@ from watchmen.console_space.storage.console_subject_storage import create_consol
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
     load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id
+from watchmen.monitor.index import is_system_subject, load_system_monitor_chart_data
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, load_chart_dataset
 from watchmen.space.service.console import load_topic_list_by_space_id
 from watchmen.space.space import Space
@@ -35,15 +37,8 @@ router = APIRouter()
 
 
 
-
-
 class AvailableSpace(Space):
     topics: List[Topic] = []
-
-
-class ConsoleSpaceSubjectChartDataSet(BaseModel):
-    meta: List[str] = [];
-    data: list = [];
 
 
 @router.get("/space/available", tags=["console"], response_model=List[AvailableSpace])
@@ -168,8 +163,14 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...)):
 
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_chart(subject_id, chart_id):
-    result = load_chart_dataset(subject_id, chart_id)
-    return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
+    if is_system_subject(subject_id):
+        return load_system_monitor_chart_data(subject_id, chart_id)
+    else:
+        result = load_chart_dataset(subject_id, chart_id)
+        return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
+
+
+
 
 
 ## Dashboard

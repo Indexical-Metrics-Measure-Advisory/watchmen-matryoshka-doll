@@ -5,6 +5,7 @@ from pypika import Query, Table
 import prestodb
 
 from watchmen.common.pagination import Pagination
+from watchmen.monitor.index import load_slow_pipeline_status
 
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, \
      load_chart_dataset
@@ -94,3 +95,7 @@ def test_datetime():
 
     print(date.weekday())
     pass
+
+
+def test_pipeline_status():
+    load_slow_pipeline_status(10)

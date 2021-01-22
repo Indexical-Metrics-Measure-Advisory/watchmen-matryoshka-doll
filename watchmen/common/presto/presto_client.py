@@ -10,5 +10,6 @@ conn = prestodb.dbapi.connect(
     schema=settings.PRESTO_SCHEMA,
 )
 
+
 def get_connection():
     return conn
