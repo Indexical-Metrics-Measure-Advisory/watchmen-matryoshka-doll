@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     #     raise ValueError(v)
 
     PROJECT_NAME: str
-    MONGO_HOS: str = ""
+    MONGO_HOST: str = ""
     MONGO_PORT: int = 0
     PRESTO_HTTP_URL = "http://localhost:8080"
     PRESTO_HOST = "localhost"
