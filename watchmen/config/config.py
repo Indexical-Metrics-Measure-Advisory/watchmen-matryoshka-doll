@@ -30,6 +30,11 @@ class Settings(BaseSettings):
     MONGO_HOST: str = ""
     MONGO_PORT: int = 0
     PRESTO_HTTP_URL = "http://localhost:8080"
+    PRESTO_HOST = "localhost"
+    PRESTO_PORT = 8080
+    PRESTO_USER = "the_user"
+    PRESTO_CATALOG = "mongo"
+    PRESTO_SCHEMA = "watchmen"
 
     class Config:
         env_file = '.env'
