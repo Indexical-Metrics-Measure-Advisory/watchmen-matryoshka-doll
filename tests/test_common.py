@@ -5,6 +5,7 @@ from pypika import Query, Table
 import prestodb
 
 from watchmen.common.pagination import Pagination
+from watchmen.monitor.presto.index import load_query_status
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, \
      load_chart_dataset
 
@@ -17,6 +18,11 @@ client = get_client(WATCHMEN)
 collection_list_name = client.list_collection_names()
 
 client.get_collection("_schema")
+
+
+
+def test_load_presto():
+    print(load_query_status())
 
 
 def test_list_collection():

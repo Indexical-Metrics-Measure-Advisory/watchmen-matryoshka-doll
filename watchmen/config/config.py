@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str
     MONGO_HOST: str = ""
     MONGO_PORT: int = 0
+    PRESTO_HTTP_URL = "http://localhost:8080"
 
     class Config:
         env_file = '.env'
