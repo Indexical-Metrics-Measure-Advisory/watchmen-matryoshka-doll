@@ -12,7 +12,8 @@ from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 log = logging.getLogger("app." + __name__)
 
-def build_columns(columns, isCount):
+
+def build_columns(columns, is_count):
     topic_dict = {}
 
     table_dict = {}
@@ -32,7 +33,7 @@ def build_columns(columns, isCount):
 
     q = Query._builder()
     q = q.from_(Table(key))
-    if isCount:
+    if is_count:
         q = q.select(fn.Count("*"))
         for key, items in topic_dict.items():
             t = Table(key)

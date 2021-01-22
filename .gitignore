@@ -103,6 +103,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+
+assert/
 .env
 .venv
 env/
