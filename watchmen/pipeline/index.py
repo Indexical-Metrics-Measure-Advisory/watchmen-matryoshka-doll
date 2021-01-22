@@ -5,18 +5,20 @@ from watchmen.topic.storage.topic_schema_storage import get_topic
 
 
 def trigger_pipeline(topic_name, instance):
-    print("topic_name :", topic_name)
+    print("trigger_pipeline topic_name :", topic_name)
     topic = get_topic(topic_name)
     # TODO validate data with topic schema
-    # print("topic.topicId:", topic.topicId)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
-    # flow = None
+    # futures =[]
 
     for pipeline in pipeline_list:
         print("run:", pipeline.json())
-        get_dask_client().submit(run_pipeline, pipeline, instance)
+        future = get_dask_client().submit(run_pipeline, pipeline, instance)
+        # futures.append(future)
 
         # print(future.result())
+    # for future in futures:
+    #     if future.exception()
 
 
 def trigger_topic(*args, **kwargs):

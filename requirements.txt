@@ -1,5 +1,6 @@
 presto-python-client
 distributed
+pymongo
 jsonschema
 python-dotenv
 passlib
