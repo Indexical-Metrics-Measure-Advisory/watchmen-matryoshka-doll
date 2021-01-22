@@ -6,6 +6,7 @@ import prestodb
 
 from watchmen.common.pagination import Pagination
 from watchmen.monitor.index import load_slow_pipeline_status
+from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_id
 
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, \
      load_chart_dataset
@@ -96,6 +97,8 @@ def test_datetime():
     print(date.weekday())
     pass
 
+def test_load_pipeline():
+   print( load_pipeline_by_id("801390024670052352"))
 
 def test_pipeline_status():
-    load_slow_pipeline_status(10)
+    print(load_slow_pipeline_status(10))

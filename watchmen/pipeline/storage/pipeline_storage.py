@@ -27,3 +27,8 @@ def convert_to_object(x):
 def load_pipeline_by_topic_id(topic_id):
     result = pipeline_collection.find({"topicId": topic_id})
     return list(map(convert_to_object, list(result)))
+
+
+def load_pipeline_by_id(pipeline_id):
+    result =pipeline_collection.find_one({"pipelineId": pipeline_id})
+    return Pipeline.parse_obj(result)

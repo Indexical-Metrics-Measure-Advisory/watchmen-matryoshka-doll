@@ -1,18 +1,20 @@
 from watchmen.common.presto.presto_client import get_connection
+from watchmen.console_space.model.console_space import ConsoleSpaceSubjectChartDataSet
 from watchmen.monitor.model.presto_monitor import PrestoSQLStatus
 from watchmen.monitor.presto.index import load_query_status_from_presto
-from watchmen.routers.console import ConsoleSpaceSubjectChartDataSet
+from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_id
 
 
 def load_slow_pipeline_status(top_n):
-    sql ="SELECT * FROM monitor_pipeline ORDER BY complete_time DESC LIMIT {0}".format(top_n)
+    sql ="SELECT complete_time,status,pipelineId FROM monitor_pipeline ORDER BY complete_time DESC LIMIT {0}".format(top_n)
     cur = get_connection().cursor()
-
     cur.execute(sql)
     rows = cur.fetchall()
-
-
-    return rows
+    results =[]
+    for row in rows:
+        row[2] = load_pipeline_by_id(row[2]).name
+        results.append(row)
+    return results
 
 
 def is_system_subject(subject_id):
