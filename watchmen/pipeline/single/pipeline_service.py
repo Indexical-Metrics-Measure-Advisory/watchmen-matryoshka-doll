@@ -1,6 +1,10 @@
 import importlib
+import traceback
 from datetime import datetime
 
+from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
+from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 NAME = "name"
@@ -29,44 +33,50 @@ def convert_action_type(action_type: str):
 
 
 def run_pipeline(pipeline, data):
-    pipeline_type = pipeline.type
+    pipeline_status = PipelineRunStatus()
+    pipeline_status.topicId = pipeline.topicId
+    pipeline_status.pipelineId = pipeline.pipelineId
+    pipeline_status.uid = get_surrogate_key()
     pipeline_topic = get_topic_by_id(pipeline.topicId)
 
-    # run_status = PipelineRunStatus()
-    # run_status.status = run_status.status
+    try:
+        start_time = datetime.now()
 
-    # run_status.name = pipeline.name
-    # now =datetime.now()
+        # time.time
+        for stage in pipeline.stages:
+            for unit in stage.units:
+                if unit.on is not None:
+                    pass  # TODO check when condition
+                actions = unit.do
+                # out_result = None
 
-    start_time = datetime.now()
+                print("len ", len(actions))
+                for action in actions:
+                    print("action: ", action.json())
+                    func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
+                    print("func: ", func)
+                    out_result = func(data)
 
-    # time.time
-    for stage in pipeline.stages:
-        for unit in stage.units:
-            if unit.on is not None:
-                pass  # TODO check when condition
-            actions = unit.do
-            # out_result = None
+        # TODO create pipeline status topic
+        # TODO set max limit for monitor topic
 
-            print("len ", len(actions))
-            for action in actions:
-                print("action: ", action.json())
-                func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
-                print("func: ", func)
-                out_result = func(data)
+        time_elapsed = datetime.now() - start_time
+        executionTime =time_elapsed.microseconds / 1000
+        pipeline_status.complete_time = executionTime
+        pipeline_status.status="FINISHED"
 
-    # TODO create pipeline status topic
-    # TODO set max limit for monitor topic
+    except Exception as e:
+        print(e)
+        pipeline_status.error = traceback.format_exc()
+        pipeline_status.status="ERROR"
+    finally:
+        print("insert_pipeline_monitor")
 
-    time_elapsed = datetime.now() - start_time
+        insert_pipeline_monitor(pipeline_status)
 
-    print('Time elapsed ', time_elapsed.microseconds / 1000)
+    # return data
 
-    return data
-    # parent_node = None
-    # for stage in pipeline:
-    #     if parent_node is None:
-    #         parent_node = dask.delayed(stage)(data)
-    #     else:
-    #         parent_node = dask.delayed(stage)(parent_node)
-    # parent_node.compute()
+
+
+
+
