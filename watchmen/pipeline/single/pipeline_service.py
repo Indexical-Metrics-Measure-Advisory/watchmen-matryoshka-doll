@@ -50,9 +50,9 @@ def run_pipeline(pipeline, data):
                 actions = unit.do
                 # out_result = None
 
-                print("len ", len(actions))
+                # print("len ", len(actions))
                 for action in actions:
-                    print("action: ", action.json())
+                    ("action: ", action.json())
                     func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                     print("func: ", func)
                     out_result = func(data)

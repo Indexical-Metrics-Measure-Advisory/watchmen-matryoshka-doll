@@ -10,7 +10,7 @@ TEMPLATE_YAML = "/insurance_template.yml"
 def load_template():
     current_path = os.path.abspath(os.path.dirname(__file__))
     # TODO merge template
-    print(current_path)
+    # print(current_path)
     with open(current_path + TEMPLATE_YAML, 'r') as stream:
         try:
             templates = yaml.safe_load(stream)["topic_list"]

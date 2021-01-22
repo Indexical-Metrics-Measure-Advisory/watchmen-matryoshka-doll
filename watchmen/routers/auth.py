@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 from typing import Any
 
@@ -12,6 +13,7 @@ from watchmen.common import deps
 from watchmen.config.config import settings
 
 router = APIRouter()
+log = logging.getLogger("app." + __name__)
 
 
 @router.post("/login/access-token", response_model=Token, tags=["authenticate"])
@@ -21,6 +23,7 @@ def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()
     OAuth2 compatible token login, get an access token for future requests
     """
     user = authenticate(form_data.username, form_data.password)
+    log.info("login username {0}".format(user.name))
 
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")

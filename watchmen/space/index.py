@@ -43,7 +43,7 @@ def add_topic_list_to_master(topic_list, master_space):
         insert_id = str(save_topic(topic.dict()).inserted_id)
         topic_id_list.append(insert_id)
 
-    print(topic_id_list)
+    # print(topic_id_list)
     master_space.topic_id_list = topic_id_list
     insert_space_to_storage(master_space).inserted_id
     # master_space.id = inserted_id

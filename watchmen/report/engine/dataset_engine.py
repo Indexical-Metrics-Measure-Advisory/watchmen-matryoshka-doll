@@ -1,3 +1,4 @@
+import logging
 import operator
 
 from pypika import Query, Table, JoinType
@@ -9,7 +10,7 @@ from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
-
+log = logging.getLogger("app." + __name__)
 
 def build_columns(columns, isCount):
     topic_dict = {}
@@ -93,16 +94,16 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
 
     conn = get_connection()
     cur = conn.cursor()
-    print("sql count:", count_query.get_sql())
+    log.info("sql count:", count_query.get_sql())
     cur.execute(count_query.get_sql())
     count_rows = cur.fetchone()
-    print("sql result:", count_rows)
-    print("sql:", query.get_sql())
+    log.info("sql result:", count_rows)
+    log.info("sql:", query.get_sql())
     cur = conn.cursor()
     cur.execute(query.get_sql() + " " + build_pagination(pagination))
     # count =cur.
     rows = cur.fetchall()
-    print("sql result:", rows)
+    log.info("sql result:", rows)
     # print("sql count:", count)
     return rows, count_rows[0]
 
@@ -110,11 +111,11 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
 def load_chart_dataset(subject_id, chart_id):
     query = build_query_for_subject_chart(subject_id, chart_id)
     conn = get_connection()
-    print("sql:", query.get_sql())
+    log.info("sql:", query.get_sql())
     cur = conn.cursor()
     cur.execute(query.get_sql())
     rows = cur.fetchall()
-    print("sql result:", rows)
+    log.info("sql result:", rows)
     return rows
 
 

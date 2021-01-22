@@ -1,12 +1,14 @@
+import logging
+
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
-
+log = logging.getLogger("app." + __name__)
 
 def init(action: UnitAction, pipeline_topic: Topic):
     def insert_topic(raw_data):
-        print("action:", action)
+        log.info("action: ", action)
         if action.topicId is not None:
             target_topic = get_topic_by_id(action.topicId)
             # condition = action.by

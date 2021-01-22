@@ -20,7 +20,7 @@ def get_condition_factor_value(raw_data, where_conditions):
 
 def init(action: UnitAction, pipeline_topic: Topic):
     def write_factor(raw_data):
-        print("write_factor in :", raw_data)
+        ("write_factor in :", raw_data)
         if action.topicId is not None:
             target_topic = get_topic_by_id(action.topicId)
 
