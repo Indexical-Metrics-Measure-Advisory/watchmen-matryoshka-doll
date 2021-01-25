@@ -7,7 +7,6 @@ from starlette import status
 from watchmen.auth.storage.user import get_user
 from watchmen.auth.user import User
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.config.config import settings
 
 reusable_oauth2 = OAuth2PasswordBearer(

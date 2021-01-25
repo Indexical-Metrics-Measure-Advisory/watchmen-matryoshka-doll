@@ -6,8 +6,4 @@ def init(action: UnitAction, pipeline_topic: Topic):
     def read_factor(raw_data):
         pass
 
-
-
-
-
     return read_factor

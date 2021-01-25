@@ -1,6 +1,5 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.console_space.model.console_space import ConsoleSpace
 
 db = get_client()

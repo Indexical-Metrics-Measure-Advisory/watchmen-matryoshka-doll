@@ -5,7 +5,7 @@ from watchmen.auth.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.utils.data_utils import WATCHMEN, build_data_pages
+from watchmen.common.utils.data_utils import build_data_pages
 
 db = get_client()
 

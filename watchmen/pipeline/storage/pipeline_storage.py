@@ -1,6 +1,5 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.pipeline.model.pipeline import Pipeline
 
 db = get_client()
@@ -30,5 +29,5 @@ def load_pipeline_by_topic_id(topic_id):
 
 
 def load_pipeline_by_id(pipeline_id):
-    result =pipeline_collection.find_one({"pipelineId": pipeline_id})
+    result = pipeline_collection.find_one({"pipelineId": pipeline_id})
     return Pipeline.parse_obj(result)

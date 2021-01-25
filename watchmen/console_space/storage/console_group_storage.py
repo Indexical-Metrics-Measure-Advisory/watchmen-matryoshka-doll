@@ -7,7 +7,7 @@ db = get_client()
 # print("create_console_group_to_storage",db.client)
 
 
-GROUP_COLLECTION='console_space_group'
+GROUP_COLLECTION = 'console_space_group'
 console_space_group = db.get_collection('console_space_group')
 
 

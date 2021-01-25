@@ -10,6 +10,7 @@ from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
+
 log = logging.getLogger("app." + __name__)
 
 
@@ -212,6 +213,8 @@ def build_query_for_subject_chart(subject_id, chart_id):
             q = q.select(fn.Max(t[indicator_factor.name]))
         elif indicator.aggregator == "min":
             q = q.select(fn.Min(t[indicator_factor.name]))
+        else:
+            q = q.select(fn.Max(t[indicator_factor.name]))
 
     for dimension in chart.dimensions:
         topic = get_topic_by_id(dimension.topicId)

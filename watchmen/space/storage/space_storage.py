@@ -2,7 +2,7 @@ from bson import regex
 
 from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.utils.data_utils import WATCHMEN, build_data_pages
+from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.space.space import Space
 
 db = get_client()

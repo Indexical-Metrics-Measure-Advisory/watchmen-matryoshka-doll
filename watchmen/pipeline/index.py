@@ -1,9 +1,9 @@
 import logging
 
-from watchmen.common.dask.client import get_dask_client
 from watchmen.pipeline.single.pipeline_service import run_pipeline
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.topic.storage.topic_schema_storage import get_topic
+
 log = logging.getLogger("app." + __name__)
 
 

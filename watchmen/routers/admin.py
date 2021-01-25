@@ -215,7 +215,7 @@ async def save_pipeline(pipeline: Pipeline):
 async def load_pipeline(topic_id):
     # pipeline_list_produce = []
     result = load_pipeline_by_topic_id(topic_id)
-    pipeline_list_produce=[*result]
+    pipeline_list_produce = [*result]
     for pipeline in result:
         for stage in pipeline.stages:
             for unit in stage.units:
@@ -223,11 +223,7 @@ async def load_pipeline(topic_id):
                     result = load_pipeline_by_topic_id(action.topicId)
                     pipeline_list_produce = [*pipeline_list_produce, *result]
 
-
     return {"topicId": topic_id, "consume": [], "produce": pipeline_list_produce}
-
-
-
 
 # Report
 

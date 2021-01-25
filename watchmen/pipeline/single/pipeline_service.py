@@ -66,21 +66,16 @@ def run_pipeline(pipeline, data):
         time_elapsed = datetime.now() - start_time
         execution_time = time_elapsed.microseconds / 1000
         pipeline_status.complete_time = execution_time
-        pipeline_status.status="FINISHED"
+        pipeline_status.status = "FINISHED"
 
-        log.info("pipeline_status {0} time :{1}".format(pipeline.name,execution_time))
+        log.info("pipeline_status {0} time :{1}".format(pipeline.name, execution_time))
 
     except Exception as e:
         log.error(e)
         pipeline_status.error = traceback.format_exc()
-        pipeline_status.status="ERROR"
+        pipeline_status.status = "ERROR"
     finally:
         # log.info("insert_pipeline_monitor")
         insert_pipeline_monitor(pipeline_status)
 
     # return data
-
-
-
-
-

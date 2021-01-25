@@ -8,6 +8,7 @@ __pycache__/
 
 .idea
 temp/
+.log
 
 # Distribution / packaging
 .Python

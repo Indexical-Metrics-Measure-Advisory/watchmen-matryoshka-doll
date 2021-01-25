@@ -2,17 +2,17 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 # import h2o
 from watchmen.common.log import log
-log.init()
 
+log.init()
 
 log = logging.getLogger("app." + __name__)
 
 from watchmen.routers import admin, console, common, auth, monitor
 
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,

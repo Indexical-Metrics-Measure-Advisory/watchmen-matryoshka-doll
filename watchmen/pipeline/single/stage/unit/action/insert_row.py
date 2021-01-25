@@ -4,7 +4,9 @@ from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
+
 log = logging.getLogger("app." + __name__)
+
 
 def init(action: UnitAction, pipeline_topic: Topic):
     def insert_topic(raw_data):
@@ -17,4 +19,5 @@ def init(action: UnitAction, pipeline_topic: Topic):
             mapping_result = run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic)
             # if data is None:
             # insert_topic_data(target_topic.name, mapping_result)
+
     return insert_topic
