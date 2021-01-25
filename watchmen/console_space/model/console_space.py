@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from watchmen.common.mongo_model import MongoModel
 from watchmen.topic.topic import Topic
+from watchmen.topic.topic_relationship import TopicRelationship
 
 
 class ConsoleSpaceSubjectChartDataSet(BaseModel):
@@ -95,3 +96,6 @@ class ConsoleSpace(MongoModel):
     subjectIds: list = []
     userId: str = None
     topics: List[Topic] = []
+    topicRelations: List[TopicRelationship] = []
+
+

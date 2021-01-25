@@ -14,3 +14,5 @@ class Space(MongoModel):
     # report_list: List = None
     # status: bool = True
     # accessUsers: List[str] = None
+
+

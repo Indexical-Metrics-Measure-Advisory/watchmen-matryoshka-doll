@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from fastapi import APIRouter, Body
@@ -13,6 +14,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
+from watchmen.pipeline.service.pipeline_data_extracter import extract_topic_relationship_from_pipeline
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
@@ -26,6 +28,8 @@ from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pa
 from watchmen.topic.topic import Topic
 
 router = APIRouter()
+
+log = logging.getLogger("app." + __name__)
 
 
 class TopicSuggestionIn(BaseModel):
@@ -205,6 +209,11 @@ async def query_user_groups_list_by_name(query_name: str, pagination: Pagination
 @router.post("/pipeline", tags=["admin"], response_model=Pipeline)
 async def save_pipeline(pipeline: Pipeline):
     result = load_pipeline_by_topic_id(pipeline.topicId)
+
+
+    extract_topic_relationship_from_pipeline(pipeline)
+
+
     if not result:
         return create_pipeline(pipeline)
     else:

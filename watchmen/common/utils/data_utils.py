@@ -1,21 +1,20 @@
 import math
-import os
+# import os
 from enum import Enum
 
-from watchmen.collection.connector.local_connector import raw_data_load
 from watchmen.common.data_page import DataPage
 
 WATCHMEN = "watchmen"
 
 
-def build_json_list(files_name, path):
-    json_list = []
-    for filename in files_name:
-        full_path = path + "/" + filename
-        if os.path.isfile(full_path):
-            json_list.append(raw_data_load(full_path))
-
-    return json_list
+# def build_json_list(files_name, path):
+#     json_list = []
+#     for filename in files_name:
+#         full_path = path + "/" + filename
+#         if os.path.isfile(full_path):
+#             json_list.append(raw_data_load(full_path))
+#
+#     return json_list
 
 
 def build_collection_name(topic_name):

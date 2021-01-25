@@ -26,8 +26,11 @@ from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, lo
 from watchmen.space.service.console import load_topic_list_by_space_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import load_space_by_user
+from watchmen.topic.storage.topic_relation_storage import load_relationships_by_topic_ids, \
+    load_relationships_by_topic_ids_target
 from watchmen.topic.storage.topic_schema_storage import get_topic_list_by_ids
 from watchmen.topic.topic import Topic
+from watchmen.topic.topic_relationship import TopicRelationship
 
 router = APIRouter()
 
@@ -36,6 +39,8 @@ router = APIRouter()
 
 class AvailableSpace(Space):
     topics: List[Topic] = []
+    topicRelations : List[TopicRelationship] = []
+
 
 
 @router.get("/space/available", tags=["console"], response_model=List[AvailableSpace])
@@ -49,6 +54,7 @@ async def load_space_list_by_user(current_user: User = Depends(deps.get_current_
         available_space.name = space.name
         available_space.description = space.description
         available_space.topics = get_topic_list_by_ids(space.topicIds)
+        # available_space.topicRelations =load_relationships_by_topic_ids(space.topicIds)
         available_space_list.append(available_space)
     return available_space_list
 
@@ -82,6 +88,12 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
         console_space = ConsoleSpace.parse_obj(data)
         topic_list = load_topic_list_by_space_id(console_space.spaceId)
         console_space.topics = topic_list
+
+        topic_ids =  list(map(lambda x: x["topicId"],topic_list))
+        print("topic_ids", topic_ids)
+        source_relation = load_relationships_by_topic_ids(topic_ids)
+        target_relation =   load_relationships_by_topic_ids_target(topic_ids)
+        console_space.topicRelations =[*source_relation, *target_relation]
 
         if console_space.subjectIds is not None:
             subjects = load_console_subject_list_by_ids(console_space.subjectIds)
