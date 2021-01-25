@@ -200,21 +200,22 @@ def build_query_for_subject_chart(subject_id, chart_id):
     query = Query._builder()
     for indicator in chart.indicators:
         topic = get_topic_by_id(indicator.topicId)
-        factor = get_factor(indicator.factorId, topic)
+        indicator_factor = get_factor(indicator.factorId, topic)
         t = Table(build_collection_name(topic.name))
         q = query.from_(t)
         if indicator.aggregator == "sum":
-            q = q.select(fn.Sum(t[factor.name]))
+            q = q.select(fn.Sum(t[indicator_factor.name]))
         elif indicator.aggregator == "avg":
-            q = q.select(fn.Avg(t[factor.name]))
+            q = q.select(fn.Avg(t[indicator_factor.name]))
         elif indicator.aggregator == "max":
-            q = q.select(fn.Max(t[factor.name]))
+            q = q.select(fn.Max(t[indicator_factor.name]))
         elif indicator.aggregator == "min":
-            q = q.select(fn.Min(t[factor.name]))
+            q = q.select(fn.Min(t[indicator_factor.name]))
 
     for dimension in chart.dimensions:
         topic = get_topic_by_id(dimension.topicId)
-        factor = get_factor(dimension.factorId, topic)
-        q = q.groupby(t[factor.name])
+        dimension_factor = get_factor(dimension.factorId, topic)
+        q = q.select(dimension_factor.name)
+        q = q.groupby(t[dimension_factor.name])
 
     return q
