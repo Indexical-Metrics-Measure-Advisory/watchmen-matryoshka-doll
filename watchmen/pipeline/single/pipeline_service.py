@@ -1,4 +1,5 @@
 import importlib
+import logging
 import traceback
 from datetime import datetime
 
@@ -12,6 +13,8 @@ NAME = "name"
 PARAMETER = "parameter"
 
 STAGE_MODULE_PATH = 'watchmen.pipeline.single.stage.unit.action.'
+
+log = logging.getLogger("app." + __name__)
 
 
 def build_pipeline(stage_list):
@@ -52,26 +55,27 @@ def run_pipeline(pipeline, data):
 
                 # print("len ", len(actions))
                 for action in actions:
-                    ("action: ", action.json())
+                    log.debug("action: {}".format(action.json()))
                     func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
-                    print("func: ", func)
+                    # print("func: ", func)
                     out_result = func(data)
 
         # TODO create pipeline status topic
         # TODO set max limit for monitor topic
 
         time_elapsed = datetime.now() - start_time
-        executionTime =time_elapsed.microseconds / 1000
-        pipeline_status.complete_time = executionTime
+        execution_time = time_elapsed.microseconds / 1000
+        pipeline_status.complete_time = execution_time
         pipeline_status.status="FINISHED"
 
+        log.info("pipeline_status {0} time :{1}".format(pipeline.name,execution_time))
+
     except Exception as e:
-        print(e)
+        log.error(e)
         pipeline_status.error = traceback.format_exc()
         pipeline_status.status="ERROR"
     finally:
-        print("insert_pipeline_monitor")
-
+        # log.info("insert_pipeline_monitor")
         insert_pipeline_monitor(pipeline_status)
 
     # return data

@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "watchmen-data-processor"
+version = "0.1.0"
+description = ""
+authors = ["luke0623 <luke0623@outlook.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+fastapi = "^0.63.0"
+pypika = "^0.47.3"
+pendulum = "^2.1.2"
+presto-python-client = "^0.7.0"
+dask = "^2021.1.0"
+bson = "^0.5.10"
+regex = "^2020.11.13"
+pymongo = "^3.11.2"
+jose = "^1.0.0"
+python-jose = "^3.2.0"
+passlib = "^1.7.4"
+python-dotenv = "^0.15.0"
+jsonschema = "^3.2.0"
+distributed = "^2021.1.0"
+python-multipart = "^0.0.5"
+bcrypt = "^3.2.0"
+trino = "^0.305.0"
+nose = "^1.3.7"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

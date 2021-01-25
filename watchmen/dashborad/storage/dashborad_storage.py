@@ -3,7 +3,7 @@ from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 
-db = get_client(WATCHMEN)
+db = get_client()
 console_dashboard_collection = db.get_collection('console_dashboard')
 
 

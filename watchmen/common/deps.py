@@ -16,7 +16,7 @@ reusable_oauth2 = OAuth2PasswordBearer(
 
 
 def get_db():
-    return get_client(WATCHMEN)
+    return get_client()
 
 
 def get_current_user(token: str = Depends(reusable_oauth2)

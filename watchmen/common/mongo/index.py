@@ -1,7 +1,7 @@
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN
 
-client = get_client(WATCHMEN)
+client = get_client()
 
 collection_list_name = client.list_collection_names()
 

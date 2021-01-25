@@ -3,7 +3,7 @@ from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.console_space.model.console_space import ConsoleSpace
 
-db = get_client(WATCHMEN)
+db = get_client()
 console_space_collection = db.get_collection('console_space')
 
 

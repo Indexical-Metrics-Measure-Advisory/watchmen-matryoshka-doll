@@ -7,7 +7,7 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN, build_data_pages
 
-db = get_client(WATCHMEN)
+db = get_client()
 
 users = db.get_collection('users')
 

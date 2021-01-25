@@ -3,7 +3,7 @@ from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
-db = get_client(WATCHMEN)
+db = get_client()
 monitor_pipeline_collection = db.get_collection('monitor_pipeline')
 
 

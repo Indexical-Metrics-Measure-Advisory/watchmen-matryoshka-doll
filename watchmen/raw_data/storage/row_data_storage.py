@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from watchmen.storage.engine.storage_engine import get_client
 from watchmen.utils.data_utils import WATCHMEN
 
-db = get_client(WATCHMEN)
+db = get_client()
 
 
 class RawData(BaseModel):

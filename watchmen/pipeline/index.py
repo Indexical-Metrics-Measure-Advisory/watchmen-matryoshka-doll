@@ -15,8 +15,10 @@ def trigger_pipeline(topic_name, instance):
     # futures =[]
 
     for pipeline in pipeline_list:
-        log.info("pipeline run: {0}".format(pipeline.json()))
-        future = get_dask_client().submit(run_pipeline, pipeline, instance)
+        log.debug("pipeline run: {0}".format(pipeline.json()))
+
+        run_pipeline(pipeline, instance)
+        # future = get_dask_client().submit(run_pipeline, pipeline, instance)
         # futures.append(future)
 
         # print(future.result())

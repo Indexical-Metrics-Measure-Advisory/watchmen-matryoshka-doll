@@ -3,7 +3,7 @@ from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.pipeline.model.pipeline import Pipeline
 
-db = get_client(WATCHMEN)
+db = get_client()
 
 pipeline_collection = db.get_collection('pipeline')
 

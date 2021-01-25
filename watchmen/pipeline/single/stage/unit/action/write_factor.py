@@ -1,3 +1,5 @@
+import logging
+
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import build_right_query, filter_condition
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
@@ -6,6 +8,7 @@ from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
 
+log = logging.getLogger("app." + __name__)
 
 def get_condition_factor_value(raw_data, where_conditions):
     factor_value = {}
@@ -20,7 +23,7 @@ def get_condition_factor_value(raw_data, where_conditions):
 
 def init(action: UnitAction, pipeline_topic: Topic):
     def write_factor(raw_data):
-        ("write_factor in :", raw_data)
+        # ("write_factor in :", raw_data)
         if action.topicId is not None:
             target_topic = get_topic_by_id(action.topicId)
 
@@ -40,7 +43,10 @@ def init(action: UnitAction, pipeline_topic: Topic):
                     # insert_data = |condition_factors
 
                     insert_data = {**{target_factor.name: value}, **condition_factors}
+
+                    print("Insert data : {0}".format(insert_data))
                     # print
+
                     insert_topic_data(target_topic.name, insert_data)
                 else:
                     if target_factor.name in target_data:

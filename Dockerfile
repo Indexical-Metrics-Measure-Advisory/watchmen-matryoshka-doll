@@ -2,7 +2,10 @@ FROM python:3.7
 
 WORKDIR /app
 ADD . .
-RUN pip install -r requirements.txt
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install
+RUN pip install uvicorn
 #RUN python -m spacy download en_core_web_sm
 
 

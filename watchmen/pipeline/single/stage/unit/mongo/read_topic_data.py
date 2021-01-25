@@ -1,7 +1,7 @@
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN, build_collection_name
 
-db = get_client(WATCHMEN)
+db = get_client()
 
 
 def __build_mongo_condition(where_condition, mode):

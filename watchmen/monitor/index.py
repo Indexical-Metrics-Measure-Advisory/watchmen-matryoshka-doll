@@ -12,6 +12,7 @@ def load_slow_pipeline_status(top_n):
     rows = cur.fetchall()
     results =[]
     for row in rows:
+        row[0]=str(row[0])+"ms"
         row[2] = load_pipeline_by_id(row[2]).name
         results.append(row)
     return results
@@ -30,7 +31,7 @@ def load_query_status():
     for sql_status in sql_status_list:
         presto_sql_status = PrestoSQLStatus()
         presto_sql_status.query = sql_status["query"]
-        presto_sql_status.executionTime = sql_status["queryStats"]["executionTime"]
+        presto_sql_status.executionTime =  sql_status["queryStats"]["executionTime"]
         presto_sql_status.rawInputPositions = sql_status["queryStats"]["rawInputPositions"]
         presto_sql_status.state = sql_status["state"]
         result.append(presto_sql_status)
