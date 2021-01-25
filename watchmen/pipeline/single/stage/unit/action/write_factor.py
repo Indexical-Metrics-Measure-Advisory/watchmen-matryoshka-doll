@@ -10,6 +10,7 @@ from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 
+
 def get_condition_factor_value(raw_data, where_conditions):
     factor_value = {}
     for condition in where_conditions:

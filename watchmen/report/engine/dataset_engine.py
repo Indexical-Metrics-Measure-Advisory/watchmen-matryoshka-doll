@@ -198,11 +198,12 @@ def build_query_for_subject_chart(subject_id, chart_id):
     console_subject = load_console_subject_by_id(subject_id)
     chart = get_graphic(console_subject.graphics, chart_id)
     query = Query._builder()
+    topic = get_topic_by_id(chart.indicators[0].topicId)
+    t = Table(build_collection_name(topic.name))
+    q = query.from_(t)
     for indicator in chart.indicators:
         topic = get_topic_by_id(indicator.topicId)
         indicator_factor = get_factor(indicator.factorId, topic)
-        t = Table(build_collection_name(topic.name))
-        q = query.from_(t)
         if indicator.aggregator == "sum":
             q = q.select(fn.Sum(t[indicator_factor.name]))
         elif indicator.aggregator == "avg":
