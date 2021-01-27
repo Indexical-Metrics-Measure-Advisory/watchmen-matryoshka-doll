@@ -14,4 +14,6 @@ async def health():
 @router.post("/topic/data", tags=["common"])
 async def save_topic_data(topic_event: TopicEvent):
     # TODO user check URP
+    # TODO raw topic whether exist
+
     save_topic_instance(topic_event.code, topic_event.data)
