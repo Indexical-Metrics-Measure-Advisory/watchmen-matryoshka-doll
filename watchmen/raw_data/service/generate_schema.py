@@ -89,7 +89,7 @@ def create_model_schema(model_schema_set, name, record, is_root):
                     else:
                         model_schema.businessFields[key].values.append(value)
             else:
-                model_field = create_model_field(model_schema, key, value);
+                model_field = create_model_field(model_schema_set,model_schema, key, value)
                 model_schema.businessFields[model_field.name] = model_field
     else:
         model_schema = ModelSchema()
@@ -121,10 +121,14 @@ def create_model_field(model_schema_set, model_schema, key, value):
 
 
 def check_model_field_in_schema(name, model_schema: ModelSchema):
-    if model_schema.businessFields[name] is not None:
+    if name in model_schema.businessFields:
         return True
     else:
         return False
+    # if model_schema.businessFields[name] is not None:
+    #     return True
+    # else:
+    #     return False
 
 
 def get_model_schema_set_by_code(code):

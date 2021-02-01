@@ -89,11 +89,11 @@ def __build_sub_factors(relationship_keys, result_relationships, factor_list, sc
 
 
 def test_generate_schema_for_list_data():
-    path = '/Users/yifeng/PycharmProjects/ebaogi-data-collection/collection_data/all'
+    path = '/Users/yifeng/PycharmProjects/ebaogi-data-collection/collection_data/pinkcloud-claim'
     files_name = os.listdir(path)
     json_list = __build_json_list(files_name, path)
     # print(json_list)
-    result = create_raw_data_model_set('raw_gi_policy', json_list)
+    result = create_raw_data_model_set('raw_pinkcloud_claim', json_list)
     # print(result.json())
 
     root_name = result.code

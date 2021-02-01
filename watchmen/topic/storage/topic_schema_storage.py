@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+import pymongo
 from bson import regex
 
 from watchmen.common.pagination import Pagination
@@ -21,7 +22,7 @@ def save_topic(topic):
 def load_all_topic_list(pagination: Pagination):
     item_count = topic_col.find().count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    result = topic_col.find().skip(skips).limit(pagination.pageSize)
+    result = topic_col.find().skip(skips).limit(pagination.pageSize).sort({"last_modified": pymongo.DESCENDING})
     return build_data_pages(pagination, list(result), item_count)
 
 
@@ -66,7 +67,8 @@ def topic_dict_to_object(topic_schema_dict):
 def query_topic_list_with_pagination(query_name: str, pagination: Pagination):
     item_count = topic_col.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    result = topic_col.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    result = topic_col.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize).sort(
+        "last_modified", pymongo.DESCENDING)
     return build_data_pages(pagination, list(result), item_count)
 
 

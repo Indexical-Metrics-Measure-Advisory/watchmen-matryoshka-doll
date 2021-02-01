@@ -3,6 +3,7 @@ from datetime import datetime
 from watchmen.topic.factor.factor import Factor
 
 
+# TODO constant for operator
 def check_condition(operator, left_value, right_value):
     if operator == "equals":
         return left_value == right_value
@@ -56,4 +57,4 @@ def get_value(factor: Factor, data):
     elif factor.type == "text":
         return ""
     else:
-        return ""
+        return None

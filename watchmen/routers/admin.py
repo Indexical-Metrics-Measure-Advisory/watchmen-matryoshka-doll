@@ -209,11 +209,8 @@ async def query_user_groups_list_by_name(query_name: str, pagination: Pagination
 @router.post("/pipeline", tags=["admin"], response_model=Pipeline)
 async def save_pipeline(pipeline: Pipeline):
     result = load_pipeline_by_topic_id(pipeline.topicId)
-
-
+    # TODO remove this call ,replace by backend task when load connect space
     extract_topic_relationship_from_pipeline(pipeline)
-
-
     if not result:
         return create_pipeline(pipeline)
     else:
@@ -237,3 +234,6 @@ async def load_pipeline(topic_id):
 # Report
 
 # TODO report API
+
+
+

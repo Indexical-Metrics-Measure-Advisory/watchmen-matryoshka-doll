@@ -35,9 +35,4 @@ def extract_topic_relationship_from_pipeline(pipeline: Pipeline):
 
 
 
-# def __merge_relations(topic_relationships):
-#
-#     topic_relationships_dict = {}
-#
-#     for
 

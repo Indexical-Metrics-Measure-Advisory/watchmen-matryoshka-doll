@@ -16,4 +16,6 @@ async def save_topic_data(topic_event: TopicEvent):
     # TODO user check URP
     # TODO raw topic whether exist
 
+    # print(topic_event)
+
     save_topic_instance(topic_event.code, topic_event.data)
