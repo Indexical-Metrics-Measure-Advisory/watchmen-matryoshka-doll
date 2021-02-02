@@ -7,11 +7,11 @@ def init():
     logging.getLogger().setLevel(logging.NOTSET)
 
     # Add stdout handler, with level INFO
-    # console = logging.StreamHandler(sys.stdout)
-    # console.setLevel(logging.INFO)
-    # formatter = logging.Formatter('%(name)-13s: %(levelname)-8s %(message)s')
-    # console.setFormatter(formatter)
-    # logging.getLogger().addHandler(console)
+    console = logging.StreamHandler(sys.stdout)
+    console.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(name)-13s: %(levelname)-8s %(message)s')
+    console.setFormatter(formatter)
+    logging.getLogger().addHandler(console)
 
     # Add file rotating handler, with level DEBUG
     rotating_handler = logging.handlers.RotatingFileHandler(filename='temp/rotating.log', maxBytes=10242880,

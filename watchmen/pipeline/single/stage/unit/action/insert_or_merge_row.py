@@ -37,7 +37,7 @@ def filter_condition(where_condition, index):
 
 
 def init(action: UnitAction, pipeline_topic: Topic):
-    def merge_or_insert_topic(raw_data):
+    def merge_or_insert_topic(raw_data, context):
         # print("action:", action)
         if action.topicId is not None:
             target_topic = get_topic_by_id(action.topicId)
@@ -53,5 +53,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
                     insert_topic_data(target_topic.name, mapping_results[index])
                 else:
                     update_topic_data(target_topic.name, mapping_results[index], target_data)
+        return context
 
     return merge_or_insert_topic

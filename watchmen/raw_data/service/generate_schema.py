@@ -89,7 +89,7 @@ def create_model_schema(model_schema_set, name, record, is_root):
                     else:
                         model_schema.businessFields[key].values.append(value)
             else:
-                model_field = create_model_field(model_schema_set,model_schema, key, value)
+                model_field = create_model_field(model_schema_set, model_schema, key, value)
                 model_schema.businessFields[model_field.name] = model_field
     else:
         model_schema = ModelSchema()

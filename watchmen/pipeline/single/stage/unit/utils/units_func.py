@@ -53,8 +53,8 @@ def get_value(factor: Factor, data):
         value = data[factor.name]
         return convert_factor_type(value, factor.type)
     elif factor.type == "number":
-        return 0
+        return None
     elif factor.type == "text":
-        return ""
+        return None
     else:
         return None

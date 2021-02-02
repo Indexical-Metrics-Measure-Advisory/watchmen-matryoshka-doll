@@ -39,8 +39,7 @@ router = APIRouter()
 
 class AvailableSpace(Space):
     topics: List[Topic] = []
-    topicRelations : List[TopicRelationship] = []
-
+    topicRelations: List[TopicRelationship] = []
 
 
 @router.get("/space/available", tags=["console"], response_model=List[AvailableSpace])
@@ -88,10 +87,10 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
         console_space = ConsoleSpace.parse_obj(data)
         topic_list = load_topic_list_by_space_id(console_space.spaceId)
         console_space.topics = topic_list
-        topic_ids =  list(map(lambda x: x["topicId"],topic_list))
+        topic_ids = list(map(lambda x: x["topicId"], topic_list))
         source_relation = load_relationships_by_topic_ids(topic_ids)
-        target_relation =   load_relationships_by_topic_ids_target(topic_ids)
-        console_space.topicRelations =[*source_relation, *target_relation]
+        target_relation = load_relationships_by_topic_ids_target(topic_ids)
+        console_space.topicRelations = [*source_relation, *target_relation]
 
         if console_space.subjectIds is not None:
             subjects = load_console_subject_list_by_ids(console_space.subjectIds)

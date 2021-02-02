@@ -10,7 +10,7 @@ log = logging.getLogger("app." + __name__)
 
 def init(action: UnitAction, pipeline_topic: Topic):
     def insert_topic(raw_data):
-        log.info("action: {0}".format(action))
+        # log.info("action: {0}".format(action))
         if action.topicId is not None:
             target_topic = get_topic_by_id(action.topicId)
             # condition = action.by

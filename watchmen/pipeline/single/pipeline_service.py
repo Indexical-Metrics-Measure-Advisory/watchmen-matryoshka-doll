@@ -6,6 +6,8 @@ from datetime import datetime
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor
+from watchmen.pipeline.single.stage.unit.mongo.index import get_factor_value
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 ERROR = "ERROR"
@@ -46,23 +48,40 @@ def run_pipeline(pipeline, data):
     pipeline_status.uid = get_surrogate_key()
     pipeline_topic = get_topic_by_id(pipeline.topicId)
 
+    context = {}
+
     try:
         start_time = datetime.now()
 
         # time.time
         for stage in pipeline.stages:
+            log.info("stage name {0}".format(stage.name))
+
             for unit in stage.units:
                 if unit.on is not None:
-                    pass  # TODO check when condition
+                    when = unit.on
+                    children = when.children
+                    if len(children) > 1:
+                        pass
+                    else:
+                        condition = children[0]
+                        if condition.operator == "not-empty":
+                            topic = get_topic_by_id(condition.left.topicId)
+                            factor = get_factor(condition.left.factorId, topic)
+                            # get_factor_value
+                            if factor.name not in data:
+                                continue
+
                 actions = unit.do
                 # out_result = None
-
                 # print("len ", len(actions))
                 for action in actions:
-                    log.debug("action: {}".format(action.json()))
+                    # log.debug("action: {}".format(action.json()))
                     func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                     # print("func: ", func)
-                    out_result = func(data)
+                    out_result = func(data, context)
+                    print("out_result :", out_result)
+                    context = {**context, **out_result}
 
         # TODO create pipeline status topic
         # TODO set max limit for monitor topic
@@ -75,9 +94,10 @@ def run_pipeline(pipeline, data):
         log.info("pipeline_status {0} time :{1}".format(pipeline.name, execution_time))
 
     except Exception as e:
-        log.error(e)
+
         pipeline_status.error = traceback.format_exc()
         pipeline_status.status = ERROR
+        log.error(pipeline_status)
     finally:
         # log.info("insert_pipeline_monitor")
         insert_pipeline_monitor(pipeline_status)

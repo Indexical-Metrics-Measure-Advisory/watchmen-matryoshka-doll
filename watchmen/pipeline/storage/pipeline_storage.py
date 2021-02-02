@@ -9,13 +9,12 @@ pipeline_collection = db.get_collection('pipeline')
 
 def create_pipeline(pipeline: Pipeline) -> Pipeline:
     pipeline.pipelineId = get_surrogate_key()
-    print(pipeline)
     pipeline_collection.insert_one(pipeline.dict())
     return pipeline
 
 
 def update_pipeline(pipeline: Pipeline) -> Pipeline:
-    pipeline_collection.update_one({"topicId": pipeline.topicId}, {"$set": pipeline.dict()})
+    pipeline_collection.update_one({"pipelineId": pipeline.pipelineId}, {"$set": pipeline.dict()})
     return pipeline
 
 

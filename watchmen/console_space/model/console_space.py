@@ -29,9 +29,9 @@ class ConsoleSpaceSubjectDataSetColumn(BaseModel):
     topicId: str = None
     factorId: str = None
     operator: str = None
-    secondaryTopicId: str=None
-    secondaryFactorId: str=None
-    alias: str =None
+    secondaryTopicId: str = None
+    secondaryFactorId: str = None
+    alias: str = None
 
 
 class ConsoleSpaceSubjectDataSetJoin(BaseModel):
@@ -101,5 +101,3 @@ class ConsoleSpace(MongoModel):
     userId: str = None
     topics: List[Topic] = []
     topicRelations: List[TopicRelationship] = []
-
-
