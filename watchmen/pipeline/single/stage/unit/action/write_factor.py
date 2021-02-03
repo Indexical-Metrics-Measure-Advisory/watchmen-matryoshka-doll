@@ -1,7 +1,8 @@
 import logging
 
 from watchmen.pipeline.model.pipeline import UnitAction
-from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import build_right_query, filter_condition
+from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import filter_condition
+from watchmen.pipeline.single.stage.unit.mongo.index import build_right_query
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import update_topic_data, insert_topic_data
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value, convert_factor_type
@@ -27,7 +28,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
         if action.topicId is not None:
 
-            print("raw_data",raw_data)
+            # print("raw_data",raw_data)
             target_topic = get_topic_by_id(action.topicId)
 
             condition = action.by
@@ -37,7 +38,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             filter_where_condition = filter_condition(where_condition, 0)
             target_data = read_topic_data(filter_where_condition, target_topic.name, condition.mode)
 
-            print("target_data :",target_data)
+            # print("target_data :",target_data)
 
             target_factor = get_factor(action.factorId, target_topic)
 
@@ -50,7 +51,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
                     log.info("Insert data : {0}".format(insert_data))
                     insert_topic_data(target_topic.name, insert_data)
                 else:
-                    print("target_factor.name :",target_factor.name)
+                    # print("target_factor.name :",target_factor.name)
                     if target_factor.name in target_data:
                         source_value = target_data[target_factor.name]
                     else:

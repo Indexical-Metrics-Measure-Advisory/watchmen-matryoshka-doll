@@ -8,7 +8,7 @@ topic_relation_collections = db.get_collection('topic_relation_collections')
 
 def save_topic_relationship(topic_relation: TopicRelationship):
     result = load_relationship_by_source_id_and_target_id(topic_relation.sourceTopicId, topic_relation.targetTopicId)
-    print(result)
+    # print(result)
     if result:
         topic_relation_collections.update_one({"relationId": result["relationId"]}, {"$set": topic_relation.dict()})
     else:

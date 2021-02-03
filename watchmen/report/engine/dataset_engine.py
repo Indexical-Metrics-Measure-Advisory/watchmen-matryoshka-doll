@@ -83,26 +83,27 @@ def build_joins(joins, query, table_dict):
 
 
 def build_pagination(pagination):
-    offset_num = pagination.pageSize * (pagination.pageNumber - 1) + 1
+    offset_num = pagination.pageSize * (pagination.pageNumber - 1)
 
     return "OFFSET {0} LIMIT {1}".format(offset_num, pagination.pageSize)
 
 
 def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     console_subject = load_console_subject_by_id(subject_id)
-
     query = build_query_for_subject(console_subject)
     count_query = build_count_query_for_subject(console_subject)
-
     conn = get_connection()
     cur = conn.cursor()
-    log.info("sql count:{0}".format(count_query.get_sql()))
-    cur.execute(count_query.get_sql())
+    count_sql = count_query.get_sql(quote_char=None)
+    log.info("sql count:{0}".format(count_sql))
+    cur.execute(count_sql)
     count_rows = cur.fetchone()
     log.info("sql result: {0}".format(count_rows))
-    log.info("sql:{0}".format(query.get_sql()))
+
+    query_sql = query.get_sql(quote_char=None)+" " + build_pagination(pagination)
+    log.info("sql:{0}".format(query_sql))
     cur = conn.cursor()
-    cur.execute(query.get_sql() + " " + build_pagination(pagination))
+    cur.execute(query_sql)
     # count =cur.
     rows = cur.fetchall()
     log.info("sql result: {0}".format(rows))
@@ -113,9 +114,10 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
 def load_chart_dataset(subject_id, chart_id):
     query = build_query_for_subject_chart(subject_id, chart_id)
     conn = get_connection()
-    log.info("sql: {0}".format(query.get_sql()))
+    query_sql = query.get_sql(quote_char=None)
+    log.info("sql: {0}".format(query_sql))
     cur = conn.cursor()
-    cur.execute(query.get_sql())
+    cur.execute(query_sql)
     rows = cur.fetchall()
 
     log.info("sql result: {0}".format(rows))

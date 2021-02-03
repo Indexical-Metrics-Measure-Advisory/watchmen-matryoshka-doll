@@ -43,11 +43,6 @@ def get_factor(factor_id, target_topic):
             return factor
 
 
-def get_factor_func(factor: Factor, data):
-    # factor.
-    pass
-
-
 def get_value(factor: Factor, data):
     if factor.name in data:
         value = data[factor.name]

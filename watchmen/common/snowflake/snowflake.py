@@ -99,4 +99,4 @@ def get_surrogate_key():
 
 if __name__ == '__main__':
     worker = IdWorker(0, 0)
-    print(worker.get_id())
+    # print(worker.get_id())

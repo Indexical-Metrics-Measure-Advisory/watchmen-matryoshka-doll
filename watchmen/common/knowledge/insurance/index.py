@@ -15,7 +15,7 @@ def load_template():
         try:
             templates = yaml.safe_load(stream)["topic_list"]
             topic_list = []
-            print(templates)
+            # print(templates)
             for template in templates:
                 # topic.topic_name = template.keys()
                 for key, value in template.items():

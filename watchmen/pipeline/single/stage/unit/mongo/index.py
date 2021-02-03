@@ -100,6 +100,24 @@ def get_max_value_size(mapping_results):
     return index
 
 
+def build_right_query(condition, pipeline_topic, raw_data, target_topic):
+    where_condition = []
+    for sub_condition in condition.children:
+        # print("sub_condition:", sub_condition)
+        right_factor = get_factor(sub_condition.right.factorId, pipeline_topic)
+        # print("right_factor:", right_factor)
+
+        left_factor = get_factor(sub_condition.left.factorId, target_topic)
+        # right_value = get_value(right_factor, raw_data)
+        right_value_list = run_arithmetic_value_list(sub_condition.right.arithmetic,
+                                                     get_source_factor_value(raw_data, [], right_factor))
+        where_condition.append(
+            {"name": left_factor.name, "value": right_value_list, "operator": sub_condition.operator,
+             "right_factor": right_factor})
+        # left_value = get_value(sub_condition.left,target_topic_data,target_topic)
+    return where_condition
+
+
 def is_sub_field(factor):
     return "." in factor.name
 
