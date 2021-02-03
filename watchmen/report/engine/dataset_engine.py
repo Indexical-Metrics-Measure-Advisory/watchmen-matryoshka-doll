@@ -94,13 +94,13 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     count_query = build_count_query_for_subject(console_subject)
     conn = get_connection()
     cur = conn.cursor()
-    count_sql = count_query.get_sql(quote_char=None)
+    count_sql = count_query.get_sql()
     log.info("sql count:{0}".format(count_sql))
     cur.execute(count_sql)
     count_rows = cur.fetchone()
     log.info("sql result: {0}".format(count_rows))
 
-    query_sql = query.get_sql(quote_char=None)+" " + build_pagination(pagination)
+    query_sql = query.get_sql()+" " + build_pagination(pagination)
     log.info("sql:{0}".format(query_sql))
     cur = conn.cursor()
     cur.execute(query_sql)
@@ -114,7 +114,7 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
 def load_chart_dataset(subject_id, chart_id):
     query = build_query_for_subject_chart(subject_id, chart_id)
     conn = get_connection()
-    query_sql = query.get_sql(quote_char=None)
+    query_sql = query.get_sql()
     log.info("sql: {0}".format(query_sql))
     cur = conn.cursor()
     cur.execute(query_sql)
@@ -166,7 +166,7 @@ def build_where(filter_groups, query, table_dict):
 
 def build_query_for_subject(console_subject):
     dataset = console_subject.dataset
-    # query =None
+    query = None
     if dataset is not None:
         # build columns
         if dataset.columns:
