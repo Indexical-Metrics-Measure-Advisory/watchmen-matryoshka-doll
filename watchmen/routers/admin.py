@@ -122,7 +122,9 @@ async def save_topic(topic: Topic):
 @router.post("/update/topic", tags=["admin"], response_model=Topic)
 async def update_topic(topic_id, topic: Topic = Body(...)):
     topic = Topic.parse_obj(topic)
-    return update_topic_schema(topic_id, topic)
+    data = update_topic_schema(topic_id, topic)
+    remove_presto_schema_by_name(topic.name)
+    return data
 
 
 @router.post("/topic/name", tags=["admin"], response_model=DataPage)

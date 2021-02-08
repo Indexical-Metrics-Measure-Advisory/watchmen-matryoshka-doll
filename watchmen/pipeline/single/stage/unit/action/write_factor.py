@@ -38,8 +38,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
             filter_where_condition = filter_condition(where_condition, 0)
             target_data = read_topic_data(filter_where_condition, target_topic.name, condition.mode)
 
-            # print("target_data :",target_data)
-
             target_factor = get_factor(action.factorId, target_topic)
 
             value = __get_value(raw_data, some_value, context, target_factor)
@@ -59,7 +57,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
                     value = source_value + value
                     update_data = {target_factor.name: value}
                     update_topic_data(target_topic.name, update_data, target_data)
-            # target_data = read_topic_data(filter_where_condition, target_topic.name, condition.mode)
+
             elif some_value.arithmetic == "count":
                 if target_data is None:
                     insert_data = {**{target_factor.name: 1}, **condition_factors}

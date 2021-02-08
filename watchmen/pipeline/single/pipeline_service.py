@@ -61,7 +61,6 @@ def run_pipeline(pipeline, data):
     pipeline_topic = get_topic_by_id(pipeline.topicId)
 
     context = {}
-
     try:
         start_time = datetime.now()
 

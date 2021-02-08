@@ -1,8 +1,8 @@
+import operator
 from typing import List
 
 from pypika import Query, Table, Field, JoinType, Criterion
 from pypika.queries import QueryBuilder
-import operator
 
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
@@ -10,9 +10,6 @@ from watchmen.report.model.column import Column, Operator
 from watchmen.report.model.filter import Filter, ConnectiveType
 from watchmen.report.model.join import Join, JoinType
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
-
-
-# def build_query(columns: List[Column], joins: List[Join], filters: List[Filter]) -> str:
 
 
 def _from(column: Column) -> QueryBuilder:

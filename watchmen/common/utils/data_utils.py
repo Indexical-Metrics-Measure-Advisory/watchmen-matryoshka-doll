@@ -7,6 +7,7 @@ from pydantic.tools import lru_cache
 from watchmen.common.data_page import DataPage
 
 WATCHMEN = "watchmen"
+MONITOR = "monitor"
 
 
 @lru_cache(maxsize=100)

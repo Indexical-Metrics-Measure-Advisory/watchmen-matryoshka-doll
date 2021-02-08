@@ -27,7 +27,7 @@ def load_all_topic_list(pagination: Pagination):
 
 
 def get_topic_by_name(topic_name):
-    return topic_col.find_one("code", topic_name)
+    return topic_col.find_one({"code": topic_name})
 
 
 def get_topic(topic_name) -> Topic:
