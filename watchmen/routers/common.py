@@ -18,11 +18,11 @@ async def health():
 async def save_topic_data(topic_event: TopicEvent):
     # TODO user check URP
 
-    print(topic_event.code)
+    # print(topic_event.code)
 
     topic = get_topic(topic_event.code)
 
-    print(topic)
+    # print(topic)
     if topic is None:
         raise Exception("topic name does not exist")
 

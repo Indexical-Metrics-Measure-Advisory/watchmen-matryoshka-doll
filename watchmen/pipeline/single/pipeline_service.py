@@ -81,7 +81,7 @@ def run_pipeline(pipeline, data):
                     # log.debug("action: {}".format(action.json()))
                     func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                     out_result = func(data, context)
-                    print("out_result :", out_result)
+                    # print("out_result :", out_result)
                     context = {**context, **out_result}
 
         # TODO set max limit for monitor topic
@@ -99,5 +99,5 @@ def run_pipeline(pipeline, data):
         pipeline_status.status = ERROR
         log.error(pipeline_status)
     finally:
-        # log.info("insert_pipeline_monitor")
+        log.info("insert_pipeline_monitor")
         insert_pipeline_monitor(pipeline_status)
