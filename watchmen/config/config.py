@@ -40,6 +40,8 @@ class Settings(BaseSettings):
 
     MONGO_MONITOR_HOST: str = ""
     MONGO_MONITOR_PORT: int = 0
+    MONGO_MONITOR_USERNAME: str = None
+    MONGO_MONITOR_PASSWORD: str = None
 
     class Config:
         env_file = '.env'
