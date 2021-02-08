@@ -10,7 +10,7 @@ RUN pip install uvicorn
 
 
 EXPOSE 8000
-CMD ["uvicorn","watchmen.main:app","--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn","watchmen.main:app","--host", "0.0.0.0", "--port", "80","--workers","$WORKERS_NUM"]
 
 
 
