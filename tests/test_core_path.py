@@ -1,7 +1,7 @@
 from watchmen.pipeline.service.pipeline_data_extracter import extract_topic_relationship_from_pipeline
 from watchmen.pipeline.single.pipeline_service import run_pipeline
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
-from watchmen.topic.storage.topic_data_storage import save_topic_instance
+
 from watchmen.topic.storage.topic_schema_storage import get_topic
 
 

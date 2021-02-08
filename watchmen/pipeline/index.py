@@ -1,5 +1,6 @@
 import logging
 
+from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.pipeline_service import run_pipeline
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.topic.storage.topic_schema_storage import get_topic
@@ -7,7 +8,11 @@ from watchmen.topic.storage.topic_schema_storage import get_topic
 log = logging.getLogger("app." + __name__)
 
 
-def trigger_pipeline(topic_name, instance):
+def __match_trigger_type(trigger_type, pipeline):
+    return True
+
+
+def trigger_pipeline(topic_name, instance, trigger_type: TriggerType):
     log.info("trigger_pipeline topic_name :{0}".format(topic_name))
     topic = get_topic(topic_name)
     # TODO validate data with topic schema
@@ -15,19 +20,6 @@ def trigger_pipeline(topic_name, instance):
     # futures =[]
 
     for pipeline in pipeline_list:
-        log.debug("pipeline run: {0}".format(pipeline.json()))
-
-        run_pipeline(pipeline, instance)
-        # future = get_dask_client().submit(run_pipeline, pipeline, instance)
-        # futures.append(future)
-
-        # print(future.result())
-    # for future in futures:
-    #     if future.exception()
-
-
-def trigger_topic(*args, **kwargs):
-    topic_name = args[0]
-    instance = args[1]
-    trigger_pipeline(topic_name, instance)
-    # print(instance)
+        if __match_trigger_type(trigger_type, pipeline):
+            log.debug("pipeline run: {0}".format(pipeline.json()))
+            run_pipeline(pipeline, instance)

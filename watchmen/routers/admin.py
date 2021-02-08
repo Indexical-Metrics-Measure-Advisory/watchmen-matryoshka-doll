@@ -12,6 +12,7 @@ from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
+from watchmen.common.presto.presto_utils import remove_presto_schema_by_name
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id
@@ -112,7 +113,10 @@ async def save_topic(topic: Topic):
         return create_topic_schema(topic)
     else:
         topic = Topic.parse_obj(topic)
-        return update_topic_schema(topic.topicId, topic)
+        data =  update_topic_schema(topic.topicId, topic)
+        ## remove presto shcmea
+        remove_presto_schema_by_name(topic.name)
+        return data
 
 
 @router.post("/update/topic", tags=["admin"], response_model=Topic)
@@ -207,7 +211,6 @@ async def query_user_groups_list_by_name(query_name: str, pagination: Pagination
 
 @router.post("/pipeline", tags=["admin"], response_model=Pipeline)
 async def save_pipeline(pipeline: Pipeline):
-
     if pipeline.pipelineId is None:
         return create_pipeline(pipeline)
     else:

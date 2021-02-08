@@ -7,10 +7,17 @@ from watchmen.topic.topic import Topic
 log = logging.getLogger("app." + __name__)
 
 
+# def __build_factor_id(factor_list):
+#     for factor in factor_list:
+#         factor["factorId"] = get_surrogate_key()
+#     return factor_list
+
+
 def create_topic_schema(topic):
     # TODO add check topic check
     if type(topic) is not dict:
         topic = topic.dict()
+    # topic["factors"]=__build_factor_id(topic["factors"])
     topic["topicId"] = get_surrogate_key()
     save_topic(topic)
     return topic

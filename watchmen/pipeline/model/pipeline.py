@@ -7,6 +7,7 @@ from watchmen.common.mongo_model import MongoModel
 
 # class SimpleFuncArithmetic(BaseModel):
 
+
 class SimpleFuncValue(BaseModel):
     arithmetic: str = None
     type: str = None

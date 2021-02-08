@@ -36,6 +36,9 @@ class Settings(BaseSettings):
     PRESTO_CATALOG = "mongo"
     PRESTO_SCHEMA = "watchmen"
 
+    MONGO_MONITOR_HOST: str = ""
+    MONGO_MONITOR_PORT: int = 0
+
     class Config:
         env_file = '.env'
         env_file_encoding = 'utf-8'

@@ -1,6 +1,5 @@
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_collection_name
-from watchmen.topic.trigger import topic_event_trigger
 
 client = get_client()
 
@@ -8,7 +7,7 @@ client = get_client()
 # print("save_topic_instance",client)
 
 
-@topic_event_trigger
+# @topic_event_trigger
 def save_topic_instance(topic_name, instance):
     topic_instance_col = client.get_collection(build_collection_name(topic_name))
     topic_instance_col.insert(instance)

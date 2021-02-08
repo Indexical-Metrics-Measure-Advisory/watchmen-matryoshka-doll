@@ -1,5 +1,5 @@
 from watchmen.pipeline.model.pipeline import UnitAction
-from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import  filter_condition
+from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import filter_condition
 from watchmen.pipeline.single.stage.unit.mongo.index import build_right_query
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor

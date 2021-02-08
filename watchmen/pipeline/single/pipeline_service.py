@@ -40,7 +40,7 @@ def convert_action_type(action_type: str):
     return action_type.replace("-", "_")
 
 
-def __check_when_condition(children,data):
+def __check_when_condition(children, data):
     if len(children) > 1:
         # TODO
         pass
@@ -73,7 +73,7 @@ def run_pipeline(pipeline, data):
                 if unit.on is not None:
                     when = unit.on
                     children = when.children
-                    result = __check_when_condition(children,data)
+                    result = __check_when_condition(children, data)
                     if result:
                         continue
 
@@ -85,7 +85,6 @@ def run_pipeline(pipeline, data):
                     print("out_result :", out_result)
                     context = {**context, **out_result}
 
-        # TODO create pipeline status topic
         # TODO set max limit for monitor topic
 
         time_elapsed = datetime.now() - start_time
@@ -103,4 +102,3 @@ def run_pipeline(pipeline, data):
     finally:
         # log.info("insert_pipeline_monitor")
         insert_pipeline_monitor(pipeline_status)
-

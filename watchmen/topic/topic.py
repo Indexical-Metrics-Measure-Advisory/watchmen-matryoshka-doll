@@ -11,8 +11,9 @@ class Topic(MongoModel):
     type: str = None
     factors: List[Factor] = []
     description: str = None
+    factorIds: list = []
     # alias: List[str] = None
-    # is_aggregate: bool = False
+    # is_aggregate: bool = Falsessss
     # businessKey: list = []
 
     '''
