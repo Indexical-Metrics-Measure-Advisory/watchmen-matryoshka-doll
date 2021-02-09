@@ -8,7 +8,8 @@ pipeline_collection = db.get_collection('pipeline')
 
 
 def create_pipeline(pipeline: Pipeline) -> Pipeline:
-    pipeline.pipelineId = get_surrogate_key()
+    if pipeline.pipelineId is None:
+        pipeline.pipelineId = get_surrogate_key()
     pipeline_collection.insert_one(pipeline.dict())
     return pipeline
 

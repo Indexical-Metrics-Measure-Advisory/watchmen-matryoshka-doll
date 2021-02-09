@@ -7,7 +7,8 @@ console_space_subject = db.get_collection('console_space_subject')
 
 
 def create_console_subject_to_storage(subject: ConsoleSpaceSubject):
-    subject.subjectId = get_surrogate_key()
+    if subject.subjectId is None:
+        subject.subjectId = get_surrogate_key()
     console_space_subject.insert_one(subject.dict())
     return ConsoleSpaceSubject.parse_obj(subject)
 

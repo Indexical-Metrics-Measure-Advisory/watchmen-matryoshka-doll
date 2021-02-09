@@ -7,7 +7,8 @@ console_dashboard_collection = db.get_collection('console_dashboard')
 
 
 def create_dashboard_to_storage(dashboard: ConsoleDashboard):
-    dashboard.dashboardId = get_surrogate_key()
+    if dashboard.dashboardId is None:
+        dashboard.dashboardId = get_surrogate_key()
     console_dashboard_collection.insert_one(dashboard.dict())
     return ConsoleDashboard.parse_obj(dashboard)
 

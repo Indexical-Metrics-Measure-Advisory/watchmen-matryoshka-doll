@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # import h2o
 from watchmen.common.log import log
+from watchmen.version.index import start_to_trace_topic_changes
 
 log.init()
 
@@ -23,6 +24,9 @@ app.add_middleware(
 )
 
 # h2o.init()
+
+
+# start_to_trace_topic_changes()
 
 
 log.info("system init rest api")

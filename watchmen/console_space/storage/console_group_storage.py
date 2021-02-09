@@ -17,7 +17,8 @@ console_space_group = db.get_collection('console_space_group')
 
 def create_console_group_to_storage(group: ConsoleSpaceGroup):
     with get_client_db() as client:
-        group.groupId = get_surrogate_key()
+        if group.groupId is None:
+            group.groupId = get_surrogate_key()
         client[WATCHMEN].get_collection(GROUP_COLLECTION).insert_one(group.dict())
         return ConsoleSpaceGroup.parse_obj(group)
 

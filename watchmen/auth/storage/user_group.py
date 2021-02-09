@@ -25,7 +25,8 @@ def load_group_list_by_name(query_name):
 
 
 def create_user_group_storage(user_group: UserGroup):
-    user_group.userGroupId = get_surrogate_key()
+    if user_group.userGroupId is None:
+        user_group.userGroupId = get_surrogate_key()
     if type(user_group) is not dict:
         user_group = user_group.dict()
     user_groups.insert_one(user_group)

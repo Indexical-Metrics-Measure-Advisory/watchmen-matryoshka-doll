@@ -5,9 +5,12 @@ from watchmen.topic.topic import Topic
 
 
 def create_space(space: Space):
+
+    if space.spaceId is None:
+        space.spaceId = get_surrogate_key()
     if type(space) is not dict:
         space = space.dict()
-    space["spaceId"] = get_surrogate_key()
+
     insert_space_to_storage(space)
     return space
 

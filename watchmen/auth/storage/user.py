@@ -32,7 +32,8 @@ def load_user_by_name(user_name):
 
 
 def create_user_storage(user: User):
-    user.userId = get_surrogate_key()
+    if user.userId is None:
+        user.userId = get_surrogate_key()
     user.password = get_password_hash(user.password)
     if type(user) is not dict:
         user = user.dict()
