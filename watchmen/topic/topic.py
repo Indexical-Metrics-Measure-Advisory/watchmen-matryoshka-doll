@@ -1,7 +1,18 @@
+from enum import Enum
 from typing import List
 
 from watchmen.common.mongo_model import MongoModel
 from watchmen.topic.factor.factor import Factor
+
+
+class TopicType(Enum):
+    RAW = "raw",
+    DISTINCT = "distinct",
+    AGGREGATE = "aggregate",
+    TIME = "time",
+    RATIO = "ratio",
+    NOT_DEFINED = "not-defined",
+    SYSTEM = "system"
 
 
 class Topic(MongoModel):
@@ -12,26 +23,9 @@ class Topic(MongoModel):
     factors: List[Factor] = []
     description: str = None
     factorIds: list = []
-    # alias: List[str] = None
-    # is_aggregate: bool = Falsessss
-    # businessKey: list = []
 
     '''
-    topic_id: str = None
-
-    topic_name: str = None
-
-    businessKey  : str = None
-
-    factors: List[Factor] = []
-
-    alias: List[str] = None
-
     indexKey : List[str] = None
-
     isUnification:bool = False
 
-    embeddedRelationship: List[str] = None
-
-    parentTopicId: str = None
     '''

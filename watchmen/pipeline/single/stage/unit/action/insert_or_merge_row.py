@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from watchmen.monitor.model.pipeline_monitor import UnitStatus
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules, \
     build_right_query
@@ -23,7 +26,11 @@ def filter_condition(where_condition, index):
 
 def init(action: UnitAction, pipeline_topic: Topic):
     def merge_or_insert_topic(raw_data, context):
-        # print("action:", action)
+
+        unit_action_status = UnitStatus()
+        unit_action_status.type = action.type
+        start_time = datetime.now()
+
         if action.topicId is not None:
             target_topic = get_topic_by_id(action.topicId)
             mapping_results = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic)
@@ -38,6 +45,9 @@ def init(action: UnitAction, pipeline_topic: Topic):
                     insert_topic_data(target_topic.name, mapping_results[index])
                 else:
                     update_topic_data(target_topic.name, mapping_results[index], target_data)
-        return context
+        time_elapsed = datetime.now() - start_time
+        execution_time = time_elapsed.microseconds / 1000
+        unit_action_status.complete_time = execution_time
+        return context, unit_action_status
 
     return merge_or_insert_topic

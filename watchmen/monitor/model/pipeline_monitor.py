@@ -7,12 +7,15 @@ from pydantic import BaseModel
 from watchmen.common.mongo_model import MongoModel
 
 
-class UnitStatus(BaseModel):
-    name: str = None
-    complete_time: datetime = None
+class UnitStatus(MongoModel):
+    type: str = None
+    complete_time: int = None
+    status: str = None
+    error: str = None
+    uid: str = None
 
 
-class StageStatus(BaseModel):
+class StageStatus(MongoModel):
     name: str = None
     complete_time: datetime = None
     units: List[UnitStatus] = []

@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 
 from bson import ObjectId
 from pydantic import BaseModel, BaseConfig
@@ -11,4 +12,5 @@ class MongoModel(BaseModel):
         json_encoders = {
             datetime: lambda dt: dt.isoformat(),
             ObjectId: lambda oid: str(oid)
+            # Enum : lambda e: e.value()
         }
