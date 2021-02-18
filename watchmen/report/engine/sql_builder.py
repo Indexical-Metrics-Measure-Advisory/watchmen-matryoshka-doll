@@ -137,7 +137,7 @@ def _filter_criterion(filter: Filter) -> any:
     elif filter.operator == "less-equals":
         return operator.le(table[factor.name], int(filter.value))
     elif filter.operator == "in":
-        # todo
+        # TODO ?
         return table[factor.name].isin(['a', 'b'])
     else:
         # TODO more operator support

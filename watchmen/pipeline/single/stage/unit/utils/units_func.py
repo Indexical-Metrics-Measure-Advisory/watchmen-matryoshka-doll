@@ -2,8 +2,11 @@ from datetime import datetime
 
 from watchmen.topic.factor.factor import Factor
 
-
 # TODO constant for operator
+INSERT = "insert"
+UPDATE = "update"
+
+
 def check_condition(operator, left_value, right_value):
     if operator == "equals":
         return left_value == right_value
@@ -53,3 +56,18 @@ def get_value(factor: Factor, data):
         return None
     else:
         return None
+
+
+def add_audit_columns(dictionary, audit_type):
+    if audit_type == INSERT:
+        dictionary["insert_time"] = datetime.now()
+    elif audit_type == UPDATE:
+        dictionary["uppdate_time"] = datetime.now()
+    else:
+        raise Exception("unknown audit_type")
+
+
+def add_trace_columns(dictionary,trace_type):
+    # TODO add_trace_columns
+    
+    pass

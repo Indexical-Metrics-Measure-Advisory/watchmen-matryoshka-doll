@@ -9,6 +9,7 @@ log = logging.getLogger("app." + __name__)
 
 
 def __match_trigger_type(trigger_type, pipeline):
+    #TODO  __match_trigger_type
     return True
 
 

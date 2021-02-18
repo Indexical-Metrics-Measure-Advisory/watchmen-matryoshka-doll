@@ -5,22 +5,11 @@ from datetime import datetime
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
-from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor
+from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor, insert_units_monitor
 from watchmen.pipeline.model.pipeline import Pipeline
+from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, NOT_EMPTY, PIPELINE_UID, ERROR, FINISHED
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
-
-NOT_EMPTY = "not-empty"
-
-ERROR = "ERROR"
-
-FINISHED = "FINISHED"
-
-NAME = "name"
-
-PARAMETER = "parameter"
-
-STAGE_MODULE_PATH = 'watchmen.pipeline.single.stage.unit.action.'
 
 log = logging.getLogger("app." + __name__)
 
@@ -62,11 +51,9 @@ def run_pipeline(pipeline: Pipeline, data):
     pipeline_status.pipelineId = pipeline.pipelineId
     pipeline_status.uid = get_surrogate_key()
     pipeline_topic = get_topic_by_id(pipeline.topicId)
-    #TODO pipeline when  condition
-    context = {}
-    # context["uid"] = pipeline_status.uid
-
-    unit_status_list=[]
+    # TODO pipeline when  condition
+    context = {PIPELINE_UID: pipeline_status.uid}
+    unit_status_list = []
     try:
         start_time = datetime.now()
 
@@ -84,7 +71,8 @@ def run_pipeline(pipeline: Pipeline, data):
                         func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                         # call dynamic action in action folder
                         out_result, unit_status = func(data, context)
-                        unit_status_list.append(unit_status)
+                        unit_status.stageName = stage.name
+                        unit_status_list.append(unit_status.dict())
                         log.debug("out_result :{0}".format(out_result))
                         context = {**context, **out_result}
                 else:
@@ -104,8 +92,6 @@ def run_pipeline(pipeline: Pipeline, data):
     finally:
         log.info("insert_pipeline_monitor")
         for unit_status in unit_status_list:
-            unit_status.uid=pipeline_status.uid
-
-
-
+            unit_status["uid"] = pipeline_status.uid
+        insert_units_monitor(unit_status_list)
         insert_pipeline_monitor(pipeline_status)

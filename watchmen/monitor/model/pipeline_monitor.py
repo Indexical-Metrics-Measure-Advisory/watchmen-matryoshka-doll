@@ -1,6 +1,5 @@
 # from bson import timestamp
-from datetime import datetime
-from typing import List
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -13,12 +12,37 @@ class UnitStatus(MongoModel):
     status: str = None
     error: str = None
     uid: str = None
+    actions: list = []
+    stageName: str = None
 
 
-class StageStatus(MongoModel):
-    name: str = None
-    complete_time: datetime = None
-    units: List[UnitStatus] = []
+class BaseAction(BaseModel):
+    type: str = None
+
+
+class ReadFactorAction(BaseAction):
+    type: str = "ReadFactor"
+    value: Any = None
+    fromTopic: str = None
+    fromTopicId: str = None
+    fromFactor: str = None
+    fromFactorId: str = None
+
+
+class WriteFactorAction(BaseAction):
+    type: str = "WriteFactor"
+    value: Any = None
+    fromType: str = None
+    fromSource: str = None
+    fromFactor: str = None
+    writeFunction: str = None
+    targetTopic: str = None
+    targetFactor: str = None
+
+
+class InsertAndMergeRow(BaseAction):
+    # TODO InsertAndMergeRow
+    pass
 
 
 class PipelineRunStatus(MongoModel):

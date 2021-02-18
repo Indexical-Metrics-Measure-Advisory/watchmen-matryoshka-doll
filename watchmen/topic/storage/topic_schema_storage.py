@@ -19,6 +19,12 @@ def save_topic(topic):
     return topic_col.insert_one(topic)
 
 
+def load_all_topic():
+    result = topic_col.find()
+    # .sort("last_modified", pymongo.DESCENDING)
+    return list(result)
+
+
 def load_all_topic_list(pagination: Pagination):
     item_count = topic_col.find().count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)

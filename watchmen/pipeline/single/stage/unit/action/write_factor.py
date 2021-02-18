@@ -2,7 +2,7 @@ import logging
 import traceback
 from datetime import datetime
 
-from watchmen.monitor.model.pipeline_monitor import UnitStatus
+from watchmen.monitor.model.pipeline_monitor import UnitStatus, WriteFactorAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.pipeline_service import ERROR
 from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import filter_condition
@@ -39,8 +39,9 @@ def init(action: UnitAction, pipeline_topic: Topic):
         unit_action_status = UnitStatus()
         unit_action_status.type = action.type
         start_time = datetime.now()
-        try:
 
+        action_log = WriteFactorAction()
+        try:
             if action.topicId is not None:
                 # print("raw_data",raw_data)
                 target_topic = get_topic_by_id(action.topicId)
@@ -49,9 +50,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
                 some_value = action.value
                 where_condition = build_right_query(condition, pipeline_topic, raw_data, target_topic)
-                filter_where_condition = filter_condition(where_condition, 0)
-                target_data = read_topic_data(filter_where_condition, target_topic.name, condition.mode)
-
+                # filter_where_condition =
+                target_data = read_topic_data(filter_condition(where_condition, 0), target_topic.name, condition.mode)
                 target_factor = get_factor(action.factorId, target_topic)
 
                 value = __get_value(raw_data, some_value, context, target_factor)

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from watchmen.monitor.model.pipeline_monitor import UnitStatus
+from watchmen.monitor.model.pipeline_monitor import UnitStatus, ReadFactorAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import filter_condition
 from watchmen.pipeline.single.stage.unit.mongo.index import build_right_query
@@ -15,7 +15,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
         unit_action_status = UnitStatus()
         unit_action_status.type = action.type
         start_time = datetime.now()
-
         context_target_name = action.targetName
         topic = get_topic_by_id(action.topicId)
         factor = get_factor(action.factorId, topic)
@@ -23,10 +22,16 @@ def init(action: UnitAction, pipeline_topic: Topic):
         where_condition = build_right_query(condition, pipeline_topic, raw_data, topic)
         filter_where_condition = filter_condition(where_condition, 0)
         target_data = read_topic_data(filter_where_condition, topic.name, condition.mode)
-        # print("target_data :", target_data)
-        # print("factor.name  :", factor.name)
         if factor.name in target_data:
+            read_value = target_data[factor.name]
             context[context_target_name] = target_data[factor.name]
+
+            # build log action
+            action_log = ReadFactorAction()
+            action_log.value = read_value
+            action_log.fromFactor = factor.name
+            action_log.fromTopic = topic.name
+            unit_action_status.actions.append(action_log)
 
         time_elapsed = datetime.now() - start_time
         execution_time = time_elapsed.microseconds / 1000

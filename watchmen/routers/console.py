@@ -62,8 +62,6 @@ async def load_space_list_by_user(current_user: User = Depends(deps.get_current_
 async def connect_to_space(space_id, name, current_user: User = Depends(deps.get_current_user)):
     # space = get_space_by_id(space_id)
     topic_list = load_topic_list_by_space_id(space_id)
-
-    # TODO load connected space for duplicate check
     console_space = ConsoleSpace()
     console_space.topics = topic_list
     console_space.spaceId = space_id

@@ -6,23 +6,8 @@ from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
 
-def create_raw_data_schema(domain_code, data: json):
-    pass
 
 
-def import_raw_data(domain_code, data: json, is_create_schema):
-    pass
-    # TODO[next] one to one default merge to main topic
-    # find sub raw_data_back in relationship raw_data_back
-    # process attr
-    # generate ID   for sub raw_data_back`s relationship
-
-
-def mapping_raw_data(raw_data, mapping_list):
-    pass
-
-
-## TODO remove
 def crate_topic_by_raw_data_schema(schema, topic_list, mapping_list):
     factor_list = []
     node: schema
@@ -64,11 +49,3 @@ def crate_topic_by_raw_data_schema(schema, topic_list, mapping_list):
             crate_topic_by_raw_data_schema(node, topic_list, mapping_list)
     return mapping_list
 
-
-def batch_import_data(domain_code, data):
-    # find schema
-
-    # extract data topic base on raw_data_back
-
-    # TODO[future] use dark for parallel run
-    pass

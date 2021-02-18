@@ -15,7 +15,8 @@ from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import remove_presto_schema_by_name
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
-from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id
+from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
+    load_pipeline_list
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.service.admin import create_space, update_space_by_id
@@ -24,7 +25,7 @@ from watchmen.space.storage.space_storage import query_space_with_pagination, ge
     load_space_list_by_name
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
-    get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name
+    get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic
 from watchmen.topic.topic import Topic
 
 router = APIRouter()
@@ -133,7 +134,13 @@ async def query_topic_list_by_name(query_name: str, pagination: Pagination = Bod
     return result
 
 
-@router.post("/topic/all", tags=["admin"], response_model=DataPage)
+@router.get("/topic/all", tags=["admin"], response_model=List[Topic])
+async def query_all_topic_list():
+    result = load_all_topic()
+    return result
+
+
+@router.post("/topic/all/pages", tags=["admin"], response_model=DataPage)
 async def query_topic_list_for_pipeline(pagination: Pagination):
     result = load_all_topic_list(pagination)
     return result
@@ -213,7 +220,7 @@ async def query_user_groups_list_by_name(query_name: str, pagination: Pagination
 
 @router.post("/pipeline", tags=["admin"], response_model=Pipeline)
 async def save_pipeline(pipeline: Pipeline):
-    if pipeline.pipelineId is None:
+    if pipeline.pipelineId.startswith("f-"):
         return create_pipeline(pipeline)
     else:
         return update_pipeline(pipeline)
@@ -232,6 +239,13 @@ async def load_pipeline(topic_id):
                     pipeline_list_produce = [*pipeline_list_produce, *result]
 
     return {"topicId": topic_id, "consume": [], "produce": pipeline_list_produce}
+
+
+@router.get("/pipeline/all", tags=["admin"], response_model=List[Pipeline])
+async def load_all_pipelines():
+    return load_pipeline_list()
+
+
 
 # Report
 

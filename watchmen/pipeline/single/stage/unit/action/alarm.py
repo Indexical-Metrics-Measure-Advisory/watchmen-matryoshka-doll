@@ -29,6 +29,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
         time_elapsed = datetime.now() - start_time
         execution_time = time_elapsed.microseconds / 1000
         unit_action_status.complete_time = execution_time
-        return context, unit_action_statuss
+        return context, unit_action_status
 
     return alarm
