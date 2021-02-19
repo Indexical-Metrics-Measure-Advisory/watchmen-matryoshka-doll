@@ -1,7 +1,7 @@
 import logging
 from typing import List
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Depends, HTTPException
 from pydantic import BaseModel
 
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
@@ -10,13 +10,15 @@ from watchmen.auth.storage.user_group import create_user_group_storage, query_us
     get_user_group_list_by_ids, get_user_group, load_group_list_by_name, update_user_group_storage
 from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
+from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import remove_presto_schema_by_name
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
+from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
-    load_pipeline_list
+    load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.service.admin import create_space, update_space_by_id
@@ -244,6 +246,33 @@ async def load_pipeline(topic_id):
 @router.get("/pipeline/all", tags=["admin"], response_model=List[Pipeline])
 async def load_all_pipelines():
     return load_pipeline_list()
+
+
+@router.post("/pipeline/graphics", tags=["admin"], response_model=PipelinesGraphics)
+async def save_pipeline_graph(pipeline_graph:PipelinesGraphics,current_user: User = Depends(deps.get_current_user)):
+    user_id = current_user.userId
+    result = load_pipeline_graph(user_id)
+    if result is not None:
+        return update_pipeline_graph(pipeline_graph,user_id)
+    else:
+        pipeline_graph.userId = user_id
+        return create_pipeline_graph(pipeline_graph)
+
+
+@router.get("/pipeline/graphics/me", tags=["admin"], response_model=PipelinesGraphics)
+async def load_pipeline_graph_by_user(current_user: User = Depends(deps.get_current_user)):
+    user_id = current_user.userId
+    result = load_pipeline_graph(user_id)
+    if result is None:
+        raise HTTPException(status_code=500, detail="not found pipeline graph")
+    else:
+        return result
+
+
+
+
+
+
 
 # Report
 

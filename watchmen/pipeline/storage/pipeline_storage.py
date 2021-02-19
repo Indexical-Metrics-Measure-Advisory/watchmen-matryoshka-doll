@@ -1,10 +1,13 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.pipeline.model.pipeline import Pipeline
+from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 
 db = get_client()
 
 pipeline_collection = db.get_collection('pipeline')
+
+pipeline_graph_collection = db.get_collection('pipeline_graph')
 
 
 def create_pipeline(pipeline: Pipeline) -> Pipeline:
@@ -35,3 +38,22 @@ def load_pipeline_by_id(pipeline_id):
 def load_pipeline_list():
     result = pipeline_collection.find()
     return list(result)
+
+
+def create_pipeline_graph(pipeline_graph: PipelinesGraphics):
+    pipeline_graph_collection.insert(pipeline_graph.dict())
+    return PipelinesGraphics.parse_obj(pipeline_graph)
+
+
+def update_pipeline_graph(pipeline_graph, user_id):
+    pipeline_graph_collection.update_one({"user_id": user_id}, {"$set": pipeline_graph.dict()})
+    return PipelinesGraphics.parse_obj(pipeline_graph)
+
+
+def load_pipeline_graph(user_id):
+    result = pipeline_graph_collection.find_one({"userId": user_id})
+    if result is None:
+        return None
+    else:
+        return PipelinesGraphics.parse_obj(result)
+

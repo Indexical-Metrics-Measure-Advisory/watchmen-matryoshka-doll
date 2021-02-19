@@ -1,6 +1,9 @@
 import logging
 from datetime import datetime
+from functools import reduce
+import statistics
 
+import numpy as np
 import pandas as pd
 
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
@@ -28,6 +31,13 @@ MULTIPLY = 'multiply'
 DIVIDE = 'divide'
 MODULUS = 'modulus'
 
+COUNT = 'count',
+SUM = 'sum',
+AVG = 'avg',
+MAX = 'max',
+MIN = 'min',
+MEDIAN = 'med'
+
 DATE_FUNC = [YEAR_OF, HALF_YEAR_OF, QUARTER_OF, MONTH_OF, WEEK_OF_YEAR, WEEK_OF_MONTH, DAY_OF_WEEK, DAY_OF_MONTH]
 
 CALC_FUNC = [ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULUS]
@@ -51,16 +61,18 @@ def __convert_value_to_datetime(value):
 
 
 def __run_arithmetic(arithmetic, value):
-    if arithmetic == "none":
+    if arithmetic == NONE:
         return value
-    elif arithmetic == "year-of":
-        return __convert_value_to_datetime(value).year
-    elif arithmetic == "month-of":
-        return __convert_value_to_datetime(value).month
-    elif arithmetic == "week-of":
-        return __convert_value_to_datetime(value).isocalendar()[1]
-    elif arithmetic == "weekday":
-        return __convert_value_to_datetime(value).weekday()
+    elif arithmetic == SUM:
+        return sum(value)
+    elif arithmetic == AVG:
+        return statistics.mean(value)
+    elif arithmetic == MAX:
+        return statistics.max(value)
+    elif arithmetic == MIN:
+        return statistics.min(value)
+    elif arithmetic == MEDIAN:
+        return statistics.median(value)
 
 
 def run_arithmetic_value_list(arithmetic, source_value_list):
@@ -83,7 +95,6 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         target_factor = get_factor(mapping.factorId, target_topic)
         mapping_results.append({target_factor.name: source_value_list})
 
-    # print(mapping_results)
     mapping_data_list = merge_mapping_data(mapping_results)
     return mapping_data_list
 
@@ -97,7 +108,6 @@ def __week_number_of_month(date_value):
 
 
 def __process_date_func(source, value):
-
     log.info("value : {0}".format(value))
     arithmetic = source.type
     if arithmetic == NONE:
@@ -132,13 +142,41 @@ def __is_calculation_operation(source_type):
     return source_type in CALC_FUNC
 
 
+def __get_operator(source_type):
+    if source_type == ADD:
+        return np.add
+    elif source_type == SUBTRACT:
+        return np.subtract
+    elif source_type == MULTIPLY:
+        return np.multiply
+    elif source_type == DIVIDE:
+        return np.divide
+    elif source_type == MODULUS:
+        return np.mod
+    else:
+        raise Exception("unknown source_type {0}".format(source_type))
+
+
+def __process_operator(operator, value_list):
+    return reduce(operator, value_list)
+
+
 def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
     if __is_date_func(source.type):
         value_list = get_source_value_list(pipeline_topic, raw_data, [], Parameter.parse_obj(source.parameters[0]))
         return __process_date_func(source, value_list)
     elif __is_calculation_operation(source.type):
-        # TODO calculate process
-        return []
+        operator = __get_operator(source.type)
+        value_list = []
+        for parameter in source.parameters:
+            value = get_source_value_list(pipeline_topic, raw_data, [], Parameter.parse_obj(parameter))
+            if type(value) is list:
+                value_list.append(np.array(value))
+            else:
+                value_list.append(value)
+        # print("value :", value_list)
+
+        return __process_operator(operator, value_list).tolist()
 
 
 def get_source_value_list(pipeline_topic, raw_data, result, source):

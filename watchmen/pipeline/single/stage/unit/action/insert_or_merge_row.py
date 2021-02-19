@@ -44,9 +44,14 @@ def init(action: UnitAction, pipeline_topic: Topic):
                     insert_topic_data(target_topic.name, mapping_results[index])
                 else:
                     update_topic_data(target_topic.name, mapping_results[index], target_data)
-        time_elapsed = datetime.now() - start_time
-        execution_time = time_elapsed.microseconds / 1000
+
+        execution_time = get_execute_time(start_time)
         unit_action_status.complete_time = execution_time
         return context, unit_action_status
+
+    def get_execute_time(start_time):
+        time_elapsed = datetime.now() - start_time
+        execution_time = time_elapsed.microseconds / 1000
+        return execution_time
 
     return merge_or_insert_topic

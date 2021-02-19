@@ -4,6 +4,7 @@ from watchmen.common.utils.data_utils import build_collection_name
 db = get_client()
 
 
+# TODO operator for mongo
 def __build_mongo_condition(where_condition, mode):
     result = {}
     if len(where_condition) > 1:
