@@ -114,7 +114,7 @@ async def save_topic(topic: Topic):
         return create_topic_schema(topic)
     else:
         topic = Topic.parse_obj(topic)
-        data =  update_topic_schema(topic.topicId, topic)
+        data = update_topic_schema(topic.topicId, topic)
         ## remove presto shcmea
         remove_presto_schema_by_name(topic.name)
         return data
@@ -244,8 +244,6 @@ async def load_pipeline(topic_id):
 @router.get("/pipeline/all", tags=["admin"], response_model=List[Pipeline])
 async def load_all_pipelines():
     return load_pipeline_list()
-
-
 
 # Report
 

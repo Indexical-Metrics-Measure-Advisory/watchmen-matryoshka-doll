@@ -11,10 +11,10 @@ db = get_client()
 def insert_topic_data(topic_name, mapping_result):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
-    add_audit_columns(mapping_result,INSERT)
+    add_audit_columns(mapping_result, INSERT)
     ## TODO add insert pipeline uids
 
-    add_trace_columns(mapping_result,"insert_row")
+    add_trace_columns(mapping_result, "insert_row")
     collection.insert(mapping_result)
     trigger_pipeline(topic_name, mapping_result, TriggerType.insert)
 
@@ -31,7 +31,7 @@ def update_topic_data(topic_name, mapping_result, target_data):
     trigger_pipeline(topic_name, data, TriggerType.update)
 
 
-def find_and_modify_topic_data(topic_name,query,update_data):
+def find_and_modify_topic_data(topic_name, query, update_data):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
-    collection.find_and_modify(query=query,update=update_data)
+    collection.find_and_modify(query=query, update=update_data)

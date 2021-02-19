@@ -53,3 +53,4 @@ class PipelineRunStatus(MongoModel):
     complete_time: int = None
     # stages: List[StageStatus] = []
     error: str = None
+    rawId: str = None

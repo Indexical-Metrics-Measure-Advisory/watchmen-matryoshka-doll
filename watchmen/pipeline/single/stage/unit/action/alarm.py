@@ -4,6 +4,7 @@ from datetime import datetime
 from watchmen.monitor.model.pipeline_monitor import UnitStatus
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.topic.topic import Topic
+
 log = logging.getLogger("app." + __name__)
 
 

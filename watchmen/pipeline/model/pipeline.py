@@ -22,7 +22,7 @@ class ParameterExpression(BaseModel):
 
 class MappingFactor(BaseModel):
     arithmetic: str = None
-    source: Parameter=None
+    source: Parameter = None
     factorId: str = None
 
 
@@ -33,7 +33,7 @@ class ParameterJoint(ParameterExpression):
 
 class Conditional(MongoModel):
     conditional: bool = None
-    on: ParameterJoint=None
+    on: ParameterJoint = None
 
 
 class UnitAction(Conditional):

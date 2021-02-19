@@ -1,4 +1,5 @@
 from enum import Enum
+
 from pydantic import BaseModel
 
 
@@ -18,4 +19,3 @@ class Operator(str, Enum):
     multiply = "multiply"
     divide = "divide"
     modulus = "modulus"
-

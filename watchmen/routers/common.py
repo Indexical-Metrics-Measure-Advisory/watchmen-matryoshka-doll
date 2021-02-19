@@ -4,7 +4,7 @@ from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.topic.storage.topic_data_storage import save_topic_instance
-from watchmen.topic.storage.topic_schema_storage import get_topic_by_name, get_topic
+from watchmen.topic.storage.topic_schema_storage import get_topic
 
 router = APIRouter()
 

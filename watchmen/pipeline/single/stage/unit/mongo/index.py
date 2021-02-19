@@ -1,19 +1,36 @@
+import logging
 from datetime import datetime
+
+import pandas as pd
 
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor
 from watchmen.topic.factor.factor import Factor
 
-YEAR_OF = 'year-of',
-HALF_YEAR_OF = 'half-year-of',
-QUARTER_OF = 'quarter-of',
-MONTH_OF = 'month-of',
-WEEK_OF_YEAR = 'week-of-year',
-WEEK_OF_MONTH = 'week-of-month',
-DAY_OF_MONTH = 'day-of-month',
+DOT = "."
+
+log = logging.getLogger("app." + __name__)
+
+NONE = 'none'
+
+YEAR_OF = 'year-of'
+HALF_YEAR_OF = 'half-year-of'
+QUARTER_OF = 'quarter-of'
+MONTH_OF = 'month-of'
+WEEK_OF_YEAR = 'week-of-year'
+WEEK_OF_MONTH = 'week-of-month'
+DAY_OF_MONTH = 'day-of-month'
 DAY_OF_WEEK = 'weekdays'
 
+ADD = 'add'
+SUBTRACT = 'subtract'
+MULTIPLY = 'multiply'
+DIVIDE = 'divide'
+MODULUS = 'modulus'
+
 DATE_FUNC = [YEAR_OF, HALF_YEAR_OF, QUARTER_OF, MONTH_OF, WEEK_OF_YEAR, WEEK_OF_MONTH, DAY_OF_WEEK, DAY_OF_MONTH]
+
+CALC_FUNC = [ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULUS]
 
 
 def build_factor_list(factor):
@@ -66,7 +83,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         target_factor = get_factor(mapping.factorId, target_topic)
         mapping_results.append({target_factor.name: source_value_list})
 
-    print(mapping_results)
+    # print(mapping_results)
     mapping_data_list = merge_mapping_data(mapping_results)
     return mapping_data_list
 
@@ -75,19 +92,53 @@ def __is_date_func(source_type):
     return source_type in DATE_FUNC
 
 
-def __process_date_func(source):
-    pass
+def __week_number_of_month(date_value):
+    return date_value.isocalendar()[1] - date_value.replace(day=1).isocalendar()[1] + 1
 
 
-def __is_calculation_operation(type):
-    pass
+def __process_date_func(source, value):
+
+    log.info("value : {0}".format(value))
+    arithmetic = source.type
+    if arithmetic == NONE:
+        return value
+    elif arithmetic == YEAR_OF:
+        return __convert_value_to_datetime(value).year
+    elif arithmetic == MONTH_OF:
+        return __convert_value_to_datetime(value).month
+    elif arithmetic == WEEK_OF_YEAR:
+        return __convert_value_to_datetime(value).isocalendar()[1]
+    elif arithmetic == DAY_OF_WEEK:
+        return __convert_value_to_datetime(value).weekday()
+    elif arithmetic == WEEK_OF_MONTH:
+        return __week_number_of_month(__convert_value_to_datetime(value).date())
+    elif arithmetic == QUARTER_OF:
+        quarter = pd.Timestamp(__convert_value_to_datetime(value)).quarter
+        return quarter
+    elif arithmetic == HALF_YEAR_OF:
+        month = __convert_value_to_datetime(value).month
+        if month <= 6:
+            return 1
+        else:
+            return 2
+    elif arithmetic == DAY_OF_MONTH:
+        days_in_month = pd.Timestamp(__convert_value_to_datetime(value)).days_in_month
+        return days_in_month
+    else:
+        raise ValueError("unknown arithmetic type {0}".format(arithmetic))
 
 
-def __process_compute_kind(source: Parameter):
+def __is_calculation_operation(source_type):
+    return source_type in CALC_FUNC
+
+
+def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
     if __is_date_func(source.type):
-        return __process_date_func(source)
+        value_list = get_source_value_list(pipeline_topic, raw_data, [], Parameter.parse_obj(source.parameters[0]))
+        return __process_date_func(source, value_list)
     elif __is_calculation_operation(source.type):
-        pass
+        # TODO calculate process
+        return []
 
 
 def get_source_value_list(pipeline_topic, raw_data, result, source):
@@ -97,9 +148,8 @@ def get_source_value_list(pipeline_topic, raw_data, result, source):
     elif source.kind == "constant":
         return source.value
     elif source.kind == "computed":
-        __process_compute_kind(source)
         # TODO computed kind
-        return []
+        return __process_compute_kind(source, raw_data, pipeline_topic)
     else:
         raise Exception("Unknown source kind {0}".format(source.kind))
 
@@ -143,7 +193,6 @@ def get_max_value_size(mapping_results):
 
 def __process_parameter_join(parameter_join: ParameterJoint):
     if parameter_join.jointType == "and":
-
         pass
     elif parameter_join.jointType == "or":
         pass
@@ -154,12 +203,8 @@ def __process_parameter_join(parameter_join: ParameterJoint):
 def build_right_query(condition, pipeline_topic, raw_data, target_topic):
     where_condition = []
     for sub_condition in condition.filters:
-        # print("sub_condition:", sub_condition)
         right_factor = get_factor(sub_condition.right.factorId, pipeline_topic)
-        # print("right_factor:", right_factor)
-
         left_factor = get_factor(sub_condition.left.factorId, target_topic)
-        # right_value = get_value(right_factor, raw_data)
         right_value_list = get_source_factor_value(raw_data, [], right_factor)
         where_condition.append(
             {"name": left_factor.name, "value": right_value_list, "operator": sub_condition.operator,
@@ -169,7 +214,7 @@ def build_right_query(condition, pipeline_topic, raw_data, target_topic):
 
 
 def is_sub_field(factor):
-    return "." in factor.name
+    return DOT in factor.name
 
 
 def get_factor_value(index, factor_list, raw_data, result):

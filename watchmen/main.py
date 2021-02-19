@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # import h2o
 from watchmen.common.log import log
-from watchmen.version.index import start_to_trace_topic_changes
 
 log.init()
 

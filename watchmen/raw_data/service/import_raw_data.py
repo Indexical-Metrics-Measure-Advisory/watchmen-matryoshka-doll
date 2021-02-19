@@ -1,11 +1,7 @@
-import json
-
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.raw_data.mapping import Mapping, MappingDetail
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
-
-
 
 
 def crate_topic_by_raw_data_schema(schema, topic_list, mapping_list):
@@ -48,4 +44,3 @@ def crate_topic_by_raw_data_schema(schema, topic_list, mapping_list):
         for node in node.childs:
             crate_topic_by_raw_data_schema(node, topic_list, mapping_list)
     return mapping_list
-

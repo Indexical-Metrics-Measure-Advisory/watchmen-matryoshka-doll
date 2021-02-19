@@ -1,4 +1,5 @@
 from typing import List
+
 from watchmen.common.mongo_model import MongoModel
 
 

@@ -98,8 +98,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
             raise e
         time_elapsed = datetime.now() - start_time
         execution_time = time_elapsed.microseconds / 1000
-        unit_action_status.complete_time=execution_time
-        return context,unit_action_status
+        unit_action_status.complete_time = execution_time
+        return context, unit_action_status
 
     def __get_value(raw_data, some_value, context, target_factor):
         if some_value.type == IN_MEMORY:

@@ -12,6 +12,6 @@ log = logging.getLogger("app." + __name__)
 
 def remove_presto_schema_by_name(topic_name):
     try:
-        collection.delete_one({"table":build_collection_name(topic_name)})
+        collection.delete_one({"table": build_collection_name(topic_name)})
     except Exception as e:
         log.exception(e)

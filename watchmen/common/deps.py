@@ -36,4 +36,3 @@ def get_current_user(token: str = Depends(reusable_oauth2)
         raise HTTPException(status_code=404, detail="User not found")
 
     return user
-

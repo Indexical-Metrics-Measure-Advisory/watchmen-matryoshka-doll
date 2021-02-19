@@ -6,7 +6,6 @@ from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules, \
     build_right_query
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import insert_topic_data, update_topic_data
-
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
 

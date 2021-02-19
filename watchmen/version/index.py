@@ -1,4 +1,3 @@
-
 from watchmen.common.storage.engine.storage_engine import get_client
 
 db = get_client()
@@ -10,9 +9,3 @@ def start_to_trace_topic_changes():
     data = topic_col.watch()
     document = next(data)
     print(document)
-
-
-
-
-
-

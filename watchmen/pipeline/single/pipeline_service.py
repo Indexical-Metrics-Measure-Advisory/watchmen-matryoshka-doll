@@ -5,7 +5,7 @@ from datetime import datetime
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
-from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor, insert_units_monitor
+from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, NOT_EMPTY, PIPELINE_UID, ERROR, FINISHED
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
@@ -50,6 +50,7 @@ def run_pipeline(pipeline: Pipeline, data):
     pipeline_status.topicId = pipeline.topicId
     pipeline_status.pipelineId = pipeline.pipelineId
     pipeline_status.uid = get_surrogate_key()
+    pipeline_status.rawId = data["_id"]
 
     pipeline_topic = get_topic_by_id(pipeline.topicId)
     # TODO pipeline when  condition

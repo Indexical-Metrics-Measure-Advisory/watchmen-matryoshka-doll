@@ -1,5 +1,5 @@
-import operator
 from enum import Enum
+
 from pydantic import BaseModel
 
 
@@ -15,6 +15,3 @@ class Filter(BaseModel):
 class ConnectiveType(str, Enum):
     and_type: str = 'and'
     or_type: str = 'or'
-
-
-
