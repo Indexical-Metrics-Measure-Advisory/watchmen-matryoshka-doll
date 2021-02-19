@@ -39,7 +39,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             for index in range(len(mapping_results)):
                 filter_where_condition = filter_condition(where_condition, index)
                 # print("filter_where_condition:", filter_where_condition)
-                target_data = read_topic_data(filter_where_condition, target_topic.name, condition.mode)
+                target_data = read_topic_data(filter_where_condition, target_topic.name, condition.jointType)
                 # print("target: ", target_data)
                 if target_data is None:
                     insert_topic_data(target_topic.name, mapping_results[index])

@@ -1,7 +1,19 @@
 from datetime import datetime
 
+from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor
 from watchmen.topic.factor.factor import Factor
+
+YEAR_OF = 'year-of',
+HALF_YEAR_OF = 'half-year-of',
+QUARTER_OF = 'quarter-of',
+MONTH_OF = 'month-of',
+WEEK_OF_YEAR = 'week-of-year',
+WEEK_OF_MONTH = 'week-of-month',
+DAY_OF_MONTH = 'day-of-month',
+DAY_OF_WEEK = 'weekdays'
+
+DATE_FUNC = [YEAR_OF, HALF_YEAR_OF, QUARTER_OF, MONTH_OF, WEEK_OF_YEAR, WEEK_OF_MONTH, DAY_OF_WEEK, DAY_OF_MONTH]
 
 
 def build_factor_list(factor):
@@ -22,7 +34,7 @@ def __convert_value_to_datetime(value):
 
 
 def __run_arithmetic(arithmetic, value):
-    if arithmetic == "no-func":
+    if arithmetic == "none":
         return value
     elif arithmetic == "year-of":
         return __convert_value_to_datetime(value).year
@@ -47,25 +59,55 @@ def run_arithmetic_value_list(arithmetic, source_value_list):
 def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
     mapping_results = []
     for mapping in mapping_list:
+        source = mapping.source
         result = []
-        source = mapping["from"]
-        source_factor = get_factor(source["factorId"], pipeline_topic)
-        source_value_list = run_arithmetic_value_list(source["arithmetic"],
-                                                      get_source_factor_value(raw_data, result, source_factor))
-        target = mapping["to"]
-        target_factor = get_factor(target["factorId"], target_topic)
+        source_value_list = run_arithmetic_value_list(mapping.arithmetic,
+                                                      get_source_value_list(pipeline_topic, raw_data, result, source))
+        target_factor = get_factor(mapping.factorId, target_topic)
         mapping_results.append({target_factor.name: source_value_list})
 
+    print(mapping_results)
     mapping_data_list = merge_mapping_data(mapping_results)
-
     return mapping_data_list
+
+
+def __is_date_func(source_type):
+    return source_type in DATE_FUNC
+
+
+def __process_date_func(source):
+    pass
+
+
+def __is_calculation_operation(type):
+    pass
+
+
+def __process_compute_kind(source: Parameter):
+    if __is_date_func(source.type):
+        return __process_date_func(source)
+    elif __is_calculation_operation(source.type):
+        pass
+
+
+def get_source_value_list(pipeline_topic, raw_data, result, source):
+    if source.kind == "topic":
+        source_factor = get_factor(source.factorId, pipeline_topic)
+        return get_source_factor_value(raw_data, result, source_factor)
+    elif source.kind == "constant":
+        return source.value
+    elif source.kind == "computed":
+        __process_compute_kind(source)
+        # TODO computed kind
+        return []
+    else:
+        raise Exception("Unknown source kind {0}".format(source.kind))
 
 
 def get_source_factor_value(raw_data, result, source_factor):
     if is_sub_field(source_factor):
         factor_list = build_factor_list(source_factor)
         source_value_list = get_factor_value(0, factor_list, raw_data, result)
-
     else:
         source_value_list = get_value(source_factor, raw_data)
     return source_value_list
@@ -78,11 +120,10 @@ def merge_mapping_data(mapping_results):
         mapping_data = {}
         for mapping_result in mapping_results:
             for key, value in mapping_result.items():
-                if type(value) is list:
+                if type(value) is list and len(value) > 0:
                     mapping_data[key] = value[i]
                 else:
                     mapping_data[key] = value
-
         mapping_data_list.append(mapping_data)
     return mapping_data_list
 
@@ -100,17 +141,26 @@ def get_max_value_size(mapping_results):
     return index
 
 
+def __process_parameter_join(parameter_join: ParameterJoint):
+    if parameter_join.jointType == "and":
+
+        pass
+    elif parameter_join.jointType == "or":
+        pass
+    else:
+        raise Exception("unknown parameter join type {0}".format(parameter_join.jointType))
+
+
 def build_right_query(condition, pipeline_topic, raw_data, target_topic):
     where_condition = []
-    for sub_condition in condition.children:
+    for sub_condition in condition.filters:
         # print("sub_condition:", sub_condition)
         right_factor = get_factor(sub_condition.right.factorId, pipeline_topic)
         # print("right_factor:", right_factor)
 
         left_factor = get_factor(sub_condition.left.factorId, target_topic)
         # right_value = get_value(right_factor, raw_data)
-        right_value_list = run_arithmetic_value_list(sub_condition.right.arithmetic,
-                                                     get_source_factor_value(raw_data, [], right_factor))
+        right_value_list = get_source_factor_value(raw_data, [], right_factor)
         where_condition.append(
             {"name": left_factor.name, "value": right_value_list, "operator": sub_condition.operator,
              "right_factor": right_factor})

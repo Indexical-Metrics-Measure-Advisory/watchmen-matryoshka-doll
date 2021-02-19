@@ -50,10 +50,13 @@ def run_pipeline(pipeline: Pipeline, data):
     pipeline_status.topicId = pipeline.topicId
     pipeline_status.pipelineId = pipeline.pipelineId
     pipeline_status.uid = get_surrogate_key()
+
     pipeline_topic = get_topic_by_id(pipeline.topicId)
     # TODO pipeline when  condition
+
     context = {PIPELINE_UID: pipeline_status.uid}
     unit_status_list = []
+
     try:
         start_time = datetime.now()
 
@@ -93,5 +96,5 @@ def run_pipeline(pipeline: Pipeline, data):
         log.info("insert_pipeline_monitor")
         for unit_status in unit_status_list:
             unit_status["uid"] = pipeline_status.uid
-        insert_units_monitor(unit_status_list)
+        # insert_units_monitor(unit_status_list)
         insert_pipeline_monitor(pipeline_status)
