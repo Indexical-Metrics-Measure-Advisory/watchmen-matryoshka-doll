@@ -18,7 +18,7 @@ from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
-    load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph
+    load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.service.admin import create_space, update_space_by_id
@@ -246,6 +246,11 @@ async def load_pipeline(topic_id):
 @router.get("/pipeline/all", tags=["admin"], response_model=List[Pipeline])
 async def load_all_pipelines():
     return load_pipeline_list()
+
+
+@router.get("/pipeline/enabled", tags=["admin"])
+async def update_pipeline_enabled(pipeline_id,enabled):
+    update_pipeline_status(pipeline_id, enabled)
 
 
 @router.post("/pipeline/graphics", tags=["admin"], response_model=PipelinesGraphics)

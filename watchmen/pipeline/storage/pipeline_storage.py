@@ -35,6 +35,10 @@ def load_pipeline_by_id(pipeline_id):
     return Pipeline.parse_obj(result)
 
 
+def update_pipeline_status(pipeline_id, enabled):
+    pipeline_collection.update_one({"pipelineId": pipeline_id}, {"$set": {"enabled": enabled}})
+
+
 def load_pipeline_list():
     result = pipeline_collection.find()
     return list(result)
@@ -56,4 +60,3 @@ def load_pipeline_graph(user_id):
         return None
     else:
         return PipelinesGraphics.parse_obj(result)
-
