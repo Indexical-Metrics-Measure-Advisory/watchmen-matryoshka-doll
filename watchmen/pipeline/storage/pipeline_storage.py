@@ -39,6 +39,10 @@ def update_pipeline_status(pipeline_id, enabled):
     pipeline_collection.update_one({"pipelineId": pipeline_id}, {"$set": {"enabled": enabled}})
 
 
+def update_pipeline_name(pipeline_id, name):
+    pipeline_collection.update_one({"pipelineId": pipeline_id}, {"$set": {"name": name}})
+
+
 def load_pipeline_list():
     result = pipeline_collection.find()
     return list(result)
