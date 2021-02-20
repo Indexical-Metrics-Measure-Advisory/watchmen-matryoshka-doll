@@ -3,32 +3,13 @@ from typing import List
 from pydantic import BaseModel
 
 from watchmen.common.mongo_model import MongoModel
-
-
-class Parameter(BaseModel):
-    kind: str = None
-    type: str = None
-    parameters: list = []
-    value: str = None
-    topicId: str = None
-    factorId: str = None
-
-
-class ParameterExpression(BaseModel):
-    left: Parameter = None
-    operator: str = None
-    right: Parameter = None
+from watchmen.common.parameter import Parameter, ParameterJoint
 
 
 class MappingFactor(BaseModel):
     arithmetic: str = None
     source: Parameter = None
     factorId: str = None
-
-
-class ParameterJoint(ParameterExpression):
-    jointType: str = None
-    filters: List[ParameterExpression] = []
 
 
 class Conditional(MongoModel):

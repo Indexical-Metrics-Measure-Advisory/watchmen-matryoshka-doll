@@ -4,8 +4,8 @@ from typing import List, Any
 from pydantic import BaseModel
 
 from watchmen.common.mongo_model import MongoModel
+from watchmen.common.parameter import ParameterJoint, Parameter
 from watchmen.topic.topic import Topic
-from watchmen.topic.topic_relationship import TopicRelationship
 
 
 class ConsoleSpaceSubjectChartDataSet(BaseModel):
@@ -21,8 +21,8 @@ class ConsoleSpaceSubjectDataSetFilter(BaseModel):
 
 
 class ConsoleSpaceSubjectDataSetFilterJoint(BaseModel):
-    jointType: str = None;
-    filters: List[ConsoleSpaceSubjectDataSetFilter] = [];
+    jointType: str = None
+    filters: List[ConsoleSpaceSubjectDataSetFilter] = []
 
 
 class ConsoleSpaceSubjectDataSetColumn(BaseModel):
@@ -34,18 +34,32 @@ class ConsoleSpaceSubjectDataSetColumn(BaseModel):
     alias: str = None
 
 
-class ConsoleSpaceSubjectDataSetJoin(BaseModel):
-    topicId: str = None;
-    factorId: str = None;
-    secondaryTopicId: str = None;
-    secondaryFactorId: str = None;
-    type: str = None;
+class SubjectDataSetJoin(BaseModel):
+    topicId: str = None
+    factorId: str = None
+    secondaryTopicId: str = None
+    secondaryFactorId: str = None
+    type: str = None
 
 
-class ConsoleDataSet(BaseModel):
-    filters: List[ConsoleSpaceSubjectDataSetFilterJoint] = []
-    columns: List[ConsoleSpaceSubjectDataSetColumn] = []
-    joins: List[ConsoleSpaceSubjectDataSetJoin] = []
+class SubjectDataSetFilter(ParameterJoint):
+    pass
+
+
+class SubjectDataSetFilterJoint(ParameterJoint):
+    filters: List[SubjectDataSetFilter]
+
+
+class SubjectDataSetColumn(BaseModel):
+    columnId: str = None
+    parameter: Parameter
+    alias: str = None
+
+
+class SubjectDataSet(BaseModel):
+    filters: SubjectDataSetFilterJoint
+    columns: List[SubjectDataSetColumn] = []
+    joins: List[SubjectDataSetJoin] = []
 
 
 class ConsoleSpaceSubjectChartIndicator(BaseModel):
@@ -70,6 +84,39 @@ class ConsoleSpaceSubjectChart(BaseModel):
     colors: Any = None
 
 
+class ReportIndicator(BaseModel):
+    name: str = None
+    arithmetic: str = None
+
+
+class ReportDimension(BaseModel):
+    name: str = None
+
+
+class ChartSettings(BaseModel):
+    backgroundColor: str = None
+    border: Any = None
+    borderColor: str = None
+    borderRadius: Any = None
+    colorSeries: Any = None
+
+
+class Chart(BaseModel):
+    type: str = None
+    settings: ChartSettings = None
+
+
+class Report(MongoModel):
+    reportId: str = None
+    name: str = None
+    indicators: List[ReportIndicator]
+    dimensions: List[ReportDimension]
+    description: str = None
+    rect: Any = None
+    chart: Chart
+    lastVisitTime: str = None
+
+
 class ConsoleSpaceSubject(MongoModel):
     subjectId: str = None
     name: str = None
@@ -77,8 +124,15 @@ class ConsoleSpaceSubject(MongoModel):
     graphicsCount: int = None
     lastVisitTime: datetime = None
     createdAt: str = None
-    dataset: ConsoleDataSet = None
-    graphics: List[ConsoleSpaceSubjectChart] = []
+    reports: List[Report] = []
+    dataset: SubjectDataSet = None
+    # graphics: List[ConsoleSpaceSubjectChart] = []
+
+    # subjectId: string;
+    # name: string;
+    # reports?: Array < Report >;
+    # dataset: SubjectDataSet;
+    # lastVisitTime: string;
 
 
 class ConsoleSpaceGroup(MongoModel):
@@ -94,10 +148,10 @@ class ConsoleSpace(MongoModel):
     connectId: str = None
     type: str = None
     lastVisitTime: datetime = None
-    groups: List[ConsoleSpaceGroup] = []
+    # groups: List[ConsoleSpaceGroup] = []
     subjects: List[ConsoleSpaceSubject] = []
     groupIds: list = []
     subjectIds: list = []
     userId: str = None
     topics: List[Topic] = []
-    topicRelations: List[TopicRelationship] = []
+    # topicRelations: List[TopicRelationship] = []

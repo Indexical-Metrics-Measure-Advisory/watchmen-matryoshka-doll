@@ -52,7 +52,7 @@ async def load_space_list_by_user(current_user: User = Depends(deps.get_current_
         available_space.spaceId = space.spaceId
         available_space.name = space.name
         available_space.description = space.description
-        available_space.topics = get_topic_list_by_ids(space.topicIds)
+        available_space.topicIds = space.topicIds
         # available_space.topicRelations =load_relationships_by_topic_ids(space.topicIds)
         available_space_list.append(available_space)
     return available_space_list
@@ -85,22 +85,22 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
         console_space = ConsoleSpace.parse_obj(data)
         topic_list = load_topic_list_by_space_id(console_space.spaceId)
         console_space.topics = topic_list
-        topic_ids = list(map(lambda x: x["topicId"], topic_list))
-        source_relation = load_relationships_by_topic_ids(topic_ids)
-        target_relation = load_relationships_by_topic_ids_target(topic_ids)
-        console_space.topicRelations = [*source_relation, *target_relation]
+        # topic_ids = list(map(lambda x: x["topicId"], topic_list))
+        # source_relation = load_relationships_by_topic_ids(topic_ids)
+        # target_relation = load_relationships_by_topic_ids_target(topic_ids)
+        # console_space.topicRelations = [*source_relation, *target_relation]
 
         if console_space.subjectIds is not None:
             subjects = load_console_subject_list_by_ids(console_space.subjectIds)
             console_space.subjects = subjects
 
-        if console_space.groupIds is not None:
-            group_list = load_console_group_list_by_ids(console_space.groupIds)
-            for group in group_list:
-                console_group = ConsoleSpaceGroup.parse_obj(group)
-                subject_list = load_console_subject_list_by_ids(console_group.subjectIds)
-                console_group.subjects = subject_list
-                console_space.groups.append(console_group)
+        # if console_space.groupIds is not None:
+        #     group_list = load_console_group_list_by_ids(console_space.groupIds)
+        #     for group in group_list:
+        #         console_group = ConsoleSpaceGroup.parse_obj(group)
+        #         subject_list = load_console_subject_list_by_ids(console_group.subjectIds)
+        #         console_group.subjects = subject_list
+        #         console_space.groups.append(console_group)
         result.append(console_space)
     return result
 
@@ -109,17 +109,17 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
 
 
 @router.post("/console_space/subject", tags=["console"], response_model=ConsoleSpaceSubject)
-async def create_console_subject(connect_id, group_id: Optional[str], subject: ConsoleSpaceSubject = Body(...)):
+async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body(...)):
     console_space = load_console_space_by_id(connect_id)
     subject = create_console_subject_to_storage(subject)
-    if group_id is not None and group_id != "undefined":
-        # print("group:", group_id)
-        group = load_console_group_by_id(group_id)
-        group.subjectIds.append(subject.subjectId)
-        update_console_group(group)
-    else:
-        console_space.subjectIds.append(subject.subjectId)
-        save_console_space(console_space)
+    # if group_id is not None:
+    #     # print("group:", group_id)
+    #     group = load_console_group_by_id(group_id)
+    #     group.subjectIds.append(subject.subjectId)
+    #     update_console_group(group)
+    # else:
+    console_space.subjectIds.append(subject.subjectId)
+    save_console_space(console_space)
 
     return subject
 
