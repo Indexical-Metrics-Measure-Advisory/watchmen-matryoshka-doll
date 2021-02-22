@@ -33,7 +33,7 @@ def delete_console_subject_by_id(subject_id):
 
 
 def delete_console_subject_by_ids(subject_ids):
-    console_space_subject.delete({"subjectId": {"$in": subject_ids}})
+    console_space_subject.remove({"subjectId": {"$in": subject_ids}})
 
 
 def rename_console_subject_by_id(subject_id, name):

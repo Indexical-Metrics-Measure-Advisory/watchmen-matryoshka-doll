@@ -51,3 +51,7 @@ def build_data_pages(pagination, result, item_count):
     data_page.pageNumber = pagination.pageNumber
     data_page.pageCount = math.ceil(item_count / pagination.pageSize)
     return data_page
+
+
+def check_fake_id(id: str) -> bool:
+    return id.startswith('f-', 0, 2)

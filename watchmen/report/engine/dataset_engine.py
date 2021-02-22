@@ -9,6 +9,7 @@ from watchmen.common.presto.presto_client import get_connection
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
+from watchmen.report.engine.sql_builder import _from, _select, _join, _connective_filter, _filter
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
@@ -165,6 +166,7 @@ def build_where(filter_groups, query, table_dict):
                 return query
 
 
+'''
 def build_query_for_subject(console_subject):
     dataset = console_subject.dataset
     query = None
@@ -177,8 +179,23 @@ def build_query_for_subject(console_subject):
         if dataset.joins:
             query = build_joins(dataset.joins, query, table_dict)
     return query
+'''
 
 
+def build_query_for_subject(console_subject):
+    dataset = console_subject.dataset
+    query = None
+    if dataset is not None:
+        query = _from(dataset.columns[0])
+        for column in dataset.columns:
+            query = _select(query, column)
+        for join in dataset.joins:
+            query = _join(query, join)
+        if dataset.filters:
+            query = _filter(query, dataset.filters)
+    return query
+
+'''
 def build_count_query_for_subject(console_subject):
     dataset = console_subject.dataset
     # query =None
@@ -189,6 +206,20 @@ def build_count_query_for_subject(console_subject):
             query = build_where(dataset.filters, query, table_dict)
         if dataset.joins:
             query = build_joins(dataset.joins, query, table_dict)
+    return query
+'''
+
+
+def build_count_query_for_subject(console_subject):
+    dataset = console_subject.dataset
+    query =None
+    if dataset is not None:
+        query = _from(dataset.columns[0])
+        query = query.select(fn.Count("*"))
+        for join in dataset.joins:
+            query = _join(query, join)
+        if dataset.filters:
+            query = _filter(query, dataset.filters)
     return query
 
 

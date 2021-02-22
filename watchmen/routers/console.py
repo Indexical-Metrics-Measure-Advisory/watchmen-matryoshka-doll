@@ -7,7 +7,7 @@ from watchmen.auth.user import User
 from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
-from watchmen.common.utils.data_utils import build_data_pages
+from watchmen.common.utils.data_utils import build_data_pages, check_fake_id
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject, \
     ConsoleSpaceSubjectChartDataSet
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
@@ -110,19 +110,20 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
 
 @router.post("/console_space/subject", tags=["console"], response_model=ConsoleSpaceSubject)
 async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body(...)):
-    console_space = load_console_space_by_id(connect_id)
-    subject = create_console_subject_to_storage(subject)
-    # if group_id is not None:
-    #     # print("group:", group_id)
-    #     group = load_console_group_by_id(group_id)
-    #     group.subjectIds.append(subject.subjectId)
-    #     update_console_group(group)
-    # else:
-    console_space.subjectIds.append(subject.subjectId)
-    save_console_space(console_space)
+    if check_fake_id(subject.subjectId):
+        subject.subjectId = None
+        console_space = load_console_space_by_id(connect_id)
+        subject = create_console_subject_to_storage(subject)
+        # if group_id is not None:
+        #     # print("group:", group_id)
+        #     group = load_console_group_by_id(group_id)
+        #     group.subjectIds.append(subject.subjectId)
+        #     update_console_group(group)
+        # else:
+        console_space.subjectIds.append(subject.subjectId)
+        save_console_space(console_space)
 
-    return subject
-
+        return subject
 
 @router.get("/console_space/delete", tags=["console"])
 async def delete_console_space(connect_id, current_user: User = Depends(deps.get_current_user)):

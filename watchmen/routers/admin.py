@@ -14,6 +14,7 @@ from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import remove_presto_schema_by_name
+from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
@@ -193,10 +194,17 @@ async def query_user_list_for_user_group(query_name):
 
 @router.post("/user_group", tags=["admin"], response_model=UserGroup)
 async def save_user_group(user_group: UserGroup):
+    if check_fake_id(user_group.userGroupId):
+        user_group.userGroupId = None
     if user_group.userGroupId is None:
         return create_user_group_storage(user_group)
     else:
         return update_user_group_storage(user_group)
+
+
+@router.post("/update/user_group", tags=["admin"], response_model=UserGroup)
+async def update_user_group(user_group: UserGroup):
+    return update_user_group_storage(user_group)
 
 
 @router.get("/query/user_group/space", tags=["admin"], response_model=List[UserGroup])
@@ -217,6 +225,7 @@ async def query_user_groups_by_ids(user_group_ids: List[str]):
 @router.post("/user_group/name", tags=["admin"], response_model=DataPage)
 async def query_user_groups_list_by_name(query_name: str, pagination: Pagination = Body(...)):
     return query_user_groups_by_name_with_paginate(query_name, pagination)
+
 
 
 # pipeline

@@ -2,14 +2,15 @@ from enum import Enum
 
 from pydantic import BaseModel
 
+from watchmen.common.parameter import Parameter
+
 
 class Filter(BaseModel):
-    topicId: str = None
-    factorId: str = None
+    jointType: str = None
+    filters: list = None
+    left: Parameter = None
+    right: Parameter = None
     operator: str = None
-    secondaryTopicId: str = None
-    secondaryFactorId: str = None
-    value: str = None
 
 
 class ConnectiveType(str, Enum):
