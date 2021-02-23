@@ -60,12 +60,8 @@ def run_pipeline(pipeline: Pipeline, data):
 
     try:
         start_time = datetime.now()
-
         for stage in pipeline.stages:
-
-
             log.info("stage name {0}".format(stage.name))
-
             for unit in stage.units:
                 if unit.on is not None:
                     result = __check_when_condition(unit.on.children, data)

@@ -85,6 +85,7 @@ def parse_dict_parameter(parameter: dict):
             pass
         # todo custom function
 
+
 def _select(q: QueryBuilder, column: Column) -> QueryBuilder:
     return q.select(parse_parameter(column.parameter)).as_(column.alias)
 

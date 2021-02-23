@@ -6,9 +6,8 @@ from watchmen.monitor.model.pipeline_monitor import UnitStatus, WriteFactorActio
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.pipeline_service import ERROR
 from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import filter_condition
-from watchmen.pipeline.single.stage.unit.mongo.index import build_right_query
+from watchmen.pipeline.single.stage.unit.mongo.index import find_pipeline_topic_condition
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
-from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import update_topic_data, insert_topic_data
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value, convert_factor_type
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
@@ -17,7 +16,7 @@ IN_MEMORY = "in-memory"
 
 COUNT = "count"
 
-SUM = "sum"
+# SUM = "sum"
 
 log = logging.getLogger("app." + __name__)
 
@@ -35,6 +34,8 @@ def get_condition_factor_value(raw_data, where_conditions):
     return factor_value
 
 
+# TODO write factor
+
 def init(action: UnitAction, pipeline_topic: Topic):
     def write_factor(raw_data, context):
 
@@ -48,52 +49,53 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 # print("raw_data",raw_data)
                 target_topic = get_topic_by_id(action.topicId)
 
-                condition = action.by
+                conditions = action.by
 
-                some_value = action.value
-                where_condition = build_right_query(condition, pipeline_topic, raw_data, target_topic)
+                # some_value = action.value
+                where_condition = find_pipeline_topic_condition(conditions, pipeline_topic, raw_data, target_topic)
                 # filter_where_condition =
-                target_data = read_topic_data(filter_condition(where_condition, 0), target_topic.name, condition.mode)
+                target_data = read_topic_data(filter_condition(where_condition, 0), target_topic.name,
+                                              conditions.jointType)
                 target_factor = get_factor(action.factorId, target_topic)
 
                 value = __get_value(raw_data, some_value, context, target_factor)
-                condition_factors = get_condition_factor_value(raw_data, where_condition)
-
-                if some_value.arithmetic == SUM:
-                    if target_data is None:
-                        insert_data = {**{target_factor.name: value}, **condition_factors}
-                        log.info("Insert data : {0}".format(insert_data))
-                        insert_topic_data(target_topic.name, insert_data)
-                    else:
-                        # print("target_factor.name :",target_factor.name)
-                        if target_factor.name in target_data:
-                            source_value = target_data[target_factor.name]
-                        else:
-                            source_value = 0
-                        value = source_value + value
-                        update_data = {target_factor.name: value}
-                        update_topic_data(target_topic.name, update_data, target_data)
-
-                elif some_value.arithmetic == COUNT:
-                    if target_data is None:
-                        insert_data = {**{target_factor.name: 1}, **condition_factors}
-                        insert_topic_data(target_topic.name, insert_data)
-                    else:
-                        if target_factor.name in target_data:
-                            source_value = target_data[target_factor.name]
-                        else:
-                            source_value = 0
-                        value = source_value + 1
-                        update_data = {target_factor.name: value}
-                        update_topic_data(target_topic.name, update_data, target_data)
-                else:
-                    if target_data is None:
-                        insert_data = {**{target_factor.name: value}, **condition_factors}
-                        log.debug("Insert data : {0}".format(insert_data))
-                        insert_topic_data(target_topic.name, insert_data)
-                    else:
-                        update_data = {target_factor.name: value}
-                        update_topic_data(target_topic.name, update_data, target_data)
+                # condition_factors = get_condition_factor_value(raw_data, where_condition)
+                #
+                # if some_value.arithmetic == SUM:
+                #     if target_data is None:
+                #         insert_data = {**{target_factor.name: value}, **condition_factors}
+                #         log.info("Insert data : {0}".format(insert_data))
+                #         insert_topic_data(target_topic.name, insert_data)
+                #     else:
+                #         # print("target_factor.name :",target_factor.name)
+                #         if target_factor.name in target_data:
+                #             source_value = target_data[target_factor.name]
+                #         else:
+                #             source_value = 0
+                #         value = source_value + value
+                #         update_data = {target_factor.name: value}
+                #         update_topic_data(target_topic.name, update_data, target_data)
+                #
+                # elif some_value.arithmetic == COUNT:
+                #     if target_data is None:
+                #         insert_data = {**{target_factor.name: 1}, **condition_factors}
+                #         insert_topic_data(target_topic.name, insert_data)
+                #     else:
+                #         if target_factor.name in target_data:
+                #             source_value = target_data[target_factor.name]
+                #         else:
+                #             source_value = 0
+                #         value = source_value + 1
+                #         update_data = {target_factor.name: value}
+                #         update_topic_data(target_topic.name, update_data, target_data)
+                # else:
+                #     if target_data is None:
+                #         insert_data = {**{target_factor.name: value}, **condition_factors}
+                #         log.debug("Insert data : {0}".format(insert_data))
+                #         insert_topic_data(target_topic.name, insert_data)
+                #     else:
+                #         update_data = {target_factor.name: value}
+                #         update_topic_data(target_topic.name, update_data, target_data)
         except Exception as e:
             unit_action_status.status = ERROR
             unit_action_status.error = traceback.format_exc()
