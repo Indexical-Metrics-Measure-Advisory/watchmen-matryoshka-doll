@@ -155,6 +155,8 @@ def _filter_criterion(filter: Filter) -> any:
     if filter.operator == "equals":
         if right.isdigit():
             return operator.eq(left, int(right))
+        else:
+            return operator.eq(left, right)
     elif filter.operator == "not-equals":
         return operator.ne(left, right)
     elif filter.operator == "more":
