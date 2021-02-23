@@ -24,7 +24,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
         target_topic = get_topic_by_id(action.topicId)
 
-        mapping_results = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic)
+        mapping_results,mapping_logs = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic)
 
         conditions = action.by
 
@@ -39,6 +39,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             else:
                 update_topic_data(target_topic.name, mapping_results[index], target_data)
 
+        unit_action_status.mapping=mapping_logs
         unit_action_status.complete_time = get_execute_time(start_time)
         return context, unit_action_status
 

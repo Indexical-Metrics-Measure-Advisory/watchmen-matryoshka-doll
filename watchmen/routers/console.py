@@ -7,6 +7,7 @@ from watchmen.auth.user import User
 from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, check_fake_id
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject, \
     ConsoleSpaceSubjectChartDataSet
@@ -113,6 +114,12 @@ async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body
     if check_fake_id(subject.subjectId):
         subject.subjectId = None
         console_space = load_console_space_by_id(connect_id)
+
+        for report in subject.reports:
+            report.reportId = get_surrogate_key()
+            subject.reportIds.append(report.reportId)
+
+
         subject = create_console_subject_to_storage(subject)
         # if group_id is not None:
         #     # print("group:", group_id)

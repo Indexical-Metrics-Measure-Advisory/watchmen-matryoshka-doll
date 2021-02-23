@@ -40,6 +40,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             else:
                 raise Exception("target_topic row already exist")
 
+
         unit_action_status.complete_time = get_execute_time(start_time)
         return context, unit_action_status
 

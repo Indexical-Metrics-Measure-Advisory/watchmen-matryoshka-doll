@@ -13,6 +13,7 @@ class UnitStatus(MongoModel):
     error: str = None
     uid: str = None
     actions: list = []
+    mapping:list=[]
     stageName: str = None
 
 

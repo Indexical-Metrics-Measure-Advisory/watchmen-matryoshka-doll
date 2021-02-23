@@ -9,29 +9,29 @@ from watchmen.topic.topic import Topic
 
 
 class ConsoleSpaceSubjectChartDataSet(BaseModel):
-    meta: List[str] = [];
-    data: list = [];
+    meta: List[str] = []
+    data: list = []
+
+#
+# class ConsoleSpaceSubjectDataSetFilter(BaseModel):
+#     topicId: str = None
+#     factorId: str = None
+#     operator: str = None
+#     value: str = None
+#
+#
+# class ConsoleSpaceSubjectDataSetFilterJoint(BaseModel):
+#     jointType: str = None
+#     filters: List[ConsoleSpaceSubjectDataSetFilter] = []
 
 
-class ConsoleSpaceSubjectDataSetFilter(BaseModel):
-    topicId: str = None
-    factorId: str = None
-    operator: str = None
-    value: str = None
-
-
-class ConsoleSpaceSubjectDataSetFilterJoint(BaseModel):
-    jointType: str = None
-    filters: List[ConsoleSpaceSubjectDataSetFilter] = []
-
-
-class ConsoleSpaceSubjectDataSetColumn(BaseModel):
-    topicId: str = None
-    factorId: str = None
-    operator: str = None
-    secondaryTopicId: str = None
-    secondaryFactorId: str = None
-    alias: str = None
+# class ConsoleSpaceSubjectDataSetColumn(BaseModel):
+#     topicId: str = None
+#     factorId: str = None
+#     operator: str = None
+#     secondaryTopicId: str = None
+#     secondaryFactorId: str = None
+#     alias: str = None
 
 
 class SubjectDataSetJoin(BaseModel):
@@ -60,28 +60,6 @@ class SubjectDataSet(BaseModel):
     filters: SubjectDataSetFilterJoint
     columns: List[SubjectDataSetColumn] = []
     joins: List[SubjectDataSetJoin] = []
-
-
-class ConsoleSpaceSubjectChartIndicator(BaseModel):
-    topicId: str = None
-    factorId: str = None
-    aggregator: str = None
-
-
-class ConsoleSpaceSubjectChartDimension(BaseModel):
-    topicId: str = None
-    factorId: str = None
-
-
-class ConsoleSpaceSubjectChart(BaseModel):
-    chartId: str = None
-    name: str = None
-    type: str = None
-    indicators: List[ConsoleSpaceSubjectChartIndicator] = []
-    dimensions: List[ConsoleSpaceSubjectChartDimension] = []
-    rect: Any = None
-    predefined: bool = False
-    colors: Any = None
 
 
 class ReportIndicator(BaseModel):
@@ -125,6 +103,7 @@ class ConsoleSpaceSubject(MongoModel):
     lastVisitTime: datetime = None
     createdAt: str = None
     reports: List[Report] = []
+    reportIds:list=[]
     dataset: SubjectDataSet = None
     # graphics: List[ConsoleSpaceSubjectChart] = []
 

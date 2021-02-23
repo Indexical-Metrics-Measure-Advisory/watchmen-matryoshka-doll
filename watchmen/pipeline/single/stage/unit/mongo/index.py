@@ -86,17 +86,30 @@ def run_arithmetic_value_list(arithmetic, source_value_list):
 
 
 def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
+
+    mapping_logs=[]
+
     mapping_results = []
     for mapping in mapping_list:
+        mapping_log ={}
         source = mapping.source
+
+        mapping_log["source"]=source
+
+        mapping_log["arithmetic"]=mapping.arithmetic
         result = []
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, result, source))
+        mapping_log["value"]=source_value_list
         target_factor = get_factor(mapping.factorId, target_topic)
+
+        mapping_log["target"] = target_factor
         mapping_results.append({target_factor.name: source_value_list})
 
+        mapping_logs.append(mapping_log)
+
     mapping_data_list = merge_mapping_data(mapping_results)
-    return mapping_data_list
+    return mapping_data_list,mapping_logs
 
 
 def __is_date_func(source_type):
