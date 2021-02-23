@@ -116,8 +116,11 @@ def _join(q: QueryBuilder, join: Join) -> QueryBuilder:
 
 
 def _filter(q: QueryBuilder, filter: Filter) -> QueryBuilder:
-    test = _connective_filter(filter)
-    return q.where(test)
+    if len(filter.filters) > 0:
+        where = _connective_filter(filter)
+        return q.where(where)
+    else:
+        return q
 
 
 def _connective_filter(filter: Filter):
