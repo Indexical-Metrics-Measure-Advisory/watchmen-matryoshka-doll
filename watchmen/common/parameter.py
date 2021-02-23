@@ -1,6 +1,13 @@
+from enum import Enum
 from typing import List
 
 from pydantic import BaseModel
+
+
+class ParameterKind(Enum):
+    TOPIC = 'topic',
+    CONSTANT = 'constant',
+    COMPUTED = 'computed'
 
 
 class Parameter(BaseModel):

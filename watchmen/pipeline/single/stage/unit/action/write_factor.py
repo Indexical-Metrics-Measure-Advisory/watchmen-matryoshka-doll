@@ -22,6 +22,8 @@ SUM = "sum"
 log = logging.getLogger("app." + __name__)
 
 
+# TODO refactor write factor
+
 def get_condition_factor_value(raw_data, where_conditions):
     factor_value = {}
     for condition in where_conditions:

@@ -46,6 +46,12 @@ def get_factor(factor_id, target_topic):
             return factor
 
 
+def get_execute_time(start_time):
+    time_elapsed = datetime.now() - start_time
+    execution_time = time_elapsed.microseconds / 1000
+    return execution_time
+
+
 def get_value(factor: Factor, data):
     if factor.name in data:
         value = data[factor.name]

@@ -179,17 +179,17 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
         return __process_operator(operator, value_list).tolist()
 
 
-def get_source_value_list(pipeline_topic, raw_data, result, source):
-    if source.kind == "topic":
-        source_factor = get_factor(source.factorId, pipeline_topic)
+def get_source_value_list(pipeline_topic, raw_data, result, parameter):
+    if parameter.kind == "topic":
+        source_factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, result, source_factor)
-    elif source.kind == "constant":
-        return source.value
-    elif source.kind == "computed":
+    elif parameter.kind == "constant":
+        return parameter.value
+    elif parameter.kind == "computed":
         # TODO computed kind
-        return __process_compute_kind(source, raw_data, pipeline_topic)
+        return __process_compute_kind(parameter, raw_data, pipeline_topic)
     else:
-        raise Exception("Unknown source kind {0}".format(source.kind))
+        raise Exception("Unknown source kind {0}".format(parameter.kind))
 
 
 def get_source_factor_value(raw_data, result, source_factor):

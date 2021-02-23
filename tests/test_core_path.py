@@ -28,11 +28,11 @@ def test_save_gi_policy():
          run_pipeline(pipeline, data)
 
 
-def test_build_pipeline_topic_relation():
-    topic = get_topic("raw_gi_policy")
-    pipeline_list = load_pipeline_by_topic_id(topic.topicId)
-    for pipeline in pipeline_list:
-        print(extract_topic_relationship_from_pipeline(pipeline))
-
-
+# def test_build_pipeline_topic_relation():
+#     topic = get_topic("raw_gi_policy")
+#     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
+#     for pipeline in pipeline_list:
+#         print(extract_topic_relationship_from_pipeline(pipeline))
+#
+#
 

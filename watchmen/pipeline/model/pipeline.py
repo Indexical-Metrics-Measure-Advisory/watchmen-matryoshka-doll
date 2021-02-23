@@ -19,6 +19,7 @@ class Conditional(MongoModel):
 
 class UnitAction(Conditional):
     # unitId: str = None
+    actionId: str = None
     type: str = None
     targetName: str = None
 
@@ -35,6 +36,7 @@ class UnitAction(Conditional):
 
 
 class ProcessUnit(Conditional):
+    unitId: str = None
     # on: CompositeCondition = None;
     do: List[UnitAction] = []
 

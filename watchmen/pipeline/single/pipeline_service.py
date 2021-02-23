@@ -62,6 +62,8 @@ def run_pipeline(pipeline: Pipeline, data):
         start_time = datetime.now()
 
         for stage in pipeline.stages:
+
+
             log.info("stage name {0}".format(stage.name))
 
             for unit in stage.units:

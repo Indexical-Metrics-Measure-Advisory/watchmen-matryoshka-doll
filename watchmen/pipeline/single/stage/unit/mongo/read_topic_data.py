@@ -5,7 +5,10 @@ db = get_client()
 
 
 # TODO operator for mongo
-def __build_mongo_condition(where_condition, mode):
+def __build_mongo_condition(where_condition, jointType):
+
+
+    print("where_condition",where_condition)
     result = {}
     if len(where_condition) > 1:
         for condition in where_condition:
