@@ -8,22 +8,22 @@ db = get_client()
 
 
 # @topic_event_trigger
-def insert_topic_data(topic_name, mapping_result):
+def insert_topic_data(topic_name, mapping_result,pipeline_uid):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
     add_audit_columns(mapping_result, INSERT)
-    ## TODO add insert pipeline uids
-
-    add_trace_columns(mapping_result, "insert_row")
-    collection.insert(mapping_result)
+    add_trace_columns(mapping_result, "insert_row", pipeline_uid)
+    result = collection.insert(mapping_result)
     trigger_pipeline(topic_name, mapping_result, TriggerType.insert)
+    return result
 
 
 # @topic_event_trigger
-def update_topic_data(topic_name, mapping_result, target_data):
+def update_topic_data(topic_name, mapping_result, target_data,pipeline_uid):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
     add_audit_columns(mapping_result, UPDATE)
+    add_trace_columns(mapping_result,"update_row", pipeline_uid)
     # collection.find_and_modify()
     # TODO find_and_modify
     collection.update_one({"_id": target_data["_id"]}, {"$set": mapping_result})

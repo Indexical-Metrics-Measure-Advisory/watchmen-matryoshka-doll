@@ -73,7 +73,6 @@ def add_audit_columns(dictionary, audit_type):
         raise Exception("unknown audit_type")
 
 
-def add_trace_columns(dictionary, trace_type):
+def add_trace_columns(dictionary, trace_type,pipeline_uid):
     # TODO add_trace_columns
-
-    pass
+    dictionary[trace_type]=pipeline_uid

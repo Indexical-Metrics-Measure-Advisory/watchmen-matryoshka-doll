@@ -9,6 +9,7 @@ import pandas as pd
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor
 from watchmen.topic.factor.factor import Factor
+from watchmen.topic.topic import Topic
 
 DOT = "."
 

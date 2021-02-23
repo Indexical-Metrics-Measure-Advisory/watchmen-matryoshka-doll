@@ -5,7 +5,7 @@ from datetime import datetime
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
-from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor
+from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor, insert_units_monitor
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, NOT_EMPTY, PIPELINE_UID, ERROR, FINISHED
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
@@ -73,6 +73,7 @@ def run_pipeline(pipeline: Pipeline, data):
                         func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                         # call dynamic action in action folder
                         out_result, unit_status = func(data, context)
+                        print("unit_status",unit_status)
                         unit_status.stageName = stage.name
                         unit_status_list.append(unit_status.dict())
                         log.debug("out_result :{0}".format(out_result))
@@ -95,5 +96,6 @@ def run_pipeline(pipeline: Pipeline, data):
         log.info("insert_pipeline_monitor")
         for unit_status in unit_status_list:
             unit_status["uid"] = pipeline_status.uid
-        # insert_units_monitor(unit_status_list)
+        if len(unit_status_list)>0:
+            insert_units_monitor(unit_status_list)
         insert_pipeline_monitor(pipeline_status)
