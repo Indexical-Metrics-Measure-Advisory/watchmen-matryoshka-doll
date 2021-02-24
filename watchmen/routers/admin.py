@@ -67,7 +67,7 @@ class FactorSuggestionIn(BaseModel):
 
 @router.post("/space", tags=["admin"], response_model=Space)
 async def save_space(space: Space):
-    if space.spaceId is None:
+    if space.spaceId is None or check_fake_id(space.spaceId):
         return create_space(space)
     else:
         return update_space_by_id(space.spaceId, space)
@@ -114,7 +114,7 @@ async def create_topic(topic: Topic):
 
 @router.post("/save/topic", tags=["admin"], response_model=Topic)
 async def save_topic(topic: Topic):
-    if topic.topicId is None:
+    if check_fake_id(topic.topicId):
         return create_topic_schema(topic)
     else:
         topic = Topic.parse_obj(topic)
@@ -164,7 +164,7 @@ async def query_topic_list_by_ids(topic_ids: List[str]):
 
 @router.post("/user", tags=["admin"], response_model=User)
 async def save_user(user: User):
-    if user.userId is None:
+    if user.userId is None or check_fake_id(user.userId):
         return create_user_storage(user)
     else:
         return update_user_storage(user)
@@ -196,7 +196,7 @@ async def query_user_list_for_user_group(query_name):
 async def save_user_group(user_group: UserGroup):
     if check_fake_id(user_group.userGroupId):
         user_group.userGroupId = None
-    if user_group.userGroupId is None:
+    if user_group.userGroupId is None or check_fake_id(user_group.userGroupId):
         return create_user_group_storage(user_group)
     else:
         return update_user_group_storage(user_group)

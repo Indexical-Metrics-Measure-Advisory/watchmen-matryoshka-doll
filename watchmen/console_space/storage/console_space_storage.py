@@ -1,5 +1,6 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
+from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.model.console_space import ConsoleSpace
 
 db = get_client()
@@ -17,7 +18,7 @@ def update_console_space(console_space: ConsoleSpace):
 
 
 def save_console_space(console_space: ConsoleSpace):
-    if console_space.connectId is None:
+    if console_space.connectId is None or check_fake_id(console_space.connectId):
         console_space.connectId = get_surrogate_key()
         return create_console_space(console_space)
     else:

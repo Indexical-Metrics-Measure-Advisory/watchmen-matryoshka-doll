@@ -4,7 +4,7 @@ from watchmen.auth.user_group import UserGroup
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.utils.data_utils import build_data_pages
+from watchmen.common.utils.data_utils import build_data_pages, check_fake_id
 
 db = get_client()
 user_groups = db.get_collection('user_groups')
@@ -25,7 +25,7 @@ def load_group_list_by_name(query_name):
 
 
 def create_user_group_storage(user_group: UserGroup):
-    if user_group.userGroupId is None:
+    if user_group.userGroupId is None or check_fake_id(user_group.userGroupId):
         user_group.userGroupId = get_surrogate_key()
     if type(user_group) is not dict:
         user_group = user_group.dict()
