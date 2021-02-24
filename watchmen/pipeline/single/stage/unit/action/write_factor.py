@@ -73,7 +73,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
             target_data = read_topic_data(filter_where_condition, target_topic.name,
                                           conditions.jointType)
 
-            # print("target_data", target_data)
 
             if target_data is None:
                 condition_factors = get_condition_factor_value(raw_data, where_condition)

@@ -62,7 +62,7 @@ def __convert_value_to_datetime(value):
 
 
 def __run_arithmetic(arithmetic, value):
-    print("value",value)
+    # print("value",value)
     if arithmetic == NONE:
         return value
     elif arithmetic == SUM:
@@ -354,3 +354,10 @@ def build_mongo_condition(where_condition, jointType):
         condition = where_condition[0]
         if condition["operator"] == "equals":
             return {condition["name"]: condition["value"]}
+
+
+def process_variable(variable_name):
+    if variable_name.startswith("{"):
+        return "memory",variable_name.replace("{","").replace("}","")
+    else:
+        return "constant",variable_name

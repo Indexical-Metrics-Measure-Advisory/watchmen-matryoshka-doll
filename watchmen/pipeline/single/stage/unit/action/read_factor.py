@@ -3,7 +3,8 @@ from datetime import datetime
 from watchmen.monitor.model.pipeline_monitor import UnitStatus, ReadFactorAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import filter_condition
-from watchmen.pipeline.single.stage.unit.mongo.index import build_right_query, find_pipeline_topic_condition
+from watchmen.pipeline.single.stage.unit.mongo.index import build_right_query, find_pipeline_topic_condition, \
+    process_variable
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_execute_time
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
@@ -16,13 +17,6 @@ def build_action_log(factor, read_value, topic, unit_action_status):
     action_log.fromFactor = factor.name
     action_log.fromTopic = topic.name
     unit_action_status.actions.append(action_log)
-
-
-def process_variable(variable_name):
-    if variable_name.startswith("{"):
-        return "memory",variable_name.replace("{","").replace("}","")
-    else:
-        return "constant",variable_name
 
 
 def init(action: UnitAction, pipeline_topic: Topic):
@@ -39,7 +33,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
         filter_where_condition = filter_condition(where_condition)
         target_data = read_topic_data(filter_where_condition, topic.name,
                                       conditions.jointType)
-        print("target_data",target_data)
+        # print("target_data",target_data)
         if factor.name in target_data:
             read_value = target_data[factor.name]
             context[context_target_name] = target_data[factor.name]
@@ -48,7 +42,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             build_action_log(factor, read_value, topic, unit_action_status)
 
         unit_action_status.complete_time = get_execute_time(start_time)
-        print("context",context)
+        # print("context",context)
         return context, unit_action_status
 
     return read_factor
