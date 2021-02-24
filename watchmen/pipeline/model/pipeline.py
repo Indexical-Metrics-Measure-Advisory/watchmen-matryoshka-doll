@@ -21,18 +21,20 @@ class UnitAction(Conditional):
     # unitId: str = None
     actionId: str = None
     type: str = None
-    targetName: str = None
+    # targetName: str = None
 
     # UnitActionAlarm
     severity: str = None
     message: str = None
+    arithmetic:str = None
 
     # topic
     topicId: str = None
     factorId: str = None
     mapping: List[MappingFactor] = []
     by: ParameterJoint = None
-    value: str = None
+    # value: str = None
+    source: Parameter = None
 
 
 class ProcessUnit(Conditional):

@@ -8,7 +8,7 @@ from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor, insert_units_monitor
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, NOT_EMPTY, PIPELINE_UID, ERROR, FINISHED
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_execute_time
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
@@ -73,7 +73,7 @@ def run_pipeline(pipeline: Pipeline, data):
                         func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                         # call dynamic action in action folder
                         out_result, unit_status = func(data, context)
-                        print("unit_status",unit_status)
+                        # print("unit_status",unit_status)
                         unit_status.stageName = stage.name
                         unit_status_list.append(unit_status.dict())
                         log.debug("out_result :{0}".format(out_result))
@@ -81,8 +81,7 @@ def run_pipeline(pipeline: Pipeline, data):
                 else:
                     log.info("action stage unit  {0} do is None".format(stage.name))
 
-        time_elapsed = datetime.now() - start_time
-        execution_time = time_elapsed.microseconds / 1000
+        execution_time = get_execute_time(start_time)
         pipeline_status.complete_time = execution_time
         pipeline_status.status = FINISHED
         log.info("pipeline_status {0} time :{1}".format(pipeline.name, execution_time))
@@ -94,8 +93,11 @@ def run_pipeline(pipeline: Pipeline, data):
         log.error(pipeline_status)
     finally:
         log.info("insert_pipeline_monitor")
-        for unit_status in unit_status_list:
-            unit_status["uid"] = pipeline_status.uid
-        if len(unit_status_list)>0:
-            insert_units_monitor(unit_status_list)
-        insert_pipeline_monitor(pipeline_status)
+
+        if pipeline_topic.type == "system":
+            log.info("pipeline_status is {0}".format(pipeline_status))
+            log.info("unit status is {0}".format(unit_status_list))
+        else:
+            if unit_status_list:
+                insert_units_monitor(unit_status_list)
+            insert_pipeline_monitor(pipeline_status)
