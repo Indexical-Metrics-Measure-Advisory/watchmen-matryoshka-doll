@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from watchmen.common.mongo_model import MongoModel
 from watchmen.common.parameter import ParameterJoint, Parameter
+from watchmen.report.model.report import Report
 from watchmen.topic.topic import Topic
 
 
@@ -61,7 +62,7 @@ class SubjectDataSet(BaseModel):
     columns: List[SubjectDataSetColumn] = []
     joins: List[SubjectDataSetJoin] = []
 
-
+'''
 class ReportIndicator(BaseModel):
     name: str = None
     arithmetic: str = None
@@ -87,12 +88,13 @@ class Chart(BaseModel):
 class Report(MongoModel):
     reportId: str = None
     name: str = None
-    indicators: List[ReportIndicator]
-    dimensions: List[ReportDimension]
+    indicators: List[ReportIndicator] = None
+    dimensions: List[ReportDimension] = None
     description: str = None
     rect: Any = None
-    chart: Chart
+    chart: Chart = None
     lastVisitTime: str = None
+'''
 
 
 class ConsoleSpaceSubject(MongoModel):

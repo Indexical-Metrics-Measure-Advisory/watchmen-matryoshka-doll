@@ -38,3 +38,8 @@ def delete_console_subject_by_ids(subject_ids):
 
 def rename_console_subject_by_id(subject_id, name):
     console_space_subject.update_one({"subjectId": subject_id}, {"$set": {"name": name}})
+
+
+def load_console_subject_by_report_id(report_id):
+    result = console_space_subject.find_one({"reportIds": {"$in": [report_id]}})
+    return ConsoleSpaceSubject.parse_obj(result)

@@ -7,9 +7,11 @@ from pypika import functions as fn
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_client import get_connection
 from watchmen.common.utils.data_utils import build_collection_name
-from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
+from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id, \
+    load_console_subject_by_report_id
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
-from watchmen.report.engine.sql_builder import _from, _select, _join, _connective_filter, _filter
+from watchmen.report.engine.sql_builder import _from, _select, _join, _connective_filter, _filter, _groupby, _indicator
+from watchmen.report.storage.report_storage import load_report_by_id
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
@@ -112,7 +114,7 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     # print("sql count:", count)
     return rows, count_rows[0]
 
-
+'''
 def load_chart_dataset(subject_id, chart_id):
     query = build_query_for_subject_chart(subject_id, chart_id)
     conn = get_connection()
@@ -122,6 +124,18 @@ def load_chart_dataset(subject_id, chart_id):
     cur.execute(query_sql)
     rows = cur.fetchall()
 
+    log.info("sql result: {0}".format(rows))
+    return rows
+'''
+
+def load_chart_dataset(chart_id):
+    query = build_query_for_subject_chart(chart_id)
+    conn = get_connection()
+    query_sql = query.get_sql()
+    log.info("sql: {0}".format(query_sql))
+    cur = conn.cursor()
+    cur.execute(query_sql)
+    rows = cur.fetchall()
     log.info("sql result: {0}".format(rows))
     return rows
 
@@ -228,7 +242,7 @@ def get_graphic(graphics, chart_id):
         if chart.chartId == chart_id:
             return chart
 
-
+'''
 def build_query_for_subject_chart(subject_id, chart_id):
     console_subject = load_console_subject_by_id(subject_id)
     chart = get_graphic(console_subject.graphics, chart_id)
@@ -257,3 +271,24 @@ def build_query_for_subject_chart(subject_id, chart_id):
         q = q.groupby(t[dimension_factor.name])
 
     return q
+'''
+
+
+def build_query_for_subject_chart(chart_id):
+    console_subject = load_console_subject_by_report_id(chart_id)
+    columns_dict = column_list_convert_dict(console_subject.dataset.columns)
+    chart = load_report_by_id(chart_id)
+    for indicator in chart.indicators:
+        q = _indicator(q, indicator, columns_dict.get(indicator.columnId))
+
+    for dimension in chart.dimensions:
+        q = _groupby(q, columns_dict.get(dimension.columnId))
+
+    return q
+
+
+def column_list_convert_dict(columns) -> dict:
+    columns_dict={}
+    for column in columns:
+        columns_dict[column.columnId] = column
+    return columns_dict

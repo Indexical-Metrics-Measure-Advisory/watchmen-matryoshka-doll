@@ -18,12 +18,14 @@ from watchmen.console_space.storage.console_group_storage import create_console_
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
     load_console_space_by_id, rename_console_space_by_id
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
-    load_console_subject_list_by_ids, update_console_subject, rename_console_subject_by_id
+    load_console_subject_list_by_ids, update_console_subject, rename_console_subject_by_id, load_console_subject_by_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
     load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id
 from watchmen.monitor.index import is_system_subject, load_system_monitor_chart_data
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, load_chart_dataset
+from watchmen.report.model.report import Report
+from watchmen.report.storage.report_storage import create_report, load_report_by_id
 from watchmen.space.service.console import load_topic_list_by_space_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import load_space_by_user
@@ -173,7 +175,7 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...),
     data, count = load_dataset_by_subject_id(subject_id, pagination)
     return build_data_pages(pagination, data, count)
 
-
+'''
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_chart(subject_id, chart_id, current_user: User = Depends(deps.get_current_user)):
     if is_system_subject(subject_id):
@@ -181,6 +183,29 @@ async def load_chart(subject_id, chart_id, current_user: User = Depends(deps.get
     else:
         result = load_chart_dataset(subject_id, chart_id)
         return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
+'''
+
+
+@router.post("/console_space/subject/report/save", tags=["console"], response_model=Report)
+async def save_report(subject_id: str, report: Report, current_user: User = Depends(deps.get_current_user)):
+    report.reportId = get_surrogate_key()
+    new_report = create_report(report)
+    subject = load_console_subject_by_id(subject_id)
+    subject.reportIds.append(report.reportId)
+    subject.reports.append(new_report)
+    update_console_subject(subject)
+    return new_report
+
+
+@router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
+async def load_chart(report_id, current_user: User = Depends(deps.get_current_user)):
+    report = load_report_by_id(report_id)
+    if len(report.indicators) > 0:
+        result = load_chart_dataset(report_id)
+        return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
+    else:
+        if report.chart.type == "count":
+            return ConsoleSpaceSubjectChartDataSet(meta=[], data=[[0]])
 
 
 ## Dashboard

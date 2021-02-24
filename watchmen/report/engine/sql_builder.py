@@ -1,5 +1,6 @@
 import operator
 from typing import List
+from pypika import functions as fn
 
 from pypika import Query, Table, Field, JoinType, Criterion
 from pypika.queries import QueryBuilder
@@ -10,6 +11,7 @@ from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.report.model.column import Column, Operator
 from watchmen.report.model.filter import Filter, ConnectiveType
 from watchmen.report.model.join import Join, JoinType
+from watchmen.report.model.report import ReportIndicator
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
@@ -207,3 +209,20 @@ def parse_filter_parameter(parameter: Parameter):
             pass
         #todo custom function
 '''
+
+
+def _groupby(q:QueryBuilder, column: Column) -> QueryBuilder:
+    return q.groupby(parse_parameter(column.parameter))
+
+
+def _indicator(q: QueryBuilder, indicator: ReportIndicator, column: Column) -> QueryBuilder:
+    if indicator.arithmetic == "sum":
+        return q.select(fn.Sum(parse_parameter(column.parameter)))
+    elif indicator.arithmetic == "avg":
+        return q.select(fn.Avg(parse_parameter(column.parameter)))
+    elif indicator.arithmetic == "max":
+        return q.select(fn.Max(parse_parameter(column.parameter)))
+    elif indicator.arithmetic == "min":
+        return q.select(fn.Min(parse_parameter(column.parameter)))
+    else:
+        return q.select(fn.Max(parse_parameter(column.parameter)))
