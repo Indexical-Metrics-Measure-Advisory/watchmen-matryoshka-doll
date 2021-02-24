@@ -16,12 +16,18 @@ from watchmen.topic.topic import Topic
 log = logging.getLogger("app." + __name__)
 
 
+#  TODO  more arithmetic to be implement
 def __build_mongo_update(update_data,arithmetic,target_factor):
     if arithmetic=="sum":
         return {"$inc": update_data}
-    if arithmetic=="count":
+    elif arithmetic=="count":
         return {"$inc": {target_factor.name:1}}
-
+    elif arithmetic=="max":
+        return {"$max":update_data}
+    elif arithmetic == "min":
+        return {"$min": update_data}
+    else:
+        return update_data
 
 
 def get_condition_factor_value(raw_data, where_conditions):
@@ -58,16 +64,16 @@ def init(action: UnitAction, pipeline_topic: Topic):
             target_factor = get_factor(action.factorId, target_topic)
 
             source_value_list = get_source_value_list(pipeline_topic, raw_data, [], action.source)
-            print("source_value_list", source_value_list)
+            # print("source_value_list", source_value_list)
 
             update_data = {target_factor.name: source_value_list}
 
-            print("filter_where_condition", filter_where_condition)
+            # print("filter_where_condition", filter_where_condition)
 
             target_data = read_topic_data(filter_where_condition, target_topic.name,
                                           conditions.jointType)
 
-            print("target_data", target_data)
+            # print("target_data", target_data)
 
             if target_data is None:
                 condition_factors = get_condition_factor_value(raw_data, where_condition)
@@ -78,7 +84,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             else:
                 update_data=__build_mongo_update(update_data,action.arithmetic,target_factor)
 
-                print("update_data",update_data)
+                # print("update_data",update_data)
                 find_and_modify_topic_data(target_topic.name,
                                            build_mongo_condition(filter_where_condition, conditions.jointType),
                                            update_data)
