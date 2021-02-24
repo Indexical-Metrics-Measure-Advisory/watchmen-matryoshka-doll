@@ -38,7 +38,10 @@ def get_topic_by_name(topic_name):
 
 def get_topic(topic_name) -> Topic:
     result = topic_col.find_one({"code": topic_name})
-    return Topic.parse_obj(result)
+    if result is None:
+        return None
+    else:
+        return Topic.parse_obj(result)
 
 
 def load_topic_list_by_name(topic_name):
@@ -54,7 +57,7 @@ def check_topic_exist(topic_name, topic_type) -> bool:
         return True
 
 
-@lru_cache(maxsize=100)
+# @lru_cache(maxsize=100)
 def get_topic_by_id(topic_id):
     result = topic_col.find_one({"topicId": topic_id})
     return Topic.parse_obj(result)

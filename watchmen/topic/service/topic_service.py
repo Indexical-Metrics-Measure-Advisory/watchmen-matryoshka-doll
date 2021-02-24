@@ -9,9 +9,6 @@ log = logging.getLogger("app." + __name__)
 
 
 def create_topic_schema(topic):
-    topic = get_topic(topic.name)
-    if topic is not None:
-        raise Exception("topic already exist")
     if topic.topicId is None or check_fake_id(topic.topicId):
         topic.topicId = get_surrogate_key()
     if type(topic) is not dict:
