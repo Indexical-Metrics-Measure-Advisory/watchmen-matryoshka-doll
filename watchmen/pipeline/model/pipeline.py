@@ -21,7 +21,7 @@ class UnitAction(Conditional):
     # unitId: str = None
     actionId: str = None
     type: str = None
-    # targetName: str = None
+    variableName: str = None
 
     # UnitActionAlarm
     severity: str = None

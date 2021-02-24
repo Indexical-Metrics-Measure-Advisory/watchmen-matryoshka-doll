@@ -37,12 +37,14 @@ def __check_when_condition(children, data):
         # TODO and and or condition
         pass
     else:
+
+        # TODO __check_when_condition
         condition = children[0]
-        if condition.operator == NOT_EMPTY:
-            topic = get_topic_by_id(condition.left.topicId)
-            factor = get_factor(condition.left.factorId, topic)
-            # get_factor_value
-            return factor.name not in data
+        # if condition.operator == NOT_EMPTY:
+        #     topic = get_topic_by_id(condition.left.topicId)
+        #     factor = get_factor(condition.left.factorId, topic)
+        #     # get_factor_value
+        #     return factor.name not in data
 
 
 def run_pipeline(pipeline: Pipeline, data):
@@ -52,52 +54,53 @@ def run_pipeline(pipeline: Pipeline, data):
     pipeline_status.uid = get_surrogate_key()
     pipeline_status.rawId = data["_id"]
 
-    pipeline_topic = get_topic_by_id(pipeline.topicId)
-    # TODO pipeline when  condition
+    if pipeline.enabled:
+        pipeline_topic = get_topic_by_id(pipeline.topicId)
+        # TODO pipeline when  condition
 
-    context = {PIPELINE_UID: pipeline_status.uid}
-    unit_status_list = []
+        context = {PIPELINE_UID: pipeline_status.uid}
+        unit_status_list = []
 
-    try:
-        start_time = datetime.now()
-        for stage in pipeline.stages:
-            log.info("stage name {0}".format(stage.name))
-            for unit in stage.units:
-                if unit.on is not None:
-                    result = __check_when_condition(unit.on.children, data)
-                    if result:
-                        continue
+        try:
+            start_time = datetime.now()
+            for stage in pipeline.stages:
+                log.info("stage name {0}".format(stage.name))
+                for unit in stage.units:
+                    # if unit.on is not None:
+                    #     result = __check_when_condition(unit.on.children, data)
+                    #     if result:
+                    #         continue
 
-                if unit.do is not None:
-                    for action in unit.do:
-                        func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
-                        # call dynamic action in action folder
-                        out_result, unit_status = func(data, context)
-                        # print("unit_status",unit_status)
-                        unit_status.stageName = stage.name
-                        unit_status_list.append(unit_status.dict())
-                        log.debug("out_result :{0}".format(out_result))
-                        context = {**context, **out_result}
-                else:
-                    log.info("action stage unit  {0} do is None".format(stage.name))
+                    if unit.do is not None:
+                        for action in unit.do:
+                            func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
+                            # call dynamic action in action folder
+                            out_result, unit_status = func(data, context)
+                            # print("unit_status",unit_status)
+                            unit_status.stageName = stage.name
+                            unit_status_list.append(unit_status.dict())
+                            log.debug("out_result :{0}".format(out_result))
+                            context = {**context, **out_result}
+                    else:
+                        log.info("action stage unit  {0} do is None".format(stage.name))
 
-        execution_time = get_execute_time(start_time)
-        pipeline_status.complete_time = execution_time
-        pipeline_status.status = FINISHED
-        log.info("pipeline_status {0} time :{1}".format(pipeline.name, execution_time))
+            execution_time = get_execute_time(start_time)
+            pipeline_status.complete_time = execution_time
+            pipeline_status.status = FINISHED
+            log.info("pipeline_status {0} time :{1}".format(pipeline.name, execution_time))
 
-    except Exception as e:
-        log.exception(e)
-        pipeline_status.error = traceback.format_exc()
-        pipeline_status.status = ERROR
-        log.error(pipeline_status)
-    finally:
-        log.info("insert_pipeline_monitor")
+        except Exception as e:
+            log.exception(e)
+            pipeline_status.error = traceback.format_exc()
+            pipeline_status.status = ERROR
+            log.error(pipeline_status)
+        finally:
+            log.info("insert_pipeline_monitor")
 
-        if pipeline_topic.type == "system":
-            log.info("pipeline_status is {0}".format(pipeline_status))
-            log.info("unit status is {0}".format(unit_status_list))
-        else:
-            if unit_status_list:
-                insert_units_monitor(unit_status_list)
-            insert_pipeline_monitor(pipeline_status)
+            if pipeline_topic.type == "system":
+                log.info("pipeline_status is {0}".format(pipeline_status))
+                log.info("unit status is {0}".format(unit_status_list))
+            else:
+                if unit_status_list:
+                    insert_units_monitor(unit_status_list)
+                insert_pipeline_monitor(pipeline_status)
