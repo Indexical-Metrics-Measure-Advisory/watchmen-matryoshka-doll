@@ -25,7 +25,7 @@ from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_sto
 from watchmen.monitor.index import is_system_subject, load_system_monitor_chart_data
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, load_chart_dataset
 from watchmen.report.model.report import Report
-from watchmen.report.storage.report_storage import create_report, load_report_by_id
+from watchmen.report.storage.report_storage import create_report, load_report_by_id, save_subject_report
 from watchmen.space.service.console import load_topic_list_by_space_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import load_space_by_user
@@ -192,9 +192,15 @@ async def save_report(subject_id: str, report: Report, current_user: User = Depe
     new_report = create_report(report)
     subject = load_console_subject_by_id(subject_id)
     subject.reportIds.append(report.reportId)
-    subject.reports.append(new_report)
+    #subject.reports.append(new_report)
     update_console_subject(subject)
     return new_report
+
+
+@router.post("/console_space/subject/report/update", tags=["console"], response_model=Report)
+async def update_report(report: Report, current_user: User = Depends(deps.get_current_user)):
+    save_subject_report(report)
+    return report
 
 
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)

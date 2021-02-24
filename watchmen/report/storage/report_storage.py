@@ -10,6 +10,11 @@ def create_report(report):
     return Report.parse_obj(report)
 
 
+def save_subject_report(report):
+    console_report_collection.update_one({"reportId": report.reportId}, {"$set": report.dict()})
+    return report
+
+
 def create_dataset_reports(reports):
     console_report_collection.insert_many(reports)
 
