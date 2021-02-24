@@ -1,5 +1,6 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
+from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 
 db = get_client()
@@ -7,7 +8,7 @@ console_space_subject = db.get_collection('console_space_subject')
 
 
 def create_console_subject_to_storage(subject: ConsoleSpaceSubject):
-    if subject.subjectId is None:
+    if subject.subjectId is None or check_fake_id(subject.subjectId):
         subject.subjectId = get_surrogate_key()
     console_space_subject.insert_one(subject.dict())
     return ConsoleSpaceSubject.parse_obj(subject)

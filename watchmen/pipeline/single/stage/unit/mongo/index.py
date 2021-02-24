@@ -62,6 +62,7 @@ def __convert_value_to_datetime(value):
 
 
 def __run_arithmetic(arithmetic, value):
+    print("value",value)
     if arithmetic == NONE:
         return value
     elif arithmetic == SUM:
@@ -101,6 +102,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         result = []
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, result, source))
+
         mapping_log["value"]=source_value_list
         target_factor = get_factor(mapping.factorId, target_topic)
 
@@ -178,7 +180,13 @@ def __process_operator(operator, value_list):
 def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
     if __is_date_func(source.type):
         value_list = get_source_value_list(pipeline_topic, raw_data, [], Parameter.parse_obj(source.parameters[0]))
-        return __process_date_func(source, value_list)
+        if type(value_list) == list:
+            result =[]
+            for value in value_list:
+                result.append(__process_date_func(source, value))
+            return result
+        else:
+            return
     elif __is_calculation_operation(source.type):
         operator = __get_operator(source.type)
         value_list = []
@@ -282,10 +290,10 @@ def get_factor_value(index, factor_list, raw_data, result):
     return result
 
 
-def filter_condition(where_condition, index):
+def filter_condition(where_condition, index=0):
     filter_conditions = []
     for condition in where_condition:
-        filter_condition = {"name": condition["source_factor"], "operator": condition["operator"]}
+        filter_condition = {"name": condition["name"], "operator": condition["operator"]}
         if type(condition["value"]) is list:
             filter_condition["value"] = condition["value"][index]
         else:
@@ -325,6 +333,24 @@ def find_pipeline_topic_condition(conditions: ParameterJoint, pipeline_topic, ra
             target_factor = get_factor(target_parameter.factorId, target_topic)
             where_condition.append(
                 {"name": target_factor.name, "value": value_list, "operator": condition.operator,
-                 "source_factor": source_factor.name})
+                 "source_factor": source_factor})
 
     return where_condition
+
+
+# TODO operator for mongo
+# TODO  jointType
+def build_mongo_condition(where_condition, jointType):
+    # print("where_condition",where_condition)
+    result = {}
+    if len(where_condition) > 1:
+        for condition in where_condition:
+            if condition["operator"] == "equals":
+                name = condition["name"]
+                value = condition["value"]
+                result[name] = value
+        return result
+    else:
+        condition = where_condition[0]
+        if condition["operator"] == "equals":
+            return {condition["name"]: condition["value"]}

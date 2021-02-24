@@ -14,6 +14,9 @@ class UnitStatus(MongoModel):
     uid: str = None
     actions: list = []
     mapping:list=[]
+    conditions=[]
+    insertCount: int = 0
+    updateCount: int = 0
     stageName: str = None
 
 

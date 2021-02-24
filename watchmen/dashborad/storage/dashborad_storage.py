@@ -1,5 +1,6 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
+from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 
 db = get_client()
@@ -7,7 +8,7 @@ console_dashboard_collection = db.get_collection('console_dashboard')
 
 
 def create_dashboard_to_storage(dashboard: ConsoleDashboard):
-    if dashboard.dashboardId is None:
+    if dashboard.dashboardId is None or check_fake_id(dashboard.dashboardId):
         dashboard.dashboardId = get_surrogate_key()
     console_dashboard_collection.insert_one(dashboard.dict())
     return ConsoleDashboard.parse_obj(dashboard)
