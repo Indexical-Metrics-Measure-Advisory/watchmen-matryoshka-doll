@@ -87,7 +87,12 @@ def build_query_for_subject_chart(chart_id):
     if report.chart.type == ChartType.COUNT:
         q = build_count_query_for_subject(console_subject)
     else:
-        q = build_query_for_subject(console_subject)
+        dataset = console_subject.dataset
+        q = _from(dataset.columns[0])
+        for join in dataset.joins:
+            q = _join(q, join)
+        if dataset.filters:
+            q = _filter(q, dataset.filters)
         for indicator in report.indicators:
             q = _indicator(q, indicator, columns_dict.get(indicator.columnId))
         for dimension in report.dimensions:
