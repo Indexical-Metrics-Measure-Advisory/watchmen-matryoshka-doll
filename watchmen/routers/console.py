@@ -206,13 +206,8 @@ async def update_report(report: Report, current_user: User = Depends(deps.get_cu
 
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_chart(report_id, current_user: User = Depends(deps.get_current_user)):
-    report = load_report_by_id(report_id)
-    if len(report.indicators) > 0:
-        result = load_chart_dataset(report_id)
-        return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
-    else:
-        if report.chart.type == "count":
-            return ConsoleSpaceSubjectChartDataSet(meta=[], data=[[0]])
+    result = load_chart_dataset(report_id)
+    return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
 
 ## Dashboard
