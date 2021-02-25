@@ -278,11 +278,18 @@ def build_query_for_subject_chart(chart_id):
     console_subject = load_console_subject_by_report_id(chart_id)
     columns_dict = column_list_convert_dict(console_subject.dataset.columns)
     chart = load_report_by_id(chart_id)
+
+    q = Query._builder()
+    topic = get_topic_by_id(columns_dict.get(chart.indicators[0].columnId).parameter.topicId)
+    t = Table(build_collection_name(topic.name))
+    q = q.from_(t)
     for indicator in chart.indicators:
         q = _indicator(q, indicator, columns_dict.get(indicator.columnId))
 
     for dimension in chart.dimensions:
         q = _groupby(q, columns_dict.get(dimension.columnId))
+
+
 
     return q
 

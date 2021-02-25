@@ -22,3 +22,12 @@ def create_dataset_reports(reports):
 def load_report_by_id(report_id):
     result = console_report_collection.find_one({"reportId": report_id})
     return Report.parse_obj(result)
+
+
+def load_reports_by_ids(report_ids):
+    results = console_report_collection.find({"reportId":{"$in":report_ids}})
+    return list(results)
+
+
+def delete_report_by_id(report_id):
+    console_report_collection.delete_one({"reportId": report_id})
