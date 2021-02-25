@@ -192,6 +192,7 @@ async def save_report(subject_id: str, report: Report, current_user: User = Depe
     new_report = create_report(report)
     subject = load_console_subject_by_id(subject_id)
     subject.reportIds.append(report.reportId)
+
     #subject.reports.append(new_report)
     update_console_subject(subject)
     return new_report

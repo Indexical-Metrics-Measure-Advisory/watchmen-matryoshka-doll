@@ -59,4 +59,5 @@ class Report(MongoModel):
     description: str = None
     rect: ReportRect = None
     chart: Chart = None
+    createdAt:str = None
     lastVisitTime: str = None

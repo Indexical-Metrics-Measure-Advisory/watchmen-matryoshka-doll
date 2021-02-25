@@ -15,7 +15,7 @@ from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, \
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import WATCHMEN
 
-client = get_client(WATCHMEN)
+client = get_client()
 
 collection_list_name = client.list_collection_names()
 
@@ -32,7 +32,7 @@ def test_list_collection():
 
     data =client.get_collection("_schema")
 
-    print(data.find_one())
+    data.delete_one({"table":"topic_pinkcloud-policy-product"})
 
 
 
