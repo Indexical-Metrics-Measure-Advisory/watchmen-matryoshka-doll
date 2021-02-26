@@ -6,7 +6,7 @@ from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_client import get_connection
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id, \
     load_console_subject_by_report_id
-from watchmen.report.engine.sql_builder import _from, _select, _join, _filter, _groupby, _indicator
+from watchmen.report.engine.sql_builder import _from, _select, _join, _filter, _groupby, _indicator, _orderby
 from watchmen.report.storage.report_storage import load_report_by_id
 
 log = logging.getLogger("app." + __name__)
@@ -97,6 +97,7 @@ def build_query_for_subject_chart(chart_id):
             q = _indicator(q, indicator, columns_dict.get(indicator.columnId))
         for dimension in report.dimensions:
             q = _groupby(q, columns_dict.get(dimension.columnId))
+            q = _orderby(q, columns_dict.get(dimension.columnId))
     return q
 
 

@@ -55,7 +55,7 @@ def parse_object_parameter(parameter: Parameter):
             pass
         elif parameter.type == Operator.modulus:
             pass
-        #todo custom function
+        # todo custom function
 
 
 def parse_dict_parameter(parameter: dict):
@@ -180,6 +180,7 @@ def _filter_criterion(filter: Filter) -> any:
         # TODO more operator support
         raise Exception("operator is not supported")
 
+
 '''
 def parse_filter_parameter(parameter: Parameter):
     if parameter.kind == "topic":
@@ -211,7 +212,7 @@ def parse_filter_parameter(parameter: Parameter):
 '''
 
 
-def _groupby(q:QueryBuilder, column: Column) -> QueryBuilder:
+def _groupby(q: QueryBuilder, column: Column) -> QueryBuilder:
     return q.groupby(parse_parameter(column.parameter))
 
 
@@ -226,3 +227,7 @@ def _indicator(q: QueryBuilder, indicator: ReportIndicator, column: Column) -> Q
         return q.select(fn.Min(parse_parameter(column.parameter)))
     else:
         return q.select(fn.Max(parse_parameter(column.parameter)))
+
+
+def _orderby(q: QueryBuilder, column: Column) -> QueryBuilder:
+    return q.orderby(parse_parameter(column.parameter))
