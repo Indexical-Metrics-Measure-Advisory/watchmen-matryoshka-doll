@@ -163,6 +163,8 @@ def _filter_criterion(filter: Filter) -> any:
             return operator.eq(left, int(right))
         else:
             return operator.eq(left, right)
+    elif filter.operator == 'not-empty':
+        return left.notnull()
     elif filter.operator == "not-equals":
         return operator.ne(left, right)
     elif filter.operator == "more":
@@ -174,8 +176,7 @@ def _filter_criterion(filter: Filter) -> any:
     elif filter.operator == "less-equals":
         return operator.le(left, int(right))
     elif filter.operator == "in":
-        # TODO
-        return left.isin(['a', 'b'])
+        return left.isin(right)
     else:
         # TODO more operator support
         raise Exception("operator is not supported")
