@@ -163,10 +163,12 @@ def _filter_criterion(filter: Filter) -> any:
             return operator.eq(left, int(right))
         else:
             return operator.eq(left, right)
-    elif filter.operator == 'not-empty':
-        return left.notnull()
     elif filter.operator == "not-equals":
         return operator.ne(left, right)
+    elif filter.operator == 'empty':
+        return left.isnull()
+    elif filter.operator == 'not-empty':
+        return left.notnull()
     elif filter.operator == "more":
         return operator.gt(left, int(right))
     elif filter.operator == "more-equals":
@@ -175,8 +177,24 @@ def _filter_criterion(filter: Filter) -> any:
         return operator.lt(left, int(right))
     elif filter.operator == "less-equals":
         return operator.le(left, int(right))
-    elif filter.operator == "in":
-        return left.isin(right)
+    elif filter.operator == 'in':
+        value_list = right.split(',')
+        values: List = []
+        for value in value_list:
+            if value.isdigit():
+                values.append(int(value))
+            else:
+                values.append(value)
+        return left.isin(values)
+    elif filter.operator == 'not-in':
+        value_list = right.split(',')
+        values: List = []
+        for value in value_list:
+            if value.isdigit():
+                values.append(int(value))
+            else:
+                values.append(value)
+        return left.notin(values)
     else:
         # TODO more operator support
         raise Exception("operator is not supported")
