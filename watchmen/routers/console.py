@@ -24,7 +24,8 @@ from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
     load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id
 from watchmen.monitor.index import is_system_subject, load_system_monitor_chart_data
-from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, load_chart_dataset
+from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, load_chart_dataset, \
+    load_chart_dataset_temp
 from watchmen.report.model.report import Report
 from watchmen.report.storage.report_storage import create_report, load_report_by_id, save_subject_report, \
     load_reports_by_ids, delete_report_by_id
@@ -211,6 +212,12 @@ async def delete_report(report_id):
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_chart(report_id, current_user: User = Depends(deps.get_current_user)):
     result = load_chart_dataset(report_id)
+    return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
+
+
+@router.post("/console_space/dataset/chart/temporary", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
+async def load_temporary_chart(report:Report):
+    result = load_chart_dataset_temp(report)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
 

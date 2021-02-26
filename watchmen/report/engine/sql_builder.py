@@ -11,7 +11,7 @@ from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.report.model.column import Column, Operator
 from watchmen.report.model.filter import Filter, ConnectiveType
 from watchmen.report.model.join import Join, JoinType
-from watchmen.report.model.report import ReportIndicator
+from watchmen.report.model.report import ReportIndicator, ReportDimension
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
@@ -246,6 +246,10 @@ def _indicator(q: QueryBuilder, indicator: ReportIndicator, column: Column) -> Q
         return q.select(fn.Min(parse_parameter(column.parameter)))
     else:
         return q.select(fn.Max(parse_parameter(column.parameter)))
+
+
+def _dimension(q: QueryBuilder, dimension: ReportDimension, column: Column):
+    return q.select(fn.Max(parse_parameter(column.parameter)))
 
 
 def _orderby(q: QueryBuilder, column: Column) -> QueryBuilder:

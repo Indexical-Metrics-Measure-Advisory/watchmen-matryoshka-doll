@@ -1,13 +1,15 @@
 import logging
+import statistics
 from datetime import datetime
 from functools import reduce
-import statistics
 
 import numpy as np
 import pandas as pd
 
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, ADDRESS
+from watchmen.plugin.langid_detect import detect
+from watchmen.plugin.service.plugin_service import load_address_plugin
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
@@ -87,32 +89,61 @@ def run_arithmetic_value_list(arithmetic, source_value_list):
         return __run_arithmetic(arithmetic, source_value_list)
 
 
-def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
+def __process_factor_type(target_factor, source_value_list):
+    print(target_factor)
+    print(target_factor.type=="address")
+    results = []
+    if target_factor.type=="address" and source_value_list is not None:
+        print(source_value_list)
+        if type(source_value_list) == list :
 
-    mapping_logs=[]
+            for source_value in source_value_list:
+                if source_value is not None:
+                    language = detect(source_value)
+                    plugin = load_address_plugin(language[0])
+                    result = plugin.run(source_value)
+                    results.append(result)
+            return results
+        else:
+            language = detect(source_value_list)
+            plugin = load_address_plugin(language[0])
+            result = plugin.run(source_value_list)
+            return result
+
+
+def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
+    mapping_logs = []
 
     mapping_results = []
     for mapping in mapping_list:
-        mapping_log ={}
+        mapping_log = {}
         source = mapping.source
 
-        mapping_log["source"]=source
+        mapping_log["source"] = source
 
-        mapping_log["arithmetic"]=mapping.arithmetic
+        mapping_log["arithmetic"] = mapping.arithmetic
         result = []
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, result, source))
 
-        mapping_log["value"]=source_value_list
+        mapping_log["value"] = source_value_list
         target_factor = get_factor(mapping.factorId, target_topic)
 
         mapping_log["target"] = target_factor
+        print("source_value_list",source_value_list)
+
+        result = __process_factor_type(target_factor, source_value_list)
+        print("result",result)
+        if result is not None:
+            if len(result) == 1:
+                mapping_results.append(result[0])
+
         mapping_results.append({target_factor.name: source_value_list})
 
         mapping_logs.append(mapping_log)
 
     mapping_data_list = merge_mapping_data(mapping_results)
-    return mapping_data_list,mapping_logs
+    return mapping_data_list, mapping_logs
 
 
 def __is_date_func(source_type):
@@ -181,7 +212,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
     if __is_date_func(source.type):
         value_list = get_source_value_list(pipeline_topic, raw_data, [], Parameter.parse_obj(source.parameters[0]))
         if type(value_list) == list:
-            result =[]
+            result = []
             for value in value_list:
                 result.append(__process_date_func(source, value))
             return result
@@ -203,7 +234,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
 
 def get_source_value_list(pipeline_topic, raw_data, result, parameter):
     if parameter.kind == "topic":
-        source_factor = get_factor(parameter.factorId, pipeline_topic)
+        source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, result, source_factor)
     elif parameter.kind == "constant":
         return parameter.value
@@ -358,6 +389,6 @@ def build_mongo_condition(where_condition, jointType):
 
 def process_variable(variable_name):
     if variable_name.startswith("{"):
-        return "memory",variable_name.replace("{","").replace("}","")
+        return "memory", variable_name.replace("{", "").replace("}", "")
     else:
-        return "constant",variable_name
+        return "constant", variable_name

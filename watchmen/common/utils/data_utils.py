@@ -5,6 +5,10 @@ from enum import Enum
 from pydantic.tools import lru_cache
 
 from watchmen.common.data_page import DataPage
+from watchmen.pipeline.single.stage.unit.utils.units_func import ADDRESS, CONTINENT, REGION, COUNTRY, PROVINCE, CITY, \
+    DISTRICT, ROAD, COMMUNITY, FLOOR, RESIDENCE_TYPE, RESIDENTIAL_AREA, TEXT, EMAIL, PHONE, MOBILE, FAX, GENDER, \
+    HALF_YEAR, QUARTER, SEASON, MONTH, HALF_MONTH, TEN_DAYS, WEEK_OF_YEAR, WEEK_OF_MONTH, HALF_WEEK, DAY_OF_MONTH, \
+    DAY_OF_WEEK, DAY_KIND, HOUR, HOUR_KIND, MINUTE, SECOND, AM_PM, DATETIME, UNSIGNED, DATE, TIME
 
 WATCHMEN = "watchmen"
 MONITOR = "monitor"
@@ -55,3 +59,30 @@ def build_data_pages(pagination, result, item_count):
 
 def check_fake_id(id: str) -> bool:
     return id.startswith('f-', 0, 2)
+
+
+def is_presto_varchar_type(factor_type):
+    date_types = [ADDRESS, CONTINENT, REGION, COUNTRY, PROVINCE, CITY, DISTRICT, ROAD, COMMUNITY, FLOOR, RESIDENCE_TYPE,
+                  RESIDENTIAL_AREA, TEXT, EMAIL, PHONE, MOBILE, FAX, GENDER]
+    if factor_type in date_types:
+        return True
+    else:
+        return False
+
+
+def is_presto_int_type(factor_type):
+    date_types = [HALF_YEAR, QUARTER, SEASON, MONTH, HALF_MONTH, TEN_DAYS, WEEK_OF_YEAR, WEEK_OF_MONTH, HALF_WEEK,
+                  DAY_OF_MONTH, DAY_OF_WEEK,
+                  DAY_KIND, HOUR, HOUR_KIND, MINUTE, SECOND, AM_PM,UNSIGNED]
+    if factor_type in date_types:
+        return True
+    else:
+        return False
+
+
+def is_presto_datetime(factor_type):
+    date_types = [DATETIME,DATE,TIME]
+    if factor_type in date_types:
+        return True
+    else:
+        return False

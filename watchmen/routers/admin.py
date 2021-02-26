@@ -13,7 +13,7 @@ from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
-from watchmen.common.presto.presto_utils import remove_presto_schema_by_name
+from watchmen.common.presto.presto_utils import remove_presto_schema_by_name, create_or_update__presto_schema_fields
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
@@ -115,12 +115,15 @@ async def create_topic(topic: Topic):
 @router.post("/save/topic", tags=["admin"], response_model=Topic)
 async def save_topic(topic: Topic):
     if check_fake_id(topic.topicId):
-        return create_topic_schema(topic)
+        result = create_topic_schema(topic)
+        create_or_update__presto_schema_fields(result)
+        return result
     else:
         topic = Topic.parse_obj(topic)
         data = update_topic_schema(topic.topicId, topic)
         ## remove presto shcmea
-        remove_presto_schema_by_name(topic.name)
+        create_or_update__presto_schema_fields(data)
+
         return data
 
 
@@ -128,7 +131,8 @@ async def save_topic(topic: Topic):
 async def update_topic(topic_id, topic: Topic = Body(...)):
     topic = Topic.parse_obj(topic)
     data = update_topic_schema(topic_id, topic)
-    remove_presto_schema_by_name(topic.name)
+    # remove_presto_schema_by_name(topic.name)
+    create_or_update__presto_schema_fields(data)
     return data
 
 
@@ -227,7 +231,6 @@ async def query_user_groups_list_by_name(query_name: str, pagination: Pagination
     return query_user_groups_by_name_with_paginate(query_name, pagination)
 
 
-
 # pipeline
 
 @router.post("/pipeline", tags=["admin"], response_model=Pipeline)
@@ -259,7 +262,7 @@ async def load_all_pipelines():
 
 
 @router.get("/pipeline/enabled", tags=["admin"])
-async def update_pipeline_enabled(pipeline_id,enabled):
+async def update_pipeline_enabled(pipeline_id, enabled):
     update_pipeline_status(pipeline_id, enabled)
 
 
@@ -269,11 +272,11 @@ async def rename_pipeline(pipeline_id, name):
 
 
 @router.post("/pipeline/graphics", tags=["admin"], response_model=PipelinesGraphics)
-async def save_pipeline_graph(pipeline_graph:PipelinesGraphics,current_user: User = Depends(deps.get_current_user)):
+async def save_pipeline_graph(pipeline_graph: PipelinesGraphics, current_user: User = Depends(deps.get_current_user)):
     user_id = current_user.userId
     result = load_pipeline_graph(user_id)
     if result is not None:
-        return update_pipeline_graph(pipeline_graph,user_id)
+        return update_pipeline_graph(pipeline_graph, user_id)
     else:
         pipeline_graph.userId = user_id
         return create_pipeline_graph(pipeline_graph)
@@ -287,11 +290,6 @@ async def load_pipeline_graph_by_user(current_user: User = Depends(deps.get_curr
         raise HTTPException(status_code=500, detail="not found pipeline graph")
     else:
         return result
-
-
-
-
-
 
 # Report
 
