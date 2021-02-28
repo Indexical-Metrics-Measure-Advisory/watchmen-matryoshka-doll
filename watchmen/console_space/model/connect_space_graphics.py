@@ -5,12 +5,6 @@ from pydantic import BaseModel
 from watchmen.common.mongo_model import MongoModel
 
 
-#  ConnectedSpaceBlockGraphicsRect {
-# 	coordinate: BlockCoordinate;
-# 	frame: BlockFrame;
-# 	name: BlockName;
-# }
-
 class ConnectedSpaceBlockGraphics(BaseModel):
     rect: Any = None
 
@@ -27,3 +21,4 @@ class ConnectedSpaceGraphics(MongoModel):
     connectId: str = None
     topics: List[TopicGraphics]
     subjects: List[SubjectGraphics]
+    userId: str = None

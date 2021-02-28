@@ -5,6 +5,7 @@ from watchmen.console_space.model.console_space import ConsoleSpace
 
 db = get_client()
 console_space_collection = db.get_collection('console_space')
+console_space_graph_collection = db.get_collection('console_space_graph')
 
 
 def create_console_space(console_space: ConsoleSpace):
@@ -46,3 +47,17 @@ def load_console_space_by_subject_id(subject_id):
 
 def rename_console_space_by_id(connect_id, name):
     console_space_collection.update_one({"connectId": connect_id}, {"$set": {"name": name}})
+
+
+def create_console_space_graph(console_space_graph):
+    console_space_graph_collection.insert(console_space_graph.dict())
+
+
+def update_console_space_graph(console_space_graph):
+    console_space_graph_collection.update_one({"userId": console_space_graph.userId},
+                                              {"$set": console_space_graph.dict()})
+
+
+def load_console_space_graph_by_user_id(user_id):
+    result = console_space_graph_collection.find({"userId": user_id})
+    return list(result)

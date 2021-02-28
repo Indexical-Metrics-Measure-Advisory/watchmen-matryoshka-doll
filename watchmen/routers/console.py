@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, Depends, Body
 
@@ -9,32 +9,30 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, check_fake_id
+from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject, \
     ConsoleSpaceSubjectChartDataSet
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
     delete_console_space_and_sub_data
 from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
-    load_console_group_by_id, update_console_group, load_console_group_list_by_ids, rename_console_group_by_id
+    rename_console_group_by_id
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
-    load_console_space_by_id, rename_console_space_by_id
+    load_console_space_by_id, rename_console_space_by_id, create_console_space_graph, update_console_space_graph, \
+    load_console_space_graph_by_user_id
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
     load_console_subject_list_by_ids, update_console_subject, rename_console_subject_by_id, load_console_subject_by_id, \
     load_console_subject_by_report_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
     load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id
-from watchmen.monitor.index import is_system_subject, load_system_monitor_chart_data
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, load_chart_dataset, \
     load_chart_dataset_temp
 from watchmen.report.model.report import Report
-from watchmen.report.storage.report_storage import create_report, load_report_by_id, save_subject_report, \
+from watchmen.report.storage.report_storage import create_report, save_subject_report, \
     load_reports_by_ids, delete_report_by_id
 from watchmen.space.service.console import load_topic_list_by_space_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import load_space_by_user
-from watchmen.topic.storage.topic_relation_storage import load_relationships_by_topic_ids, \
-    load_relationships_by_topic_ids_target
-from watchmen.topic.storage.topic_schema_storage import get_topic_list_by_ids
 from watchmen.topic.topic import Topic
 from watchmen.topic.topic_relationship import TopicRelationship
 
@@ -119,16 +117,11 @@ async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body
             subject.reportIds.append(report.reportId)
 
         subject = create_console_subject_to_storage(subject)
-        # if group_id is not None:
-        #     # print("group:", group_id)
-        #     group = load_console_group_by_id(group_id)
-        #     group.subjectIds.append(subject.subjectId)
-        #     update_console_group(group)
-        # else:
         console_space.subjectIds.append(subject.subjectId)
         save_console_space(console_space)
 
         return subject
+
 
 @router.get("/console_space/delete", tags=["console"])
 async def delete_console_space(connect_id, current_user: User = Depends(deps.get_current_user)):
@@ -162,7 +155,7 @@ async def delete_subject(subject_id, current_user: User = Depends(deps.get_curre
 
 @router.post("/console_space/subject/save", tags=["console"], response_model=ConsoleSpaceSubject)
 async def save_console_subject(subject: ConsoleSpaceSubject, current_user: User = Depends(deps.get_current_user)):
-    subject.reports=[]
+    subject.reports = []
     return update_console_subject(subject)
 
 
@@ -173,28 +166,29 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...),
     return build_data_pages(pagination, data, count)
 
 
-async def save_console_space_graph(console_space_graph,current_user: User = Depends(deps.get_current_user)):
-    pass
+@router.post("/console_space/graphics", tags=["console"], response_model=ConnectedSpaceGraphics)
+async def save_console_space_graph(console_space_graph: ConnectedSpaceGraphics,
+                                   current_user: User = Depends(deps.get_current_user)):
 
+    old_console_space_graph = load_console_space_graph_by_user_id(current_user.userId)
+    console_space_graph.userId = current_user.userId
 
-async def load_my_console_space_graph(current_user: User = Depends(deps.get_current_user)):
-    pass
-
-'''
-@router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
-async def load_chart(subject_id, chart_id, current_user: User = Depends(deps.get_current_user)):
-    if is_system_subject(subject_id):
-        return load_system_monitor_chart_data(subject_id, chart_id)
+    if old_console_space_graph is None:
+        create_console_space_graph(console_space_graph)
     else:
-        result = load_chart_dataset(subject_id, chart_id)
-        return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
-'''
+        update_console_space_graph(console_space_graph)
+    return console_space_graph
+
+
+@router.get("/console_space/graphics/me", tags=["console"], response_model=List[ConnectedSpaceGraphics])
+async def load_my_console_space_graph(current_user: User = Depends(deps.get_current_user)):
+    return load_console_space_graph_by_user_id(current_user.userId)
 
 
 @router.post("/console_space/subject/report/save", tags=["console"], response_model=Report)
 async def save_report(subject_id: str, report: Report, current_user: User = Depends(deps.get_current_user)):
     report.reportId = get_surrogate_key()
-    report.subjectId=subject_id
+    report.subjectId = subject_id
     new_report = create_report(report)
     subject = load_console_subject_by_id(subject_id)
     subject.reportIds.append(report.reportId)
@@ -223,7 +217,7 @@ async def load_chart(report_id, current_user: User = Depends(deps.get_current_us
 
 
 @router.post("/console_space/dataset/chart/temporary", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
-async def load_temporary_chart(report:Report):
+async def load_temporary_chart(report: Report):
     result = load_chart_dataset_temp(report)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
