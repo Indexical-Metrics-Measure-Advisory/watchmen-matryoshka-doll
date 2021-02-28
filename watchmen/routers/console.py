@@ -118,7 +118,6 @@ async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body
             report.reportId = get_surrogate_key()
             subject.reportIds.append(report.reportId)
 
-
         subject = create_console_subject_to_storage(subject)
         # if group_id is not None:
         #     # print("group:", group_id)
@@ -172,6 +171,14 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...),
                        current_user: User = Depends(deps.get_current_user)):
     data, count = load_dataset_by_subject_id(subject_id, pagination)
     return build_data_pages(pagination, data, count)
+
+
+async def save_console_space_graph(console_space_graph,current_user: User = Depends(deps.get_current_user)):
+    pass
+
+
+async def load_my_console_space_graph(current_user: User = Depends(deps.get_current_user)):
+    pass
 
 '''
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)

@@ -27,9 +27,9 @@ def __convert_presto_type(factor_type):
     elif is_presto_int_type(factor_type):
         return "integer"
     elif factor_type == BOOLEAN:
-        return "boolean"
+        return "timestamp"
     elif is_presto_datetime(factor_type):
-        return "datetime"
+        return "date"
     elif factor_type == NUMBER or factor_type:
         return "double"
     else:
@@ -50,10 +50,10 @@ def __build_presto_fields(factors):
 
 def create_or_update__presto_schema_fields(topic: Topic):
     topic_name = build_collection_name(topic.name)
-    presto_schema = collection.find_one({"table": build_collection_name(topic_name)})
+    presto_schema = collection.find_one({"table": topic_name})
     new_schema = {"table": topic_name, "fields": __build_presto_fields(topic.factors)}
     if presto_schema is None:
         collection.insert(new_schema)
     else:
-        collection.delete_one({"table": build_collection_name(topic_name)})
+        collection.delete_one({"table": topic_name})
         collection.insert(new_schema)
