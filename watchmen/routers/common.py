@@ -23,6 +23,6 @@ async def save_topic_data(topic_event: TopicEvent):
     if topic is None:
         raise Exception("topic name does not exist")
 
-    add_audit_columns(topic_event.data,INSERT)
+    add_audit_columns(topic_event.data, INSERT)
     save_topic_instance(topic_event.code, topic_event.data)
     trigger_pipeline(topic_event.code, topic_event.data, TriggerType.insert)

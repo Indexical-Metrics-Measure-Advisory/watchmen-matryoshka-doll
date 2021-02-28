@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Any
+from typing import List
 
 from pydantic import BaseModel
 
@@ -12,6 +12,7 @@ from watchmen.topic.topic import Topic
 class ConsoleSpaceSubjectChartDataSet(BaseModel):
     meta: List[str] = []
     data: list = []
+
 
 #
 # class ConsoleSpaceSubjectDataSetFilter(BaseModel):
@@ -62,6 +63,7 @@ class SubjectDataSet(BaseModel):
     columns: List[SubjectDataSetColumn] = []
     joins: List[SubjectDataSetJoin] = []
 
+
 '''
 class ReportIndicator(BaseModel):
     name: str = None
@@ -105,7 +107,7 @@ class ConsoleSpaceSubject(MongoModel):
     lastVisitTime: datetime = None
     createdAt: str = None
     reports: List[Report] = []
-    reportIds:list=[]
+    reportIds: list = []
     dataset: SubjectDataSet = None
     # graphics: List[ConsoleSpaceSubjectChart] = []
 

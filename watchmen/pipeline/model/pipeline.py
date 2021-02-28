@@ -26,7 +26,7 @@ class UnitAction(Conditional):
     # UnitActionAlarm
     severity: str = None
     message: str = None
-    arithmetic:str = None
+    arithmetic: str = None
 
     # topic
     topicId: str = None

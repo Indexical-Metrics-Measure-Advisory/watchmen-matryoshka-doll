@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, ADDRESS
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor
 from watchmen.plugin.langid_detect import detect
 from watchmen.plugin.service.plugin_service import load_address_plugin
 from watchmen.topic.factor.factor import Factor
@@ -91,11 +91,11 @@ def run_arithmetic_value_list(arithmetic, source_value_list):
 
 def __process_factor_type(target_factor, source_value_list):
     print(target_factor)
-    print(target_factor.type=="address")
+    print(target_factor.type == "address")
     results = []
-    if target_factor.type=="address" and source_value_list is not None:
+    if target_factor.type == "address" and source_value_list is not None:
         print(source_value_list)
-        if type(source_value_list) == list :
+        if type(source_value_list) == list:
 
             for source_value in source_value_list:
                 if source_value is not None:
@@ -130,10 +130,10 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         target_factor = get_factor(mapping.factorId, target_topic)
 
         mapping_log["target"] = target_factor
-        print("source_value_list",source_value_list)
+        print("source_value_list", source_value_list)
 
         result = __process_factor_type(target_factor, source_value_list)
-        print("result",result)
+        print("result", result)
         if result is not None:
             if len(result) == 1:
                 mapping_results.append(result[0])

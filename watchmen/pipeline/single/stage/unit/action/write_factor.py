@@ -17,13 +17,13 @@ log = logging.getLogger("app." + __name__)
 
 
 #  TODO  more arithmetic to be implement
-def __build_mongo_update(update_data,arithmetic,target_factor):
-    if arithmetic=="sum":
+def __build_mongo_update(update_data, arithmetic, target_factor):
+    if arithmetic == "sum":
         return {"$inc": update_data}
-    elif arithmetic=="count":
-        return {"$inc": {target_factor.name:1}}
-    elif arithmetic=="max":
-        return {"$max":update_data}
+    elif arithmetic == "count":
+        return {"$inc": {target_factor.name: 1}}
+    elif arithmetic == "max":
+        return {"$max": update_data}
     elif arithmetic == "min":
         return {"$min": update_data}
     else:
@@ -73,7 +73,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
             target_data = read_topic_data(filter_where_condition, target_topic.name,
                                           conditions.jointType)
 
-
             if target_data is None:
                 condition_factors = get_condition_factor_value(raw_data, where_condition)
                 insert_data = {**{target_factor.name: source_value_list}, **condition_factors}
@@ -81,7 +80,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 insert_topic_data(target_topic.name, insert_data, pipeline_uid)
                 pass
             else:
-                update_data=__build_mongo_update(update_data,action.arithmetic,target_factor)
+                update_data = __build_mongo_update(update_data, action.arithmetic, target_factor)
 
                 # print("update_data",update_data)
                 find_and_modify_topic_data(target_topic.name,

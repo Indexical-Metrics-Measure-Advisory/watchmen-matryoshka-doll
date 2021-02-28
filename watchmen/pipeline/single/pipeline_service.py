@@ -7,8 +7,8 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor, insert_units_monitor
 from watchmen.pipeline.model.pipeline import Pipeline
-from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, NOT_EMPTY, PIPELINE_UID, ERROR, FINISHED
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_execute_time
+from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_execute_time
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)

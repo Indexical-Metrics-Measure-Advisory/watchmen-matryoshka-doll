@@ -38,7 +38,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
             target_data = read_topic_data(filter_where_condition, target_topic.name, conditions.jointType)
             if target_data is None:
-                insert_topic_data(target_topic.name, mapping_results[index],pipeline_uid)
+                insert_topic_data(target_topic.name, mapping_results[index], pipeline_uid)
             else:
                 raise Exception("target_topic row already exist")
 

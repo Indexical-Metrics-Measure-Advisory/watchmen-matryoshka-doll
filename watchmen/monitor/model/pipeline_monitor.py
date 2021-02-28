@@ -13,8 +13,8 @@ class UnitStatus(MongoModel):
     error: str = None
     uid: str = None
     actions: list = []
-    mapping:list=[]
-    conditions=[]
+    mapping: list = []
+    conditions = []
     insertCount: int = 0
     updateCount: int = 0
     stageName: str = None

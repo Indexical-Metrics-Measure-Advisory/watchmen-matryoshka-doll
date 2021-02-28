@@ -3,7 +3,7 @@ from datetime import datetime
 from watchmen.monitor.model.pipeline_monitor import UnitStatus, ReadFactorAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import filter_condition
-from watchmen.pipeline.single.stage.unit.mongo.index import build_right_query, find_pipeline_topic_condition, \
+from watchmen.pipeline.single.stage.unit.mongo.index import find_pipeline_topic_condition, \
     process_variable
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_execute_time

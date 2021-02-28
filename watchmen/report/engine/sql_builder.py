@@ -1,11 +1,11 @@
 import operator
 from typing import List
-from pypika import functions as fn
 
-from pypika import Query, Table, Field, JoinType, Criterion
+from pypika import Query, Table, JoinType
+from pypika import functions as fn
 from pypika.queries import QueryBuilder
 
-from watchmen.common.parameter import Parameter, ParameterExpression
+from watchmen.common.parameter import Parameter
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.report.model.column import Column, Operator

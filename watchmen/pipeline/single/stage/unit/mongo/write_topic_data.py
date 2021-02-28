@@ -8,7 +8,7 @@ db = get_client()
 
 
 # @topic_event_trigger
-def insert_topic_data(topic_name, mapping_result,pipeline_uid):
+def insert_topic_data(topic_name, mapping_result, pipeline_uid):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
     add_audit_columns(mapping_result, INSERT)
@@ -18,11 +18,11 @@ def insert_topic_data(topic_name, mapping_result,pipeline_uid):
 
 
 # @topic_event_trigger
-def update_topic_data(topic_name, mapping_result, target_data,pipeline_uid):
+def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
     add_audit_columns(mapping_result, UPDATE)
-    add_trace_columns(mapping_result,"update_row", pipeline_uid)
+    add_trace_columns(mapping_result, "update_row", pipeline_uid)
     # collection.find_and_modify()
     # TODO find_and_modify
     collection.update_one({"_id": target_data["_id"]}, {"$set": mapping_result})
@@ -34,7 +34,3 @@ def find_and_modify_topic_data(topic_name, query, update_data):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
     collection.find_and_modify(query=query, update=update_data)
-
-
-
-

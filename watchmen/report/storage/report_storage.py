@@ -25,7 +25,7 @@ def load_report_by_id(report_id):
 
 
 def load_reports_by_ids(report_ids):
-    results = console_report_collection.find({"reportId":{"$in":report_ids}})
+    results = console_report_collection.find({"reportId": {"$in": report_ids}})
     return list(results)
 
 

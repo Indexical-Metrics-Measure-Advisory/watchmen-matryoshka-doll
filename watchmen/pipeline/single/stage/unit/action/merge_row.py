@@ -1,4 +1,3 @@
-
 import logging
 from datetime import datetime
 
@@ -7,7 +6,7 @@ from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules, find_pipeline_topic_condition, \
     filter_condition
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
-from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import  update_topic_data
+from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import update_topic_data
 from watchmen.pipeline.single.stage.unit.utils import PIPELINE_UID
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_execute_time
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
@@ -41,7 +40,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             if target_data is None:
                 raise Exception("target_topic row does not exist")
             else:
-                update_topic_data(target_topic.name, mapping_results[index], target_data,pipeline_uid)
+                update_topic_data(target_topic.name, mapping_results[index], target_data, pipeline_uid)
 
         unit_action_status.complete_time = get_execute_time(start_time)
         return context, unit_action_status

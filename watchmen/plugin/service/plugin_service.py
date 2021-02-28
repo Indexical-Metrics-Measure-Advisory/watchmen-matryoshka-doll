@@ -9,7 +9,7 @@ def find_plugin_func(plugin_type):
 
 
 def build_plugin_name(language):
-    return "address_"+language
+    return "address_" + language
 
 
 def load_address_plugin(language):
@@ -20,9 +20,3 @@ def load_address_plugin(language):
     except:
         print("no such plugin")
         return None
-
-
-
-
-
-

@@ -13,7 +13,7 @@ from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
-from watchmen.common.presto.presto_utils import remove_presto_schema_by_name, create_or_update__presto_schema_fields
+from watchmen.common.presto.presto_utils import create_or_update__presto_schema_fields
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow

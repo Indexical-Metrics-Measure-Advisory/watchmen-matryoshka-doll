@@ -1,8 +1,9 @@
 from enum import Enum
 from typing import List
 
-from watchmen.common.mongo_model import MongoModel
 from pydantic import BaseModel
+
+from watchmen.common.mongo_model import MongoModel
 
 
 class ReportIndicatorArithmetic(str, Enum):
@@ -59,6 +60,6 @@ class Report(MongoModel):
     description: str = None
     rect: ReportRect = None
     chart: Chart = None
-    createdAt:str = None
+    createdAt: str = None
     lastVisitTime: str = None
-    subjectId:str = None
+    subjectId: str = None
