@@ -13,10 +13,14 @@ class ParameterKind(Enum):
 class Parameter(BaseModel):
     kind: str = None
     type: str = None
-    parameters: list = []
+    parameters: List['Parameter'] = []
     value: str = None
     topicId: str = None
     factorId: str = None
+
+
+# for self-referencing model, need python 3.7+
+Parameter.update_forward_refs()
 
 
 class ParameterExpression(BaseModel):

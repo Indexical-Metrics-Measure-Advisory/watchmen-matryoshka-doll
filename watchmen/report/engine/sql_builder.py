@@ -22,6 +22,37 @@ def _from(column: Column) -> QueryBuilder:
 
 
 def parse_parameter(parameter: Parameter):
+    if parameter.kind == "topic":
+        topic = get_topic_by_id(parameter.topicId)
+        topic_col_name = build_collection_name(topic.name)
+        factor = get_factor(parameter.factorId, topic)
+        return Table(topic_col_name)[factor.name]
+    elif parameter.kind == 'constant':
+        return parameter.value
+    elif parameter.kind == 'computed':
+        if parameter.type == Operator.add:
+            result = None
+            for item in parameter.parameters:
+                if result:
+                    result = operator.add(result, parse_parameter(item))
+                else:
+                    result = parse_parameter(item)
+            return result
+        elif parameter.type == Operator.subtract:
+            pass
+        elif parameter.type == Operator.subtract:
+            pass
+        elif parameter.type == Operator.multiply:
+            pass
+        elif parameter.type == Operator.divide:
+            pass
+        elif parameter.type == Operator.modulus:
+            pass
+        # todo custom function
+
+
+'''
+def parse_parameter(parameter: Parameter):
     if isinstance(parameter, dict):
         return parse_dict_parameter(parameter)
     if isinstance(parameter, Parameter):
@@ -86,6 +117,7 @@ def parse_dict_parameter(parameter: dict):
         elif parameter.get('type') == Operator.modulus:
             pass
         # todo custom function
+'''
 
 
 def _select(q: QueryBuilder, column: Column) -> QueryBuilder:
@@ -164,7 +196,10 @@ def _filter_criterion(filter: Filter) -> any:
         else:
             return operator.eq(left, right)
     elif filter.operator == "not-equals":
-        return operator.ne(left, right)
+        if right.isdigit():
+            return left.__ne__(int(right))
+        else:
+            return left.__ne__(right)
     elif filter.operator == 'empty':
         return left.isnull()
     elif filter.operator == 'not-empty':
@@ -198,37 +233,6 @@ def _filter_criterion(filter: Filter) -> any:
     else:
         # TODO more operator support
         raise Exception("operator is not supported")
-
-
-'''
-def parse_filter_parameter(parameter: Parameter):
-    if parameter.kind == "topic":
-        topic = get_topic_by_id(parameter.topicId)
-        topic_col_name = build_collection_name(topic.name)
-        factor = get_factor(parameter.factorId, topic)
-        return Table(topic_col_name)[factor.name]
-    elif parameter.kind == 'constant':
-        return parameter.value
-    elif parameter.kind == 'computed':
-        if parameter.type == Operator.add:
-            result = None
-            for item in parameter.parameters:
-                if result:
-                    result = operator.add(result, parse_filter_parameter(item))
-                else:
-                    result = parse_filter_parameter(item)
-        elif parameter.type == Operator.subtract:
-            pass
-        elif parameter.type == Operator.subtract:
-            pass
-        elif parameter.type == Operator.multiply:
-            pass
-        elif parameter.type == Operator.divide:
-            pass
-        elif parameter.type == Operator.modulus:
-            pass
-        #todo custom function
-'''
 
 
 def _groupby(q: QueryBuilder, column: Column) -> QueryBuilder:
