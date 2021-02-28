@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 import pymongo
 from bson import regex
 

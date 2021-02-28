@@ -1,8 +1,9 @@
-import langid
 from langid.langid import LanguageIdentifier, model
 
 identifier = LanguageIdentifier.from_modelstring(model, norm_probs=True)
-identifier.set_languages(['en','ja'])
+identifier.set_languages(['en', 'ja'])
+
+
 # def init()
 
 

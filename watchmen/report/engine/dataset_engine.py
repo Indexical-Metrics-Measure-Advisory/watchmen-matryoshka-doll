@@ -1,6 +1,6 @@
 import logging
+
 from pypika import functions as fn
-from watchmen.report.model.report import ChartType
 
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_client import get_connection
@@ -8,6 +8,7 @@ from watchmen.console_space.storage.console_subject_storage import load_console_
     load_console_subject_by_report_id
 from watchmen.report.engine.sql_builder import _from, _select, _join, _filter, _groupby, _indicator, _orderby, \
     _dimension
+from watchmen.report.model.report import ChartType
 from watchmen.report.storage.report_storage import load_report_by_id
 
 log = logging.getLogger("app." + __name__)
@@ -93,7 +94,7 @@ def build_count_query_for_subject(console_subject):
     return query
 
 
-def build_query_for_subject_chart(chart_id,report=None):
+def build_query_for_subject_chart(chart_id, report=None):
     console_subject = load_console_subject_by_report_id(chart_id)
     columns_dict = column_list_convert_dict(console_subject.dataset.columns)
     if report is None:
