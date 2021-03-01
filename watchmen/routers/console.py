@@ -3,6 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, Body, HTTPException
 from pydantic import BaseModel
+from starlette import status
 
 from watchmen.auth.storage.user import get_user
 from watchmen.auth.user import User
@@ -50,13 +51,12 @@ class AvailableSpace(Space):
 
 
 class ShareDashboard(BaseModel):
-    dashboard:ConsoleDashboard=None
-    reports:List[Report]=[]
+    dashboard: ConsoleDashboard = None
+    reports: List[Report] = []
 
 
 class SharedSubject(BaseModel):
-    subject: ConsoleSpaceSubject=None
-
+    subject: ConsoleSpaceSubject = None
 
 
 @router.get("/space/available", tags=["console"], response_model=List[AvailableSpace])
@@ -273,12 +273,12 @@ async def share_dashboard(dashboard_id: str, token: str):
     security_payload = validate_jwt(token)
     user = get_user(security_payload["sub"])
     if user is None:
-        raise HTTPException(status_code=403)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     dashboard = load_dashboard_by_id(dashboard_id)
 
-    reports = load_reports_by_ids(list(map(lambda report: report.reportId,dashboard.reports)))
+    reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)))
 
-    return {"dashboard":dashboard,"reports":reports}
+    return {"dashboard": dashboard, "reports": reports}
 
 
 @router.get("/share/subject", tags=["share"], response_model=ConsoleSpaceSubject)
@@ -286,6 +286,6 @@ async def share_subject(subject_id: str, token: str):
     security_payload = validate_jwt(token)
     user = get_user(security_payload["sub"])
     if user is None:
-        raise HTTPException(status_code=403)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     subject = load_console_subject_by_id(subject_id)
-    return {"subject":subject}
+    return {"subject": subject}
