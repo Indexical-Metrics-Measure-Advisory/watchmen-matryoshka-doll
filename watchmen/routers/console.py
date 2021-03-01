@@ -230,7 +230,7 @@ async def load_temporary_chart(report: Report):
 async def create_dashboard(name: str, current_user: User = Depends(deps.get_current_user)):
     dashboard = ConsoleDashboard()
     dashboard.name = name
-    dashboard.lastVisitTime = datetime.now()
+    # dashboard.lastVisitTime = datetime.now()
     dashboard.userId = current_user.userId
     return create_dashboard_to_storage(dashboard)
 
