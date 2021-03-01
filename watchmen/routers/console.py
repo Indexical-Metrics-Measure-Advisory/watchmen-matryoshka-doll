@@ -121,6 +121,8 @@ async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body
         save_console_space(console_space)
 
         return subject
+    else:
+        raise Exception("id is not fake ID")
 
 
 @router.get("/console_space/delete", tags=["console"])
