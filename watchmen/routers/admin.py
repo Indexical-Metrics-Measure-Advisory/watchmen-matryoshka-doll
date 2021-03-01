@@ -59,11 +59,6 @@ class FactorSuggestionIn(BaseModel):
 
 # ADMIN
 
-# ## Space
-# @router.post("/space", tags=["admin"], response_model=Space)
-# async def create_space(space: Space):
-#     return create_space(space)
-
 
 @router.post("/space", tags=["admin"], response_model=Space)
 async def save_space(space: Space):
@@ -294,3 +289,7 @@ async def load_pipeline_graph_by_user(current_user: User = Depends(deps.get_curr
 # Report
 
 # TODO report API
+
+
+
+

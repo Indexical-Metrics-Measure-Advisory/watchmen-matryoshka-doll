@@ -2,7 +2,6 @@ from datetime import datetime
 
 from watchmen.topic.factor.factor import Factor
 
-# TODO constant for operator
 INSERT = "insert"
 UPDATE = "update"
 SEQUENCE = "sequence"
@@ -151,5 +150,4 @@ def add_audit_columns(dictionary, audit_type):
 
 
 def add_trace_columns(dictionary, trace_type, pipeline_uid):
-    # TODO add_trace_columns
     dictionary[trace_type] = pipeline_uid

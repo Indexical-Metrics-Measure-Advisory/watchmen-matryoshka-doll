@@ -23,8 +23,6 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     collection = db.get_collection(collection_name)
     add_audit_columns(mapping_result, UPDATE)
     add_trace_columns(mapping_result, "update_row", pipeline_uid)
-    # collection.find_and_modify()
-    # TODO find_and_modify
     collection.update_one({"_id": target_data["_id"]}, {"$set": mapping_result})
     data = {**target_data, **mapping_result}
     trigger_pipeline(topic_name, data, TriggerType.update)

@@ -26,7 +26,7 @@
 #
 #
 # def is_and(cconjs):
-#     # TODO[next] check empty
+#
 #     return all(x.lemma_ == "and" for x in cconjs)
 #
 #
@@ -149,8 +149,6 @@
 #             result["value"] = value
 #             rule_schema["then"] = result
 #
-#     # TODO[next] match factor to domain and basic raw_data_back
-#     # TODO[future] generate report for rules
 #     return rule_schema
 #
 #

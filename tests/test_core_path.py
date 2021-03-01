@@ -10,7 +10,6 @@ def test_save_topic_instance():
 
     # save_topic_instance("raw_gi_policy", data)
     topic = get_topic("raw_gi_policy")
-    # # TODO validate data with topic schema
     #
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
 

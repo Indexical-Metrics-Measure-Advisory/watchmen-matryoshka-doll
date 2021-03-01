@@ -6,8 +6,6 @@ from watchmen.raw_data_back.rule_schema import RuleType
 from watchmen.common.rule.import_rule import import_single_rule
 
 
-# TODO[next] add raw_data_back in parameter
-
 
 def test_import_rule():
     rule = "if the customer’s gender is male and the age is over 60 and the main clause limit exceeds 100W, " \

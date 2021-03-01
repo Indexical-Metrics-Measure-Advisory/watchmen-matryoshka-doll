@@ -6,6 +6,7 @@ from starlette import status
 
 from watchmen.auth.storage.user import get_user
 from watchmen.auth.user import User
+from watchmen.common.security.index import validate_jwt
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.config.config import settings
 
@@ -21,9 +22,7 @@ def get_db():
 def get_current_user(token: str = Depends(reusable_oauth2)
                      ) -> User:
     try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-        )
+        payload = validate_jwt(token)
 
     # token_data = token.TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):

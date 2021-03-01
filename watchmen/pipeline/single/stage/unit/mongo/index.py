@@ -239,7 +239,6 @@ def get_source_value_list(pipeline_topic, raw_data, result, parameter):
     elif parameter.kind == "constant":
         return parameter.value
     elif parameter.kind == "computed":
-        # TODO computed kind
         return __process_compute_kind(parameter, raw_data, pipeline_topic)
     else:
         raise Exception("Unknown source kind {0}".format(parameter.kind))

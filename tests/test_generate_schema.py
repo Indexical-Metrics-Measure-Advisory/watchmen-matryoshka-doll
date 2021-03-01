@@ -167,7 +167,6 @@ def test_generate_schema_for_list_data():
 
 # def test_generate_schema_for_list_data():
 
-# TODO[next] batch import data and get raw_data_back
 
 # rule = "if the customer’s gender is male, the age is over 60,
 # and the main clause limit exceeds 100W,

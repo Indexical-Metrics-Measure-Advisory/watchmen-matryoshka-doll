@@ -1,12 +1,14 @@
 from datetime import datetime
 from typing import List
 
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends, Body, HTTPException
 
+from watchmen.auth.storage.user import get_user
 from watchmen.auth.user import User
 from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
+from watchmen.common.security.index import validate_jwt
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, check_fake_id
 from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics
@@ -24,7 +26,7 @@ from watchmen.console_space.storage.console_subject_storage import create_consol
     load_console_subject_by_report_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
-    load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id
+    load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id, load_dashboard_by_id
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id, load_chart_dataset, \
     load_chart_dataset_temp
 from watchmen.report.model.report import Report
@@ -252,3 +254,24 @@ async def delete_dashboard(dashboard_id, current_user: User = Depends(deps.get_c
 @router.get("/dashboard/rename", tags=["console"])
 async def rename_dashboard(dashboard_id, name: str, current_user: User = Depends(deps.get_current_user)):
     rename_dashboard_by_id(dashboard_id, name)
+
+
+##Share
+@router.get("/share/dashboard", tags=["share"], response_model=ConsoleDashboard)
+async def share_dashboard(dashboard_id: str, token: str):
+    security_payload = validate_jwt(token)
+    user = get_user(security_payload["sub"])
+    if user is None:
+        raise HTTPException(status_code=403)
+    dashboard = load_dashboard_by_id(dashboard_id)
+    return dashboard
+
+
+@router.get("/share/subject", tags=["share"], response_model=ConsoleSpaceSubject)
+async def share_subject(subject_id: str, token: str):
+    security_payload = validate_jwt(token)
+    user = get_user(security_payload["sub"])
+    if user is None:
+        raise HTTPException(status_code=403)
+    subject = load_console_subject_by_id(subject_id)
+    return subject

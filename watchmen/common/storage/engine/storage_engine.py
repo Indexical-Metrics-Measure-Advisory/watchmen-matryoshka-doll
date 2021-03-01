@@ -11,7 +11,7 @@ monitor_client = MongoClient(settings.MONGO_MONITOR_HOST, settings.MONGO_MONITOR
 
 db = client[WATCHMEN]
 
-# TODO adapter relationship db
+#   TODO adapter relationship db
 
 
 def get_client():

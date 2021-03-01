@@ -6,10 +6,11 @@ from watchmen.space.factors.topic import Topic
 
 TEMPLATE_YAML = "/insurance_template.yml"
 
+# TODO[future] knowledge template
 
 def load_template():
     current_path = os.path.abspath(os.path.dirname(__file__))
-    # TODO merge template
+
     # print(current_path)
     with open(current_path + TEMPLATE_YAML, 'r') as stream:
         try:
@@ -34,13 +35,3 @@ def load_template():
         except yaml.YAMLError as exc:
             print(exc)
 
-# def load_template_from_db():
-#     current_path = os.path.abspath(os.path.dirname(__file__))
-#     # TODO merge template
-#     print(current_path)
-#     with open(current_path + TEMPLATE_YAML, 'r') as stream:
-#         try:
-#             template = yaml.safe_load(stream)
-#             return template
-#         except yaml.YAMLError as exc:
-#             print(exc)
