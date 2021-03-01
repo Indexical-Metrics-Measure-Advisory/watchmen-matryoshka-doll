@@ -36,15 +36,15 @@ router = APIRouter()
 
 log = logging.getLogger("app." + __name__)
 
-
-class TopicSuggestionIn(BaseModel):
-    lake_schema_set: ModelSchemaSet = None
-    master_schema: Space = None
-
-
-class FactorSuggestionIn(BaseModel):
-    lake_schema: ModelSchema = None
-    topic: Topic = None
+#
+# class TopicSuggestionIn(BaseModel):
+#     lake_schema_set: ModelSchemaSet = None
+#     master_schema: Space = None
+#
+#
+# class FactorSuggestionIn(BaseModel):
+#     lake_schema: ModelSchema = None
+#     topic: Topic = None
 
 
 # @router.post("/admin/suggestion/topic", tags=["admin"])

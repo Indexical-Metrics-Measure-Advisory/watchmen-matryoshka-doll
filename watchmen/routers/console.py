@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Depends, Body, HTTPException
+from pydantic import BaseModel
 
 from watchmen.auth.storage.user import get_user
 from watchmen.auth.user import User
@@ -46,6 +47,16 @@ router = APIRouter()
 class AvailableSpace(Space):
     topics: List[Topic] = []
     topicRelations: List[TopicRelationship] = []
+
+
+class ShareDashboard(BaseModel):
+    dashboard:ConsoleDashboard=None
+    reports:List[Report]=[]
+
+
+class SharedSubject(BaseModel):
+    subject: ConsoleSpaceSubject=None
+
 
 
 @router.get("/space/available", tags=["console"], response_model=List[AvailableSpace])
@@ -257,14 +268,17 @@ async def rename_dashboard(dashboard_id, name: str, current_user: User = Depends
 
 
 ##Share
-@router.get("/share/dashboard", tags=["share"], response_model=ConsoleDashboard)
+@router.get("/share/dashboard", tags=["share"], response_model=ShareDashboard)
 async def share_dashboard(dashboard_id: str, token: str):
     security_payload = validate_jwt(token)
     user = get_user(security_payload["sub"])
     if user is None:
         raise HTTPException(status_code=403)
     dashboard = load_dashboard_by_id(dashboard_id)
-    return dashboard
+
+    reports = load_reports_by_ids(list(map(lambda report: report.reportId,dashboard.reports)))
+
+    return {"dashboard":dashboard,"reports":reports}
 
 
 @router.get("/share/subject", tags=["share"], response_model=ConsoleSpaceSubject)
@@ -274,4 +288,4 @@ async def share_subject(subject_id: str, token: str):
     if user is None:
         raise HTTPException(status_code=403)
     subject = load_console_subject_by_id(subject_id)
-    return subject
+    return {"subject":subject}
