@@ -2,7 +2,6 @@ import logging
 from typing import List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
-from pydantic import BaseModel
 
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
     get_user, load_user_list_by_name, update_user_storage
@@ -21,8 +20,6 @@ from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
     load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status, \
     update_pipeline_name
-from watchmen.raw_data.model_schema import ModelSchema
-from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.service.admin import create_space, update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
@@ -35,6 +32,7 @@ from watchmen.topic.topic import Topic
 router = APIRouter()
 
 log = logging.getLogger("app." + __name__)
+
 
 #
 # class TopicSuggestionIn(BaseModel):
@@ -61,7 +59,7 @@ log = logging.getLogger("app." + __name__)
 
 
 @router.post("/space", tags=["admin"], response_model=Space)
-async def save_space(space: Space):
+async def save_space(space: Space, current_user: User = Depends(deps.get_current_user)):
     if space.spaceId is None or check_fake_id(space.spaceId):
         return create_space(space)
     else:
@@ -69,46 +67,47 @@ async def save_space(space: Space):
 
 
 @router.post("/update/space", tags=["admin"], response_model=Space)
-async def update_space(space_id, space: Space = Body(...)):
+async def update_space(space_id, space: Space = Body(...), current_user: User = Depends(deps.get_current_user)):
     return update_space_by_id(space_id, space)
 
 
 @router.get("/space", tags=["admin"], response_model=Space)
-async def load_space(space_id):
+async def load_space(space_id: str, current_user: User = Depends(deps.get_current_user)):
     return get_space_by_id(space_id)
 
 
 @router.post("/space/name", tags=["admin"], response_model=DataPage)
-async def query_space_list(query_name: str, pagination: Pagination = Body(...)):
+async def query_space_list(query_name: str, pagination: Pagination = Body(...),
+                           current_user: User = Depends(deps.get_current_user)):
     result = query_space_with_pagination(query_name, pagination)
     return result
 
 
 @router.post("/space/ids", tags=["admin"], response_model=List[Space])
-async def query_space_list_by_ids(space_ids: List[str]):
+async def query_space_list_by_ids(space_ids: List[str], current_user: User = Depends(deps.get_current_user)):
     return get_space_list_by_ids(space_ids)
 
 
 @router.get("/query/space/group", tags=["admin"], response_model=List[Space])
-async def query_space_list_for_user_group(query_name: str):
+async def query_space_list_for_user_group(query_name: str, current_user: User = Depends(deps.get_current_user)):
     return load_space_list_by_name(query_name)
 
 
 # Topic
 
 @router.get("/topic", tags=["admin"], response_model=Topic)
-async def load_topic(topic_id):
+async def load_topic(topic_id, current_user: User = Depends(deps.get_current_user)):
     # print(topic_id)
     return get_topic_by_id(topic_id)
 
 
 @router.post("/topic", tags=["admin"], response_model=Topic)
-async def create_topic(topic: Topic):
+async def create_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
     return create_topic_schema(topic)
 
 
 @router.post("/save/topic", tags=["admin"], response_model=Topic)
-async def save_topic(topic: Topic):
+async def save_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
     if check_fake_id(topic.topicId):
         result = create_topic_schema(topic)
         create_or_update__presto_schema_fields(result)
@@ -123,7 +122,7 @@ async def save_topic(topic: Topic):
 
 
 @router.post("/update/topic", tags=["admin"], response_model=Topic)
-async def update_topic(topic_id, topic: Topic = Body(...)):
+async def update_topic(topic_id, topic: Topic = Body(...), current_user: User = Depends(deps.get_current_user)):
     topic = Topic.parse_obj(topic)
     data = update_topic_schema(topic_id, topic)
     # remove_presto_schema_by_name(topic.name)
@@ -132,30 +131,31 @@ async def update_topic(topic_id, topic: Topic = Body(...)):
 
 
 @router.post("/topic/name", tags=["admin"], response_model=DataPage)
-async def query_topic_list_by_name(query_name: str, pagination: Pagination = Body(...)):
+async def query_topic_list_by_name(query_name: str, pagination: Pagination = Body(...),
+                                   current_user: User = Depends(deps.get_current_user)):
     result = query_topic_list_with_pagination(query_name, pagination)
     return result
 
 
 @router.get("/topic/all", tags=["admin"], response_model=List[Topic])
-async def query_all_topic_list():
+async def query_all_topic_list(current_user: User = Depends(deps.get_current_user)):
     result = load_all_topic()
     return result
 
 
 @router.post("/topic/all/pages", tags=["admin"], response_model=DataPage)
-async def query_topic_list_for_pipeline(pagination: Pagination):
+async def query_topic_list_for_pipeline(pagination: Pagination, current_user: User = Depends(deps.get_current_user)):
     result = load_all_topic_list(pagination)
     return result
 
 
 @router.get("/query/topic/space", tags=["admin"], response_model=List[Topic])
-async def query_topic_list_for_space(query_name: str):
+async def query_topic_list_for_space(query_name: str, current_user: User = Depends(deps.get_current_user)):
     return load_topic_list_by_name(query_name)
 
 
 @router.post("/topic/ids", tags=["admin"], response_model=List[Topic])
-async def query_topic_list_by_ids(topic_ids: List[str]):
+async def query_topic_list_by_ids(topic_ids: List[str], current_user: User = Depends(deps.get_current_user)):
     return get_topic_list_by_ids(topic_ids)
 
 
@@ -170,29 +170,30 @@ async def save_user(user: User):
 
 
 @router.post("/user/name", tags=["admin"], response_model=DataPage)
-async def query_user_list_by_name(query_name: str, pagination: Pagination = Body(...)):
+async def query_user_list_by_name(query_name: str, pagination: Pagination = Body(...),
+                                  current_user: User = Depends(deps.get_current_user)):
     return query_users_by_name_with_pagination(query_name, pagination)
 
 
 @router.post("/user/ids", tags=["admin"], response_model=List[User])
-async def query_user_list_by_ids(user_ids: List[str]):
+async def query_user_list_by_ids(user_ids: List[str], current_user: User = Depends(deps.get_current_user)):
     return get_user_list_by_ids(user_ids)
 
 
 @router.get("/user", tags=["admin"], response_model=User)
-async def load_user(user_id: str):
+async def load_user(user_id: str, current_user: User = Depends(deps.get_current_user)):
     return get_user(user_id)
 
 
 @router.get("/query/user/group", tags=["admin"], response_model=List[User])
-async def query_user_list_for_user_group(query_name):
+async def query_user_list_for_user_group(query_name, current_user: User = Depends(deps.get_current_user)):
     return load_user_list_by_name(query_name)
 
 
 # User Group
 
 @router.post("/user_group", tags=["admin"], response_model=UserGroup)
-async def save_user_group(user_group: UserGroup):
+async def save_user_group(user_group: UserGroup, current_user: User = Depends(deps.get_current_user)):
     if check_fake_id(user_group.userGroupId):
         user_group.userGroupId = None
     if user_group.userGroupId is None or check_fake_id(user_group.userGroupId):
@@ -202,34 +203,35 @@ async def save_user_group(user_group: UserGroup):
 
 
 @router.post("/update/user_group", tags=["admin"], response_model=UserGroup)
-async def update_user_group(user_group: UserGroup):
+async def update_user_group(user_group: UserGroup, current_user: User = Depends(deps.get_current_user)):
     return update_user_group_storage(user_group)
 
 
 @router.get("/query/user_group/space", tags=["admin"], response_model=List[UserGroup])
-async def query_group_list_for_space(query_name: str):
+async def query_group_list_for_space(query_name: str, current_user: User = Depends(deps.get_current_user)):
     return load_group_list_by_name(query_name)
 
 
 @router.get("/user_group", tags=["admin"], response_model=UserGroup)
-async def load_user_group(user_group_id):
+async def load_user_group(user_group_id, current_user: User = Depends(deps.get_current_user)):
     return get_user_group(user_group_id)
 
 
 @router.post("/user_groups/ids", tags=["admin"], response_model=List[UserGroup])
-async def query_user_groups_by_ids(user_group_ids: List[str]):
+async def query_user_groups_by_ids(user_group_ids: List[str], current_user: User = Depends(deps.get_current_user)):
     return get_user_group_list_by_ids(user_group_ids)
 
 
 @router.post("/user_group/name", tags=["admin"], response_model=DataPage)
-async def query_user_groups_list_by_name(query_name: str, pagination: Pagination = Body(...)):
+async def query_user_groups_list_by_name(query_name: str, pagination: Pagination = Body(...),
+                                         current_user: User = Depends(deps.get_current_user)):
     return query_user_groups_by_name_with_paginate(query_name, pagination)
 
 
 # pipeline
 
 @router.post("/pipeline", tags=["admin"], response_model=Pipeline)
-async def save_pipeline(pipeline: Pipeline):
+async def save_pipeline(pipeline: Pipeline, current_user: User = Depends(deps.get_current_user)):
     if pipeline.pipelineId.startswith("f-"):
         return create_pipeline(pipeline)
     else:
@@ -237,7 +239,7 @@ async def save_pipeline(pipeline: Pipeline):
 
 
 @router.get("/pipeline", tags=["admin"], response_model=PipelineFlow)
-async def load_pipeline(topic_id):
+async def load_pipeline(topic_id, current_user: User = Depends(deps.get_current_user)):
     # pipeline_list_produce = []
     result = load_pipeline_by_topic_id(topic_id)
     pipeline_list_produce = [*result]
@@ -252,17 +254,17 @@ async def load_pipeline(topic_id):
 
 
 @router.get("/pipeline/all", tags=["admin"], response_model=List[Pipeline])
-async def load_all_pipelines():
+async def load_all_pipelines(current_user: User = Depends(deps.get_current_user)):
     return load_pipeline_list()
 
 
 @router.get("/pipeline/enabled", tags=["admin"])
-async def update_pipeline_enabled(pipeline_id, enabled):
+async def update_pipeline_enabled(pipeline_id, enabled, current_user: User = Depends(deps.get_current_user)):
     update_pipeline_status(pipeline_id, enabled)
 
 
 @router.get("/pipeline/rename", tags=["admin"])
-async def rename_pipeline(pipeline_id, name):
+async def rename_pipeline(pipeline_id, name, current_user: User = Depends(deps.get_current_user)):
     update_pipeline_name(pipeline_id, name)
 
 
@@ -289,7 +291,3 @@ async def load_pipeline_graph_by_user(current_user: User = Depends(deps.get_curr
 # Report
 
 # TODO report API
-
-
-
-

@@ -89,7 +89,7 @@ async def connect_to_space(space_id, name, current_user: User = Depends(deps.get
 
 
 @router.get("/console_space/rename", tags=["console"])
-async def rename_console_space(connect_id: str, name: str):
+async def rename_console_space(connect_id: str, name: str,current_user: User = Depends(deps.get_current_user)):
     rename_console_space_by_id(connect_id, name)
 
 
@@ -120,7 +120,7 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
 
 
 @router.post("/console_space/subject", tags=["console"], response_model=ConsoleSpaceSubject)
-async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body(...)):
+async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body(...),current_user: User = Depends(deps.get_current_user)):
     if check_fake_id(subject.subjectId):
         subject.subjectId = None
         console_space = load_console_space_by_id(connect_id)
@@ -149,7 +149,7 @@ async def rename_console_space_subject(subject_id: str, name: str, current_user:
 
 
 @router.get("/console_space/group/rename", tags=["console"])
-async def rename_console_group_subject(group_id: str, name: str):
+async def rename_console_group_subject(group_id: str, name: str,current_user: User = Depends(deps.get_current_user)):
     rename_console_group_by_id(group_id, name)
 
 
@@ -216,7 +216,7 @@ async def update_report(report: Report, current_user: User = Depends(deps.get_cu
 
 
 @router.get("/console_space/subject/report/delete", tags=["console"])
-async def delete_report(report_id):
+async def delete_report(report_id,current_user: User = Depends(deps.get_current_user)):
     subject = load_console_subject_by_report_id(report_id)
     subject.reportIds.remove(report_id)
     update_console_subject(subject)
@@ -230,7 +230,7 @@ async def load_chart(report_id, current_user: User = Depends(deps.get_current_us
 
 
 @router.post("/console_space/dataset/chart/temporary", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
-async def load_temporary_chart(report: Report):
+async def load_temporary_chart(report: Report,current_user: User = Depends(deps.get_current_user)):
     result = load_chart_dataset_temp(report)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
