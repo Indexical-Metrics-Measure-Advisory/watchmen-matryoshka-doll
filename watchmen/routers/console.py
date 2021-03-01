@@ -201,7 +201,7 @@ async def load_my_console_space_graph(current_user: User = Depends(deps.get_curr
 @router.post("/console_space/subject/report/save", tags=["console"], response_model=Report)
 async def save_report(subject_id: str, report: Report, current_user: User = Depends(deps.get_current_user)):
     report.reportId = get_surrogate_key()
-    report.subjectId = subject_id
+    # report.subjectId = subject_id
     new_report = create_report(report)
     subject = load_console_subject_by_id(subject_id)
     subject.reportIds.append(report.reportId)

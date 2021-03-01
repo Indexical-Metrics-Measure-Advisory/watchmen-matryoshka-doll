@@ -62,4 +62,4 @@ class Report(MongoModel):
     chart: Chart = None
     createdAt: str = None
     lastVisitTime: str = None
-    subjectId: str = None
+    # subjectId: str = None
