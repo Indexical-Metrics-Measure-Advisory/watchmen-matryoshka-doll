@@ -4,14 +4,14 @@ from watchmen.common.mongo_model import MongoModel
 
 
 class FactorType(Enum):
-    SEQUENCE = "sequence",
-    NUMBER = "number",
-    TEXT = "text",
-    DATETIME = "datetime",
-    BOOLEAN = "boolean",
-    ENUM = "enum",
-    OBJECT = "object",
-    ARRAY = "array",
+    SEQUENCE = "sequence"
+    NUMBER = "number"
+    TEXT = "text"
+    DATETIME = "datetime"
+    BOOLEAN = "boolean"
+    ENUM = "enum"
+    OBJECT = "object"
+    ARRAY = "array"
 
 
 class Factor(MongoModel):
