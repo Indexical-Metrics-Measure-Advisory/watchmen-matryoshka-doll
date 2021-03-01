@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enum import Enum
 from typing import List
 
@@ -8,7 +9,7 @@ from watchmen.common.parameter import Parameter
 
 class Filter(BaseModel):
     jointType: str = None
-    filters: List['Filter'] = None
+    filters: List[Filter] = None
     left: Parameter = None
     right: Parameter = None
     operator: str = None

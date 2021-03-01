@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enum import Enum
 from typing import List
 
@@ -13,7 +14,7 @@ class ParameterKind(Enum):
 class Parameter(BaseModel):
     kind: str = None
     type: str = None
-    parameters: List['Parameter'] = []
+    parameters: List[Parameter] = []
     value: str = None
     topicId: str = None
     factorId: str = None
