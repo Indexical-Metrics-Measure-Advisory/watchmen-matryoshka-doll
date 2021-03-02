@@ -8,8 +8,7 @@ import pandas as pd
 
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor
-from watchmen.plugin.langid_detect import detect
-from watchmen.plugin.service.plugin_service import load_address_plugin
+from watchmen.plugin.service.plugin_service import run_plugin
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
@@ -90,31 +89,24 @@ def run_arithmetic_value_list(arithmetic, source_value_list):
 
 
 def __process_factor_type(target_factor, source_value_list):
-    print(target_factor)
-    print(target_factor.type == "address")
     results = []
-    if target_factor.type == "address" and source_value_list is not None:
-        print(source_value_list)
+    if source_value_list is not None:
         if type(source_value_list) == list:
-
             for source_value in source_value_list:
                 if source_value is not None:
-                    language = detect(source_value)
-                    plugin = load_address_plugin(language[0])
-                    result = plugin.run(source_value)
-                    results.append(result)
+                    result = run_plugin(target_factor.type, source_value)
+                    if result is not None:
+                        results.append(result)
             return results
         else:
-            language = detect(source_value_list)
-            plugin = load_address_plugin(language[0])
-            result = plugin.run(source_value_list)
-            return result
+            return run_plugin(target_factor.type, source_value_list)
 
 
 def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
     mapping_logs = []
 
     mapping_results = []
+
     for mapping in mapping_list:
         mapping_log = {}
         source = mapping.source
@@ -130,20 +122,21 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         target_factor = get_factor(mapping.factorId, target_topic)
 
         mapping_log["target"] = target_factor
-        print("source_value_list", source_value_list)
+        # print("source_value_list", source_value_list)
 
         result = __process_factor_type(target_factor, source_value_list)
-        print("result", result)
-        if result is not None:
-            if len(result) == 1:
-                mapping_results.append(result[0])
-
+        merge_plugin_results(mapping_results, result)
         mapping_results.append({target_factor.name: source_value_list})
 
         mapping_logs.append(mapping_log)
 
     mapping_data_list = merge_mapping_data(mapping_results)
     return mapping_data_list, mapping_logs
+
+
+def merge_plugin_results(mapping_results, result):
+    if result is not None and len(result) > 0:
+        mapping_results.append(result[0])
 
 
 def __is_date_func(source_type):

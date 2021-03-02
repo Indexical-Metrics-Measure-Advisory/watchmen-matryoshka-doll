@@ -1,22 +1,14 @@
-import importlib
-
-PLUGIN__MODULE_PATH = "watchmen.plugin."
+from watchmen.plugin.util.index import find_plugin_func
 
 
-def find_plugin_func(plugin_type):
-    plugin = importlib.import_module(PLUGIN__MODULE_PATH + plugin_type)
-    return plugin
-
-
-def build_plugin_name(language):
-    return "address_" + language
-
-
-def load_address_plugin(language):
-    try:
-        plugin_name = build_plugin_name(language)
-        plugin = find_plugin_func(plugin_name)
-        return plugin
-    except:
-        print("no such plugin")
+def run_plugin(factor_type,value):
+    plugin = find_plugin_func(factor_type)
+    if plugin is None:
         return None
+    else:
+        return plugin.run(value)
+
+
+# TODO init plugin system
+def init():
+    pass
