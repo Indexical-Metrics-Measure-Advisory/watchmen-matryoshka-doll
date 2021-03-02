@@ -188,7 +188,7 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...),
 async def save_console_space_graph(console_space_graph: ConnectedSpaceGraphics,
                                    current_user: User = Depends(deps.get_current_user)):
     old_console_space_graph = load_console_space_graph_by_user_id(current_user.userId)
-    console_space_graph.userId = current_user.userIds
+    console_space_graph.userId = current_user.userId
     if old_console_space_graph is None:
         create_console_space_graph(console_space_graph)
     else:

@@ -20,7 +20,8 @@ def authenticate(username, password):
 
 
 def __is_initialized(db = Depends(deps.get_db)):
-    db.get_connection
+    pass
+    # db.get_connection
 
 
 def init_superuser():
