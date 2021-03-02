@@ -298,7 +298,11 @@ async def share_subject(subject_id: str, token: str):
 
 @router.get('/favorites/me', tags=["console"], response_model=Favorite)
 async def load_favorites_by_user(current_user: User = Depends(deps.get_current_user)):
-    return load_favorite(current_user.userId)
+    result =  load_favorite(current_user.userId)
+    if result is None:
+        return Favorite()
+    else:
+        return result
 
 
 @router.post('/favorites/save', tags=["console"], response_model=Favorite)
