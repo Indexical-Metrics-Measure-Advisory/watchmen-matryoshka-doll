@@ -16,6 +16,6 @@ def run(address):
     language = detect(address)
     address_plugin = load_address_plugin(language[0])
     if address_plugin is None:
-        return address
+        return None
     else:
         return address_plugin.run(address)

@@ -16,6 +16,7 @@ from watchmen.common.utils.data_utils import build_data_pages, check_fake_id
 from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject, \
     ConsoleSpaceSubjectChartDataSet
+from watchmen.console_space.model.favorite import Favorite
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
     delete_console_space_and_sub_data
 from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
@@ -26,6 +27,7 @@ from watchmen.console_space.storage.console_space_storage import save_console_sp
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
     load_console_subject_list_by_ids, update_console_subject, rename_console_subject_by_id, load_console_subject_by_id, \
     load_console_subject_by_report_id
+from watchmen.console_space.storage.favorite_storage import load_favorite, save_favorite
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
     load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id, load_dashboard_by_id
@@ -89,7 +91,7 @@ async def connect_to_space(space_id, name, current_user: User = Depends(deps.get
 
 
 @router.get("/console_space/rename", tags=["console"])
-async def rename_console_space(connect_id: str, name: str,current_user: User = Depends(deps.get_current_user)):
+async def rename_console_space(connect_id: str, name: str, current_user: User = Depends(deps.get_current_user)):
     rename_console_space_by_id(connect_id, name)
 
 
@@ -120,7 +122,8 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
 
 
 @router.post("/console_space/subject", tags=["console"], response_model=ConsoleSpaceSubject)
-async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body(...),current_user: User = Depends(deps.get_current_user)):
+async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body(...),
+                                 current_user: User = Depends(deps.get_current_user)):
     if check_fake_id(subject.subjectId):
         subject.subjectId = None
         console_space = load_console_space_by_id(connect_id)
@@ -149,7 +152,7 @@ async def rename_console_space_subject(subject_id: str, name: str, current_user:
 
 
 @router.get("/console_space/group/rename", tags=["console"])
-async def rename_console_group_subject(group_id: str, name: str,current_user: User = Depends(deps.get_current_user)):
+async def rename_console_group_subject(group_id: str, name: str, current_user: User = Depends(deps.get_current_user)):
     rename_console_group_by_id(group_id, name)
 
 
@@ -216,7 +219,7 @@ async def update_report(report: Report, current_user: User = Depends(deps.get_cu
 
 
 @router.get("/console_space/subject/report/delete", tags=["console"])
-async def delete_report(report_id,current_user: User = Depends(deps.get_current_user)):
+async def delete_report(report_id, current_user: User = Depends(deps.get_current_user)):
     subject = load_console_subject_by_report_id(report_id)
     subject.reportIds.remove(report_id)
     update_console_subject(subject)
@@ -230,7 +233,7 @@ async def load_chart(report_id, current_user: User = Depends(deps.get_current_us
 
 
 @router.post("/console_space/dataset/chart/temporary", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
-async def load_temporary_chart(report: Report,current_user: User = Depends(deps.get_current_user)):
+async def load_temporary_chart(report: Report, current_user: User = Depends(deps.get_current_user)):
     result = load_chart_dataset_temp(report)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
@@ -289,3 +292,17 @@ async def share_subject(subject_id: str, token: str):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     subject = load_console_subject_by_id(subject_id)
     return {"subject": subject}
+
+
+## FAVORITE
+
+@router.get('/favorites/me', tags=["console"], response_model=Favorite)
+async def load_favorites_by_user(current_user: User = Depends(deps.get_current_user)):
+    return load_favorite(current_user.userId)
+
+
+@router.post('/favorites/save', tags=["console"], response_model=Favorite)
+async def save_favorite_with_user(favorite: Favorite, current_user: User = Depends(deps.get_current_user)):
+    favorite.userId = current_user.userId
+    save_favorite(favorite)
+    return favorite

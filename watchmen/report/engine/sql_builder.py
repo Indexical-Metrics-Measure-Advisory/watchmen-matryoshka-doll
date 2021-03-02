@@ -248,6 +248,8 @@ def _indicator(q: QueryBuilder, indicator: ReportIndicator, column: Column) -> Q
         return q.select(fn.Max(parse_parameter(column.parameter)))
     elif indicator.arithmetic == "min":
         return q.select(fn.Min(parse_parameter(column.parameter)))
+    elif indicator.arithmetic == "count":
+        return q.select(fn.Count(parse_parameter(column.parameter)))
     else:
         return q.select(fn.Max(parse_parameter(column.parameter)))
 

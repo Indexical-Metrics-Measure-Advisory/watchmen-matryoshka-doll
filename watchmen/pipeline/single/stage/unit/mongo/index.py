@@ -126,6 +126,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
 
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
+        # print(mapping_results)
         mapping_results.append({target_factor.name: source_value_list})
 
         mapping_logs.append(mapping_log)
