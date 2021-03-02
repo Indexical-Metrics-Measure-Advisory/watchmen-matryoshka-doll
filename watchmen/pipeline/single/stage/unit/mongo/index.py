@@ -149,7 +149,10 @@ def __week_number_of_month(date_value):
 
 
 def __process_date_func(source, value):
-    log.info("value : {0}".format(value))
+    log.info("source type {0}  value : {1}".format(source.type,value))
+    print("source",source)
+    print("value",value)
+
     arithmetic = source.type
     if arithmetic == NONE:
         return value
@@ -203,6 +206,7 @@ def __process_operator(operator, value_list):
 
 
 def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
+    print("__process_compute_kind ",__is_date_func(source.type))
     if __is_date_func(source.type):
         value_list = get_source_value_list(pipeline_topic, raw_data, [], Parameter.parse_obj(source.parameters[0]))
         if type(value_list) == list:
@@ -211,7 +215,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
                 result.append(__process_date_func(source, value))
             return result
         else:
-            return
+            return __process_date_func(source, value_list)
     elif __is_calculation_operation(source.type):
         operator = __get_operator(source.type)
         value_list = []

@@ -81,7 +81,7 @@ def build_query_for_subject(console_subject):
     return query
 
 
-def build_count_query_for_subject(console_subject,columns_dict,report):
+def build_count_query_for_subject_chart(console_subject,columns_dict,report):
     dataset = console_subject.dataset
     query = None
     # indicator = report.indicators[0]
@@ -99,13 +99,27 @@ def build_count_query_for_subject(console_subject,columns_dict,report):
     return query
 
 
+def build_count_query_for_subject(console_subject):
+    dataset = console_subject.dataset
+    query = None
+    # indicator = report.indicators[0]
+    if dataset is not None:
+        query = _from(dataset.columns[0])
+        query = query.select(fn.Count("*"))
+        for join in dataset.joins:
+            query = _join(query, join)
+        if dataset.filters:
+            query = _filter(query, dataset.filters)
+    return query
+
+
 def build_query_for_subject_chart(chart_id, report=None):
     console_subject = load_console_subject_by_report_id(chart_id)
     columns_dict = column_list_convert_dict(console_subject.dataset.columns)
     if report is None:
         report = load_report_by_id(chart_id)
     if report.chart.type == ChartType.COUNT:
-        q = build_count_query_for_subject(console_subject,columns_dict,report)
+        q = build_count_query_for_subject_chart(console_subject,columns_dict,report)
     else:
         dataset = console_subject.dataset
         q = _from(dataset.columns[0])
