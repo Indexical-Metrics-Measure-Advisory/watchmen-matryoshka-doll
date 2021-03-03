@@ -39,85 +39,40 @@ def parse_parameter(parameter: Parameter):
                     result = parse_parameter(item)
             return result
         elif parameter.type == Operator.subtract:
-            pass
-        elif parameter.type == Operator.subtract:
-            pass
-        elif parameter.type == Operator.multiply:
-            pass
-        elif parameter.type == Operator.divide:
-            pass
-        elif parameter.type == Operator.modulus:
-            pass
-        # todo custom function
-
-
-'''
-def parse_parameter(parameter: Parameter):
-    if isinstance(parameter, dict):
-        return parse_dict_parameter(parameter)
-    if isinstance(parameter, Parameter):
-        return parse_object_parameter(parameter)
-
-
-def parse_object_parameter(parameter: Parameter):
-    if parameter.kind == "topic":
-        topic = get_topic_by_id(parameter.topicId)
-        topic_col_name = build_collection_name(topic.name)
-        factor = get_factor(parameter.factorId, topic)
-        return Table(topic_col_name)[factor.name]
-    elif parameter.kind == 'constant':
-        return parameter.value
-    elif parameter.kind == 'computed':
-        if parameter.type == Operator.add:
             result = None
             for item in parameter.parameters:
                 if result:
-                    result = operator.add(result, parse_parameter(item))
+                    result = operator.sub(result, parse_parameter(item))
                 else:
                     result = parse_parameter(item)
             return result
-        elif parameter.type == Operator.subtract:
-            pass
-        elif parameter.type == Operator.subtract:
-            pass
         elif parameter.type == Operator.multiply:
-            pass
-        elif parameter.type == Operator.divide:
-            pass
-        elif parameter.type == Operator.modulus:
-            pass
-        # todo custom function
-
-
-def parse_dict_parameter(parameter: dict):
-    if parameter.get('kind') == "topic":
-        topic = get_topic_by_id(parameter.get('topicId'))
-        topic_col_name = build_collection_name(topic.name)
-        factor = get_factor(parameter.get('factorId'), topic)
-        return Table(topic_col_name)[factor.name]
-    elif parameter.get('kind') == 'constant':
-        return parameter.get('value')
-    elif parameter.get('kind') == 'computed':
-        if parameter.get('type') == Operator.add:
             result = None
-            for item in parameter.get('parameters', []):
+            for item in parameter.parameters:
                 if result:
-                    result = operator.add(result, parse_parameter(item))
+                    result = operator.mul(result, parse_parameter(item))
                 else:
                     result = parse_parameter(item)
             return result
-        elif parameter.get('type') == Operator.subtract:
-            pass
-        elif parameter.get('type') == Operator.subtract:
-            pass
-        elif parameter.get('type') == Operator.multiply:
-            pass
-        elif parameter.get('type') == Operator.divide:
-            pass
-        elif parameter.get('type') == Operator.modulus:
-            pass
-        # todo custom function
-'''
+        elif parameter.type == Operator.divide:
+            result = None
+            for item in parameter.parameters:
+                if result:
+                    result = operator.truediv(result, parse_parameter(item))
+                else:
+                    result = parse_parameter(item)
+            return result
+        elif parameter.type == Operator.modulus:
+            result = None
+            for item in parameter.parameters:
+                if result:
+                    result = operator.mod(result, parse_parameter(item))
+                else:
+                    result = parse_parameter(item)
+            return result
+        else:
+            # TODO more operator support
+            raise Exception("operator is not supported")
 
 
 def _select(q: QueryBuilder, column: Column) -> QueryBuilder:
