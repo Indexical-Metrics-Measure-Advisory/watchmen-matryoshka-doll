@@ -17,17 +17,19 @@ from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGr
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject, \
     ConsoleSpaceSubjectChartDataSet
 from watchmen.console_space.model.favorite import Favorite
+from watchmen.console_space.model.last_snapshot import LastSnapshot
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
     delete_console_space_and_sub_data
 from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
     rename_console_group_by_id
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
     load_console_space_by_id, rename_console_space_by_id, create_console_space_graph, update_console_space_graph, \
-    load_console_space_graph_by_user_id
+    load_console_space_graph_by_user_id, load_console_space_graph
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
     load_console_subject_list_by_ids, update_console_subject, rename_console_subject_by_id, load_console_subject_by_id, \
     load_console_subject_by_report_id
 from watchmen.console_space.storage.favorite_storage import load_favorite, save_favorite
+from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot, save_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
     load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id, load_dashboard_by_id
@@ -187,7 +189,7 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...),
 @router.post("/console_space/graphics", tags=["console"], response_model=ConnectedSpaceGraphics)
 async def save_console_space_graph(console_space_graph: ConnectedSpaceGraphics,
                                    current_user: User = Depends(deps.get_current_user)):
-    old_console_space_graph = load_console_space_graph_by_user_id(current_user.userId)
+    old_console_space_graph = load_console_space_graph(console_space_graph.connectId)
     console_space_graph.userId = current_user.userId
     if old_console_space_graph is None:
         create_console_space_graph(console_space_graph)
@@ -298,7 +300,7 @@ async def share_subject(subject_id: str, token: str):
 
 @router.get('/favorites/me', tags=["console"], response_model=Favorite)
 async def load_favorites_by_user(current_user: User = Depends(deps.get_current_user)):
-    result =  load_favorite(current_user.userId)
+    result = load_favorite(current_user.userId)
     if result is None:
         return Favorite()
     else:
@@ -310,3 +312,21 @@ async def save_favorite_with_user(favorite: Favorite, current_user: User = Depen
     favorite.userId = current_user.userId
     save_favorite(favorite)
     return favorite
+
+
+## LastSnapshot
+@router.get('/last_snapshot/me', tags=["console"], response_model=LastSnapshot)
+async def load_last_snapshot_by_user(current_user: User = Depends(deps.get_current_user)):
+    result = load_last_snapshot(current_user.userId)
+    if result is None:
+        return LastSnapshot()
+    else:
+        return result
+
+
+@router.post('/last_snapshot/save', tags=["console"], response_model=LastSnapshot)
+async def save_last_snapshot_with_user(last_snapshot: LastSnapshot,
+                                       current_user: User = Depends(deps.get_current_user)):
+    last_snapshot.userId = current_user.userId
+    save_last_snapshot(last_snapshot)
+    return last_snapshot

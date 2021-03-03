@@ -27,5 +27,5 @@ def init():
 #
 # log.debug('Debug message, should only appear in the file.')
 # log.info('Info message, should appear in file and stdout.')
-# log.warning('Warning message, should appear in file and stdout.')
+# log.warning('Warning message, should appear in file and stdout.   ')
 # log.error('Error message, should appear in file and stdout.')

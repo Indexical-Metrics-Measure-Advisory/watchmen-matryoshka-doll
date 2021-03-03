@@ -54,10 +54,16 @@ def create_console_space_graph(console_space_graph):
 
 
 def update_console_space_graph(console_space_graph):
-    console_space_graph_collection.update_one({"userId": console_space_graph.userId},
+    console_space_graph_collection.update_one({"connectId": console_space_graph.connectId},
                                               {"$set": console_space_graph.dict()})
 
 
 def load_console_space_graph_by_user_id(user_id):
     result = console_space_graph_collection.find({"userId": user_id})
     return list(result)
+
+
+def load_console_space_graph(connect_id):
+    result = console_space_graph_collection.find_one({"connectId": connect_id})
+    return result
+
