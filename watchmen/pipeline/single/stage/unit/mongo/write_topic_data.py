@@ -32,3 +32,4 @@ def find_and_modify_topic_data(topic_name, query, update_data):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
     collection.find_and_modify(query=query, update=update_data)
+    trigger_pipeline(topic_name, update_data, TriggerType.update)

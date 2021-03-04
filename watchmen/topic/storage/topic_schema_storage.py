@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 import pymongo
 from bson import regex
 
@@ -34,6 +36,7 @@ def get_topic_by_name(topic_name):
     return topic_col.find_one({"code": topic_name})
 
 
+@lru_cache(maxsize=100)
 def get_topic(topic_name) -> Topic:
     result = topic_col.find_one({"code": topic_name})
     if result is None:
@@ -55,7 +58,8 @@ def check_topic_exist(topic_name, topic_type) -> bool:
         return True
 
 
-# @lru_cache(maxsize=100)
+# TODO clear cache
+@lru_cache(maxsize=100)
 def get_topic_by_id(topic_id):
     result = topic_col.find_one({"topicId": topic_id})
     return Topic.parse_obj(result)

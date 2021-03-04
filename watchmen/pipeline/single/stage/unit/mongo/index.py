@@ -12,6 +12,16 @@ from watchmen.plugin.service.plugin_service import run_plugin
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
+CONSTANT = "constant"
+
+TOPIC = "topic"
+
+VALUE = "value"
+
+OPERATOR = "operator"
+
+NAME = "name"
+
 DOT = "."
 
 log = logging.getLogger("app." + __name__)
@@ -118,7 +128,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, result, source))
 
-        mapping_log["value"] = source_value_list
+        mapping_log[VALUE] = source_value_list
         target_factor = get_factor(mapping.factorId, target_topic)
 
         mapping_log["target"] = target_factor
@@ -149,7 +159,7 @@ def __week_number_of_month(date_value):
 
 
 def __process_date_func(source, value):
-    log.info("source type {0}  value : {1}".format(source.type,value))
+    log.info("source type {0}  value : {1}".format(source.type, value))
     # print("source",source)
     # print("value",value)
 
@@ -231,10 +241,10 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
 
 
 def get_source_value_list(pipeline_topic, raw_data, result, parameter):
-    if parameter.kind == "topic":
+    if parameter.kind == TOPIC:
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, result, source_factor)
-    elif parameter.kind == "constant":
+    elif parameter.kind == CONSTANT:
         return parameter.value
     elif parameter.kind == "computed":
         return __process_compute_kind(parameter, raw_data, pipeline_topic)
@@ -295,7 +305,7 @@ def build_right_query(condition, pipeline_topic, raw_data, target_topic):
         left_factor = get_factor(sub_condition.left.factorId, target_topic)
         right_value_list = get_source_factor_value(raw_data, [], right_factor)
         where_condition.append(
-            {"name": left_factor.name, "value": right_value_list, "operator": sub_condition.operator,
+            {NAME: left_factor.name, VALUE: right_value_list, OPERATOR: sub_condition.operator,
              "right_factor": right_factor})
         # left_value = get_value(sub_condition.left,target_topic_data,target_topic)
     return where_condition
@@ -321,11 +331,11 @@ def get_factor_value(index, factor_list, raw_data, result):
 def filter_condition(where_condition, index=0):
     filter_conditions = []
     for condition in where_condition:
-        filter_condition = {"name": condition["name"], "operator": condition["operator"]}
-        if type(condition["value"]) is list:
-            filter_condition["value"] = condition["value"][index]
+        filter_condition = {NAME: condition[NAME], OPERATOR: condition[OPERATOR]}
+        if type(condition[VALUE]) is list:
+            filter_condition[VALUE] = condition[VALUE][index]
         else:
-            filter_condition["value"] = condition["value"]
+            filter_condition[VALUE] = condition[VALUE]
 
         filter_conditions.append(filter_condition)
 
@@ -333,7 +343,7 @@ def filter_condition(where_condition, index=0):
 
 
 def __is_pipeline_topic(parameter: Parameter, pipeline_topic: Topic):
-    if parameter.kind == "topic" and parameter.topicId == pipeline_topic.topicId:
+    if parameter.kind == TOPIC and parameter.topicId == pipeline_topic.topicId:
         return True
     else:
         return False
@@ -360,7 +370,7 @@ def find_pipeline_topic_condition(conditions: ParameterJoint, pipeline_topic, ra
             value_list = get_source_value_list(pipeline_topic, raw_data, [], source_parameter)
             target_factor = get_factor(target_parameter.factorId, target_topic)
             where_condition.append(
-                {"name": target_factor.name, "value": value_list, "operator": condition.operator,
+                {NAME: target_factor.name, VALUE: value_list, OPERATOR: condition.operator,
                  "source_factor": source_factor})
 
     return where_condition
@@ -373,19 +383,19 @@ def build_mongo_condition(where_condition, jointType):
     result = {}
     if len(where_condition) > 1:
         for condition in where_condition:
-            if condition["operator"] == "equals":
-                name = condition["name"]
-                value = condition["value"]
+            if condition[OPERATOR] == "equals":
+                name = condition[NAME]
+                value = condition[VALUE]
                 result[name] = value
         return result
     else:
         condition = where_condition[0]
-        if condition["operator"] == "equals":
-            return {condition["name"]: condition["value"]}
+        if condition[OPERATOR] == "equals":
+            return {condition[NAME]: condition[VALUE]}
 
 
 def process_variable(variable_name):
     if variable_name.startswith("{"):
         return "memory", variable_name.replace("{", "").replace("}", "")
     else:
-        return "constant", variable_name
+        return CONSTANT, variable_name

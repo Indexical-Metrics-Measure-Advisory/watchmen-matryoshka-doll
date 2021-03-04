@@ -6,6 +6,7 @@ from watchmen.space.factors.topic import Topic
 
 TEMPLATE_YAML = "/insurance_template.yml"
 
+
 # TODO[future] knowledge template
 
 def load_template():
@@ -34,4 +35,3 @@ def load_template():
             return topic_list
         except yaml.YAMLError as exc:
             print(exc)
-

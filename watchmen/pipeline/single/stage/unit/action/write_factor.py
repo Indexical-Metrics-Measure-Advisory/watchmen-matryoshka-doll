@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+import time
 
 from watchmen.monitor.model.pipeline_monitor import UnitStatus, WriteFactorAction
 from watchmen.pipeline.model.pipeline import UnitAction
@@ -9,7 +9,7 @@ from watchmen.pipeline.single.stage.unit.mongo.index import find_pipeline_topic_
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import find_and_modify_topic_data, insert_topic_data
 from watchmen.pipeline.single.stage.unit.utils import PIPELINE_UID
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value, get_execute_time
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
 
@@ -46,7 +46,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
         unit_action_status = UnitStatus()
         unit_action_status.type = action.type
-        start_time = datetime.now()
+        start = time.time()
         pipeline_uid = context[PIPELINE_UID]
         # TODO  action_log
         action_log = WriteFactorAction()
@@ -86,8 +86,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 find_and_modify_topic_data(target_topic.name,
                                            build_mongo_condition(filter_where_condition, conditions.jointType),
                                            update_data)
-
-        unit_action_status.complete_time = get_execute_time(start_time)
+        elapsed_time = time.time() - start
+        unit_action_status.complete_time = elapsed_time
         return context, unit_action_status
 
     return write_factor

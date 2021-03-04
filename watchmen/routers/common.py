@@ -18,6 +18,7 @@ async def health():
 @router.post("/topic/data", tags=["common"])
 async def save_topic_data(topic_event: TopicEvent):
     # TODO user check URP
+    # start = time.process_time()
 
     topic = get_topic(topic_event.code)
     if topic is None:
@@ -25,4 +26,11 @@ async def save_topic_data(topic_event: TopicEvent):
 
     add_audit_columns(topic_event.data, INSERT)
     save_topic_instance(topic_event.code, topic_event.data)
+    await __trigger_pipeline(topic_event)
+    # elapsed_time = time.process_time() - start
+    # end = time.time()
+    # print(elapsed_time)
+
+
+async def __trigger_pipeline(topic_event):
     trigger_pipeline(topic_event.code, topic_event.data, TriggerType.insert)

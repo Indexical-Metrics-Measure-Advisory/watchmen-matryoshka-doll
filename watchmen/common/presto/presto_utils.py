@@ -1,5 +1,6 @@
 import logging
 
+from watchmen.common.constants import presto_constants
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_collection_name, is_presto_varchar_type, is_presto_int_type, \
     is_presto_datetime
@@ -13,6 +14,10 @@ collection = db.get_collection('_schema')
 
 log = logging.getLogger("app." + __name__)
 
+presto_fields = [{"name": "_id", "type": "ObjectId", "hidden": True},
+                     {"name": "insert_time", "type": "timestamp", "hidden": False},
+                     {"name": "update_time", "type": "timestamp", "hidden": False}]
+
 
 def remove_presto_schema_by_name(topic_name):
     try:
@@ -23,23 +28,23 @@ def remove_presto_schema_by_name(topic_name):
 
 def __convert_presto_type(factor_type):
     if is_presto_varchar_type(factor_type):
-        return "varchar"
+        return presto_constants.VARCHAR
     elif is_presto_int_type(factor_type):
-        return "integer"
+        return presto_constants.INTEGER
     elif factor_type == BOOLEAN:
-        return "timestamp"
+        return presto_constants.TIMESTAMP
     elif is_presto_datetime(factor_type):
-        return "date"
+        return presto_constants.DATE
     elif factor_type == NUMBER or factor_type:
-        return "double"
+        return presto_constants.DOUBLE
     else:
-        return "varchar"
+        return presto_constants.VARCHAR
 
 
 def __build_presto_fields(factors):
-    presto_fields = [{"name": "_id", "type": "ObjectId", "hidden": True},
-                     {"name": "insert_time", "type": "timestamp", "hidden": False},
-                     {"name": "update_time", "type": "timestamp", "hidden": False}]
+    # presto_fields = [{"name": "_id", "type": "ObjectId", "hidden": True},
+    #                  {"name": "insert_time", "type": "timestamp", "hidden": False},
+    #                  {"name": "update_time", "type": "timestamp", "hidden": False}]
     for factor in factors:
         factor = Factor.parse_obj(factor)
         field = {"name": factor.name, "type": __convert_presto_type(factor.type), "hidden": False}

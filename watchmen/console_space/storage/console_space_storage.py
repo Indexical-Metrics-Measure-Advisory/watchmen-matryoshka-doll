@@ -66,4 +66,3 @@ def load_console_space_graph_by_user_id(user_id):
 def load_console_space_graph(connect_id):
     result = console_space_graph_collection.find_one({"connectId": connect_id})
     return result
-

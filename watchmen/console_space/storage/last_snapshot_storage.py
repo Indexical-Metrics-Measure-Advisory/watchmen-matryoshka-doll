@@ -1,6 +1,5 @@
 from watchmen.common.storage.engine.storage_engine import get_client
 
-
 db = get_client()
 console_space_last_snapshot = db.get_collection('console_space_last_snapshot')
 

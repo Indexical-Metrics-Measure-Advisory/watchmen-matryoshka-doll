@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.pipeline.model.pipeline import Pipeline
@@ -25,6 +27,7 @@ def __convert_to_object(x):
     return Pipeline.parse_obj(x)
 
 
+@lru_cache(maxsize=100)
 def load_pipeline_by_topic_id(topic_id):
     result = pipeline_collection.find({"topicId": topic_id})
     return list(map(__convert_to_object, list(result)))

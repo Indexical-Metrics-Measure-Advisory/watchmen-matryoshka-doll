@@ -19,7 +19,7 @@ def authenticate(username, password):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
 
-def __is_initialized(db = Depends(deps.get_db)):
+def __is_initialized(db=Depends(deps.get_db)):
     pass
     # db.get_connection
 

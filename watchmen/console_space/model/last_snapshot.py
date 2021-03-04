@@ -5,4 +5,4 @@ class LastSnapshot(BaseModel):
     language: str = None
     lastDashboardId: str = None
     favoritePin: bool = False
-    userId:str = None
+    userId: str = None

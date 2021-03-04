@@ -1,10 +1,13 @@
 import logging
+from functools import lru_cache
 
 from watchmen.plugin.util.index import find_plugin_func
+
 log = logging.getLogger("app." + __name__)
 
 
-def run_plugin(factor_type,value):
+@lru_cache(maxsize=16)
+def run_plugin(factor_type, value):
     try:
         plugin = find_plugin_func(factor_type)
         if plugin is None:

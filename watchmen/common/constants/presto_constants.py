@@ -1,0 +1,5 @@
+DOUBLE = "double"
+DATE = "date"
+TIMESTAMP = "timestamp"
+VARCHAR = "varchar"
+INTEGER = "integer"

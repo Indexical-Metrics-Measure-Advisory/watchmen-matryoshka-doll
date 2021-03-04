@@ -26,6 +26,6 @@ def load_favorite(user_id):
         return favorite
 
 
-def update_favorite(user_id, favorite:Favorite):
+def update_favorite(user_id, favorite: Favorite):
     data = favorite.dict()
     console_space_favorites.update_one({"userId": user_id}, {"$set": data})

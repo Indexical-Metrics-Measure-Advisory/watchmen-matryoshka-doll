@@ -1,0 +1,3 @@
+
+class ParameterConstants(object):
+    pass

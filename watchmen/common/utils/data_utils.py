@@ -14,7 +14,7 @@ WATCHMEN = "watchmen"
 MONITOR = "monitor"
 
 
-@lru_cache(maxsize=100)
+@lru_cache(maxsize=50)
 def build_collection_name(topic_name):
     return "topic_" + topic_name
 

@@ -17,8 +17,3 @@ def validate_jwt(token):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-
-
-
-
-

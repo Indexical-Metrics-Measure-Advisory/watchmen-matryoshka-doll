@@ -1,26 +1,23 @@
 import importlib
 import logging
+import time
 import traceback
-from datetime import datetime
+from functools import lru_cache
 
+from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor, insert_units_monitor
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_execute_time
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
 
 
-# def build_pipeline(stage_list):
-#     pipeline = []
-#     for stage_config in stage_list:
-#         stage_method = importlib.import_module(STAGE_MODULE_PATH + stage_config[NAME])
-#         stage = stage_method.init(**stage_config[PARAMETER])
-#         pipeline.append(stage)
-#     return pipeline
+@lru_cache(maxsize=16)
+def load_action_python(action_type):
+    return importlib.import_module(STAGE_MODULE_PATH + action_type)
 
 
 def find_action_type_func(action_type, action, pipeline_topic):
@@ -28,6 +25,7 @@ def find_action_type_func(action_type, action, pipeline_topic):
     return stage_method.init(action, pipeline_topic)
 
 
+@lru_cache(maxsize=16)
 def convert_action_type(action_type: str):
     return action_type.replace("-", "_")
 
@@ -52,7 +50,7 @@ def run_pipeline(pipeline: Pipeline, data):
     pipeline_status.topicId = pipeline.topicId
     pipeline_status.pipelineId = pipeline.pipelineId
     pipeline_status.uid = get_surrogate_key()
-    pipeline_status.rawId = data["_id"]
+    pipeline_status.rawId = data[pipeline_constants.ID]
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
@@ -62,7 +60,7 @@ def run_pipeline(pipeline: Pipeline, data):
         unit_status_list = []
 
         try:
-            start_time = datetime.now()
+            start = time.time()
             for stage in pipeline.stages:
                 log.info("stage name {0}".format(stage.name))
                 for unit in stage.units:
@@ -84,10 +82,10 @@ def run_pipeline(pipeline: Pipeline, data):
                     else:
                         log.info("action stage unit  {0} do is None".format(stage.name))
 
-            execution_time = get_execute_time(start_time)
-            pipeline_status.complete_time = execution_time
+            elapsed_time = time.time() - start
+            pipeline_status.complete_time = elapsed_time
             pipeline_status.status = FINISHED
-            log.info("pipeline_status {0} time :{1}".format(pipeline.name, execution_time))
+            log.info("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))
 
         except Exception as e:
             log.exception(e)
@@ -97,7 +95,7 @@ def run_pipeline(pipeline: Pipeline, data):
         finally:
             log.info("insert_pipeline_monitor")
 
-            if pipeline_topic.type == "system":
+            if pipeline_topic.type == pipeline_constants.SYSTEM:
                 log.info("pipeline_status is {0}".format(pipeline_status))
                 log.info("unit status is {0}".format(unit_status_list))
             else:
