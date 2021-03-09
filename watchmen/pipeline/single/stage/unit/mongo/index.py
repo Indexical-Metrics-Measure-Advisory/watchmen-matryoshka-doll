@@ -64,7 +64,7 @@ def __convert_value_to_datetime(value):
 
 
 def __run_arithmetic(arithmetic, value):
-    # print("value",value)
+
     if arithmetic == NONE:
         return value
     elif arithmetic == SUM:
@@ -105,7 +105,6 @@ def __process_factor_type(target_factor, source_value_list):
 
 def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
     mapping_logs = []
-
     mapping_results = []
 
     for mapping in mapping_list:
@@ -147,8 +146,6 @@ def __week_number_of_month(date_value):
 
 def __process_date_func(source, value):
     log.info("source type {0}  value : {1}".format(source.type, value))
-    # print("source",source)
-    # print("value",value)
 
     arithmetic = source.type
     if arithmetic == NONE:
@@ -285,20 +282,6 @@ def __process_parameter_join(parameter_join: ParameterJoint):
         raise Exception("unknown parameter join type {0}".format(parameter_join.jointType))
 
 
-# def build_right_query(condition, pipeline_topic, raw_data, target_topic):
-#     where_condition = []
-#     for sub_condition in condition.filters:
-#         right_factor = get_factor(sub_condition.right.factorId, pipeline_topic)
-#         left_factor = get_factor(sub_condition.left.factorId, target_topic)
-#         right_value_list = get_source_factor_value(raw_data, [], right_factor)
-#         where_condition.append(
-#             {pipeline_constants.NAME: left_factor.name, pipeline_constants.VALUE: right_value_list,
-#              pipeline_constants.OPERATOR: sub_condition.operator,
-#              "right_factor": right_factor})
-#         # left_value = get_value(sub_condition.left,target_topic_data,target_topic)
-#     return where_condition
-
-
 def is_sub_field(factor):
     return DOT in factor.name
 
@@ -314,21 +297,6 @@ def get_factor_value(index, factor_list, raw_data, result):
     else:
         result.append(data)
     return result
-
-
-def filter_condition(where_condition, index=0):
-    filter_conditions = []
-    for condition in where_condition:
-        filter_condition = {pipeline_constants.NAME: condition[pipeline_constants.NAME],
-                            pipeline_constants.OPERATOR: condition[pipeline_constants.OPERATOR]}
-        if type(condition[pipeline_constants.VALUE]) is list:
-            filter_condition[pipeline_constants.VALUE] = condition[pipeline_constants.VALUE][index]
-        else:
-            filter_condition[pipeline_constants.VALUE] = condition[pipeline_constants.VALUE]
-
-        filter_conditions.append(filter_condition)
-
-    return filter_conditions
 
 
 def __is_current_topic(parameter: Parameter, pipeline_topic: Topic):
@@ -446,9 +414,9 @@ def __convert_to_list(value):
         # TODO for in and not in operator
         pass
 
-
-def __is_raw_topic(pipeline_topic):
-    return pipeline_topic.type == parameter_constants.RAW
+#
+# def __is_raw_topic(pipeline_topic):
+#     return pipeline_topic.type == parameter_constants.RAW
 
 
 def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list):
@@ -513,16 +481,3 @@ def __build_mongo_query(joint_type, where_condition):
         return where_condition_result
 
 
-def build_mongo_condition(where_condition, joint_type):
-    result = {}
-    if len(where_condition) > 1:
-        for condition in where_condition:
-            if condition[pipeline_constants.OPERATOR] == "equals":
-                name = condition[pipeline_constants.NAME]
-                value = condition[pipeline_constants.VALUE]
-                result[name] = value
-        return result
-    else:
-        condition = where_condition[0]
-        if condition[pipeline_constants.OPERATOR] == "equals":
-            return {condition[pipeline_constants.NAME]: condition[pipeline_constants.VALUE]}
