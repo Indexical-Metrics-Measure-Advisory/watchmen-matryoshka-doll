@@ -1,12 +1,10 @@
+from watchmen.common.constants import pipeline_constants
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE
-
-OLD = "old"
-
-NEW = "new"
+from watchmen.topic.storage.topic_data_storage import find_topic_data_by_id
 
 db = get_client()
 
@@ -25,22 +23,18 @@ def insert_topic_data(topic_name, mapping_result, pipeline_uid):
 def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
-    old_data = __find_data_by_id(collection, target_data["_id"])
+    old_data = find_topic_data_by_id(collection, target_data["_id"])
     add_audit_columns(mapping_result, UPDATE)
     add_trace_columns(mapping_result, "update_row", pipeline_uid)
     collection.update_one({"_id": target_data["_id"]}, {"$set": mapping_result})
     data = {**target_data, **mapping_result}
-    trigger_pipeline(topic_name, {NEW: data, OLD: old_data}, TriggerType.update)
+    trigger_pipeline(topic_name, {pipeline_constants.NEW: data, pipeline_constants.OLD: old_data}, TriggerType.update)
 
 
 def find_and_modify_topic_data(topic_name, query, update_data, target_data):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
-    old_data = __find_data_by_id(collection, target_data["_id"])
+    old_data = find_topic_data_by_id(collection, target_data["_id"])
     collection.find_and_modify(query=query, update=update_data)
-    trigger_pipeline(topic_name, {NEW: update_data, OLD: old_data}, TriggerType.update)
-
-
-def __find_data_by_id(collection, id):
-    result = collection.find_one({"_id": id})
-    return result
+    trigger_pipeline(topic_name, {pipeline_constants.NEW: update_data, pipeline_constants.OLD: old_data},
+                     TriggerType.update)

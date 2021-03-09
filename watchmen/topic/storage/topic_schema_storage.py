@@ -16,6 +16,7 @@ topic_col = db.get_collection('topic')
 def save_topic(topic):
     # print(get_topic_by_id.cache_info())
     get_topic_by_id.cache_clear()
+    get_topic.cache_clear()
     return topic_col.insert_one(topic)
 
 
@@ -36,7 +37,7 @@ def get_topic_by_name(topic_name):
     return topic_col.find_one({"name": topic_name})
 
 
-@lru_cache(maxsize=100)
+@lru_cache(maxsize=50)
 def get_topic(topic_name) -> Topic:
     result = topic_col.find_one({"name": topic_name})
     if result is None:
@@ -58,8 +59,7 @@ def check_topic_exist(topic_name, topic_type) -> bool:
         return True
 
 
-# TODO clear cache
-@lru_cache(maxsize=100)
+@lru_cache(maxsize=50)
 def get_topic_by_id(topic_id):
     result = topic_col.find_one({"topicId": topic_id})
     return Topic.parse_obj(result)
@@ -84,4 +84,6 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination):
 
 
 def update_topic(topic_id, topic: Topic):
+    get_topic_by_id.cache_clear()
+    get_topic.cache_clear()
     return topic_col.update_one({"topicId": topic_id}, {"$set": topic})

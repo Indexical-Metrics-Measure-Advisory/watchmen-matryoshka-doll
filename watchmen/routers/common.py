@@ -1,14 +1,20 @@
+import logging
+
 from fastapi import APIRouter
 
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.constants import pipeline_constants
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
+from watchmen.pipeline.single.pipeline_service import run_pipeline
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
-from watchmen.topic.storage.topic_data_storage import save_topic_instance
+from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
+from watchmen.topic.storage.topic_data_storage import save_topic_instance, find_topic_data_by_id_and_topic_name
 from watchmen.topic.storage.topic_schema_storage import get_topic
 
 router = APIRouter()
+
+log = logging.getLogger("app." + __name__)
 
 
 @router.get("/health", tags=["common"])
@@ -36,5 +42,12 @@ async def __trigger_pipeline(topic_event):
 
 
 @router.post("/topic/data/rerun", tags=["common"])
-async def rerun_pipeline(topic_code, instance_id, pipeline_id):
-    pass
+async def rerun_pipeline(topic_name, instance_id, pipeline_id):
+    instance = find_topic_data_by_id_and_topic_name(topic_name, instance_id)
+    topic = get_topic(topic_name)
+    pipeline_list = load_pipeline_by_topic_id(topic.topicId)
+    for pipeline in pipeline_list:
+        if pipeline.pipelineId == pipeline_id:
+            log.info("rerun topic {0} and pipeline {1}".format(topic_name,pipeline.pipelineId))
+            run_pipeline(pipeline, instance)
+    return {"received": True}

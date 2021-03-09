@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_collection_name
 
@@ -23,3 +25,13 @@ def get_topic_instances(topic_name, conditions):
     # print(topic_name)
     topic_instance_col = client.get_collection(build_collection_name(topic_name))
     return topic_instance_col.find(conditions)
+
+
+def find_topic_data_by_id_and_topic_name(topic_name, object_id):
+    topic_instance_col = client.get_collection(build_collection_name(topic_name))
+    return find_topic_data_by_id(topic_instance_col, ObjectId(object_id))
+
+
+def find_topic_data_by_id(collection, id):
+    result = collection.find_one({"_id": id})
+    return result
