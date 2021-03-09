@@ -6,16 +6,12 @@ from functools import reduce
 import numpy as np
 import pandas as pd
 
-from watchmen.common.constants import pipeline_constants, parameter_constants
+from watchmen.common.constants import pipeline_constants, parameter_constants, mongo_constants
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable
 from watchmen.plugin.service.plugin_service import run_plugin
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
-
-CONSTANT = "constant"
-
-TOPIC = "topic"
 
 DOT = "."
 
@@ -336,7 +332,7 @@ def filter_condition(where_condition, index=0):
 
 
 def __is_current_topic(parameter: Parameter, pipeline_topic: Topic):
-    if parameter.kind == TOPIC and parameter.topicId == pipeline_topic.topicId:
+    if parameter.kind == parameter_constants.TOPIC and parameter.topicId == pipeline_topic.topicId:
         return True
     else:
         return False
@@ -456,10 +452,6 @@ def __is_raw_topic(pipeline_topic):
 
 
 def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list):
-    # TODO issue for update record
-
-    print("update_data", update_data)
-
     if arithmetic == "sum":
         if old_value_list is not None:
             dif_update_value = {target_factor.name: update_data[target_factor.name] - old_value_list}
@@ -480,37 +472,48 @@ def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list)
         return update_data
 
 
+def __process_where_condition(where_condition):
+    if where_condition[pipeline_constants.OPERATOR] == parameter_constants.EQUALS:
+        return {where_condition[pipeline_constants.NAME].name: where_condition[pipeline_constants.VALUE]}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.EMPTY:
+        return {where_condition[pipeline_constants.NAME].name: None}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EMPTY:
+        return {where_condition[pipeline_constants.NAME].name: {"$exists": True}}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EQUALS:
+        return {where_condition[pipeline_constants.NAME].name: {"$ne": where_condition[pipeline_constants.VALUE]}}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE:
+        return {where_condition[pipeline_constants.NAME].name: {"$gt": where_condition[pipeline_constants.VALUE]}}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.LESS:
+        return {where_condition[pipeline_constants.NAME].name: {"$lt": where_condition[pipeline_constants.VALUE]}}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE_EQUALS:
+        return {where_condition[pipeline_constants.NAME].name: {"$gte": where_condition[pipeline_constants.VALUE]}}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.LESS_EQUALS:
+        return {where_condition[pipeline_constants.NAME].name: {"$lte": where_condition[pipeline_constants.VALUE]}}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.IN:
+        return {where_condition[pipeline_constants.NAME].name: {
+            "$in": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.IN:
+        return {where_condition[pipeline_constants.NAME].name: {
+            "$nin": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
+
+
 def __build_mongo_query(joint_type, where_condition):
     if joint_type is None:
-        if where_condition[pipeline_constants.OPERATOR] == parameter_constants.EQUALS:
-            return {where_condition[pipeline_constants.NAME].name: where_condition[pipeline_constants.VALUE]}
-        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.EMPTY:
-            return {where_condition[pipeline_constants.NAME].name: None}
-        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EMPTY:
-            return {where_condition[pipeline_constants.NAME].name: {"$exists": True}}
-        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EQUALS:
-            return {where_condition[pipeline_constants.NAME].name: {"$ne": where_condition[pipeline_constants.VALUE]}}
-        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE:
-            return {where_condition[pipeline_constants.NAME].name: {"$gt": where_condition[pipeline_constants.VALUE]}}
-        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.LESS:
-            return {where_condition[pipeline_constants.NAME].name: {"$lt": where_condition[pipeline_constants.VALUE]}}
-        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE_EQUALS:
-            return {where_condition[pipeline_constants.NAME].name: {"$gte": where_condition[pipeline_constants.VALUE]}}
-        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.LESS_EQUALS:
-            return {where_condition[pipeline_constants.NAME].name: {"$lte": where_condition[pipeline_constants.VALUE]}}
-        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.IN:
-            return {where_condition[pipeline_constants.NAME].name: {
-                "$in": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
-        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.IN:
-            return {where_condition[pipeline_constants.NAME].name: {
-                "$nin": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
+        return __process_where_condition(where_condition)
+    else:
+        where_condition_result = {}
+        if joint_type == parameter_constants.AND:
+            where_condition_result[mongo_constants.MONGO_AND] = []
+            for condition in where_condition:
+                where_condition_result[mongo_constants.MONGO_AND].append(__process_where_condition(condition))
+        elif joint_type == parameter_constants.OR:
+            where_condition_result[mongo_constants.MONGO_OR] = []
+            for condition in where_condition:
+                where_condition_result[mongo_constants.MONGO_OR].append(__process_where_condition(condition))
+        return where_condition_result
 
-
-# TODO operator for mongo
-# TODO  jointType
 
 def build_mongo_condition(where_condition, joint_type):
-    # print("where_condition",where_condition)
     result = {}
     if len(where_condition) > 1:
         for condition in where_condition:

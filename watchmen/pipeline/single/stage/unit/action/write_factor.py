@@ -16,17 +16,12 @@ from watchmen.topic.topic import Topic
 log = logging.getLogger("app." + __name__)
 
 
-#  TODO  more arithmetic to be implement
-
-
 def get_condition_factor_value(raw_data, where_conditions, joint_type):
     if joint_type is None:
         return {where_conditions[pipeline_constants.NAME].name: where_conditions[pipeline_constants.VALUE]}
     else:
-
         factor_value = {}
         for condition in where_conditions:
-            print(condition)
             source_factor = condition[pipeline_constants.NAME]
             value = get_value(source_factor, raw_data)
             factor_value[source_factor.name] = value

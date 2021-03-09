@@ -21,3 +21,6 @@ MORE = "more"
 MORE_EQUALS = "more-equals"
 IN = "in"
 NOT_IN = "not-in"
+
+AND = "and"
+OR = "or"

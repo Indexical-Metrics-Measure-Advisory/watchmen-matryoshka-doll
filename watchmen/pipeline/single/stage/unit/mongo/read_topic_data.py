@@ -5,11 +5,11 @@ from watchmen.pipeline.single.stage.unit.mongo.index import build_mongo_conditio
 db = get_client()
 
 
-def read_topic_data(where_condition, topic_name, joint_type):
+def read_topic_data(mongo_query, topic_name):
     collection_name = build_collection_name(topic_name)
     collection = db.get_collection(collection_name)
-    condition = build_mongo_condition(where_condition, joint_type)
-    result = collection.find_one(condition)
+    # condition = build_mongo_condition(where_condition, joint_type)
+    result = collection.find_one(mongo_query)
     return result
 
 

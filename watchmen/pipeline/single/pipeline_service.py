@@ -74,7 +74,7 @@ def run_pipeline(pipeline: Pipeline, data):
                             func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                             # call dynamic action in action folder
                             out_result, unit_status = func(data, context)
-                            # print("unit_status",unit_status)
+
                             unit_status.stageName = stage.name
                             unit_status_list.append(unit_status.dict())
                             log.debug("out_result :{0}".format(out_result))
