@@ -6,8 +6,9 @@ from functools import reduce
 import numpy as np
 import pandas as pd
 
+from watchmen.common.constants import pipeline_constants, parameter_constants
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable
 from watchmen.plugin.service.plugin_service import run_plugin
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
@@ -15,12 +16,6 @@ from watchmen.topic.topic import Topic
 CONSTANT = "constant"
 
 TOPIC = "topic"
-
-VALUE = "value"
-
-OPERATOR = "operator"
-
-NAME = "name"
 
 DOT = "."
 
@@ -81,9 +76,9 @@ def __run_arithmetic(arithmetic, value):
     elif arithmetic == AVG:
         return statistics.mean(value)
     elif arithmetic == MAX:
-        return statistics.max(value)
+        return max(value)
     elif arithmetic == MIN:
-        return statistics.min(value)
+        return min(value)
     elif arithmetic == MEDIAN:
         return statistics.median(value)
 
@@ -120,23 +115,19 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
     for mapping in mapping_list:
         mapping_log = {}
         source = mapping.source
-
         mapping_log["source"] = source
-
         mapping_log["arithmetic"] = mapping.arithmetic
-        result = []
-        source_value_list = run_arithmetic_value_list(mapping.arithmetic,
-                                                      get_source_value_list(pipeline_topic, raw_data, result, source))
 
-        mapping_log[VALUE] = source_value_list
+        source_value_list = run_arithmetic_value_list(mapping.arithmetic,
+                                                      get_source_value_list(pipeline_topic, raw_data, source))
+
         target_factor = get_factor(mapping.factorId, target_topic)
 
         mapping_log["target"] = target_factor
-        # print("source_value_list", source_value_list)
+        mapping_log[pipeline_constants.VALUE] = source_value_list
 
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
-        # print(mapping_results)
         mapping_results.append({target_factor.name: source_value_list})
 
         mapping_logs.append(mapping_log)
@@ -218,7 +209,7 @@ def __process_operator(operator, value_list):
 def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
     # print("__process_compute_kind ",__is_date_func(source.type))
     if __is_date_func(source.type):
-        value_list = get_source_value_list(pipeline_topic, raw_data, [], Parameter.parse_obj(source.parameters[0]))
+        value_list = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(source.parameters[0]))
         if type(value_list) == list:
             result = []
             for value in value_list:
@@ -230,7 +221,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
         operator = __get_operator(source.type)
         value_list = []
         for parameter in source.parameters:
-            value = get_source_value_list(pipeline_topic, raw_data, [], Parameter.parse_obj(parameter))
+            value = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(parameter))
             if type(value) is list:
                 value_list.append(np.array(value))
             else:
@@ -240,13 +231,13 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
         return __process_operator(operator, value_list).tolist()
 
 
-def get_source_value_list(pipeline_topic, raw_data, result, parameter):
-    if parameter.kind == TOPIC:
+def get_source_value_list(pipeline_topic, raw_data, parameter, result=[]):
+    if parameter.kind == parameter_constants.TOPIC:
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, result, source_factor)
-    elif parameter.kind == CONSTANT:
+    elif parameter.kind == parameter_constants.CONSTANT:
         return parameter.value
-    elif parameter.kind == "computed":
+    elif parameter.kind == parameter_constants.COMPUTED:
         return __process_compute_kind(parameter, raw_data, pipeline_topic)
     else:
         raise Exception("Unknown source kind {0}".format(parameter.kind))
@@ -298,17 +289,18 @@ def __process_parameter_join(parameter_join: ParameterJoint):
         raise Exception("unknown parameter join type {0}".format(parameter_join.jointType))
 
 
-def build_right_query(condition, pipeline_topic, raw_data, target_topic):
-    where_condition = []
-    for sub_condition in condition.filters:
-        right_factor = get_factor(sub_condition.right.factorId, pipeline_topic)
-        left_factor = get_factor(sub_condition.left.factorId, target_topic)
-        right_value_list = get_source_factor_value(raw_data, [], right_factor)
-        where_condition.append(
-            {NAME: left_factor.name, VALUE: right_value_list, OPERATOR: sub_condition.operator,
-             "right_factor": right_factor})
-        # left_value = get_value(sub_condition.left,target_topic_data,target_topic)
-    return where_condition
+# def build_right_query(condition, pipeline_topic, raw_data, target_topic):
+#     where_condition = []
+#     for sub_condition in condition.filters:
+#         right_factor = get_factor(sub_condition.right.factorId, pipeline_topic)
+#         left_factor = get_factor(sub_condition.left.factorId, target_topic)
+#         right_value_list = get_source_factor_value(raw_data, [], right_factor)
+#         where_condition.append(
+#             {pipeline_constants.NAME: left_factor.name, pipeline_constants.VALUE: right_value_list,
+#              pipeline_constants.OPERATOR: sub_condition.operator,
+#              "right_factor": right_factor})
+#         # left_value = get_value(sub_condition.left,target_topic_data,target_topic)
+#     return where_condition
 
 
 def is_sub_field(factor):
@@ -331,18 +323,19 @@ def get_factor_value(index, factor_list, raw_data, result):
 def filter_condition(where_condition, index=0):
     filter_conditions = []
     for condition in where_condition:
-        filter_condition = {NAME: condition[NAME], OPERATOR: condition[OPERATOR]}
-        if type(condition[VALUE]) is list:
-            filter_condition[VALUE] = condition[VALUE][index]
+        filter_condition = {pipeline_constants.NAME: condition[pipeline_constants.NAME],
+                            pipeline_constants.OPERATOR: condition[pipeline_constants.OPERATOR]}
+        if type(condition[pipeline_constants.VALUE]) is list:
+            filter_condition[pipeline_constants.VALUE] = condition[pipeline_constants.VALUE][index]
         else:
-            filter_condition[VALUE] = condition[VALUE]
+            filter_condition[pipeline_constants.VALUE] = condition[pipeline_constants.VALUE]
 
         filter_conditions.append(filter_condition)
 
     return filter_conditions
 
 
-def __is_pipeline_topic(parameter: Parameter, pipeline_topic: Topic):
+def __is_current_topic(parameter: Parameter, pipeline_topic: Topic):
     if parameter.kind == TOPIC and parameter.topicId == pipeline_topic.topicId:
         return True
     else:
@@ -350,52 +343,183 @@ def __is_pipeline_topic(parameter: Parameter, pipeline_topic: Topic):
 
 
 def __get_source_and_target_parameter(condition, pipeline_topic: Topic):
-    if __is_pipeline_topic(condition.left, pipeline_topic):
+    if __is_current_topic(condition.left, pipeline_topic):
         return condition.left, condition.right
-    elif __is_pipeline_topic(condition.right, pipeline_topic):
+    elif __is_current_topic(condition.right, pipeline_topic):
         return condition.right, condition.left
     else:
         return None, None
 
 
-def find_pipeline_topic_condition(conditions: ParameterJoint, pipeline_topic, raw_data, target_topic):
-    where_condition = []
-    for condition in conditions.filters:
-        source_parameter, target_parameter = __get_source_and_target_parameter(condition, pipeline_topic)
-        if source_parameter is None:
-            # TODO constant value
-            pass
+def __process_parameter_constants(parameter: Parameter, context):
+    variable_type, context_target_name = process_variable(parameter.value)
+    if variable_type == parameter_constants.CONSTANT:
+        return parameter.value
+    elif variable_type == parameter_constants.MEMORY:
+        if context_target_name in context:
+            return context[context_target_name]
         else:
-            source_factor = get_factor(source_parameter.factorId, pipeline_topic)
-            value_list = get_source_value_list(pipeline_topic, raw_data, [], source_parameter)
-            target_factor = get_factor(target_parameter.factorId, target_topic)
-            where_condition.append(
-                {NAME: target_factor.name, VALUE: value_list, OPERATOR: condition.operator,
-                 "source_factor": source_factor})
+            raise ValueError("no variable {0} in context".format(context_target_name))
+    else:
+        raise ValueError("variable_type is invalid")
 
-    return where_condition
+
+def build_parameter_condition(parameter: Parameter, pipeline_topic: Topic, target_topic: Topic, raw_data, context):
+    if parameter.kind == parameter_constants.TOPIC:
+        if __is_current_topic(parameter, pipeline_topic):
+            return {pipeline_constants.VALUE: get_source_value_list(pipeline_topic, raw_data, parameter)}
+        elif __is_current_topic(parameter, target_topic):
+            target_factor = get_factor(parameter.factorId, target_topic)
+            return {pipeline_constants.NAME: target_factor}
+    elif parameter.kind == parameter_constants.CONSTANT:
+        return {pipeline_constants.VALUE: __process_parameter_constants(parameter, context)}
+    elif parameter.kind == parameter_constants.COMPUTED:
+        if __is_date_func(parameter.type):
+            return {pipeline_constants.VALUE: __process_compute_date(parameter, pipeline_topic, raw_data)}
+        elif __is_calculation_operation(parameter.type):
+            return __process_compute_calculation_condition(parameter, pipeline_topic, target_topic, raw_data, context)
+    else:
+        raise Exception("Unknown parameter kind {0}".format(parameter.kind))
+
+
+def __process_compute_calculation_condition(parameter, pipeline_topic, target_topic, raw_data, context):
+    operator = __get_operator(parameter.type)
+    value_list = []
+    for parameter in parameter.parameters:
+        parameter_result = build_parameter_condition(parameter, pipeline_topic, target_topic, raw_data, context)
+        if pipeline_constants.VALUE in parameter_result:
+            value = parameter_result[pipeline_constants.VALUE]
+            if type(value) is list:
+                value_list.append(np.array(value))
+            else:
+                value_list.append(value)
+        if pipeline_constants.NAME in parameter_result:
+            raise Exception("target_topic in compute parameter is not supported")
+
+    return __process_operator(operator, value_list).tolist()
+
+
+def __process_compute_date(parameter, pipeline_topic, raw_data):
+    value_list = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(parameter.parameters[0]))
+    if type(value_list) == list:
+        result = []
+        for value in value_list:
+            result.append(__process_date_func(parameter, value))
+        return result
+    else:
+        return __process_date_func(parameter, value_list)
+
+
+def __process_condition(condition, pipeline_topic, target_topic, raw_data, context):
+    where = {pipeline_constants.OPERATOR: condition.operator}
+    process_parameter_result(build_parameter_condition(condition.left, pipeline_topic, target_topic, raw_data, context),
+                             where)
+    process_parameter_result(
+        build_parameter_condition(condition.right, pipeline_topic, target_topic, raw_data, context), where)
+    return where
+
+
+def process_parameter_result(right_result, where):
+    if pipeline_constants.NAME in right_result:
+        where[pipeline_constants.NAME] = right_result[pipeline_constants.NAME]
+    else:
+        where[pipeline_constants.VALUE] = right_result[pipeline_constants.VALUE]
+
+
+def build_query_conditions(conditions: ParameterJoint, pipeline_topic: Topic, raw_data, target_topic, context):
+    if len(conditions.filters) == 1:
+        # ignore jointType
+        condition = conditions.filters[0]
+        return None, __process_condition(condition, pipeline_topic, target_topic, raw_data, context)
+    else:
+        where_conditions = []
+        for condition in conditions.filters:
+            if condition.jointType is None:
+                where_conditions.append(__process_condition(condition, pipeline_topic, target_topic, raw_data, context))
+            else:
+                where_conditions.append(
+                    build_query_conditions(condition, pipeline_topic, target_topic, raw_data, context))
+
+        return conditions.jointType, where_conditions
+
+
+def __convert_to_list(value):
+    if type(value) == list:
+        return value
+    else:
+        # TODO for in and not in operator
+        pass
+
+
+def __is_raw_topic(pipeline_topic):
+    return pipeline_topic.type == parameter_constants.RAW
+
+
+def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list):
+    # TODO issue for update record
+
+    print("update_data", update_data)
+
+    if arithmetic == "sum":
+        if old_value_list is not None:
+            dif_update_value = {target_factor.name: update_data[target_factor.name] - old_value_list}
+            print("dif_update_value", dif_update_value)
+            return {"$inc": dif_update_value}
+        else:
+            return {"$inc": update_data}
+    elif arithmetic == "count":
+        if old_value_list is not None:
+            return {"$inc": {target_factor.name: 0}}
+        else:
+            return {"$inc": {target_factor.name: 1}}
+    elif arithmetic == "max":
+        return {"$max": update_data}
+    elif arithmetic == "min":
+        return {"$min": update_data}
+    else:
+        return update_data
+
+
+def __build_mongo_query(joint_type, where_condition):
+    if joint_type is None:
+        if where_condition[pipeline_constants.OPERATOR] == parameter_constants.EQUALS:
+            return {where_condition[pipeline_constants.NAME].name: where_condition[pipeline_constants.VALUE]}
+        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.EMPTY:
+            return {where_condition[pipeline_constants.NAME].name: None}
+        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EMPTY:
+            return {where_condition[pipeline_constants.NAME].name: {"$exists": True}}
+        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EQUALS:
+            return {where_condition[pipeline_constants.NAME].name: {"$ne": where_condition[pipeline_constants.VALUE]}}
+        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE:
+            return {where_condition[pipeline_constants.NAME].name: {"$gt": where_condition[pipeline_constants.VALUE]}}
+        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.LESS:
+            return {where_condition[pipeline_constants.NAME].name: {"$lt": where_condition[pipeline_constants.VALUE]}}
+        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE_EQUALS:
+            return {where_condition[pipeline_constants.NAME].name: {"$gte": where_condition[pipeline_constants.VALUE]}}
+        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.LESS_EQUALS:
+            return {where_condition[pipeline_constants.NAME].name: {"$lte": where_condition[pipeline_constants.VALUE]}}
+        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.IN:
+            return {where_condition[pipeline_constants.NAME].name: {
+                "$in": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
+        elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.IN:
+            return {where_condition[pipeline_constants.NAME].name: {
+                "$nin": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
 
 
 # TODO operator for mongo
 # TODO  jointType
-def build_mongo_condition(where_condition, jointType):
+
+def build_mongo_condition(where_condition, joint_type):
     # print("where_condition",where_condition)
     result = {}
     if len(where_condition) > 1:
         for condition in where_condition:
-            if condition[OPERATOR] == "equals":
-                name = condition[NAME]
-                value = condition[VALUE]
+            if condition[pipeline_constants.OPERATOR] == "equals":
+                name = condition[pipeline_constants.NAME]
+                value = condition[pipeline_constants.VALUE]
                 result[name] = value
         return result
     else:
         condition = where_condition[0]
-        if condition[OPERATOR] == "equals":
-            return {condition[NAME]: condition[VALUE]}
-
-
-def process_variable(variable_name):
-    if variable_name.startswith("{"):
-        return "memory", variable_name.replace("{", "").replace("}", "")
-    else:
-        return CONSTANT, variable_name
+        if condition[pipeline_constants.OPERATOR] == "equals":
+            return {condition[pipeline_constants.NAME]: condition[pipeline_constants.VALUE]}

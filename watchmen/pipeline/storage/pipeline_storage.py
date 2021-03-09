@@ -19,6 +19,7 @@ def create_pipeline(pipeline: Pipeline) -> Pipeline:
 
 
 def update_pipeline(pipeline: Pipeline) -> Pipeline:
+    load_pipeline_by_topic_id.cache_clear()
     pipeline_collection.update_one({"pipelineId": pipeline.pipelineId}, {"$set": pipeline.dict()})
     return pipeline
 

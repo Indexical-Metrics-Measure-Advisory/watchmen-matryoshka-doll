@@ -50,7 +50,7 @@ def run_pipeline(pipeline: Pipeline, data):
     pipeline_status.topicId = pipeline.topicId
     pipeline_status.pipelineId = pipeline.pipelineId
     pipeline_status.uid = get_surrogate_key()
-    pipeline_status.rawId = data[pipeline_constants.ID]
+    pipeline_status.rawId = data[pipeline_constants.NEW][pipeline_constants.ID]
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)

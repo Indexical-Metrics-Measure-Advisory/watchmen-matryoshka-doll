@@ -1,6 +1,9 @@
 # coding: utf-8
 import time
 
+# from multiprocessing.sharedctypes import synchronized
+from watchmen.common.snowflake.simpleflake import get_next_id
+
 
 class InvalidSystemClock(Exception):
     pass
@@ -93,8 +96,9 @@ class IdWorker(object):
 worker = IdWorker(0, 0)
 
 
+# @synchronized
 def get_surrogate_key():
-    return str(worker.get_id())
+    return str(get_next_id())
 
 
 if __name__ == '__main__':

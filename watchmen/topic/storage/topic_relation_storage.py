@@ -16,8 +16,8 @@ def save_topic_relationship(topic_relation: TopicRelationship):
     return TopicRelationship.parse_obj(topic_relation)
 
 
-def load_relationship_by_source_id_and_target_id(soure_topic_id, target_topic_id):
-    result = topic_relation_collections.find_one({"sourceTopicId": soure_topic_id, "targetTopicId": target_topic_id})
+def load_relationship_by_source_id_and_target_id(source_topic_id, target_topic_id):
+    result = topic_relation_collections.find_one({"sourceTopicId": source_topic_id, "targetTopicId": target_topic_id})
     return result
 
 

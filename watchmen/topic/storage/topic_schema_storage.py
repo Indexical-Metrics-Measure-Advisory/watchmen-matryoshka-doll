@@ -33,12 +33,12 @@ def load_all_topic_list(pagination: Pagination):
 
 
 def get_topic_by_name(topic_name):
-    return topic_col.find_one({"code": topic_name})
+    return topic_col.find_one({"name": topic_name})
 
 
 @lru_cache(maxsize=100)
 def get_topic(topic_name) -> Topic:
-    result = topic_col.find_one({"code": topic_name})
+    result = topic_col.find_one({"name": topic_name})
     if result is None:
         return None
     else:
@@ -46,12 +46,12 @@ def get_topic(topic_name) -> Topic:
 
 
 def load_topic_list_by_name(topic_name):
-    result = topic_col.find({"code": regex.Regex(topic_name)})
+    result = topic_col.find({"name": regex.Regex(topic_name)})
     return list(result)
 
 
 def check_topic_exist(topic_name, topic_type) -> bool:
-    result = topic_col.find_one({"code", topic_name, "type", topic_type})
+    result = topic_col.find_one({"name", topic_name, "type", topic_type})
     if result is None:
         return False
     else:

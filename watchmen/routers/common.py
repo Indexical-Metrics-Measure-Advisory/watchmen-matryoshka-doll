@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from watchmen.collection.model.topic_event import TopicEvent
+from watchmen.common.constants import pipeline_constants
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
@@ -18,7 +19,6 @@ async def health():
 @router.post("/topic/data", tags=["common"])
 async def save_topic_data(topic_event: TopicEvent):
     # TODO user check URP
-    # start = time.process_time()
 
     topic = get_topic(topic_event.code)
     if topic is None:
@@ -27,10 +27,14 @@ async def save_topic_data(topic_event: TopicEvent):
     add_audit_columns(topic_event.data, INSERT)
     save_topic_instance(topic_event.code, topic_event.data)
     await __trigger_pipeline(topic_event)
-    # elapsed_time = time.process_time() - start
-    # end = time.time()
-    # print(elapsed_time)
+    return {"received": True}
 
 
 async def __trigger_pipeline(topic_event):
-    trigger_pipeline(topic_event.code, topic_event.data, TriggerType.insert)
+    trigger_pipeline(topic_event.code, {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
+                     TriggerType.insert)
+
+
+@router.post("/topic/data/rerun", tags=["common"])
+async def rerun_pipeline(topic_code, instance_id, pipeline_id):
+    pass

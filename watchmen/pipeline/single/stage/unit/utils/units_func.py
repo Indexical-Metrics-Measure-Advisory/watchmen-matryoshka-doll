@@ -1,6 +1,8 @@
 from datetime import datetime
 
+from watchmen.common.constants import parameter_constants, pipeline_constants
 from watchmen.topic.factor.factor import Factor
+from watchmen.topic.topic import Topic
 
 INSERT = "insert"
 UPDATE = "update"
@@ -116,6 +118,13 @@ def convert_factor_type(value, factor_type):
         return value
 
 
+def build_factor_dict(topic: Topic):
+    factor_dict = {}
+    for factor in topic.factors:
+        factor_dict[factor.factorId] = factor
+    return factor_dict
+
+
 def get_factor(factor_id, target_topic):
     for factor in target_topic.factors:
         if factor.factorId == factor_id:
@@ -142,12 +151,19 @@ def get_value(factor: Factor, data):
 
 def add_audit_columns(dictionary, audit_type):
     if audit_type == INSERT:
-        dictionary["insert_time"] = datetime.now()
+        dictionary[pipeline_constants.INSERT_TIME] = datetime.now()
     elif audit_type == UPDATE:
-        dictionary["uppdate_time"] = datetime.now()
+        dictionary[pipeline_constants.UPDATE_TIME] = datetime.now()
     else:
         raise Exception("unknown audit_type")
 
 
 def add_trace_columns(dictionary, trace_type, pipeline_uid):
     dictionary[trace_type] = pipeline_uid
+
+
+def process_variable(variable_name):
+    if variable_name.startswith("{"):
+        return "memory", variable_name.replace("{", "").replace("}", "")
+    else:
+        return parameter_constants.CONSTANT, variable_name

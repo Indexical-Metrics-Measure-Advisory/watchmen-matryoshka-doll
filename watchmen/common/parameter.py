@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 
 class ParameterKind(Enum):
-    TOPIC = 'topic',
+    TOPIC = 'topic'
     CONSTANT = 'constant',
     COMPUTED = 'computed'
 
@@ -21,10 +21,6 @@ class Parameter(BaseModel):
     factorId: str = None
 
 
-# for self-referencing model, need python 3.7+
-Parameter.update_forward_refs()
-
-
 class ParameterExpression(BaseModel):
     left: Parameter = None
     operator: str = None
@@ -33,4 +29,9 @@ class ParameterExpression(BaseModel):
 
 class ParameterJoint(ParameterExpression):
     jointType: str = None
-    filters: List[ParameterExpression] = []
+    filters: List[ParameterJoint] = []
+
+
+# for self-referencing model, need python 3.7+
+Parameter.update_forward_refs()
+ParameterJoint.update_forward_refs()

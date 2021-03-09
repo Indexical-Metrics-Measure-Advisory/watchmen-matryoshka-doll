@@ -10,7 +10,7 @@ log.init()
 
 log = logging.getLogger("app." + __name__)
 
-from watchmen.routers import admin, console, common, auth, monitor
+from watchmen.routers import admin, console, common, auth
 
 app = FastAPI()
 

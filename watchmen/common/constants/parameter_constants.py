@@ -1,3 +1,23 @@
+TOPIC = "topic"
+CONSTANT = "constant"
+COMPUTED = "computed"
+MEMORY = "memory"
 
-class ParameterConstants(object):
-    pass
+RAW = "raw"
+DISTINCT = "distinct"
+AGGREGATE = "aggregate"
+TIME = "time"
+RATIO = "ratio"
+NOT_DEFINED = "not-defined"
+SYSTEM = "system"
+
+EMPTY = "empty"
+NOT_EMPTY = "not-empty"
+EQUALS = "equals"
+NOT_EQUALS = "not-equals"
+LESS = "less"
+LESS_EQUALS = "less-equals"
+MORE = "more"
+MORE_EQUALS = "more-equals"
+IN = "in"
+NOT_IN = "not-in"

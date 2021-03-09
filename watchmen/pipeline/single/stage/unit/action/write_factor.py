@@ -1,15 +1,15 @@
 import logging
 import time
 
-from watchmen.monitor.model.pipeline_monitor import UnitStatus, WriteFactorAction
+from watchmen.common.constants import pipeline_constants
+from watchmen.monitor.model.pipeline_monitor import UnitStatus
 from watchmen.pipeline.model.pipeline import UnitAction
-from watchmen.pipeline.single.stage.unit.action.insert_or_merge_row import filter_condition
-from watchmen.pipeline.single.stage.unit.mongo.index import find_pipeline_topic_condition, get_source_value_list, \
-    build_mongo_condition
-from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import read_topic_data
+from watchmen.pipeline.single.stage.unit.mongo.index import build_query_conditions, get_source_value_list, \
+    __build_mongo_query, __build_mongo_update
+from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import find_and_modify_topic_data, insert_topic_data
 from watchmen.pipeline.single.stage.unit.utils import PIPELINE_UID
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value, build_factor_dict
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
 
@@ -17,75 +17,68 @@ log = logging.getLogger("app." + __name__)
 
 
 #  TODO  more arithmetic to be implement
-def __build_mongo_update(update_data, arithmetic, target_factor):
-    if arithmetic == "sum":
-        return {"$inc": update_data}
-    elif arithmetic == "count":
-        return {"$inc": {target_factor.name: 1}}
-    elif arithmetic == "max":
-        return {"$max": update_data}
-    elif arithmetic == "min":
-        return {"$min": update_data}
+
+
+def get_condition_factor_value(raw_data, where_conditions, joint_type):
+    if joint_type is None:
+        return {where_conditions[pipeline_constants.NAME].name: where_conditions[pipeline_constants.VALUE]}
     else:
-        return update_data
 
+        factor_value = {}
+        for condition in where_conditions:
+            print(condition)
+            source_factor = condition[pipeline_constants.NAME]
+            value = get_value(source_factor, raw_data)
+            factor_value[source_factor.name] = value
 
-def get_condition_factor_value(raw_data, where_conditions):
-    factor_value = {}
-    for condition in where_conditions:
-        source_factor = condition["source_factor"]
-        value = get_value(source_factor, raw_data)
-
-        factor_value[condition["name"]] = value
-
-    return factor_value
+        return factor_value
 
 
 def init(action: UnitAction, pipeline_topic: Topic):
-    def write_factor(raw_data, context):
-
-        unit_action_status = UnitStatus()
-        unit_action_status.type = action.type
+    def write_factor(instance, context):
+        raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
+        unit_action_status = UnitStatus(type=action.type)
         start = time.time()
         pipeline_uid = context[PIPELINE_UID]
         # TODO  action_log
-        action_log = WriteFactorAction()
+        print("write_factor")
+        # action_log = WriteFactorAction()
 
         if action.topicId is not None:
-
             target_topic = get_topic_by_id(action.topicId)
-
+            # todo for find factor
+            factor_dict = build_factor_dict(target_topic)
             conditions = action.by
-
-            # action.arithmetic
-
-            where_condition = find_pipeline_topic_condition(conditions, pipeline_topic, raw_data, target_topic)
-            filter_where_condition = filter_condition(where_condition)
+            joint_type, where_condition = build_query_conditions(conditions, pipeline_topic, raw_data, target_topic,
+                                                                 context)
+            source_value_list = get_source_value_list(pipeline_topic, raw_data, action.source)
             target_factor = get_factor(action.factorId, target_topic)
-
-            source_value_list = get_source_value_list(pipeline_topic, raw_data, [], action.source)
-            # print("source_value_list", source_value_list)
-
             update_data = {target_factor.name: source_value_list}
-
-            # print("filter_where_condition", filter_where_condition)
-
-            target_data = read_topic_data(filter_where_condition, target_topic.name,
-                                          conditions.jointType)
-
+            mongo_query = __build_mongo_query(joint_type, where_condition)
+            target_data = query_topic_data(mongo_query, target_topic.name)
             if target_data is None:
-                condition_factors = get_condition_factor_value(raw_data, where_condition)
+                condition_factors = get_condition_factor_value(raw_data, where_condition, joint_type)
                 insert_data = {**{target_factor.name: source_value_list}, **condition_factors}
                 log.info("Insert data : {0}".format(insert_data))
                 insert_topic_data(target_topic.name, insert_data, pipeline_uid)
-                pass
             else:
-                update_data = __build_mongo_update(update_data, action.arithmetic, target_factor)
+                print("old_value", old_value)
+                if old_value is not None:
+                    old_value_list = get_source_value_list(pipeline_topic, old_value, action.source)
+                    # def_value_list = source_value_list - old_value_list
+                    # update_data = {target_factor.name: def_value_list}
+                    find_and_modify_topic_data(target_topic.name,
+                                               mongo_query,
+                                               __build_mongo_update(update_data, action.arithmetic, target_factor,
+                                                                    old_value_list),
+                                               target_data)
+                else:
+                    find_and_modify_topic_data(target_topic.name,
+                                               mongo_query,
+                                               __build_mongo_update(update_data, action.arithmetic, target_factor,
+                                                                    None),
+                                               target_data)
 
-                # print("update_data",update_data)
-                find_and_modify_topic_data(target_topic.name,
-                                           build_mongo_condition(filter_where_condition, conditions.jointType),
-                                           update_data)
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
         return context, unit_action_status

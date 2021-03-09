@@ -15,8 +15,8 @@ collection = db.get_collection('_schema')
 log = logging.getLogger("app." + __name__)
 
 presto_fields = [{"name": "_id", "type": "ObjectId", "hidden": True},
-                     {"name": "insert_time", "type": "timestamp", "hidden": False},
-                     {"name": "update_time", "type": "timestamp", "hidden": False}]
+                 {"name": "insert_time", "type": "timestamp", "hidden": False},
+                 {"name": "update_time", "type": "timestamp", "hidden": False}]
 
 
 def remove_presto_schema_by_name(topic_name):
