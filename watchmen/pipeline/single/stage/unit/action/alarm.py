@@ -8,6 +8,7 @@ from watchmen.topic.topic import Topic
 log = logging.getLogger("app." + __name__)
 
 
+# TODO alert for validation 
 def init(action: UnitAction, pipeline_topic: Topic):
     def alarm(raw_data, context):
         unit_action_status = UnitStatus()

@@ -16,7 +16,8 @@ def insert_topic_data(topic_name, mapping_result, pipeline_uid):
     add_audit_columns(mapping_result, INSERT)
     add_trace_columns(mapping_result, "insert_row", pipeline_uid)
     collection.insert(mapping_result)
-    trigger_pipeline(topic_name, {NEW: mapping_result, OLD: None}, TriggerType.insert)
+    trigger_pipeline(topic_name, {pipeline_constants.NEW: mapping_result, pipeline_constants.OLD: None},
+                     TriggerType.insert)
 
 
 # @topic_event_trigger
