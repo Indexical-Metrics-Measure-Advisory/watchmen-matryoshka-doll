@@ -9,7 +9,8 @@ from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.pipeline_service import run_pipeline
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
-from watchmen.topic.storage.topic_data_storage import save_topic_instance, find_topic_data_by_id_and_topic_name
+from watchmen.topic.storage.topic_data_storage import save_topic_instance, find_topic_data_by_id_and_topic_name, \
+    update_topic_instance
 from watchmen.topic.storage.topic_schema_storage import get_topic
 
 router = APIRouter()
@@ -36,6 +37,7 @@ async def save_topic_data(topic_event: TopicEvent):
     return {"received": True}
 
 
+
 async def __trigger_pipeline(topic_event):
     trigger_pipeline(topic_event.code, {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
                      TriggerType.insert)
@@ -51,3 +53,14 @@ async def rerun_pipeline(topic_name, instance_id, pipeline_id):
             log.info("rerun topic {0} and pipeline {1}".format(topic_name,pipeline.pipelineId))
             run_pipeline(pipeline, instance)
     return {"received": True}
+
+
+@router.post("/topic/data/patch", tags=["common"])
+async def patch_topic_instance(topic_name,instance,instance_id):
+    result = find_topic_data_by_id_and_topic_name(topic_name, instance_id)
+    if result is None:
+        raise Exception("topic {0} id {1} not found data ".format(topic_name,instance_id))
+    else:
+        #TODO audit data
+        update_topic_instance(topic_name,instance,instance_id)
+
