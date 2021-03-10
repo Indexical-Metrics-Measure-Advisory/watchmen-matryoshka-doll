@@ -36,10 +36,8 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     log.info("sql:{0}".format(query_sql))
     cur = conn.cursor()
     cur.execute(query_sql)
-    # count =cur.
     rows = cur.fetchall()
-    log.info("sql result: {0}".format(rows))
-    # print("sql count:", count)
+    log.debug("sql result: {0}".format(rows))
     return rows, count_rows[0]
 
 
@@ -51,7 +49,7 @@ def load_chart_dataset(report_id):
     cur = conn.cursor()
     cur.execute(query_sql)
     rows = cur.fetchall()
-    log.info("sql result: {0}".format(rows))
+    log.debug("sql result: {0}".format(rows))
     return rows
 
 
@@ -63,7 +61,7 @@ def load_chart_dataset_temp(report):
     cur = conn.cursor()
     cur.execute(query_sql)
     rows = cur.fetchall()
-    log.info("sql result: {0}".format(rows))
+    log.debug("sql result: {0}".format(rows))
     return rows
 
 
