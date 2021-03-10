@@ -37,7 +37,6 @@ async def save_topic_data(topic_event: TopicEvent):
     return {"received": True}
 
 
-
 async def __trigger_pipeline(topic_event):
     trigger_pipeline(topic_event.code, {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
                      TriggerType.insert)
@@ -50,17 +49,16 @@ async def rerun_pipeline(topic_name, instance_id, pipeline_id):
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
     for pipeline in pipeline_list:
         if pipeline.pipelineId == pipeline_id:
-            log.info("rerun topic {0} and pipeline {1}".format(topic_name,pipeline.pipelineId))
+            log.info("rerun topic {0} and pipeline {1}".format(topic_name, pipeline.pipelineId))
             run_pipeline(pipeline, instance)
     return {"received": True}
 
 
 @router.post("/topic/data/patch", tags=["common"])
-async def patch_topic_instance(topic_name,instance,instance_id):
+async def patch_topic_instance(topic_name, instance, instance_id):
     result = find_topic_data_by_id_and_topic_name(topic_name, instance_id)
     if result is None:
-        raise Exception("topic {0} id {1} not found data ".format(topic_name,instance_id))
+        raise Exception("topic {0} id {1} not found data ".format(topic_name, instance_id))
     else:
-        #TODO audit data
-        update_topic_instance(topic_name,instance,instance_id)
-
+        # TODO audit data
+        update_topic_instance(topic_name, instance, instance_id)

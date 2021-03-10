@@ -64,7 +64,6 @@ def __convert_value_to_datetime(value):
 
 
 def __run_arithmetic(arithmetic, value):
-
     if arithmetic == NONE:
         return value
     elif arithmetic == SUM:
@@ -414,6 +413,7 @@ def __convert_to_list(value):
         # TODO for in and not in operator
         pass
 
+
 #
 # def __is_raw_topic(pipeline_topic):
 #     return pipeline_topic.type == parameter_constants.RAW
@@ -479,5 +479,3 @@ def __build_mongo_query(joint_type, where_condition):
             for condition in where_condition:
                 where_condition_result[mongo_constants.MONGO_OR].append(__process_where_condition(condition))
         return where_condition_result
-
-

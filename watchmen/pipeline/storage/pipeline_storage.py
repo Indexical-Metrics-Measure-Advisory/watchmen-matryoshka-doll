@@ -37,7 +37,7 @@ def load_pipeline_by_topic_id(topic_id):
 def load_pipeline_by_id(pipeline_id):
     result = pipelines.find_one({"pipelineId": pipeline_id})
     if result is None:
-        return  None
+        return None
     else:
         return Pipeline.parse_obj(result)
 

@@ -38,4 +38,3 @@ def delete_report_by_id(report_id):
 
 def import_report_to_db(report):
     console_reports.insert_one(report)
-

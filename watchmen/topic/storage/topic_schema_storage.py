@@ -94,4 +94,3 @@ def update_topic(topic_id, topic: Topic):
 
 def import_topic_to_db(topic):
     topics.insert_one(topic.dict())
-

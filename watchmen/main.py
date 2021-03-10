@@ -2,6 +2,7 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from watchmen.common.log import log
 from watchmen.routers import admin, console, common, auth, metadata
 

@@ -45,4 +45,3 @@ def test_token(current_user: User = Depends(deps.get_current_user)) -> Any:
     Test access token
     """
     return current_user
-
