@@ -21,7 +21,10 @@ def update_dashboard_to_storage(dashboard: ConsoleDashboard):
 
 def load_dashboard_by_id(dashboard_id):
     result = console_dashboards.find_one({"dashboardId": dashboard_id})
-    return ConsoleDashboard.parse_obj(result)
+    if result is None:
+        return None
+    else:
+        return ConsoleDashboard.parse_obj(result)
 
 
 def load_dashboard_by_user_id(user_id):

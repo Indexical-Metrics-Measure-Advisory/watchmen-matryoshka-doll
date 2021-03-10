@@ -14,7 +14,10 @@ users = db.get_collection('users')
 
 def get_user(user_id):
     user = users.find_one({"userId": user_id})
-    return User.parse_obj(user)
+    if user is None:
+        return None
+    else:
+        return User.parse_obj(user)
 
 
 def get_user_list_by_ids(user_ids: list):

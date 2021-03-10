@@ -16,7 +16,10 @@ def insert_space_to_storage(space):
 
 def get_space_by_id(space_id: str):
     result = spaces.find_one({"spaceId": space_id})
-    return Space.parse_obj(result)
+    if result is None:
+        return None
+    else:
+        return Space.parse_obj(result)
 
 
 def update_space_to_storage(space_id: str, space: Space):

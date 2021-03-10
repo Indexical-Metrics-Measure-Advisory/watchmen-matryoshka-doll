@@ -26,7 +26,10 @@ def update_console_subject(console_subject: ConsoleSpaceSubject):
 
 def load_console_subject_by_id(subject_id):
     result = console_space_subjects.find_one({"subjectId": subject_id})
-    return ConsoleSpaceSubject.parse_obj(result)
+    if result is None:
+        return None
+    else:
+        return ConsoleSpaceSubject.parse_obj(result)
 
 
 def delete_console_subject_by_id(subject_id):

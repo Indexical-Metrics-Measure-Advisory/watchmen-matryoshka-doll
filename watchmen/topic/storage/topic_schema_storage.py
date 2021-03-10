@@ -62,7 +62,10 @@ def check_topic_exist(topic_name, topic_type) -> bool:
 @lru_cache(maxsize=50)
 def get_topic_by_id(topic_id):
     result = topics.find_one({"topicId": topic_id})
-    return Topic.parse_obj(result)
+    if result is None:
+        return None
+    else:
+        return Topic.parse_obj(result)
 
 
 def get_topic_list_by_ids(topic_ids):

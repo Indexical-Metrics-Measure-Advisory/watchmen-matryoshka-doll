@@ -28,7 +28,10 @@ def save_console_space(console_space: ConsoleSpace):
 
 def load_console_space_by_id(connect_id: str):
     result = console_spaces.find_one({"connectId": connect_id})
-    return ConsoleSpace.parse_obj(result)
+    if result is None:
+        return None
+    else:
+        return ConsoleSpace.parse_obj(result)
 
 
 def delete_console_space_storage(connect_id):

@@ -21,7 +21,10 @@ def create_dataset_reports(reports):
 
 def load_report_by_id(report_id):
     result = console_reports.find_one({"reportId": report_id})
-    return Report.parse_obj(result)
+    if result is None:
+        return None
+    else:
+        return Report.parse_obj(result)
 
 
 def load_reports_by_ids(report_ids):
