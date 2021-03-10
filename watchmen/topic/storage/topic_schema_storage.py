@@ -10,36 +10,36 @@ from watchmen.topic.topic import Topic
 
 db = get_client()
 
-topic_col = db.get_collection('topic')
+topics = db.get_collection('topics')
 
 
 def save_topic(topic):
     # print(get_topic_by_id.cache_info())
     get_topic_by_id.cache_clear()
     get_topic.cache_clear()
-    return topic_col.insert_one(topic)
+    return topics.insert_one(topic)
 
 
 def load_all_topic():
-    result = topic_col.find()
+    result = topics.find()
     # .sort("last_modified", pymongo.DESCENDING)
     return list(result)
 
 
 def load_all_topic_list(pagination: Pagination):
-    item_count = topic_col.find().count()
+    item_count = topics.find().count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    result = topic_col.find().skip(skips).limit(pagination.pageSize).sort("last_modified", pymongo.DESCENDING)
+    result = topics.find().skip(skips).limit(pagination.pageSize).sort("last_modified", pymongo.DESCENDING)
     return build_data_pages(pagination, list(result), item_count)
 
 
 def get_topic_by_name(topic_name):
-    return topic_col.find_one({"name": topic_name})
+    return topics.find_one({"name": topic_name})
 
 
 @lru_cache(maxsize=50)
 def get_topic(topic_name) -> Topic:
-    result = topic_col.find_one({"name": topic_name})
+    result = topics.find_one({"name": topic_name})
     if result is None:
         return None
     else:
@@ -47,12 +47,12 @@ def get_topic(topic_name) -> Topic:
 
 
 def load_topic_list_by_name(topic_name):
-    result = topic_col.find({"name": regex.Regex(topic_name)})
+    result = topics.find({"name": regex.Regex(topic_name)})
     return list(result)
 
 
 def check_topic_exist(topic_name, topic_type) -> bool:
-    result = topic_col.find_one({"name", topic_name, "type", topic_type})
+    result = topics.find_one({"name", topic_name, "type", topic_type})
     if result is None:
         return False
     else:
@@ -61,12 +61,12 @@ def check_topic_exist(topic_name, topic_type) -> bool:
 
 @lru_cache(maxsize=50)
 def get_topic_by_id(topic_id):
-    result = topic_col.find_one({"topicId": topic_id})
+    result = topics.find_one({"topicId": topic_id})
     return Topic.parse_obj(result)
 
 
 def get_topic_list_by_ids(topic_ids):
-    result = topic_col.find({"topicId": {"$in": topic_ids}})
+    result = topics.find({"topicId": {"$in": topic_ids}})
     return list(result)
 
 
@@ -76,9 +76,9 @@ def topic_dict_to_object(topic_schema_dict):
 
 
 def query_topic_list_with_pagination(query_name: str, pagination: Pagination):
-    item_count = topic_col.find({"name": regex.Regex(query_name)}).count()
+    item_count = topics.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    result = topic_col.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize).sort(
+    result = topics.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize).sort(
         "last_modified", pymongo.DESCENDING)
     return build_data_pages(pagination, list(result), item_count)
 
@@ -86,4 +86,9 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination):
 def update_topic(topic_id, topic: Topic):
     get_topic_by_id.cache_clear()
     get_topic.cache_clear()
-    return topic_col.update_one({"topicId": topic_id}, {"$set": topic})
+    return topics.update_one({"topicId": topic_id}, {"$set": topic})
+
+
+def import_topic_to_db(topic):
+    topics.insert_one(topic.dict())
+

@@ -43,3 +43,7 @@ def query_user_groups_by_name_with_paginate(query_name: str, pagination: Paginat
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = user_groups.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
     return build_data_pages(pagination, list(result), items_count)
+
+
+def import_user_group_to_db(group):
+    user_groups.insert_one(group.dict())

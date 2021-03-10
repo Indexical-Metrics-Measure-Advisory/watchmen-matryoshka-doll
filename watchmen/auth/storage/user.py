@@ -51,3 +51,7 @@ def query_users_by_name_with_pagination(query_name: str, pagination: Pagination)
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     result = users.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
     return build_data_pages(pagination, list(result), items_count)
+
+
+def import_user_to_db(user):
+    users.insert_one(user.dict())

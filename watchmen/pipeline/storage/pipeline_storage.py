@@ -7,20 +7,20 @@ from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 
 db = get_client()
 
-pipeline_collection = db.get_collection('pipeline')
+pipelines = db.get_collection('pipelines')
 
 pipeline_graph_collection = db.get_collection('pipeline_graph')
 
 
 def create_pipeline(pipeline: Pipeline) -> Pipeline:
     pipeline.pipelineId = get_surrogate_key()
-    pipeline_collection.insert_one(pipeline.dict())
+    pipelines.insert_one(pipeline.dict())
     return pipeline
 
 
 def update_pipeline(pipeline: Pipeline) -> Pipeline:
     load_pipeline_by_topic_id.cache_clear()
-    pipeline_collection.update_one({"pipelineId": pipeline.pipelineId}, {"$set": pipeline.dict()})
+    pipelines.update_one({"pipelineId": pipeline.pipelineId}, {"$set": pipeline.dict()})
     return pipeline
 
 
@@ -30,25 +30,25 @@ def __convert_to_object(x):
 
 @lru_cache(maxsize=100)
 def load_pipeline_by_topic_id(topic_id):
-    result = pipeline_collection.find({"topicId": topic_id})
+    result = pipelines.find({"topicId": topic_id})
     return list(map(__convert_to_object, list(result)))
 
 
 def load_pipeline_by_id(pipeline_id):
-    result = pipeline_collection.find_one({"pipelineId": pipeline_id})
+    result = pipelines.find_one({"pipelineId": pipeline_id})
     return Pipeline.parse_obj(result)
 
 
 def update_pipeline_status(pipeline_id, enabled):
-    pipeline_collection.update_one({"pipelineId": pipeline_id}, {"$set": {"enabled": enabled}})
+    pipelines.update_one({"pipelineId": pipeline_id}, {"$set": {"enabled": enabled}})
 
 
 def update_pipeline_name(pipeline_id, name):
-    pipeline_collection.update_one({"pipelineId": pipeline_id}, {"$set": {"name": name}})
+    pipelines.update_one({"pipelineId": pipeline_id}, {"$set": {"name": name}})
 
 
 def load_pipeline_list():
-    result = pipeline_collection.find()
+    result = pipelines.find()
     return list(result)
 
 
@@ -68,3 +68,7 @@ def load_pipeline_graph(user_id):
         return None
     else:
         return PipelinesGraphics.parse_obj(result)
+
+
+def import_pipeline_to_db(pipeline):
+    pipelines.insert_one(pipeline.dict())

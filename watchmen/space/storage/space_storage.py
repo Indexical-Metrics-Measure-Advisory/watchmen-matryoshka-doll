@@ -7,51 +7,55 @@ from watchmen.space.space import Space
 
 db = get_client()
 
-collection = db.get_collection('space')
+spaces = db.get_collection('spaces')
 
 
 def insert_space_to_storage(space):
-    return collection.insert_one(space)
+    return spaces.insert_one(space)
 
 
 def get_space_by_id(space_id: str):
-    result = collection.find_one({"spaceId": space_id})
+    result = spaces.find_one({"spaceId": space_id})
     return Space.parse_obj(result)
 
 
 def update_space_to_storage(space_id: str, space: Space):
-    return collection.update_one({"spaceId": space_id}, {"$set": space})
+    return spaces.update_one({"spaceId": space_id}, {"$set": space})
 
 
 def query_space_with_pagination(query_name: str, pagination: Pagination):
-    items_count = collection.find({"name": regex.Regex(query_name)}).count()
+    items_count = spaces.find({"name": regex.Regex(query_name)}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    result = collection.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
+    result = spaces.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
     return build_data_pages(pagination, list(result), items_count)
 
 
 def get_space_list_by_ids(space_ids):
-    result = collection.find({"spaceId": {"$in": space_ids}})
+    result = spaces.find({"spaceId": {"$in": space_ids}})
     return list(result)
 
 
 def load_space_by_user(group_ids):
-    result = collection.find({"groupIds": {"$in": group_ids}})
+    result = spaces.find({"groupIds": {"$in": group_ids}})
     return list(result)
 
 
 def load_space_by_name(name):
-    data = collection.find_one({"name": name})
+    data = spaces.find_one({"name": name})
     return data
 
 
 def load_space_list_by_name(name):
-    result = collection.find({"name": regex.Regex(name)})
+    result = spaces.find({"name": regex.Regex(name)})
     return list(result)
 
 
 def load_space_list_by_user_id_with_pagination(group_ids, pagination: Pagination):
-    items_count = collection.find({"groupIds": {"$in": group_ids}}).count()
+    items_count = spaces.find({"groupIds": {"$in": group_ids}}).count()
     skips = pagination.pageSize * (pagination.pageNumber - 1)
-    result = collection.find({"groupIds": {"$in": group_ids}}).skip(skips).limit(pagination.pageSize)
+    result = spaces.find({"groupIds": {"$in": group_ids}}).skip(skips).limit(pagination.pageSize)
     return build_data_pages(pagination, list(result), items_count)
+
+
+def import_space_to_db(space):
+    spaces.insert_one(space.dict())
