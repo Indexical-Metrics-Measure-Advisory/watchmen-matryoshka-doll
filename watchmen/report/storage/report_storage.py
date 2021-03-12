@@ -1,10 +1,6 @@
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.console_space.model.console_space import Report
-#
-# db = get_client()
-# console_reports = db.get_collection('console_reports')
-
 
 CONSOLE_REPORTS = "console_reports"
 
