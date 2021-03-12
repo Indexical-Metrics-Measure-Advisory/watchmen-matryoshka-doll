@@ -23,10 +23,8 @@ router = APIRouter()
 log = logging.getLogger("app." + __name__)
 
 
-
 class TopicInstance(MongoModel):
-    data:Any = None
-
+    data: Any = None
 
 
 @router.get("/health", tags=["common"])
@@ -48,10 +46,10 @@ async def save_topic_data(topic_event: TopicEvent):
     return {"received": True}
 
 
-@router.get("/topic/data/all", tags=["common"],response_model=List[TopicInstance])
-async def load_topic_instance(topic_name,current_user: User = Depends(deps.get_current_user)):
+@router.get("/topic/data/all", tags=["common"], response_model=List[TopicInstance])
+async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_current_user)):
     results = get_topic_instances_all(topic_name)
-    instances =[]
+    instances = []
     for result in results:
         instances.append(TopicInstance(data=result))
     return instances
@@ -85,6 +83,6 @@ async def patch_topic_instance(topic_name, instance, instance_id):
 
 
 @router.post("/topic/data/remove", tags=["common"])
-async def remove_topic_collection(collections:List[str],current_user: User = Depends(deps.get_current_user)):
+async def remove_topic_collection(collections: List[str], current_user: User = Depends(deps.get_current_user)):
     for collection in collections:
         delete_topic_collection(collection)
