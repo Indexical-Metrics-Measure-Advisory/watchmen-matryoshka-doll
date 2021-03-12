@@ -90,7 +90,7 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination):
     #     "last_modified", pymongo.DESCENDING)
     # return build_data_pages(pagination, list(result), item_count)
     return template.query_with_pagination("topics", pagination, Topic, query_dict={"name": regex.Regex(query_name)},
-                                          sort_dict={"last_modified": pymongo.DESCENDING})
+                                          sort_dict=["last_modified", pymongo.DESCENDING])
 
 
 def update_topic(topic_id, topic: Topic):

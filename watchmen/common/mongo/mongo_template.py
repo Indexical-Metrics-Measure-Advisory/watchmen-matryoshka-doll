@@ -67,7 +67,7 @@ def __sort(cursor, sort_dict):
     if sort_dict is None:
         return cursor
     else:
-        return cursor.sort(sort_dict)
+        return cursor.sort(*sort_dict)
 
 
 def query_with_pagination(collection_name, pagination, base_model, query_dict=None, sort_dict=None):

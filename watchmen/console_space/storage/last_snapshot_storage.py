@@ -37,4 +37,4 @@ def load_last_snapshot(user_id):
 def update_last_snapshot(user_id, last_snapshot):
     # data = last_snapshot.dict()
     # console_space_last_snapshot.update_one({"userId": user_id}, {"$set": data})
-    return template.update_one(LAST_SNAPSHOT,{"userId": user_id},data)
+    return template.update_one(LAST_SNAPSHOT,{"userId": user_id},last_snapshot,LastSnapshot)

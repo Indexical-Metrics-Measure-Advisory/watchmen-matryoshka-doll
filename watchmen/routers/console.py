@@ -114,7 +114,7 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
         if console_space.subjectIds is not None:
             subjects = load_console_subject_list_by_ids(console_space.subjectIds)
             for subject in subjects:
-                subject["reports"] = load_reports_by_ids(subject["reportIds"])
+                subject.reports = load_reports_by_ids(subject.reportIds)
             console_space.subjects = subjects
         result.append(console_space)
     return result

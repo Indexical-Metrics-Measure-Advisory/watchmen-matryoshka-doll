@@ -30,7 +30,7 @@ def query_space_with_pagination(query_name: str, pagination: Pagination):
     # skips = pagination.pageSize * (pagination.pageNumber - 1)
     # result = spaces.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
     # return build_data_pages(pagination, list(result), items_count)
-    return template.query_with_pagination("spaces", {"name": regex.Regex(query_name)}, pagination, Space)
+    return template.query_with_pagination("spaces", pagination, Space,{"name": regex.Regex(query_name)})
 
 
 def get_space_list_by_ids(space_ids):
