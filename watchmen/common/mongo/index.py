@@ -13,4 +13,3 @@ def check_collection_if_exist(dbname, collection_name):
 def delete_topic_collection(collection_name):
     topic_name = build_collection_name(collection_name)
     client.get_collection(topic_name).drop()
-

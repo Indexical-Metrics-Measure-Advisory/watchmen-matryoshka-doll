@@ -25,5 +25,3 @@ def update_topic_schema(
         topic = topic.dict()
     update_topic(topic_id, topic)
     return Topic.parse_obj(topic)
-
-

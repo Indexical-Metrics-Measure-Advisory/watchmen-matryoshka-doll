@@ -38,7 +38,6 @@ def get_topic_instances_all(topic_name):
     return list(result)
 
 
-
 def find_topic_data_by_id_and_topic_name(topic_name, object_id):
     topic_instance_col = client.get_collection(build_collection_name(topic_name))
     return find_topic_data_by_id(topic_instance_col, ObjectId(object_id))

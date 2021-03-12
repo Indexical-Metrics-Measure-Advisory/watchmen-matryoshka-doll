@@ -254,7 +254,7 @@ async def load_pipeline(topic_id, current_user: User = Depends(deps.get_current_
 
 
 @router.get("/pipeline/id", tags=["admin"], response_model=Pipeline)
-async def load_pipeline_by_pipeline_id(pipeline_id,current_user: User = Depends(deps.get_current_user)):
+async def load_pipeline_by_pipeline_id(pipeline_id, current_user: User = Depends(deps.get_current_user)):
     return load_pipeline_by_id(pipeline_id)
 
 

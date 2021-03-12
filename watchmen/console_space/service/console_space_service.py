@@ -17,14 +17,14 @@ def delete_console_space_and_sub_data(connect_id):
     console_space = load_console_space_by_id(connect_id)
     if console_space.subjectIds:
         delete_console_subject_by_ids(console_space.subjectIds)
-    if console_space.groupIds:
-        delete_console_group(console_space.groupIds)
+    # if console_space.groupIds:
+    #     delete_console_group(console_space.groupIds)
     delete_console_space_storage(connect_id)
 
     # console_space.subjectIds
 
 
-def delete_console_group(group_ids):
-    group_list = load_console_group_list_by_ids(group_ids)
-    for group in group_list:
-        delete_console_subject_by_ids(group["subjectIds"])
+# def delete_console_group(group_ids):
+#     group_list = load_console_group_list_by_ids(group_ids)
+#     for group in group_list:
+#         delete_console_subject_by_ids(group["subjectIds"])
