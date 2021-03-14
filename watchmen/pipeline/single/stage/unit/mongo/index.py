@@ -26,7 +26,7 @@ MONTH_OF = 'month-of'
 WEEK_OF_YEAR = 'week-of-year'
 WEEK_OF_MONTH = 'week-of-month'
 DAY_OF_MONTH = 'day-of-month'
-DAY_OF_WEEK = 'weekdays'
+DAY_OF_WEEK = 'day-of-week'
 
 ADD = 'add'
 SUBTRACT = 'subtract'
