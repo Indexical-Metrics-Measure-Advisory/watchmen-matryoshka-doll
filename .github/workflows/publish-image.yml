@@ -25,4 +25,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/indexical-metrics-measure-advisory/watchmen-data-processor:latest
+          tags: ghcr.io/indexical-metrics-measure-advisory/watchmen-matryoshka-doll:latest
