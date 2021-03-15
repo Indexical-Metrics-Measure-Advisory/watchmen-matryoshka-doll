@@ -13,6 +13,8 @@ def load_address_plugin(language):
 
 
 def run(address):
+    if type(address) is not str:
+        return None
     language = detect(address)
     address_plugin = load_address_plugin(language[0])
     if address_plugin is None:

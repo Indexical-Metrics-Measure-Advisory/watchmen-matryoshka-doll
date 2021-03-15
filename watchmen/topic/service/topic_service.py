@@ -14,6 +14,7 @@ def create_topic_schema(topic):
     if type(topic) is not dict:
         topic = topic.dict()
     save_topic(topic)
+    ## TODO create table
     return Topic.parse_obj(topic)
 
 

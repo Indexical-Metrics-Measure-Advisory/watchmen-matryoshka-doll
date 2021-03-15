@@ -1,9 +1,3 @@
-from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.pipeline.model.pipeline import Pipeline
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
-from watchmen.topic.storage.topic_relation_storage import save_topic_relationship
-from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
-from watchmen.topic.topic_relationship import TopicRelationship
 #
 #
 # def extract_topic_relationship_from_pipeline(pipeline: Pipeline):

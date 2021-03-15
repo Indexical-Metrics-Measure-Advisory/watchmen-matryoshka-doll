@@ -102,8 +102,8 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
     user_id = current_user.userId
     console_space_list = load_console_space_list_by_user(user_id)
     result = []
-    for data in console_space_list:
-        console_space = ConsoleSpace.parse_obj(data)
+    for console_space in console_space_list:
+        # console_space = ConsoleSpace.parse_obj(data)
         topic_list = load_topic_list_by_space_id(console_space.spaceId)
         console_space.topics = topic_list
         # topic_ids = list(map(lambda x: x["topicId"], topic_list))
@@ -114,7 +114,7 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
         if console_space.subjectIds is not None:
             subjects = load_console_subject_list_by_ids(console_space.subjectIds)
             for subject in subjects:
-                subject["reports"] = load_reports_by_ids(subject["reportIds"])
+                subject.reports = load_reports_by_ids(subject.reportIds)
             console_space.subjects = subjects
         result.append(console_space)
     return result

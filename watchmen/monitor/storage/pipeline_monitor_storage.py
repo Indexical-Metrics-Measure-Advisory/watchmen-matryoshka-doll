@@ -10,7 +10,6 @@ def insert_pipeline_monitor(pipeline_status: PipelineRunStatus):
     monitor_pipeline_collection.insert_one(pipeline_status.dict())
 
 
-#
 # def insert_stage_monitor(stage_status):
 #     pass
 

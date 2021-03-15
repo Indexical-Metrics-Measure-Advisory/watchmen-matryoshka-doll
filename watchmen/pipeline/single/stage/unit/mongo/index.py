@@ -64,7 +64,6 @@ def __convert_value_to_datetime(value):
 
 
 def __run_arithmetic(arithmetic, value):
-
     if arithmetic == NONE:
         return value
     elif arithmetic == SUM:
@@ -115,18 +114,19 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
 
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source))
-
+        # print()
+        print("source", source)
+        print("source_value_list", source_value_list)
         target_factor = get_factor(mapping.factorId, target_topic)
 
         mapping_log["target"] = target_factor
         mapping_log[pipeline_constants.VALUE] = source_value_list
-
+        # print("source_value_list",source_value_list)
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
         mapping_results.append({target_factor.name: source_value_list})
 
         mapping_logs.append(mapping_log)
-
     mapping_data_list = merge_mapping_data(mapping_results)
     return mapping_data_list, mapping_logs
 
@@ -227,7 +227,8 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
 def get_source_value_list(pipeline_topic, raw_data, parameter, result=[]):
     if parameter.kind == parameter_constants.TOPIC:
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
-        return get_source_factor_value(raw_data, result, source_factor)
+        # print(source_factor)
+        return get_source_factor_value(raw_data, [], source_factor)
     elif parameter.kind == parameter_constants.CONSTANT:
         return parameter.value
     elif parameter.kind == parameter_constants.COMPUTED:
@@ -238,8 +239,11 @@ def get_source_value_list(pipeline_topic, raw_data, parameter, result=[]):
 
 def get_source_factor_value(raw_data, result, source_factor):
     if is_sub_field(source_factor):
+        # print(source_factor.name)
         factor_list = build_factor_list(source_factor)
+        print("factor_list", factor_list)
         source_value_list = get_factor_value(0, factor_list, raw_data, result)
+        print("tt", source_value_list)
     else:
         source_value_list = get_value(source_factor, raw_data)
     return source_value_list
@@ -251,6 +255,7 @@ def merge_mapping_data(mapping_results):
     for i in range(max_value_size):
         mapping_data = {}
         for mapping_result in mapping_results:
+            # print("mapping_result",mapping_result)
             for key, value in mapping_result.items():
                 if type(value) is list and len(value) > 0:
                     mapping_data[key] = value[i]
@@ -289,6 +294,7 @@ def is_sub_field(factor):
 def get_factor_value(index, factor_list, raw_data, result):
     factor = factor_list[index]
     data = get_value(factor, raw_data)
+    print("result",result)
     if type(data) is list:
         for raw in data:
             get_factor_value(index + 1, factor_list, raw, result)
@@ -296,6 +302,7 @@ def get_factor_value(index, factor_list, raw_data, result):
         get_factor_value(index + 1, factor_list, data, result)
     else:
         result.append(data)
+    print("result", result)
     return result
 
 
@@ -414,6 +421,7 @@ def __convert_to_list(value):
         # TODO for in and not in operator
         pass
 
+
 #
 # def __is_raw_topic(pipeline_topic):
 #     return pipeline_topic.type == parameter_constants.RAW
@@ -479,5 +487,3 @@ def __build_mongo_query(joint_type, where_condition):
             for condition in where_condition:
                 where_condition_result[mongo_constants.MONGO_OR].append(__process_where_condition(condition))
         return where_condition_result
-
-

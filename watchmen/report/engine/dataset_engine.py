@@ -6,6 +6,8 @@ from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_client import get_connection
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id, \
     load_console_subject_by_report_id
+from watchmen.monitor.services.query_monitor_service import build_query_condition_subject
+
 from watchmen.report.engine.sql_builder import _from, _select, _join, _filter, _groupby, _indicator, _orderby, \
     _dimension
 from watchmen.report.model.report import ChartType
@@ -20,19 +22,25 @@ def build_pagination(pagination):
 
 
 def load_dataset_by_subject_id(subject_id, pagination: Pagination):
-    ##TODO report monitor
+    # TODO report monitor
+
     console_subject = load_console_subject_by_id(subject_id)
+
+    # build query condition
     query = build_query_for_subject(console_subject)
     count_query = build_count_query_for_subject(console_subject)
+    count_sql = count_query.get_sql()
+    # query_condition_count = build_query_condition_subject(console_subject,count_sql,query_type="dataset")
     conn = get_connection()
     cur = conn.cursor()
-    count_sql = count_query.get_sql()
+
     log.info("sql count:{0}".format(count_sql))
     cur.execute(count_sql)
     count_rows = cur.fetchone()
     log.info("sql result: {0}".format(count_rows))
 
     query_sql = query.get_sql() + " " + build_pagination(pagination)
+    # query_condition = build_query_condition_subject(console_subject, query_sql, query_type="dataset")
     log.info("sql:{0}".format(query_sql))
     cur = conn.cursor()
     cur.execute(query_sql)
@@ -43,6 +51,10 @@ def load_dataset_by_subject_id(subject_id, pagination: Pagination):
 
 def load_chart_dataset(report_id):
     query = build_query_for_subject_chart(report_id)
+    return __load_chart_dataset(query)
+
+
+def __load_chart_dataset(query):
     conn = get_connection()
     query_sql = query.get_sql()
     log.info("sql: {0}".format(query_sql))
@@ -55,14 +67,7 @@ def load_chart_dataset(report_id):
 
 def load_chart_dataset_temp(report):
     query = build_query_for_subject_chart(report.reportId, report)
-    conn = get_connection()
-    query_sql = query.get_sql()
-    log.info("sql: {0}".format(query_sql))
-    cur = conn.cursor()
-    cur.execute(query_sql)
-    rows = cur.fetchall()
-    log.debug("sql result: {0}".format(rows))
-    return rows
+    return __load_chart_dataset(query)
 
 
 def build_query_for_subject(console_subject):
@@ -82,7 +87,6 @@ def build_query_for_subject(console_subject):
 def build_count_query_for_subject_chart(console_subject, columns_dict, report):
     dataset = console_subject.dataset
     query = None
-    # indicator = report.indicators[0]
     if dataset is not None:
         query = _from(dataset.columns[0])
         if report.indicators:

@@ -19,7 +19,7 @@ from watchmen.pipeline.model.pipeline_flow import PipelineFlow
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
     load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status, \
-    update_pipeline_name
+    update_pipeline_name, load_pipeline_by_id
 from watchmen.space.service.admin import create_space, update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
@@ -253,6 +253,11 @@ async def load_pipeline(topic_id, current_user: User = Depends(deps.get_current_
     return {"topicId": topic_id, "consume": [], "produce": pipeline_list_produce}
 
 
+@router.get("/pipeline/id", tags=["admin"], response_model=Pipeline)
+async def load_pipeline_by_pipeline_id(pipeline_id, current_user: User = Depends(deps.get_current_user)):
+    return load_pipeline_by_id(pipeline_id)
+
+
 @router.get("/pipeline/all", tags=["admin"], response_model=List[Pipeline])
 async def load_all_pipelines(current_user: User = Depends(deps.get_current_user)):
     return load_pipeline_list()
@@ -291,12 +296,3 @@ async def load_pipeline_graph_by_user(current_user: User = Depends(deps.get_curr
 # Report
 
 # TODO report API
-
-
-
-
-
-
-
-
-
