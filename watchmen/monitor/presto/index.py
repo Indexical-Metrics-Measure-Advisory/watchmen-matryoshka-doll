@@ -8,3 +8,5 @@ def load_query_status_from_presto():
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     return response.json()
+
+

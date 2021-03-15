@@ -14,12 +14,12 @@ def init():
     logging.getLogger().addHandler(console)
 
     # Add file rotating handler, with level DEBUG
-    rotating_handler = logging.handlers.RotatingFileHandler(filename='temp/rotating.log', maxBytes=10242880,
-                                                            backupCount=5)
-    rotating_handler.setLevel(logging.ERROR)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    rotating_handler.setFormatter(formatter)
-    logging.getLogger().addHandler(rotating_handler)
+    # rotating_handler = logging.handlers.RotatingFileHandler(filename='temp/rotating.log', maxBytes=10242880,
+    #                                                         backupCount=5)
+    # rotating_handler.setLevel(logging.ERROR)
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # rotating_handler.setFormatter(formatter)
+    # logging.getLogger().addHandler(rotating_handler)
 
     # return logging
 

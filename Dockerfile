@@ -1,12 +1,11 @@
-FROM python:3.7
+FROM python:3.9
 
 WORKDIR /app
 ADD . .
 RUN pip install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install
-RUN pip install uvicorn
-#RUN python -m spacy download en_core_web_sm
+
 
 
 EXPOSE 8000
