@@ -15,35 +15,36 @@
 <img alt="Architecture Diagram" src="doc/image/architecture.png" />
 </p>
 
-watchman-data-processor is the back-end server for the watchmen data platform. 
+watchmen-matryoshka-doll is the back-end server for the watchmen data platform. 
 
 # Use Case
 
 <p align="center">
-<img alt="Architecture Diagram" src="doc/image/usecase.png" />
+<img alt="Use Case" src="doc/image/usecase.png" />
 </p>
 
 
-# build requirements
+
+# Build Requirements
 
 * Mac OS X or Linux or Windows
 * Python 3.7+, 64-bit
 * Docker
 
-# start
+# Start
 local start
 
 ```
 python app.py
 ```
 
-# docker run
+# Docker Run
 
 ```
-docker run --name watchmen-data-processor -v /usr/watchmen/watchmen-data-processor/temp/rotating.log:/app/temp/rotating.log --env-file /usr/watchmen/watchmen-data-processor/env.list -p 8000:80 -d  ghcr.io/indexical-metrics-measure-advisory/watchmen-data-processor:latest
+docker run --name watchmen-matryoshka-doll -v /usr/watchmen/watchmen-matryoshka-doll/temp/rotating.log:/app/temp/rotating.log --env-file /usr/watchmen/watchmen-matryoshka-doll/env.list -p 8000:80 -d  ghcr.io/indexical-metrics-measure-advisory/watchmen-matryoshka-doll:latest
 ```
 
-# configuration
+# Configuration
 
 ```
 PROJECT_NAME=matryoshka
@@ -57,7 +58,7 @@ PRESTO_PORT=8080
 WORKERS_NUM=2
 ```
 
-# presto configuration
+# Presto Configuration
 
 ```
 connector.name=mongodb
