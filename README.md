@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://www.watchmen.com/"><img alt="Watchmen Logo" src="doc/image/logo.png" /></a>
+    <a href="https://www.watchmen.com/"><img alt="Watchmen Logo" width="130" height="130" src="doc/image/logo.png" /></a>
 </p>
 <p align="center">
     <b>watchmen is a lighter platform for data analytics.</b>
@@ -12,7 +12,7 @@
 # Overview
 
 <p align="center">
-<img alt="Architecture Diagram" src="doc/image/architecture.png" />
+<img alt="Architecture Diagram" width="360" height="180" src="doc/image/architecture.png" />
 </p>
 
 watchmen-matryoshka-doll is the back-end server for the watchmen data platform. 
@@ -20,7 +20,7 @@ watchmen-matryoshka-doll is the back-end server for the watchmen data platform.
 # Use Case
 
 <p align="center">
-<img alt="Use Case" src="doc/image/usecase.png" />
+<img alt="Use Case" width="500" height="320" src="doc/image/usecase.png" />
 </p>
 
 
