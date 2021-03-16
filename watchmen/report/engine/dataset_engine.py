@@ -9,6 +9,7 @@ from watchmen.console_space.storage.console_subject_storage import load_console_
 from watchmen.monitor.model.query_monitor import QueryMonitor
 from watchmen.monitor.services.query_monitor_service import  build_query_summary, \
     build_result_summary, build_query_monitor
+from watchmen.monitor.storage.query_monitor_storage import insert_query_monitor
 
 from watchmen.report.engine.sql_builder import _from, _select, _join, _filter, _groupby, _indicator, _orderby, \
     _dimension
@@ -59,9 +60,8 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     return rows, count_rows[0]
 
 
-async  def save_query_monitor_data(query_monitor):
-    print(query_monitor)
-    pass
+async def save_query_monitor_data(query_monitor):
+    insert_query_monitor(query_monitor)
 
 
 def load_chart_dataset(report_id):
