@@ -182,7 +182,7 @@ async def save_console_subject(subject: ConsoleSpaceSubject, current_user: User 
 @router.post("/console_space/subject/dataset", tags=["console"], response_model=DataPage)
 async def load_dataset(subject_id, pagination: Pagination = Body(...),
                        current_user: User = Depends(deps.get_current_user)):
-    data, count = load_dataset_by_subject_id(subject_id, pagination)
+    data, count = await  load_dataset_by_subject_id(subject_id, pagination)
     return build_data_pages(pagination, data, count)
 
 

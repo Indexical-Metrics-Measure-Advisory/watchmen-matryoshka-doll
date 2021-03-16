@@ -1,12 +1,14 @@
 import logging
-
+import time
 from pypika import functions as fn
 
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_client import get_connection
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id, \
     load_console_subject_by_report_id
-from watchmen.monitor.services.query_monitor_service import build_query_condition_subject
+from watchmen.monitor.model.query_monitor import QueryMonitor
+from watchmen.monitor.services.query_monitor_service import  build_query_summary, \
+    build_result_summary, build_query_monitor
 
 from watchmen.report.engine.sql_builder import _from, _select, _join, _filter, _groupby, _indicator, _orderby, \
     _dimension
@@ -21,32 +23,45 @@ def build_pagination(pagination):
     return "OFFSET {0} LIMIT {1}".format(offset_num, pagination.pageSize)
 
 
-def load_dataset_by_subject_id(subject_id, pagination: Pagination):
-    # TODO report monitor
-
+async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
+    ## todo error monitor
     console_subject = load_console_subject_by_id(subject_id)
-
+    query_monitor:QueryMonitor = build_query_monitor(console_subject,query_type="dataset")
     # build query condition
+    start = time.time()
+
     query = build_query_for_subject(console_subject)
     count_query = build_count_query_for_subject(console_subject)
     count_sql = count_query.get_sql()
-    # query_condition_count = build_query_condition_subject(console_subject,count_sql,query_type="dataset")
+
+    query_count_summary = build_query_summary(count_sql)
     conn = get_connection()
     cur = conn.cursor()
-
     log.info("sql count:{0}".format(count_sql))
     cur.execute(count_sql)
     count_rows = cur.fetchone()
     log.info("sql result: {0}".format(count_rows))
 
+    query_count_summary.resultSummary = build_result_summary(count_rows,start)
+    query_monitor.querySummaryList.append(query_count_summary)
     query_sql = query.get_sql() + " " + build_pagination(pagination)
-    # query_condition = build_query_condition_subject(console_subject, query_sql, query_type="dataset")
+    query_summary = build_query_summary(query_sql)
     log.info("sql:{0}".format(query_sql))
     cur = conn.cursor()
     cur.execute(query_sql)
     rows = cur.fetchall()
     log.debug("sql result: {0}".format(rows))
+    query_summary.resultSummary = build_result_summary(rows, start)
+    query_monitor.querySummaryList.append(query_summary)
+
+    await  save_query_monitor_data(query_monitor)
+
     return rows, count_rows[0]
+
+
+async  def save_query_monitor_data(query_monitor):
+    print(query_monitor)
+    pass
 
 
 def load_chart_dataset(report_id):
