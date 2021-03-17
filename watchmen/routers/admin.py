@@ -14,6 +14,8 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update__presto_schema_fields
 from watchmen.common.utils.data_utils import check_fake_id
+from watchmen.enum.model.enum import Enum
+from watchmen.enum.storage.enum_storage import save_enum_to_storage, query_enum_list_with_pagination, load_enum_by_id
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
@@ -293,6 +295,26 @@ async def load_pipeline_graph_by_user(current_user: User = Depends(deps.get_curr
     else:
         return result
 
+
 # Report
 
 # TODO report API
+
+# ENUM
+
+@router.post("/enum", tags=["admin"], response_model=Enum)
+async def save_enum(enum: Enum):
+    return save_enum_to_storage(enum)
+
+
+@router.post("/enum/name", tags=["admin"], response_model=DataPage)
+async def load_enum_list_by_name(query_name,pagination:Pagination = Body(...),current_user: User = Depends(deps.get_current_user)):
+    return query_enum_list_with_pagination(query_name,pagination)
+
+
+@router.get("/enum", tags=["admin"], response_model=Enum)
+async def load_pipeline_by_pipeline_id(enum_id, current_user: User = Depends(deps.get_current_user)):
+    return load_enum_by_id(enum_id)
+
+
+
