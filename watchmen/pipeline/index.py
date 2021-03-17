@@ -22,13 +22,9 @@ def __match_trigger_type(trigger_type, pipeline):
 def trigger_pipeline(topic_name, instance, trigger_type: TriggerType):
     log.info("trigger_pipeline topic_name :{0}".format(topic_name))
     topic = get_topic(topic_name)
-    # TODO validate data with topic schema
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
-    # futures =[]
-    # print("pipeline list",pipeline_list)
 
     for pipeline in pipeline_list:
-        # print(__match_trigger_type(trigger_type, pipeline))
         if __match_trigger_type(trigger_type, pipeline):
-            log.info("pipeline run: {0}".format(pipeline.json()))
+            # log.info("pipeline run: {0}".format(pipeline.json()))
             run_pipeline(pipeline, instance)
