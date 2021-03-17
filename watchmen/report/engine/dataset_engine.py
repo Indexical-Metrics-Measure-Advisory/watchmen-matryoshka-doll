@@ -45,6 +45,7 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
 
     query_count_summary.resultSummary = build_result_summary(count_rows,start)
     query_monitor.querySummaryList.append(query_count_summary)
+    query_start = time.time()
     query_sql = query.get_sql() + " " + build_pagination(pagination)
     query_summary = build_query_summary(query_sql)
     log.info("sql:{0}".format(query_sql))
@@ -52,15 +53,15 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     cur.execute(query_sql)
     rows = cur.fetchall()
     log.debug("sql result: {0}".format(rows))
-    query_summary.resultSummary = build_result_summary(rows, start)
+    query_summary.resultSummary = build_result_summary(rows, query_start)
     query_monitor.querySummaryList.append(query_summary)
-
+    query_monitor.executionTime = time.time() - start
     await  save_query_monitor_data(query_monitor)
-
     return rows, count_rows[0]
 
 
 async def save_query_monitor_data(query_monitor):
+    print(query_monitor.json())
     insert_query_monitor(query_monitor)
 
 

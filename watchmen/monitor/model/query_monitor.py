@@ -30,6 +30,7 @@ class QuerySummary(BaseModel):
 class QueryMonitor(MongoModel):
     querySource: QuerySource = None
     querySummaryList: List[QuerySummary] = []
+    executionTime: int = None
 
     # queryCondition: List[QueryCondition] = None
     #

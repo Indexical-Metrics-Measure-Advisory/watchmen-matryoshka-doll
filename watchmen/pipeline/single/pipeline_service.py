@@ -55,7 +55,7 @@ def run_pipeline(pipeline: Pipeline, data):
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
         # TODO pipeline when  condition
-
+        log.info("start run pipeline {0}".format(pipeline.name))
         context = {PIPELINE_UID: pipeline_status.uid}
         unit_status_list = []
 
