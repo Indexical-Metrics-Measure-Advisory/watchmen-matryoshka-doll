@@ -12,6 +12,7 @@ NUMBER = "number"
 UNSIGNED = "unsigned"  # 0 & positive
 
 TEXT = "text"
+TIME = 'time'
 
 # address
 ADDRESS = "address"
@@ -114,6 +115,9 @@ def convert_factor_type(value, factor_type):
         return int(value)
     elif factor_type == MONTH:
         return int(value)
+    elif factor_type == TIME:
+
+        return round(value * 1000)
     else:
         return value
 

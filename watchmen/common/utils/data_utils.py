@@ -81,7 +81,7 @@ def is_presto_int_type(factor_type):
 
 
 def is_presto_datetime(factor_type):
-    date_types = [DATETIME, DATE, TIME]
+    date_types = [DATETIME, DATE]
     if factor_type in date_types:
         return True
     else:

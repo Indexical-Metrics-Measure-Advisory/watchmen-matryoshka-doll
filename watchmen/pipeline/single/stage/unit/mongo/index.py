@@ -242,10 +242,6 @@ def get_source_factor_value(raw_data, result, source_factor):
         factor_list = build_factor_list(source_factor)
         source_value_list = get_factor_value(0, factor_list, raw_data, result)
     else:
-        print("-------------")
-        print(source_factor)
-        print(raw_data)
-        print("-------------")
         source_value_list = get_value(source_factor, raw_data)
     return source_value_list
 

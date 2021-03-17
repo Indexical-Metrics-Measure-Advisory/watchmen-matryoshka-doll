@@ -4,7 +4,7 @@ from watchmen.common.constants import presto_constants
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_collection_name, is_presto_varchar_type, is_presto_int_type, \
     is_presto_datetime
-from watchmen.pipeline.single.stage.unit.utils.units_func import BOOLEAN, NUMBER
+from watchmen.pipeline.single.stage.unit.utils.units_func import BOOLEAN, NUMBER, TIME
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
@@ -13,8 +13,6 @@ db = get_client()
 collection = db.get_collection('_schema')
 
 log = logging.getLogger("app." + __name__)
-
-
 
 
 def remove_presto_schema_by_name(topic_name):
@@ -33,6 +31,8 @@ def __convert_presto_type(factor_type):
         return presto_constants.TIMESTAMP
     elif is_presto_datetime(factor_type):
         return presto_constants.DATE
+    elif factor_type == TIME:
+        return presto_constants.INTEGER
     elif factor_type == NUMBER or factor_type:
         return presto_constants.DOUBLE
     else:
