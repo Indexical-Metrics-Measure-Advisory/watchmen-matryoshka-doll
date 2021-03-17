@@ -1,3 +1,7 @@
+import pymongo
+from bson import regex
+
+from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.console_space.model.console_space import Report
@@ -45,3 +49,8 @@ def delete_report_by_id(report_id):
 def import_report_to_db(report):
     # console_reports.insert_one(report)
     template.create(CONSOLE_REPORTS,report,Report)
+
+
+def query_report_list_with_pagination(query_name: str, pagination: Pagination):
+    return template.query_with_pagination(CONSOLE_REPORTS, pagination, Report, query_dict={"name": regex.Regex(query_name)},
+                                          sort_dict=["last_modified", pymongo.DESCENDING])

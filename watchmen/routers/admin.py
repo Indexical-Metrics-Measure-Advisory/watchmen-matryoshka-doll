@@ -22,6 +22,7 @@ from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
     load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status, \
     update_pipeline_name, load_pipeline_by_id
+from watchmen.report.storage.report_storage import query_report_list_with_pagination
 from watchmen.space.service.admin import create_space, update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
@@ -137,6 +138,12 @@ async def query_topic_list_by_name(query_name: str, pagination: Pagination = Bod
                                    current_user: User = Depends(deps.get_current_user)):
     result = query_topic_list_with_pagination(query_name, pagination)
     return result
+
+
+@router.post("/report/name", tags=["admin"], response_model=DataPage)
+async def query_topic_list_by_name(query_name: str, pagination: Pagination = Body(...),
+                                   current_user: User = Depends(deps.get_current_user)):
+    return query_report_list_with_pagination(query_name, pagination)
 
 
 @router.get("/topic/all", tags=["admin"], response_model=List[Topic])
@@ -308,13 +315,11 @@ async def save_enum(enum: Enum):
 
 
 @router.post("/enum/name", tags=["admin"], response_model=DataPage)
-async def load_enum_list_by_name(query_name,pagination:Pagination = Body(...),current_user: User = Depends(deps.get_current_user)):
-    return query_enum_list_with_pagination(query_name,pagination)
+async def load_enum_list_by_name(query_name, pagination: Pagination = Body(...),
+                                 current_user: User = Depends(deps.get_current_user)):
+    return query_enum_list_with_pagination(query_name, pagination)
 
 
 @router.get("/enum", tags=["admin"], response_model=Enum)
 async def load_pipeline_by_pipeline_id(enum_id, current_user: User = Depends(deps.get_current_user)):
     return load_enum_by_id(enum_id)
-
-
-

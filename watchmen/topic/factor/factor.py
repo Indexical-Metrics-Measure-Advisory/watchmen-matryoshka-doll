@@ -18,8 +18,11 @@ class Factor(MongoModel):
     type: str = None
     factorId: str = None
     name: str = None
+    enumId: str = None
     label: str = None
     description: str = None
+    defaultValue: str = None
+    indexGroup: str =None
 
 
 '''
