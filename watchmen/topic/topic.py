@@ -18,8 +18,9 @@ class TopicType(Enum):
 class Topic(MongoModel):
     topicId: str = None
     name: str = None
-    code: str = None
+    # code: str = None
     type: str = None
+    kind: str = None
     factors: List[Factor] = []
     description: str = None
     factorIds: list = []
