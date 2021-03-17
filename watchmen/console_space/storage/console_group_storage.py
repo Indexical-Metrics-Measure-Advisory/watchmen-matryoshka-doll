@@ -4,15 +4,10 @@ from watchmen.common.utils.data_utils import WATCHMEN, check_fake_id
 from watchmen.console_space.model.console_space import ConsoleSpaceGroup
 
 db = get_client()
-# print("create_console_group_to_storage",db.client)
-
 
 GROUP_COLLECTION = 'console_space_group'
 console_space_group = db.get_collection('console_space_group')
 
-
-# def __get_group_collection():
-#     return client[WATCHMEN].get_collection(GROUP_COLLECTION)
 
 
 def create_console_group_to_storage(group: ConsoleSpaceGroup):

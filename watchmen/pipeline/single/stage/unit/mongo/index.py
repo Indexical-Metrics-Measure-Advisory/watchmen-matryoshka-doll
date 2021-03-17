@@ -114,9 +114,8 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
 
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source))
-        # print()
-        print("source", source)
-        print("source_value_list", source_value_list)
+
+
         target_factor = get_factor(mapping.factorId, target_topic)
 
         mapping_log["target"] = target_factor
@@ -241,9 +240,9 @@ def get_source_factor_value(raw_data, result, source_factor):
     if is_sub_field(source_factor):
         # print(source_factor.name)
         factor_list = build_factor_list(source_factor)
-        print("factor_list", factor_list)
+
         source_value_list = get_factor_value(0, factor_list, raw_data, result)
-        print("tt", source_value_list)
+
     else:
         source_value_list = get_value(source_factor, raw_data)
     return source_value_list
@@ -294,7 +293,7 @@ def is_sub_field(factor):
 def get_factor_value(index, factor_list, raw_data, result):
     factor = factor_list[index]
     data = get_value(factor, raw_data)
-    print("result",result)
+
     if type(data) is list:
         for raw in data:
             get_factor_value(index + 1, factor_list, raw, result)
@@ -302,7 +301,7 @@ def get_factor_value(index, factor_list, raw_data, result):
         get_factor_value(index + 1, factor_list, data, result)
     else:
         result.append(data)
-    print("result", result)
+
     return result
 
 
@@ -431,7 +430,7 @@ def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list)
     if arithmetic == "sum":
         if old_value_list is not None:
             dif_update_value = {target_factor.name: update_data[target_factor.name] - old_value_list}
-            print("dif_update_value", dif_update_value)
+
             return {"$inc": dif_update_value}
         else:
             return {"$inc": update_data}

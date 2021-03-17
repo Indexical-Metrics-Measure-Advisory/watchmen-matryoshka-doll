@@ -36,7 +36,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
         start = time.time()
         pipeline_uid = context[PIPELINE_UID]
         # TODO  action_log
-        print("write_factor")
+
         # action_log = WriteFactorAction()
 
         if action.topicId is not None:
@@ -57,7 +57,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 log.info("Insert data : {0}".format(insert_data))
                 insert_topic_data(target_topic.name, insert_data, pipeline_uid)
             else:
-                print("old_value", old_value)
+
                 if old_value is not None:
                     old_value_list = get_source_value_list(pipeline_topic, old_value, action.source)
                     # def_value_list = source_value_list - old_value_list
