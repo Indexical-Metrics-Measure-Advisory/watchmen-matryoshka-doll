@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    HOST_URL="http://localhost:8000"
 
     ALGORITHM = "HS256"
     STORAGE_ENGINE = "mongo"

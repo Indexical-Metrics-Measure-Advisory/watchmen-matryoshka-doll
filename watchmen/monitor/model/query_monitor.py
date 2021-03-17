@@ -15,8 +15,6 @@ class QuerySource(BaseModel):
 class ResultSummary(BaseModel):
     resultCount: int = None
     executionTime: int = None
-    success: bool = True
-    error: str = None
 
 
 class QuerySummary(BaseModel):
@@ -28,9 +26,12 @@ class QuerySummary(BaseModel):
 
 
 class QueryMonitor(MongoModel):
+    queryUid: int = None
     querySource: QuerySource = None
     querySummaryList: List[QuerySummary] = []
     executionTime: int = None
+    success: bool = True
+    error: str = None
 
     # queryCondition: List[QueryCondition] = None
     #

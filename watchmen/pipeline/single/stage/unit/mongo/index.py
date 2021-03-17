@@ -238,12 +238,14 @@ def get_source_value_list(pipeline_topic, raw_data, parameter, result=[]):
 
 def get_source_factor_value(raw_data, result, source_factor):
     if is_sub_field(source_factor):
-        # print(source_factor.name)
+
         factor_list = build_factor_list(source_factor)
-
         source_value_list = get_factor_value(0, factor_list, raw_data, result)
-
     else:
+        print("-------------")
+        print(source_factor)
+        print(raw_data)
+        print("-------------")
         source_value_list = get_value(source_factor, raw_data)
     return source_value_list
 
@@ -421,9 +423,6 @@ def __convert_to_list(value):
         pass
 
 
-#
-# def __is_raw_topic(pipeline_topic):
-#     return pipeline_topic.type == parameter_constants.RAW
 
 
 def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list):

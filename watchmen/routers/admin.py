@@ -12,7 +12,7 @@ from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
-from watchmen.common.presto.presto_utils import create_or_update__presto_schema_fields
+from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.enum.model.enum import Enum
 from watchmen.enum.storage.enum_storage import save_enum_to_storage, query_enum_list_with_pagination, load_enum_by_id
@@ -112,13 +112,13 @@ async def create_topic(topic: Topic, current_user: User = Depends(deps.get_curre
 async def save_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
     if check_fake_id(topic.topicId):
         result = create_topic_schema(topic)
-        create_or_update__presto_schema_fields(result)
+        create_or_update_presto_schema_fields(result)
         return result
     else:
         topic = Topic.parse_obj(topic)
         data = update_topic_schema(topic.topicId, topic)
         ## remove presto shcmea
-        create_or_update__presto_schema_fields(data)
+        create_or_update_presto_schema_fields(data)
 
         return data
 
@@ -128,7 +128,7 @@ async def update_topic(topic_id, topic: Topic = Body(...), current_user: User = 
     topic = Topic.parse_obj(topic)
     data = update_topic_schema(topic_id, topic)
     # remove_presto_schema_by_name(topic.name)
-    create_or_update__presto_schema_fields(data)
+    create_or_update_presto_schema_fields(data)
     return data
 
 

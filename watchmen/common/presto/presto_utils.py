@@ -14,9 +14,7 @@ collection = db.get_collection('_schema')
 
 log = logging.getLogger("app." + __name__)
 
-presto_fields = [{"name": "_id", "type": "ObjectId", "hidden": True},
-                 {"name": "insert_time", "type": "timestamp", "hidden": False},
-                 {"name": "update_time", "type": "timestamp", "hidden": False}]
+
 
 
 def remove_presto_schema_by_name(topic_name):
@@ -42,9 +40,9 @@ def __convert_presto_type(factor_type):
 
 
 def __build_presto_fields(factors):
-    # presto_fields = [{"name": "_id", "type": "ObjectId", "hidden": True},
-    #                  {"name": "insert_time", "type": "timestamp", "hidden": False},
-    #                  {"name": "update_time", "type": "timestamp", "hidden": False}]
+    presto_fields = [{"name": "_id", "type": "ObjectId", "hidden": True},
+                     {"name": "insert_time", "type": "timestamp", "hidden": False},
+                     {"name": "update_time", "type": "timestamp", "hidden": False}]
     for factor in factors:
         factor = Factor.parse_obj(factor)
         field = {"name": factor.name, "type": __convert_presto_type(factor.type), "hidden": False}
@@ -53,7 +51,7 @@ def __build_presto_fields(factors):
     return presto_fields
 
 
-def create_or_update__presto_schema_fields(topic: Topic):
+def create_or_update_presto_schema_fields(topic: Topic):
     topic_name = build_collection_name(topic.name)
     presto_schema = collection.find_one({"table": topic_name})
     new_schema = {"table": topic_name, "fields": __build_presto_fields(topic.factors)}

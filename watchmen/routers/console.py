@@ -230,7 +230,7 @@ async def delete_report(report_id, current_user: User = Depends(deps.get_current
 
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_chart(report_id, current_user: User = Depends(deps.get_current_user)):
-    result = load_chart_dataset(report_id)
+    result = await load_chart_dataset(report_id)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
 

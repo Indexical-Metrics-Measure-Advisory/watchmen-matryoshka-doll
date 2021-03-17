@@ -14,6 +14,7 @@ from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.pipeline_service import run_pipeline
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
+from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
 from watchmen.topic.storage.topic_data_storage import save_topic_instance, find_topic_data_by_id_and_topic_name, \
     update_topic_instance, get_topic_instances_all
 from watchmen.topic.storage.topic_schema_storage import get_topic
@@ -36,13 +37,7 @@ async def health():
 async def save_topic_data(topic_event: TopicEvent):
     # TODO user check URP
 
-    topic = get_topic(topic_event.code)
-    if topic is None:
-        raise Exception("topic name does not exist")
-
-    add_audit_columns(topic_event.data, INSERT)
-    save_topic_instance(topic_event.code, topic_event.data)
-    await __trigger_pipeline(topic_event)
+    await import_raw_topic_data(topic_event)
     return {"received": True}
 
 
