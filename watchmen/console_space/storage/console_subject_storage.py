@@ -43,7 +43,7 @@ def delete_console_subject_by_ids(subject_ids):
 
 def rename_console_subject_by_id(subject_id, name):
 
-    return template.update_one(CONSOLE_SPACE_SUBJECTS, {"subjectId": subject_id}, {"name": name})
+    return template.update_one(CONSOLE_SPACE_SUBJECTS, {"subjectId": subject_id}, {"name": name},ConsoleSpaceSubject)
 
 
 def load_console_subject_by_report_id(report_id):
