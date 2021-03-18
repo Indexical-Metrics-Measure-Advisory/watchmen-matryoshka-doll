@@ -1,23 +1,9 @@
 # from bson import timestamp
-from typing import Any
+from typing import Any, List
 
 from pydantic import BaseModel
 
 from watchmen.common.mongo_model import MongoModel
-
-
-class UnitStatus(MongoModel):
-    type: str = None
-    complete_time: int = None
-    status: str = None
-    error: str = None
-    uid: str = None
-    actions: list = []
-    mapping: list = []
-    conditions = []
-    insertCount: int = 0
-    updateCount: int = 0
-    stageName: str = None
 
 
 class BaseAction(BaseModel):
@@ -44,9 +30,22 @@ class WriteFactorAction(BaseAction):
     targetFactor: str = None
 
 
-class InsertAndMergeRow(BaseAction):
-    # TODO InsertAndMergeRow
-    pass
+class InsertAndMergeRowAction(BaseAction):
+    mapping: list = []
+    whereConditions: list = []
+
+
+class UnitStatus(MongoModel):
+    type: str = None
+    complete_time: int = None
+    status: str = None
+    error: str = None
+    uid: str = None
+    actions: List[BaseAction] = []
+    conditions :list = []
+    insertCount: int = 0
+    updateCount: int = 0
+    stageName: str = None
 
 
 class PipelineRunStatus(MongoModel):
