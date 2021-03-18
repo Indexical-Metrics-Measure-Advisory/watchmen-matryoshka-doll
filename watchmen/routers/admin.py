@@ -1,7 +1,7 @@
 import logging
 from typing import List
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends
 from pydantic import BaseModel
 
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
@@ -16,7 +16,7 @@ from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
-from watchmen.dashborad.model.dashborad import ConsoleDashboard, DashboardReport
+from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
 from watchmen.enum.model.enum import Enum
 from watchmen.enum.storage.enum_storage import save_enum_to_storage, query_enum_list_with_pagination, load_enum_by_id
@@ -73,7 +73,7 @@ class AdminDashboard(BaseModel):
 
 @router.post("/space", tags=["admin"], response_model=Space)
 async def save_space(space: Space, current_user: User = Depends(deps.get_current_user)):
-    if space.spaceId is None or check_fake_id(space.spaceId):
+    if space.spaceId is None or check_fake_id(space.spaceIsd):
         return create_space(space)
     else:
         return update_space_by_id(space.spaceId, space)
@@ -128,9 +128,7 @@ async def save_topic(topic: Topic, current_user: User = Depends(deps.get_current
     else:
         topic = Topic.parse_obj(topic)
         data = update_topic_schema(topic.topicId, topic)
-        ## remove presto shcmea
         create_or_update_presto_schema_fields(data)
-
         return data
 
 
@@ -296,10 +294,10 @@ async def rename_pipeline(pipeline_id, name, current_user: User = Depends(deps.g
 async def save_pipeline_graph(pipeline_graph: PipelinesGraphics, current_user: User = Depends(deps.get_current_user)):
     user_id = current_user.userId
     result = load_pipeline_graph(user_id)
+    pipeline_graph.userId = user_id
     if result is not None:
         return update_pipeline_graph(pipeline_graph, user_id)
     else:
-        pipeline_graph.userId = user_id
         return create_pipeline_graph(pipeline_graph)
 
 
@@ -308,7 +306,7 @@ async def load_pipeline_graph_by_user(current_user: User = Depends(deps.get_curr
     user_id = current_user.userId
     result = load_pipeline_graph(user_id)
     if result is None:
-        raise HTTPException(status_code=500, detail="not found pipeline graph")
+        return PipelinesGraphics()
     else:
         return result
 
@@ -348,4 +346,3 @@ async def load_admin_dashboard(current_user: User = Depends(deps.get_current_use
             # report_ids = list(lambda x: return x.reportId,dashboard.reports)
             reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)))
             return AdminDashboard(dashboard=dashboard, reports=reports)
-
