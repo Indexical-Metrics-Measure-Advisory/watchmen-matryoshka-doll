@@ -2,6 +2,7 @@ import logging
 from typing import List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
+from pydantic import BaseModel
 
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
     get_user, load_user_list_by_name, update_user_storage
@@ -14,6 +15,9 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
 from watchmen.common.utils.data_utils import check_fake_id
+from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
+from watchmen.dashborad.model.dashborad import ConsoleDashboard, DashboardReport
+from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
 from watchmen.enum.model.enum import Enum
 from watchmen.enum.storage.enum_storage import save_enum_to_storage, query_enum_list_with_pagination, load_enum_by_id
 from watchmen.pipeline.model.pipeline import Pipeline
@@ -22,7 +26,8 @@ from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
     load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status, \
     update_pipeline_name, load_pipeline_by_id
-from watchmen.report.storage.report_storage import query_report_list_with_pagination
+from watchmen.report.model.report import Report
+from watchmen.report.storage.report_storage import query_report_list_with_pagination, load_reports_by_ids
 from watchmen.space.service.admin import create_space, update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
@@ -35,6 +40,11 @@ from watchmen.topic.topic import Topic
 router = APIRouter()
 
 log = logging.getLogger("app." + __name__)
+
+
+class AdminDashboard(BaseModel):
+    dashboard: ConsoleDashboard = None
+    reports: List[Report] = []
 
 
 #
@@ -323,3 +333,19 @@ async def load_enum_list_by_name(query_name, pagination: Pagination = Body(...),
 @router.get("/enum", tags=["admin"], response_model=Enum)
 async def load_pipeline_by_pipeline_id(enum_id, current_user: User = Depends(deps.get_current_user)):
     return load_enum_by_id(enum_id)
+
+
+# HOME Dashboard
+@router.get("/home/dashboard", tags=["admin"], response_model=AdminDashboard)
+async def load_admin_dashboard(current_user: User = Depends(deps.get_current_user)):
+    result = load_last_snapshot(current_user.userId)
+    if result is None:
+        return None
+    else:
+        admin_dashboard_id = result.adminDashboardId
+        dashboard = load_dashboard_by_id(admin_dashboard_id)
+        if dashboard is not None:
+            # report_ids = list(lambda x: return x.reportId,dashboard.reports)
+            reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)))
+            return AdminDashboard(dashboard=dashboard, reports=reports)
+

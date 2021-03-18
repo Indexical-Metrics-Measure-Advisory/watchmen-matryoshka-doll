@@ -22,7 +22,7 @@ def update_dashboard_to_storage(dashboard: ConsoleDashboard):
     return template.update_one(DASHBOARDS,{"dashboardId": dashboard.dashboardId},dashboard,ConsoleDashboard)
 
 
-def load_dashboard_by_id(dashboard_id):
+def load_dashboard_by_id(dashboard_id)->ConsoleDashboard:
 
     return template.find_one(DASHBOARDS,{"dashboardId": dashboard_id},ConsoleDashboard)
 
