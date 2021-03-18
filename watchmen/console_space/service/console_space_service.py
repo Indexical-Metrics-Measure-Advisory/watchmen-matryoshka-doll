@@ -1,4 +1,3 @@
-from watchmen.console_space.storage.console_group_storage import load_console_group_list_by_ids
 from watchmen.console_space.storage.console_space_storage import load_console_space_by_subject_id, save_console_space, \
     load_console_space_by_id, delete_console_space_storage
 from watchmen.console_space.storage.console_subject_storage import delete_console_subject_by_id, \

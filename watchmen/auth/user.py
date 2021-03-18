@@ -10,6 +10,3 @@ class User(MongoModel):
     groupIds: list = None
     role: str = None
 
-    # userId?: string;
-    # name?: string;
-    # nickName?: string;

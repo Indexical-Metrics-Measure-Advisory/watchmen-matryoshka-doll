@@ -22,7 +22,7 @@ class Factor(MongoModel):
     label: str = None
     description: str = None
     defaultValue: str = None
-    indexGroup: str =None
+    indexGroup: str = None
 
 
 '''

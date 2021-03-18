@@ -12,10 +12,9 @@ from watchmen.common.mongo_model import MongoModel
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.pipeline_service import run_pipeline
-from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
-from watchmen.topic.storage.topic_data_storage import save_topic_instance, find_topic_data_by_id_and_topic_name, \
+from watchmen.topic.storage.topic_data_storage import find_topic_data_by_id_and_topic_name, \
     update_topic_instance, get_topic_instances_all
 from watchmen.topic.storage.topic_schema_storage import get_topic
 

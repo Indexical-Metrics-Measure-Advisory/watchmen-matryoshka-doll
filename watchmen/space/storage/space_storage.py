@@ -5,7 +5,6 @@ from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.space.space import Space
 
-
 template = find_template()
 
 
@@ -22,8 +21,7 @@ def update_space_to_storage(space_id: str, space: Space):
 
 
 def query_space_with_pagination(query_name: str, pagination: Pagination):
-
-    return template.query_with_pagination("spaces", pagination, Space,{"name": regex.Regex(query_name)})
+    return template.query_with_pagination("spaces", pagination, Space, {"name": regex.Regex(query_name)})
 
 
 def get_space_list_by_ids(space_ids):
@@ -31,17 +29,14 @@ def get_space_list_by_ids(space_ids):
 
 
 def load_space_by_user(group_ids):
-
     return template.find("spaces", {"groupIds": {"$in": group_ids}}, Space)
 
 
 def load_space_by_name(name):
-
     return mongo_template.find("spaces", {"name": name}, Space)
 
 
 def load_space_list_by_name(name):
-
     return mongo_template.find("spaces", {"name": regex.Regex(name)}, Space)
 
 

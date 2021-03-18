@@ -115,7 +115,6 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source))
 
-
         target_factor = get_factor(mapping.factorId, target_topic)
 
         mapping_log["target"] = target_factor
@@ -417,8 +416,6 @@ def __convert_to_list(value):
     else:
         # TODO for in and not in operator
         pass
-
-
 
 
 def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list):

@@ -1,4 +1,3 @@
-from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.console_space.model.favorite import Favorite
 

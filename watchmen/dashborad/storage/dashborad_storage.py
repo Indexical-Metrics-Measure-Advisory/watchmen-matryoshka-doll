@@ -1,5 +1,4 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard

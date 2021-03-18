@@ -16,7 +16,7 @@ def update_one(collection_name, query_dict, instance, base_model):
     return base_model.parse_obj(instance)
 
 
-def remove(collection_name,query_dict):
+def remove(collection_name, query_dict):
     collections = client.get_collection(collection_name)
     collections.remove(query_dict)
 

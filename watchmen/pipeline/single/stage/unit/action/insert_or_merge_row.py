@@ -30,7 +30,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
         joint_type, where_condition = build_query_conditions(action.by, pipeline_topic, raw_data, target_topic, context)
         action_log.whereConditions = where_condition
 
-
         for index in range(len(mapping_results)):
             mongo_query = __build_mongo_query(joint_type, where_condition)
             target_data = query_topic_data(mongo_query, target_topic.name)

@@ -16,12 +16,10 @@ def get_user_group(user_group_id):
 
 
 def get_user_group_list_by_ids(user_group_ids: list):
-
     return template.find(USER_GROUPS, {"userGroupId": {"$in": user_group_ids}}, UserGroup)
 
 
 def load_group_list_by_name(query_name):
-
     return template.find(USER_GROUPS, {"name": regex.Regex(query_name)}, UserGroup)
 
 

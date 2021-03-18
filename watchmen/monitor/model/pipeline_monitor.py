@@ -30,6 +30,10 @@ class WriteFactorAction(BaseAction):
     targetFactor: str = None
 
 
+class InsertAction(BaseAction):
+    mapping: list = []
+
+
 class InsertAndMergeRowAction(BaseAction):
     mapping: list = []
     whereConditions: list = []
@@ -42,7 +46,7 @@ class UnitStatus(MongoModel):
     error: str = None
     uid: str = None
     actions: List[BaseAction] = []
-    conditions :list = []
+    conditions: list = []
     insertCount: int = 0
     updateCount: int = 0
     stageName: str = None

@@ -8,5 +8,4 @@ identifier.set_languages(['en', 'ja'])
 
 
 def detect(text):
-
     return identifier.classify(text)

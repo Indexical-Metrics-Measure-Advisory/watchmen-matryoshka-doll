@@ -2,7 +2,6 @@ import pymongo
 from bson import regex
 
 from watchmen.common.pagination import Pagination
-from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.console_space.model.console_space import Report
 
@@ -14,13 +13,13 @@ template = find_template()
 def create_report(report):
     # console_reports.insert_one(report.dict())
     # return Report.parse_obj(report)
-    return  template.create(CONSOLE_REPORTS,report,Report)
+    return template.create(CONSOLE_REPORTS, report, Report)
 
 
 def save_subject_report(report):
     # console_reports.update_one({"reportId": report.reportId}, {"$set": report.dict()})
     # return report
-    return template.update_one(CONSOLE_REPORTS,{"reportId": report.reportId},report,Report)
+    return template.update_one(CONSOLE_REPORTS, {"reportId": report.reportId}, report, Report)
 
 
 # def create_dataset_reports(reports):
@@ -32,25 +31,26 @@ def load_report_by_id(report_id):
     #     return None
     # else:
     #     return Report.parse_obj(result)
-    return template.find_one(CONSOLE_REPORTS,{"reportId": report_id},Report)
+    return template.find_one(CONSOLE_REPORTS, {"reportId": report_id}, Report)
 
 
 def load_reports_by_ids(report_ids):
     # results = console_reports.find({"reportId": {"$in": report_ids}})
     # return list(results)
-    return template.find(CONSOLE_REPORTS,{"reportId": {"$in": report_ids}},Report)
+    return template.find(CONSOLE_REPORTS, {"reportId": {"$in": report_ids}}, Report)
 
 
 def delete_report_by_id(report_id):
     # console_reports.delete_one({"reportId": report_id})
-    template.delete_one(CONSOLE_REPORTS,{"reportId": report_id})
+    template.delete_one(CONSOLE_REPORTS, {"reportId": report_id})
 
 
 def import_report_to_db(report):
     # console_reports.insert_one(report)
-    template.create(CONSOLE_REPORTS,report,Report)
+    template.create(CONSOLE_REPORTS, report, Report)
 
 
 def query_report_list_with_pagination(query_name: str, pagination: Pagination):
-    return template.query_with_pagination(CONSOLE_REPORTS, pagination, Report, query_dict={"name": regex.Regex(query_name)},
+    return template.query_with_pagination(CONSOLE_REPORTS, pagination, Report,
+                                          query_dict={"name": regex.Regex(query_name)},
                                           sort_dict=["last_modified", pymongo.DESCENDING])
