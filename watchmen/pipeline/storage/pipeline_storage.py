@@ -5,6 +5,8 @@ from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 
+USER_ID = "userId"
+
 PIPELINES = "pipelines"
 
 PIPELINE_GRAPH = "pipeline_graph"
@@ -54,11 +56,11 @@ def create_pipeline_graph(pipeline_graph: PipelinesGraphics):
 
 
 def update_pipeline_graph(pipeline_graph, user_id):
-    return template.update_one(PIPELINE_GRAPH, {"userId": user_id}, pipeline_graph, PipelinesGraphics)
+    return template.update_one(PIPELINE_GRAPH, {USER_ID: user_id}, pipeline_graph, PipelinesGraphics)
 
 
 def load_pipeline_graph(user_id):
-    return template.find_one(PIPELINE_GRAPH, {"userId": user_id}, PipelinesGraphics)
+    return template.find_one(PIPELINE_GRAPH, {USER_ID: user_id}, PipelinesGraphics)
 
 
 def import_pipeline_to_db(pipeline):
