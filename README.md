@@ -8,6 +8,8 @@
     See the <a href="https://www.watchmen.com/docs/current/">User Manual</a> for deployment instructions and end user documentation.
 </p>
 
+[![GitHub license](https://img.shields.io/github/license/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll?style=flat-square)](https://github.com/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll/blob/master/LICENSE)
+![GitHub last commit](https://img.shields.io/github/last-commit/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll?style=(flat-square))
 
 # Overview
 
@@ -35,7 +37,9 @@ watchmen-matryoshka-doll is the back-end server for the watchmen data platform.
 local start
 
 ```
-python app.py
+python app.py  
+##or   
+uvicorn watchmen.main:app
 ```
 
 # Docker Run
