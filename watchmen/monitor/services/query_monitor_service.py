@@ -49,7 +49,7 @@ def build_result_summary(row, start):
 
 
 async def sync_query_monitor_data(query_monitor: QueryMonitor):
-    print(query_monitor)
+    # print(query_monitor)
     topic_event = TopicEvent(code="raw_query_monitor", data=query_monitor.dict())
     # payload = {'code': "raw_query_monitor", "data": query_monitor.json()}
     # print(settings.HOST_URL+"/topic/data")

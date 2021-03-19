@@ -239,7 +239,7 @@ def get_source_factor_value(raw_data, result, source_factor):
     if is_sub_field(source_factor):
 
         factor_list = build_factor_list(source_factor)
-        print("factor_list",factor_list)
+        # print("factor_list",factor_list)
         source_value_list = get_factor_value(0, factor_list, raw_data, result)
     else:
         source_value_list = get_value(source_factor, raw_data)
@@ -290,9 +290,9 @@ def is_sub_field(factor):
 
 def get_factor_value(index, factor_list, raw_data, result):
     factor = factor_list[index]
-    print("--factor ",factor)
+
     data = get_value(factor, raw_data)
-    print("data",data)
+
     if type(data) is list:
         for raw in data:
             get_factor_value(index + 1, factor_list, raw, result)
