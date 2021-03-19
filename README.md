@@ -8,6 +8,7 @@
     See the <a href="https://www.watchmen.com/docs/current/">User Manual</a> for deployment instructions and end user documentation.
 </p>
 
+[![GitHub license](https://img.shields.io/github/license/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll?style=flat-square)](https://github.com/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll/blob/master/LICENSE)
 
 # Overview
 
