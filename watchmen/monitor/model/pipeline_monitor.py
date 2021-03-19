@@ -45,7 +45,7 @@ class UnitStatus(MongoModel):
     status: str = None
     error: str = None
     uid: str = None
-    actions: List[BaseAction] = []
+    action: BaseAction = None
     conditions: list = []
     insertCount: int = 0
     updateCount: int = 0

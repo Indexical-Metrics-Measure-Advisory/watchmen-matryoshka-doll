@@ -16,7 +16,7 @@ def build_action_log(factor, read_value, topic, unit_action_status):
     action_log.value = read_value
     action_log.fromFactor = factor.name
     action_log.fromTopic = topic.name
-    unit_action_status.actions.append(action_log)
+    unit_action_status.action=action_log
 
 
 def init(action: UnitAction, pipeline_topic: Topic):

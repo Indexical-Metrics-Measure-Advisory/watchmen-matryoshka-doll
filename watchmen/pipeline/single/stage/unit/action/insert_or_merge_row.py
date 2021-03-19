@@ -42,7 +42,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
         action_log.mapping = mapping_logs
         elapsed_time = time.time() - start
-        unit_action_status.actions.append(action_log)
+        unit_action_status.action=action_log
         unit_action_status.complete_time = elapsed_time
         return context, unit_action_status
 
