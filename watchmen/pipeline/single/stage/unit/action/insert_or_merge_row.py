@@ -40,8 +40,9 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 update_topic_data(target_topic.name, mapping_results[index], target_data, pipeline_uid)
                 unit_action_status.updateCount = unit_action_status.updateCount + 1
 
-        # unit_action_status.mapping = mapping_logs
+        action_log.mapping = mapping_logs
         elapsed_time = time.time() - start
+        unit_action_status.actions.append(action_log)
         unit_action_status.complete_time = elapsed_time
         return context, unit_action_status
 

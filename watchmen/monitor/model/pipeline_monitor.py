@@ -55,9 +55,10 @@ class UnitStatus(MongoModel):
 class PipelineRunStatus(MongoModel):
     status: str = None
     pipelineId: str = None
+    pipelineName :str =None
     uid: str = None
     topicId: str = None
     complete_time: int = None
-    # stages: List[StageStatus] = []
+    units: List[UnitStatus] = []
     error: str = None
     rawId: str = None
