@@ -73,7 +73,7 @@ class AdminDashboard(BaseModel):
 
 @router.post("/space", tags=["admin"], response_model=Space)
 async def save_space(space: Space, current_user: User = Depends(deps.get_current_user)):
-    if space.spaceId is None or check_fake_id(space.spaceIsd):
+    if space.spaceId is None or check_fake_id(space.spaceId):
         return create_space(space)
     else:
         return update_space_by_id(space.spaceId, space)

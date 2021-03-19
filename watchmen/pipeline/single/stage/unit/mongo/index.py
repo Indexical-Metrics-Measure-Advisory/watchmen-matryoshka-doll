@@ -290,9 +290,7 @@ def is_sub_field(factor):
 
 def get_factor_value(index, factor_list, raw_data, result):
     factor = factor_list[index]
-
     data = get_value(factor, raw_data)
-
     if type(data) is list:
         for raw in data:
             get_factor_value(index + 1, factor_list, raw, result)
