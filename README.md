@@ -35,7 +35,9 @@ watchmen-matryoshka-doll is the back-end server for the watchmen data platform.
 local start
 
 ```
-python app.py  or   uvicorn watchmen.main:app
+python app.py  
+##or   
+uvicorn watchmen.main:app
 ```
 
 # Docker Run
