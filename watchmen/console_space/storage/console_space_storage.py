@@ -5,7 +5,6 @@ from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGr
 from watchmen.console_space.model.console_space import ConsoleSpace
 
 
-
 template = find_template()
 
 

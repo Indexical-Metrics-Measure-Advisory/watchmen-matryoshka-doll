@@ -9,7 +9,6 @@ GROUP_COLLECTION = 'console_space_group'
 console_space_group = db.get_collection('console_space_group')
 
 
-
 def create_console_group_to_storage(group: ConsoleSpaceGroup):
     with get_client_db() as client:
         if group.groupId is None or check_fake_id(group.groupId):

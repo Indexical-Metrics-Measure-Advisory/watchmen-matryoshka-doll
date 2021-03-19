@@ -13,7 +13,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
     def alarm(raw_data, context):
         unit_action_status = UnitStatus()
         unit_action_status.type = action.type
-        start_time = datetime.now()
+        start_time = datetime.utcnow()
 
         log.info("alert data")
         # context_target_name = action.targetName
@@ -28,7 +28,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
         # if factor.name in target_data:
         #     context[context_target_name] = target_data[factor.name]
         # # print("context :", context)
-        time_elapsed = datetime.now() - start_time
+        time_elapsed = datetime.utcnow() - start_time
         execution_time = time_elapsed.microseconds / 1000
         unit_action_status.complete_time = execution_time
         return context, unit_action_status

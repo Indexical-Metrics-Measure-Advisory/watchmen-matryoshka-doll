@@ -49,11 +49,6 @@ async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_
     return instances
 
 
-async def __trigger_pipeline(topic_event):
-    trigger_pipeline(topic_event.code, {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
-                     TriggerType.insert)
-
-
 @router.post("/topic/data/rerun", tags=["common"])
 async def rerun_pipeline(topic_name, instance_id, pipeline_id):
     instance = find_topic_data_by_id_and_topic_name(topic_name, instance_id)

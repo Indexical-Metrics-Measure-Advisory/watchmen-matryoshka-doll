@@ -20,8 +20,8 @@ def save_favorite(favorite):
 
 
 def load_favorite(user_id):
-    return template.find_one(CONSOLE_SPACE_FAVORITES,{"userId": user_id},Favorite)
+    return template.find_one(CONSOLE_SPACE_FAVORITES, {"userId": user_id}, Favorite)
 
 
 def update_favorite(user_id, favorite: Favorite):
-    return template.update_one(CONSOLE_SPACE_FAVORITES,{"userId": user_id},favorite)
+    return template.update_one(CONSOLE_SPACE_FAVORITES, {"userId": user_id}, favorite)

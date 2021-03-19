@@ -7,7 +7,6 @@ from functools import lru_cache
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
-from watchmen.monitor.storage.pipeline_monitor_storage import insert_pipeline_monitor, insert_units_monitor
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
@@ -64,6 +63,7 @@ def run_pipeline(pipeline: Pipeline, data):
             for stage in pipeline.stages:
                 log.info("stage name {0}".format(stage.name))
                 for unit in stage.units:
+                    # TODO __check_when_condition
                     # if unit.on is not None:
                     #     result = __check_when_condition(unit.on.children, data)
                     #     if result:
@@ -73,6 +73,7 @@ def run_pipeline(pipeline: Pipeline, data):
                         for action in unit.do:
                             func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                             # call dynamic action in action folder
+                            # TODO [future] custom folder
                             out_result, unit_status = func(data, context)
 
                             unit_status.stageName = stage.name
@@ -94,11 +95,13 @@ def run_pipeline(pipeline: Pipeline, data):
             log.error(pipeline_status)
         finally:
             log.info("insert_pipeline_monitor")
-
-            if pipeline_topic.type == pipeline_constants.SYSTEM:
+            if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                 log.info("pipeline_status is {0}".format(pipeline_status))
                 log.info("unit status is {0}".format(unit_status_list))
             else:
-                if unit_status_list:
-                    insert_units_monitor(unit_status_list)
-                insert_pipeline_monitor(pipeline_status)
+                pass
+            # TODO post data to raw pipeline topic
+
+        # if unit_status_list:
+        #     insert_units_monitor(unit_status_list)
+        # insert_pipeline_monitor(pipeline_status)

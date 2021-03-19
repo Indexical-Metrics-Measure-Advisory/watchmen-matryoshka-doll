@@ -136,7 +136,7 @@ def get_factor(factor_id, target_topic):
 
 
 def get_execute_time(start_time):
-    time_elapsed = datetime.now() - start_time
+    time_elapsed = datetime.utcnow() - start_time
     execution_time = time_elapsed.microseconds / 1000
     return execution_time
 
@@ -155,9 +155,9 @@ def get_value(factor: Factor, data):
 
 def add_audit_columns(dictionary, audit_type):
     if audit_type == INSERT:
-        dictionary[pipeline_constants.INSERT_TIME] = datetime.now()
+        dictionary[pipeline_constants.INSERT_TIME] = datetime.utcnow()
     elif audit_type == UPDATE:
-        dictionary[pipeline_constants.UPDATE_TIME] = datetime.now()
+        dictionary[pipeline_constants.UPDATE_TIME] = datetime.utcnow()
     else:
         raise Exception("unknown audit_type")
 

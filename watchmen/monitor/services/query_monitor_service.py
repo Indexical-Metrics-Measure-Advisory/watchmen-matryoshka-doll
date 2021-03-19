@@ -36,7 +36,7 @@ def build_query_monitor_report(report: Report, query_type: str):
 
 def build_query_summary(sql):
     query_summary = QuerySummary(querySql=sql)
-    query_summary.queryTimestamp = datetime.now()
+    query_summary.queryTimestamp = datetime.utcnow()
     return query_summary
 
 
