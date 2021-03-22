@@ -2,7 +2,7 @@ import logging
 import time
 
 from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import UnitStatus, InsertAction
+from watchmen.monitor.model.pipeline_monitor import UnitActionStatus, InsertAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import insert_topic_data
@@ -16,7 +16,7 @@ log = logging.getLogger("app." + __name__)
 def init(action: UnitAction, pipeline_topic: Topic):
     def insert_topic(instance, context):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
-        unit_action_status = UnitStatus(type=action.type)
+        unit_action_status = UnitActionStatus(type=action.type)
         start = time.time()
         pipeline_uid = context[PIPELINE_UID]
         unit_action_status.uid = pipeline_uid

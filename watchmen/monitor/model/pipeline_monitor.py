@@ -10,36 +10,49 @@ class BaseAction(BaseModel):
     type: str = None
 
 
-class ReadFactorAction(BaseAction):
-    type: str = "ReadFactor"
-    value: Any = None
+class FromTopicHolder(BaseModel):
     fromTopic: str = None
     fromTopicId: str = None
     fromFactor: str = None
     fromFactorId: str = None
 
 
-class WriteFactorAction(BaseAction):
+class TargetTopicHolder(BaseModel):
+    targetTopic: str = None
+    targetTopicId: str = None
+    targetFactor: str = None
+    targetFactorId: str = None
+
+
+class MappingHolder(BaseModel):
+    mapping: list = []
+
+
+class ConditionHolder(BaseModel):
+    conditions: list = []
+
+
+class ReadFactorAction(BaseAction, FromTopicHolder):
+    type: str = "ReadFactor"
+    value: Any = None
+
+
+class WriteFactorAction(BaseAction, FromTopicHolder, TargetTopicHolder):
     type: str = "WriteFactor"
     value: Any = None
-    fromType: str = None
-    fromSource: str = None
-    fromFactor: str = None
     writeFunction: str = None
-    targetTopic: str = None
-    targetFactor: str = None
 
 
-class InsertAction(BaseAction):
-    mapping: list = []
+class InsertAction(BaseAction, MappingHolder):
+    type: str = "InsertRow"
 
 
-class InsertAndMergeRowAction(BaseAction):
-    mapping: list = []
+class InsertAndMergeRowAction(BaseAction, FromTopicHolder, MappingHolder):
+    type: str = "InsertAndMergeRow"
     whereConditions: list = []
 
 
-class UnitStatus(MongoModel):
+class UnitActionStatus(BaseAction):
     type: str = None
     complete_time: int = None
     status: str = None
@@ -49,16 +62,26 @@ class UnitStatus(MongoModel):
     conditions: list = []
     insertCount: int = 0
     updateCount: int = 0
-    stageName: str = None
 
 
-class PipelineRunStatus(MongoModel):
+class UnitRunStatus(ConditionHolder):
+    actions: List[UnitActionStatus] = []
+
+
+class StageRunStatus(ConditionHolder):
+    name: str = None
+    units: List[UnitRunStatus] = []
+
+
+class PipelineRunStatus(MongoModel, ConditionHolder):
     status: str = None
     pipelineId: str = None
-    pipelineName :str =None
+    pipelineName: str = None
     uid: str = None
     topicId: str = None
     complete_time: int = None
-    units: List[UnitStatus] = []
+    stages: List[StageRunStatus] = []
     error: str = None
-    rawId: str = None
+    pipelineType: str = None
+    oldValue: Any = None
+    newValue: Any = None

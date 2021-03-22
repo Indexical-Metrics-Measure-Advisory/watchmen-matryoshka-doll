@@ -5,10 +5,11 @@ from pydantic import BaseModel
 from watchmen.common.mongo_model import MongoModel
 
 
-class EnumItem(BaseModel):
+class EnumItem(MongoModel):
     code: str = None
     label: str = None
     parentCode: str = None
+    replaceCode: str = None
 
 
 class Enum(MongoModel):

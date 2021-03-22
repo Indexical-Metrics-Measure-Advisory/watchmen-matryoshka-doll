@@ -1,7 +1,7 @@
 import time
 
 from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import UnitStatus, ReadFactorAction
+from watchmen.monitor.model.pipeline_monitor import UnitActionStatus, ReadFactorAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import process_variable, build_query_conditions, \
     __build_mongo_query
@@ -22,7 +22,7 @@ def build_action_log(factor, read_value, topic, unit_action_status):
 def init(action: UnitAction, pipeline_topic: Topic):
     def read_factor(instance, context):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
-        unit_action_status = UnitStatus(type=action.type)
+        unit_action_status = UnitActionStatus(type=action.type)
         start = time.time()
 
         variable_type, context_target_name = process_variable(action.variableName)

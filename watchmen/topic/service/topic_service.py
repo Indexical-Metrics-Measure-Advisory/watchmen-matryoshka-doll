@@ -15,6 +15,7 @@ def create_topic_schema(topic):
         topic = topic.dict()
     save_topic(topic)
     ## TODO create table
+
     return Topic.parse_obj(topic)
 
 

@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from watchmen.monitor.model.pipeline_monitor import UnitStatus
+from watchmen.monitor.model.pipeline_monitor import UnitActionStatus
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.topic.topic import Topic
 
@@ -11,7 +11,7 @@ log = logging.getLogger("app." + __name__)
 # TODO alert for validation 
 def init(action: UnitAction, pipeline_topic: Topic):
     def alarm(raw_data, context):
-        unit_action_status = UnitStatus()
+        unit_action_status = UnitActionStatus()
         unit_action_status.type = action.type
         start_time = datetime.utcnow()
 

@@ -7,7 +7,7 @@ from functools import lru_cache
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
+from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
 from watchmen.monitor.services.pipeline_monitor_service import sync_pipeline_monitor_data
 
 from watchmen.pipeline.model.pipeline import Pipeline
@@ -56,7 +56,6 @@ def run_pipeline(pipeline: Pipeline, data):
     pipeline_status.pipelineId = pipeline.pipelineId
     pipeline_status.pipelineName = pipeline.name
     pipeline_status.uid = get_surrogate_key()
-    pipeline_status.rawId = data[pipeline_constants.NEW][pipeline_constants.ID]
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
@@ -68,6 +67,8 @@ def run_pipeline(pipeline: Pipeline, data):
         try:
             start = time.time()
             for stage in pipeline.stages:
+                stage_run_status = StageRunStatus()
+                stage_run_status.name = stage.name
                 log.info("stage name {0}".format(stage.name))
                 for unit in stage.units:
                     # TODO __check_when_condition
@@ -77,21 +78,21 @@ def run_pipeline(pipeline: Pipeline, data):
                     #         continue
 
                     if unit.do is not None:
+                        unit_run_status = UnitRunStatus()
                         for action in unit.do:
                             func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
                             # call dynamic action in action folder
                             # TODO [future] custom folder
-                            out_result, unit_status = func(data, context)
-
-                            unit_status.stageName = stage.name
-                            unit_status_list.append(unit_status.dict())
+                            out_result, unit_action_status = func(data, context)
                             log.debug("out_result :{0}".format(out_result))
                             context = {**context, **out_result}
+                            unit_run_status.actions.append(unit_action_status)
+                        stage_run_status.units.append(unit_run_status)
                     else:
                         log.info("action stage unit  {0} do is None".format(stage.name))
 
             elapsed_time = time.time() - start
-            pipeline_status.units = unit_status_list
+            pipeline_status.stages.append(stage_run_status)
             pipeline_status.complete_time = elapsed_time
             pipeline_status.status = FINISHED
             log.info("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))
@@ -110,8 +111,8 @@ def run_pipeline(pipeline: Pipeline, data):
             else:
                 pass
             # TODO post data to raw pipeline topic
-            # print(pipeline_status.json())
-                sync_pipeline_monitor_data(pipeline_status)
+            print(pipeline_status.json())
+            #     sync_pipeline_monitor_data(pipeline_status)
 
         # if unit_status_list:
 

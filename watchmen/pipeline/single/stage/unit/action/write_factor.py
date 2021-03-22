@@ -2,7 +2,7 @@ import logging
 import time
 
 from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import UnitStatus
+from watchmen.monitor.model.pipeline_monitor import UnitActionStatus
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import build_query_conditions, get_source_value_list, \
     __build_mongo_query, __build_mongo_update
@@ -32,7 +32,7 @@ def get_condition_factor_value(raw_data, where_conditions, joint_type):
 def init(action: UnitAction, pipeline_topic: Topic):
     def write_factor(instance, context):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
-        unit_action_status = UnitStatus(type=action.type)
+        unit_action_status = UnitActionStatus(type=action.type)
         start = time.time()
         pipeline_uid = context[PIPELINE_UID]
         # TODO  action_log
