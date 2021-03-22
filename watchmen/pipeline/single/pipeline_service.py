@@ -111,8 +111,8 @@ def run_pipeline(pipeline: Pipeline, data):
             else:
                 pass
             # TODO post data to raw pipeline topic
-            print(pipeline_status.json())
-            #     sync_pipeline_monitor_data(pipeline_status)
+                print(pipeline_status.json())
+                sync_pipeline_monitor_data(pipeline_status)
 
         # if unit_status_list:
 

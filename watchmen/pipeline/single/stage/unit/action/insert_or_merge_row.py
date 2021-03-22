@@ -15,12 +15,12 @@ from watchmen.topic.topic import Topic
 def init(action: UnitAction, pipeline_topic: Topic):
     def merge_or_insert_topic(instance, context):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
-        unit_action_status = UnitActionStatus(type=action.type)
+        unit_action_status = InsertAndMergeRowAction(type=action.type)
         start = time.time()
         pipeline_uid = context[PIPELINE_UID]
         unit_action_status.uid = pipeline_uid
 
-        action_log = InsertAndMergeRowAction()
+        # action_log = InsertAndMergeRowAction()
 
         if action.topicId is None:
             raise ValueError("action.topicId is empty {0}".format(action.name))
@@ -28,7 +28,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
         target_topic = get_topic_by_id(action.topicId)
         mapping_results, mapping_logs = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic)
         joint_type, where_condition = build_query_conditions(action.by, pipeline_topic, raw_data, target_topic, context)
-        action_log.whereConditions = where_condition
+        unit_action_status.whereConditions = where_condition
 
         for index in range(len(mapping_results)):
             mongo_query = __build_mongo_query(joint_type, where_condition)
@@ -40,9 +40,9 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 update_topic_data(target_topic.name, mapping_results[index], target_data, pipeline_uid)
                 unit_action_status.updateCount = unit_action_status.updateCount + 1
 
-        action_log.mapping = mapping_logs
+        unit_action_status.mapping = mapping_logs
         elapsed_time = time.time() - start
-        unit_action_status.action=action_log
+        # unit_action_status.action=action_log
         unit_action_status.complete_time = elapsed_time
         return context, unit_action_status
 

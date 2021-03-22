@@ -10,6 +10,17 @@ class BaseAction(BaseModel):
     type: str = None
 
 
+class UnitActionStatus(BaseAction):
+    type: str = None
+    complete_time: int = None
+    status: str = None
+    error: str = None
+    uid: str = None
+    # action: BaseAction = None
+    conditions: list = []
+    insertCount: int = 0
+    updateCount: int = 0
+
 class FromTopicHolder(BaseModel):
     fromTopic: str = None
     fromTopicId: str = None
@@ -32,36 +43,24 @@ class ConditionHolder(BaseModel):
     conditions: list = []
 
 
-class ReadFactorAction(BaseAction, FromTopicHolder):
+class ReadFactorAction(UnitActionStatus, FromTopicHolder):
     type: str = "ReadFactor"
     value: Any = None
 
 
-class WriteFactorAction(BaseAction, FromTopicHolder, TargetTopicHolder):
+class WriteFactorAction(UnitActionStatus, FromTopicHolder, TargetTopicHolder):
     type: str = "WriteFactor"
     value: Any = None
     writeFunction: str = None
 
 
-class InsertAction(BaseAction, MappingHolder):
+class InsertAction(UnitActionStatus, MappingHolder):
     type: str = "InsertRow"
 
 
-class InsertAndMergeRowAction(BaseAction, FromTopicHolder, MappingHolder):
+class InsertAndMergeRowAction(UnitActionStatus, FromTopicHolder, MappingHolder):
     type: str = "InsertAndMergeRow"
     whereConditions: list = []
-
-
-class UnitActionStatus(BaseAction):
-    type: str = None
-    complete_time: int = None
-    status: str = None
-    error: str = None
-    uid: str = None
-    action: BaseAction = None
-    conditions: list = []
-    insertCount: int = 0
-    updateCount: int = 0
 
 
 class UnitRunStatus(ConditionHolder):

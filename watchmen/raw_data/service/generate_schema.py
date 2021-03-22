@@ -68,9 +68,12 @@ def create_schema(model_schema_set, name, data, is_root):
     if is_root is None:
         is_root = False
 
-    if type(data) == list:
+    if type(data) == list and len(data) > 0:
         for item in data:
             create_model_schema(model_schema_set, name, item, is_root)
+    elif type(data) == list and len(data) == 0:
+        pass
+        # create_model_schema(model_schema_set,name,{},is_root)
     else:
         create_model_schema(model_schema_set, name, data, is_root)
 
@@ -109,7 +112,9 @@ def create_model_field(model_schema_set, model_schema, key, value):
         'type': check_value_type(value),
         'values': [value]
     })
-    if model_filed.type == ValueType.LIST.value or model_filed.type == ValueType.DICT.value:
+    if type(value) == list and len(value) == 0:
+        return model_filed
+    elif model_filed.type == ValueType.LIST.value or model_filed.type == ValueType.DICT.value:
         relationship = ModelRelationship()
         create_schema(model_schema_set, key, value, False)
         relationship.parentId = model_schema.model_id
@@ -117,6 +122,7 @@ def create_model_field(model_schema_set, model_schema, key, value):
         relationship.childId = model_schema_set.schemas[key].model_id
         relationship.childName = model_schema_set.schemas[key].name
         model_schema_set.relationships[key] = relationship
+
     return model_filed
 
 

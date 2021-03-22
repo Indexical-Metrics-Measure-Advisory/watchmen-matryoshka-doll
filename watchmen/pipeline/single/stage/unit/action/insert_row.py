@@ -16,14 +16,14 @@ log = logging.getLogger("app." + __name__)
 def init(action: UnitAction, pipeline_topic: Topic):
     def insert_topic(instance, context):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
-        unit_action_status = UnitActionStatus(type=action.type)
+        unit_action_status = InsertAction(type=action.type)
         start = time.time()
         pipeline_uid = context[PIPELINE_UID]
         unit_action_status.uid = pipeline_uid
 
         if action.topicId is None:
             raise ValueError("action.topicId is empty {0}".format(action.name))
-        insert_action = InsertAction()
+        # insert_action = InsertAction()
         target_topic = get_topic_by_id(action.topicId)
         mapping_results, mapping_logs = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic)
 
@@ -34,11 +34,11 @@ def init(action: UnitAction, pipeline_topic: Topic):
             unit_action_status.insertCount = unit_action_status.insertCount + 1
 
         # for index in range(len(mapping_results)):
-        insert_action.mapping=mapping_logs
+        unit_action_status.mapping=mapping_logs
 
         # unit_action_status.mapping = mapping_logs
         elapsed_time = time.time() - start
-        unit_action_status.action=insert_action
+        # unit_action_status.action=insert_action
         unit_action_status.complete_time = elapsed_time
         return context, unit_action_status
 
