@@ -11,11 +11,10 @@ from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunSt
 from watchmen.monitor.services.pipeline_monitor_service import sync_pipeline_monitor_data
 
 from watchmen.pipeline.model.pipeline import Pipeline
-from watchmen.pipeline.model.trigger_type import TriggerType
+
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
-from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
-from watchmen.topic.storage.topic_data_storage import save_topic_instance
-from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, get_topic
+
+from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
 
@@ -104,17 +103,8 @@ def run_pipeline(pipeline: Pipeline, data):
             log.error(pipeline_status)
         finally:
             log.info("insert_pipeline_monitor")
-
             if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                 log.info("pipeline_status is {0}".format(pipeline_status))
-                log.info("unit status is {0}".format(unit_status_list))
+
             else:
-                pass
-            # TODO post data to raw pipeline topic
-            #     print(pipeline_status.json())
                 sync_pipeline_monitor_data(pipeline_status)
-
-        # if unit_status_list:
-
-        #     insert_units_monitor(unit_status_list)
-        # insert_pipeline_monitor(pipeline_status)

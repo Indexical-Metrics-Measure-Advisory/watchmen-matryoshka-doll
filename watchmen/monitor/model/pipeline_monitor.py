@@ -1,4 +1,5 @@
 # from bson import timestamp
+from datetime import datetime
 from typing import Any, List
 
 from pydantic import BaseModel
@@ -6,17 +7,12 @@ from pydantic import BaseModel
 from watchmen.common.mongo_model import MongoModel
 
 
-class BaseAction(BaseModel):
-    type: str = None
-
-
-class UnitActionStatus(BaseAction):
+class UnitActionStatus(BaseModel):
     type: str = None
     complete_time: int = None
-    status: str = None
+    status: str = None  # DONE ,ERROR
     error: str = None
     uid: str = None
-    conditions: list = []
     insertCount: int = 0
     updateCount: int = 0
 
@@ -36,19 +32,19 @@ class TargetTopicHolder(BaseModel):
 
 
 class MappingHolder(BaseModel):
-    mapping: list = []
+    mapping: Any = None
 
 
 class ConditionHolder(BaseModel):
-    conditions: list = []
+    condition_result: bool = None
 
 
-class ReadFactorAction(UnitActionStatus, FromTopicHolder):
+class ReadFactorAction(UnitActionStatus):
     type: str = "ReadFactor"
     value: Any = None
 
 
-class WriteFactorAction(UnitActionStatus, FromTopicHolder, TargetTopicHolder):
+class WriteFactorAction(UnitActionStatus):
     type: str = "WriteFactor"
     value: Any = None
     writeFunction: str = None
@@ -58,9 +54,15 @@ class InsertAction(UnitActionStatus, MappingHolder):
     type: str = "InsertRow"
 
 
-class InsertAndMergeRowAction(UnitActionStatus, FromTopicHolder, MappingHolder):
+class WhereCondition(BaseModel):
+    factor:str =None
+    operator:str = None
+    value:Any=None
+
+
+class InsertAndMergeRowAction(UnitActionStatus, MappingHolder):
     type: str = "InsertAndMergeRow"
-    whereConditions: list = []
+    whereConditions:List[WhereCondition] =[]
 
 
 class UnitRunStatus(ConditionHolder):
@@ -73,14 +75,13 @@ class StageRunStatus(ConditionHolder):
 
 
 class PipelineRunStatus(MongoModel, ConditionHolder):
-    status: str = None
+    status: str = None  # DONE ,ERROR
     pipelineId: str = None
-    pipelineName: str = None
     uid: str = None
-    topicId: str = None
+    start_time: datetime = None
     complete_time: int = None
     stages: List[StageRunStatus] = []
     error: str = None
-    pipelineType: str = None
     oldValue: Any = None
     newValue: Any = None
+    # pipeline:Pipeline = None
