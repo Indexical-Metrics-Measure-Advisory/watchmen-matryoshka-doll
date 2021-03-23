@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 
 from watchmen.common.constants import pipeline_constants, parameter_constants, mongo_constants
+from watchmen.common.constants.pipeline_constants import VALUE
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable
 from watchmen.plugin.service.plugin_service import run_plugin
@@ -456,9 +457,10 @@ def __process_where_condition(where_condition):
         return {where_condition[pipeline_constants.NAME].name: {
             "$nin": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
 
+
 def index_conditions(where_condition, index):
     result = where_condition.copy()
-    condition_values = where_condition[VALUE]
+    condition_values = where_condition[pipeline_constants.VALUE]
     if type(condition_values) == list:
         result[VALUE] = condition_values[index]
         return result
