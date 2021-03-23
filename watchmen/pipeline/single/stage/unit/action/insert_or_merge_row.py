@@ -1,15 +1,17 @@
 import time
 
 from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import UnitActionStatus, InsertAndMergeRowAction
+
+from watchmen.monitor.model.pipeline_monitor import InsertAndMergeRowAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules, \
-    build_query_conditions, __build_mongo_query
+    build_query_conditions, __build_mongo_query, index_conditions
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import insert_topic_data, update_topic_data
 from watchmen.pipeline.single.stage.unit.utils import PIPELINE_UID
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
+
 
 
 def init(action: UnitAction, pipeline_topic: Topic):
@@ -27,9 +29,11 @@ def init(action: UnitAction, pipeline_topic: Topic):
         mapping_results, mapping_logs = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic)
         joint_type, where_condition = build_query_conditions(action.by, pipeline_topic, raw_data, target_topic, context)
         unit_action_status.whereConditions = where_condition
-        mongo_query = __build_mongo_query(joint_type, where_condition)
-        target_data = query_topic_data(mongo_query, target_topic.name)
-        for mapping_result in mapping_results:
+
+        for index, mapping_result in enumerate(mapping_results):
+            mongo_query = __build_mongo_query(joint_type, index_conditions(where_condition, index))
+            target_data = query_topic_data(mongo_query, target_topic.name)
+
             if target_data is None:
                 insert_topic_data(target_topic.name, mapping_result, pipeline_uid)
                 unit_action_status.insertCount = unit_action_status.insertCount + 1
@@ -39,7 +43,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
         unit_action_status.mapping = mapping_logs
         elapsed_time = time.time() - start
-        # unit_action_status.action=action_log
         unit_action_status.complete_time = elapsed_time
         return context, unit_action_status
 

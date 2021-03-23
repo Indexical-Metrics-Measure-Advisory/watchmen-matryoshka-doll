@@ -145,7 +145,7 @@ def get_value(factor: Factor, data):
         value = data[factor.name]
         return convert_factor_type(value, factor.type)
     elif factor.type == "number":
-        return None
+        return
     elif factor.type == "text":
         return None
     else:

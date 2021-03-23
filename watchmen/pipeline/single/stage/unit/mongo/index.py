@@ -233,7 +233,6 @@ def get_source_value_list(pipeline_topic, raw_data, parameter, result=[]):
 
 def get_source_factor_value(raw_data, result, source_factor):
     if is_sub_field(source_factor):
-
         factor_list = build_factor_list(source_factor)
         # print("factor_list",factor_list)
         source_value_list = get_factor_value(0, factor_list, raw_data, result)
@@ -248,7 +247,6 @@ def merge_mapping_data(mapping_results):
     for i in range(max_value_size):
         mapping_data = {}
         for mapping_result in mapping_results:
-            # print("mapping_result",mapping_result)
             for key, value in mapping_result.items():
                 if type(value) is list and len(value) > 0:
                     mapping_data[key] = value[i]
@@ -263,7 +261,6 @@ def get_max_value_size(mapping_results):
     for mapping_result in mapping_results:
         for key, value in mapping_result.items():
             if type(value) is list:
-                # index = len(value)
                 if len(value) > index:
                     index = len(value)
             else:
@@ -458,6 +455,15 @@ def __process_where_condition(where_condition):
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.IN:
         return {where_condition[pipeline_constants.NAME].name: {
             "$nin": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
+
+def index_conditions(where_condition, index):
+    result = where_condition.copy()
+    condition_values = where_condition[VALUE]
+    if type(condition_values) == list:
+        result[VALUE] = condition_values[index]
+        return result
+    else:
+        return result
 
 
 def __build_mongo_query(joint_type, where_condition):
