@@ -104,26 +104,26 @@ def __process_factor_type(target_factor, source_value_list):
 
 
 def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
-    mapping_logs = []
+    # mapping_logs = []
     mapping_results = []
 
     for mapping in mapping_list:
         mapping_log = {}
         source = mapping.source
-        mapping_log["source"] = source
-        mapping_log["arithmetic"] = mapping.arithmetic
+        # mapping_log["source"] = source
+        # mapping_log["arithmetic"] = mapping.arithmetic
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source))
         target_factor = get_factor(mapping.factorId, target_topic)
-        mapping_log["target"] = target_factor
-        mapping_log[pipeline_constants.VALUE] = source_value_list
+        # mapping_log["target"] = target_factor
+        # mapping_log[pipeline_constants.VALUE] = source_value_list
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
         mapping_results.append({target_factor.name: source_value_list})
 
-        mapping_logs.append(mapping_log)
+        # mapping_logs.append(mapping_log)
     mapping_data_list = merge_mapping_data(mapping_results)
-    return mapping_data_list, mapping_logs
+    return mapping_data_list
 
 
 def merge_plugin_results(mapping_results, result):
