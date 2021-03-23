@@ -1,6 +1,7 @@
 import logging
 
 from watchmen.common.constants import presto_constants
+from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_collection_name, is_presto_varchar_type, is_presto_int_type, \
     is_presto_datetime
@@ -52,11 +53,17 @@ def __build_presto_fields(factors):
 
 
 def create_or_update_presto_schema_fields(topic: Topic):
-    topic_name = build_collection_name(topic.name)
-    presto_schema = collection.find_one({"table": topic_name})
-    new_schema = {"table": topic_name, "fields": __build_presto_fields(topic.factors)}
-    if presto_schema is None:
-        collection.insert(new_schema)
+    if topic.type == RAW:
+        log.info("raw topic ignore presto update")
     else:
-        collection.delete_one({"table": topic_name})
-        collection.insert(new_schema)
+        topic_name = build_collection_name(topic.name)
+        presto_schema = collection.find_one({"table": topic_name})
+        new_schema = {"table": topic_name, "fields": __build_presto_fields(topic.factors)}
+        if presto_schema is None:
+            collection.insert(new_schema)
+        else:
+            collection.delete_one({"table": topic_name})
+            collection.insert(new_schema)
+
+
+

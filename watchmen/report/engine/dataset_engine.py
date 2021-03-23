@@ -25,7 +25,6 @@ def build_pagination(pagination):
 
 
 async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
-    ## todo error monitor
     console_subject = load_console_subject_by_id(subject_id)
     query_monitor: QueryMonitor = build_query_monitor(console_subject, query_type="dataset")
     try:

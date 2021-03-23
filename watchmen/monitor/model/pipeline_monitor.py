@@ -16,10 +16,10 @@ class UnitActionStatus(BaseAction):
     status: str = None
     error: str = None
     uid: str = None
-    # action: BaseAction = None
     conditions: list = []
     insertCount: int = 0
     updateCount: int = 0
+
 
 class FromTopicHolder(BaseModel):
     fromTopic: str = None

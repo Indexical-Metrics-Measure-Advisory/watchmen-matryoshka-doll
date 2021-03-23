@@ -19,8 +19,6 @@ class ResultSummary(BaseModel):
 
 class QuerySummary(BaseModel):
     querySql: str = None
-    # name:str = None
-    # queryType :str = None
     queryTimestamp: datetime = None
     resultSummary: ResultSummary = None
 
@@ -33,6 +31,3 @@ class QueryMonitor(MongoModel):
     success: bool = True
     error: str = None
 
-    # queryCondition: List[QueryCondition] = None
-    #
-    # resultSummary: List[ResultSummary] = None
