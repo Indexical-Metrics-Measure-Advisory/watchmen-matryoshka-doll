@@ -15,7 +15,6 @@ def create_report(report):
 
 
 def save_subject_report(report):
-
     return template.update_one(CONSOLE_REPORTS, {"reportId": report.reportId}, report, Report)
 
 
@@ -24,12 +23,10 @@ def load_report_by_id(report_id):
 
 
 def load_reports_by_ids(report_ids):
-
     return template.find(CONSOLE_REPORTS, {"reportId": {"$in": report_ids}}, Report)
 
 
 def delete_report_by_id(report_id):
-
     template.delete_one(CONSOLE_REPORTS, {"reportId": report_id})
 
 

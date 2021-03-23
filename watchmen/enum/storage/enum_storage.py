@@ -25,7 +25,7 @@ def load_enum_by_id(enum_id):
 
 
 def load_enum_by_parent_id(parent_id):
-    return template.find_one(ENUMS,{"parentEnumId":parent_id},Enum)
+    return template.find_one(ENUMS, {"parentEnumId": parent_id}, Enum)
 
 
 def load_enum_list_by_name(enum_name):
@@ -47,10 +47,3 @@ def save_enum_items(enum_items):
 
 def load_enum_items_by_id(enum_id):
     pass
-
-
-
-
-
-
-

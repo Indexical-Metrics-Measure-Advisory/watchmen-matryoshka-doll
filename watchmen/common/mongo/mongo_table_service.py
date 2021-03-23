@@ -1,5 +1,3 @@
-
-
 def create_mongo_table():
     pass
 

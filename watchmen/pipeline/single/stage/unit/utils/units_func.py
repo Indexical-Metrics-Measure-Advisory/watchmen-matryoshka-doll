@@ -116,8 +116,7 @@ def convert_factor_type(value, factor_type):
     elif factor_type == MONTH:
         return int(value)
     elif factor_type == TIME:
-
-        return round(value * 1000)
+        return datetime.fromisoformat(value)
     else:
         return value
 

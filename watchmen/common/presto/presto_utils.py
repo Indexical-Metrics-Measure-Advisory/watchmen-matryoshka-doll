@@ -29,11 +29,11 @@ def __convert_presto_type(factor_type):
     elif is_presto_int_type(factor_type):
         return presto_constants.INTEGER
     elif factor_type == BOOLEAN:
-        return presto_constants.TIMESTAMP
+        return presto_constants.BOOLEAN
     elif is_presto_datetime(factor_type):
         return presto_constants.DATE
     elif factor_type == TIME:
-        return presto_constants.INTEGER
+        return presto_constants.TIMESTAMP
     elif factor_type == NUMBER or factor_type:
         return presto_constants.DOUBLE
     else:
@@ -64,6 +64,3 @@ def create_or_update_presto_schema_fields(topic: Topic):
         else:
             collection.delete_one({"table": topic_name})
             collection.insert(new_schema)
-
-
-
