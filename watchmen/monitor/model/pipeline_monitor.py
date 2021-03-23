@@ -17,20 +17,6 @@ class UnitActionStatus(BaseModel):
     updateCount: int = 0
 
 
-class FromTopicHolder(BaseModel):
-    fromTopic: str = None
-    fromTopicId: str = None
-    fromFactor: str = None
-    fromFactorId: str = None
-
-
-class TargetTopicHolder(BaseModel):
-    targetTopic: str = None
-    targetTopicId: str = None
-    targetFactor: str = None
-    targetFactorId: str = None
-
-
 class MappingHolder(BaseModel):
     mapping: Any = None
 
@@ -84,4 +70,3 @@ class PipelineRunStatus(MongoModel, ConditionHolder):
     error: str = None
     oldValue: Any = None
     newValue: Any = None
-    # pipeline:Pipeline = None

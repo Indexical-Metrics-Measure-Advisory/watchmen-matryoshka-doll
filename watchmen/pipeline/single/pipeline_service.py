@@ -2,6 +2,7 @@ import importlib
 import logging
 import time
 import traceback
+from datetime import datetime
 from functools import lru_cache
 
 from watchmen.collection.model.topic_event import TopicEvent
@@ -50,18 +51,13 @@ def __check_when_condition(children, data):
 
 
 def run_pipeline(pipeline: Pipeline, data):
-    pipeline_status = PipelineRunStatus()
-    pipeline_status.topicId = pipeline.topicId
-    pipeline_status.pipelineId = pipeline.pipelineId
-    pipeline_status.pipelineName = pipeline.name
-    pipeline_status.uid = get_surrogate_key()
+    pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId,uid=get_surrogate_key(),start_time=datetime.now())
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
         # TODO pipeline when  condition
         log.info("start run pipeline {0}".format(pipeline.name))
         context = {PIPELINE_UID: pipeline_status.uid}
-        unit_status_list = []
 
         try:
             start = time.time()
