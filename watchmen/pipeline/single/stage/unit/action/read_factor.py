@@ -1,7 +1,7 @@
 import time
 
 from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import UnitActionStatus, ReadFactorAction
+from watchmen.monitor.model.pipeline_monitor import  ReadFactorAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import process_variable, build_query_conditions, \
     __build_mongo_query
@@ -11,18 +11,13 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
 
 
-def build_action_log(factor, read_value, topic, unit_action_status):
-    action_log = ReadFactorAction()
-    action_log.value = read_value
-    action_log.fromFactor = factor.name
-    action_log.fromTopic = topic.name
-    unit_action_status.action=action_log
+
 
 
 def init(action: UnitAction, pipeline_topic: Topic):
     def read_factor(instance, context):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
-        unit_action_status = UnitActionStatus(type=action.type)
+        unit_action_status = ReadFactorAction(type=action.type)
         start = time.time()
 
         variable_type, context_target_name = process_variable(action.variableName)
@@ -35,8 +30,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
         if factor.name in target_data:
             read_value = target_data[factor.name]
             context[context_target_name] = target_data[factor.name]
-
-            build_action_log(factor, read_value, topic, unit_action_status)
+            unit_action_status.value = read_value
+            # build_action_log(factor, read_value, topic, unit_action_status)
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
         return context, unit_action_status

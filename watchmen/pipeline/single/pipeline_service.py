@@ -5,7 +5,6 @@ import traceback
 from datetime import datetime
 from functools import lru_cache
 
-from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
@@ -98,9 +97,8 @@ def run_pipeline(pipeline: Pipeline, data):
             pipeline_status.status = ERROR
             log.error(pipeline_status)
         finally:
-            log.info("insert_pipeline_monitor")
+            # log.info("insert_pipeline_monitor")
             if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                 log.info("pipeline_status is {0}".format(pipeline_status))
-
             else:
                 sync_pipeline_monitor_data(pipeline_status)

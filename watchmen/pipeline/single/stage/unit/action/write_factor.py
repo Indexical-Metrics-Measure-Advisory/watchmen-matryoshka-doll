@@ -2,7 +2,7 @@ import logging
 import time
 
 from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import UnitActionStatus, WriteFactorAction
+from watchmen.monitor.model.pipeline_monitor import WriteFactorAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import build_query_conditions, get_source_value_list, \
     __build_mongo_query, __build_mongo_update
@@ -56,8 +56,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
             else:
                 if old_value is not None:
                     old_value_list = get_source_value_list(pipeline_topic, old_value, action.source)
-                    # def_value_list = source_value_list - old_value_list
-                    # update_data = {target_factor.name: def_value_list}
                     find_and_modify_topic_data(target_topic.name,
                                                mongo_query,
                                                __build_mongo_update(update_data, action.arithmetic, target_factor,

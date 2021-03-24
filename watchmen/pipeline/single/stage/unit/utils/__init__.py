@@ -5,7 +5,7 @@ NOT_EMPTY = "not-empty"
 
 ERROR = "ERROR"
 
-FINISHED = "FINISHED"
+FINISHED = "DONE"
 
 NAME = "name"
 
