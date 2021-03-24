@@ -6,7 +6,7 @@ from watchmen.common.mysql.model.topic_schema import create_topic_schema, update
 from watchmen.common.utils.data_utils import build_data_pages
 
 
-
+print("mysql in")
 
 
 

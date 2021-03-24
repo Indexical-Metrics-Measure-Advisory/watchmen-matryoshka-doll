@@ -6,11 +6,8 @@ from fastapi import APIRouter, Depends
 from watchmen.auth.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
-from watchmen.common.constants import pipeline_constants
 from watchmen.common.mongo.index import delete_topic_collection
 from watchmen.common.mongo_model import MongoModel
-from watchmen.pipeline.index import trigger_pipeline
-from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.pipeline_service import run_pipeline
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data

@@ -7,6 +7,9 @@ from watchmen.common.utils.data_utils import build_data_pages
 client = get_client()
 
 
+print("mongo in")
+
+
 def create(collection_name, instance, base_model):
     collections = client.get_collection(collection_name)
     collections.insert_one(__convert_to_dict(instance))
