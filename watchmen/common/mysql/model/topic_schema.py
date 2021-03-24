@@ -29,9 +29,9 @@ class TopicSchema(Base):
     type = Column(String)
     description = Column(String)
     version = Column(Integer, nullable=False)
-    _source = Column(JSON)
+    facotrs = Column(JSON)
     createTime = Column(DateTime)
-    last_modified = Column(DateTime)
+    lastModifyTime = Column(DateTime)
 
     __mapper_args__ = {
         "version_id_col": version
