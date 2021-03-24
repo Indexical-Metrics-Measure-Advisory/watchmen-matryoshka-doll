@@ -4,6 +4,7 @@ from typing import List
 import pymongo
 from bson import regex
 
+from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.topic.topic import Topic
