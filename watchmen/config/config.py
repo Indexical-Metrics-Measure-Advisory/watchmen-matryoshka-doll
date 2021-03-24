@@ -45,6 +45,16 @@ class Settings(BaseSettings):
     MONGO_MONITOR_USERNAME: str = None
     MONGO_MONITOR_PASSWORD: str = None
 
+    MYSQL_HOST: str = ""
+    MYSQL_PORT: int = 3306
+    MYSQL_USER: str = ""
+    MYSQL_PASSWORD: str = ""
+    MYSQL_DATABASE: str = 'watchmen'
+    MYSQL_POOL_MAXCONNECTIONS: int = 6
+    MYSQL_POOL_MINCACHED = 2
+    MYSQL_POOL_MAXCACHED = 5
+
+
     class Config:
         env_file = '.env'
         env_file_encoding = 'utf-8'
