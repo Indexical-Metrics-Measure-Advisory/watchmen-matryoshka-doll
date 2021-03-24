@@ -1,92 +1,110 @@
-from watchmen.common.mysql.model.console_subject import create_console_subject, find_one_console_subject
-from watchmen.common.mysql.model.raw_data_schema import create_raw_topic_schema, update_raw_topic_schema
-from watchmen.common.storage.collection_list import CollectionList
-from watchmen.common.mysql.model.topic_schema import create_topic_schema, update_topic_schema, \
-    query_topic_schema_with_pagination, find_one_topic_schema
+import pymongo
+from pydantic.main import BaseModel
+
+from watchmen.common.mysql.model.table_definition import get_table_model, parse_obj, count_table, get_primary_key
 from watchmen.common.utils.data_utils import build_data_pages
+from operator import eq
+from sqlalchemy.future import select
+from sqlalchemy.orm import Session
+from sqlalchemy import update
+from watchmen.common.mysql.mysql_engine import engine
+from watchmen.common.utils.data_utils import convert_to_dict
+from bson import regex
 
 
-
-
-
-
-
-create_switcher = {
-    CollectionList.raw_schema: create_raw_topic_schema,
-    CollectionList.console_subject: create_console_subject,
-    CollectionList.topics: create_topic_schema
-    # 1: one,
-    # 2: lambda: 'two'
-}
-
-update_switcher = {
-    CollectionList.raw_schema: update_raw_topic_schema,
-    CollectionList.topics: update_topic_schema
-}
-
-remove_switcher = {
-
-}
-
-find_one_switcher = {
-    CollectionList.console_subject: find_one_console_subject,
-    CollectionList.topics: find_one_topic_schema
-}
-
-query_with_pagination_switcher = {
-    CollectionList.topics: query_topic_schema_with_pagination
-}
-
-
-def select_collection_create_method(collection_name, instance):
-    func = create_switcher.get(collection_name, lambda: 'Invalid Collection')
-    return func(instance)
-
-
-def select_collection_update_method(collection_name, query_dict, instance):
-    func = update_switcher.get(collection_name, lambda: 'Invalid Collection')
-    return func(query_dict, instance)
-
-
-def select_collection_find_one_method(collection_name, query_dict):
-    func = find_one_switcher.get(collection_name, lambda: 'Invalid Collection')
-    return func(query_dict)
-
-
-def select_collection_qwp_method(collection_name, pagination, query_dict, sort_dict):
-    func = query_with_pagination_switcher.get(collection_name, lambda: 'Invalid Collection')
-    return func(pagination, query_dict, sort_dict)
-
-
-def create(collection_name, instance, base_model):
-    select_collection_create_method(collection_name, instance)
+def create(collection_name: str, instance, base_model: BaseModel):
+    table_instance = get_table_model(collection_name)()
+    instance_dict: dict = convert_to_dict(instance)
+    for key, value in instance_dict.items():
+        setattr(table_instance, key, value)
+    session = Session(engine, future=True)
+    try:
+        session.add(table_instance)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
     return base_model.parse_obj(instance)
 
 
 def update_one(collection_name, query_dict, instance, base_model):
-    select_collection_update_method(collection_name, query_dict, instance)
+    table = get_table_model(collection_name)
+    session = Session(engine, future=True)
+    stmt = update(table)
+
+    for key, value in query_dict.items():
+        stmt = stmt.where(eq(getattr(table, key), value))
+
+    instance_dict: dict = convert_to_dict(instance)
+
+    values = {}
+    for key, value in instance_dict.items():
+        if key != get_primary_key(collection_name):
+            values[key] = value
+
+    stmt = stmt.values(values)
+    try:
+        session.execute(stmt)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
     return base_model.parse_obj(instance)
 
 
-#only for mysql to partial update of JSON values
-def update_one_of_partial(collection_name, query_dict, instance, base_model):
-    pass
-
-'''
-def remove(collection_name, query_dict):
-    collections = client.get_collection(collection_name)
-    collections.remove(query_dict)
-'''
-
-
 def find_one(collection_name, query_dict, base_model):
-    result = select_collection_find_one_method(collection_name, query_dict)
-    if result is None:
-        return
-    else:
-        return base_model.parse_obj(result)
+    table = get_table_model(collection_name)
+    stmt = select(table)
+    for key in query_dict.keys():
+        value = query_dict[key]
+        stmt = stmt.where(eq(getattr(table, key), value))
+    session = Session(engine, future=True)
+    res = session.execute(stmt).first()
+    return parse_obj(base_model, res[0])
 
 
 def query_with_pagination(collection_name, pagination, base_model, query_dict=None, sort_dict=None):
-    result = select_collection_qwp_method(collection_name, pagination, query_dict, sort_dict)
-    return build_data_pages(pagination, [base_model.parse_obj(record) for record in result], 100)
+    count = count_table(collection_name)
+    table = get_table_model(collection_name)
+    result = []
+    session = Session(engine, future=True)
+    stmt = select(table)
+    for key in query_dict.keys():
+        if isinstance(query_dict.get(key), regex.Regex):
+            value = query_dict.get(key)
+            pattern = getattr(value, 'pattern')
+            if len(pattern) > 0:
+                stmt = stmt.where(eq(getattr(table, key), pattern))
+        else:
+            stmt = stmt.where(eq(getattr(table, key), pattern))
+
+    if isinstance(sort_dict[0], str):
+        order_field = sort_dict[0]
+        if sort_dict[1] == pymongo.DESCENDING:
+            order_seq = "desc"
+        else:
+            order_seq = "asc"
+        if order_seq == "desc":
+            stmt = stmt.order_by(getattr(table, order_field).desc())
+    else:
+        for tup in sort_dict:
+            order_field = tup[0]
+            if tup[1] == pymongo.DESCENDING:
+                order_seq = "desc"
+            if tup[1] == pymongo.ASCENDING:
+                order_seq = "asc"
+            if order_seq == "desc":
+                stmt = stmt.order_by(order_field.desc())
+
+    offset = pagination.pageSize * (pagination.pageNumber - 1)
+    stmt = stmt.offset(offset).limit(pagination.pageSize)
+    res = session.execute(stmt)
+    for row in res:
+        for item in row:
+            result.append(parse_obj(base_model, item))
+    return build_data_pages(pagination, result, count)

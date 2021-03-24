@@ -3,13 +3,15 @@ from functools import lru_cache
 import pymongo
 from bson import regex
 
+from watchmen.common.mysql import mysql_template
 from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.topic.topic import Topic
 
 TOPICS = "topics"
 
-template = find_template()
+#template = find_template()
+template = mysql_template
 
 
 def save_topic(topic):
