@@ -28,7 +28,9 @@ langid = "^1.1.6"
 uvicorn = "^0.13.4"
 japanese_address = "^0.1.2"
 pandas = "^1.2.3"
-sqlalchemy = "^1.4.2"
+SQLAlchemy = "^1.4.2"
+mysqlclient = "^2.0.3"
+
 
 [tool.poetry.dev-dependencies]
 
