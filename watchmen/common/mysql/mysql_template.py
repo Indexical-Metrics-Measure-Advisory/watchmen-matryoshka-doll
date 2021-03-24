@@ -5,6 +5,12 @@ from watchmen.common.mysql.model.topic_schema import create_topic_schema, update
     query_topic_schema_with_pagination, find_one_topic_schema
 from watchmen.common.utils.data_utils import build_data_pages
 
+
+
+
+
+
+
 create_switcher = {
     CollectionList.raw_schema: create_raw_topic_schema,
     CollectionList.console_subject: create_console_subject,

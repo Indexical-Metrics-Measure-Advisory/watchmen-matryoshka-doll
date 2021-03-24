@@ -1,3 +1,6 @@
+from typing import List
+
+from watchmen.common.data_page import DataPage
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_data_pages
 
@@ -37,7 +40,7 @@ def find_all(collection_name, base_model):
     return [base_model.parse_obj(result) for result in result_list]
 
 
-def find(collection_name, query_dict, base_model, sort_dict=None):
+def find(collection_name, query_dict, base_model, sort_dict=None)->List:
     collections = client.get_collection(collection_name)
     cursor = collections.find(query_dict)
     result_list = list(cursor)
@@ -70,7 +73,7 @@ def __sort(cursor, sort_dict):
         return cursor.sort(*sort_dict)
 
 
-def query_with_pagination(collection_name, pagination, base_model, query_dict=None, sort_dict=None):
+def query_with_pagination(collection_name, pagination, base_model, query_dict=None, sort_dict=None) -> DataPage:
     collections = client.get_collection(collection_name)
     items_count = __find_with_count(collections, query_dict)
     skips = pagination.pageSize * (pagination.pageNumber - 1)
@@ -78,7 +81,7 @@ def query_with_pagination(collection_name, pagination, base_model, query_dict=No
     return build_data_pages(pagination, [base_model.parse_obj(result) for result in list(cursor)], items_count)
 
 
-def __convert_to_dict(instance):
+def __convert_to_dict(instance) -> dict:
     if type(instance) is not dict:
         return instance.dict()
     else:
