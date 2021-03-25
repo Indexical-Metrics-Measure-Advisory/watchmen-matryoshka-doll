@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import Column, Integer, String, JSON, DateTime
+from sqlalchemy import Column, Integer, String, JSON, DateTime, Boolean
 from sqlalchemy.orm import declarative_base
 
 from watchmen.common.mysql.mysql_engine import engine
@@ -46,11 +46,29 @@ class console_space_subjects(Base):
     }
 
 
+class pipelines(Base):
+    __tablename__ = 'pipelines'
+
+    pipelineId = Column(String, primary_key=True)
+    topicId = Column(String, nullable=True)
+    name = Column(String, nullable=True)
+    type = Column(String, nullable=True)
+    stages = Column(JSON)
+    enabled = Column(Boolean)
+    version = Column(Integer, nullable=False)
+
+    __mapper_args__ = {
+        "version_id_col": version
+    }
+
+
 def get_table_model(collection_name):
     if collection_name == 'topics':
         return topics
     elif collection_name == 'console_space_subjects':
         return console_space_subjects
+    elif collection_name == 'pipelines':
+        return pipelines
 
 
 def parse_obj(base_model, result):
@@ -75,3 +93,5 @@ def get_primary_key(table_name):
         return 'topicId'
     elif table_name == 'console_space_subjects':
         return 'subjectId'
+    elif table_name == 'pipelines':
+        return  'pipelineId'
