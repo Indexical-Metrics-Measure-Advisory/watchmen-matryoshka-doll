@@ -1,8 +1,11 @@
+from typing import List
+
 from bson import ObjectId
 
 from watchmen.common.mongo.index import build_code_options
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_collection_name
+from watchmen.topic.topic import Topic
 
 client = get_client()
 
@@ -31,18 +34,17 @@ def update_topic_instance(topic_name, instance, instance_id):
 
 
 def get_topic_instances(topic_name, conditions):
-    # print(topic_name)
     topic_instance_col = client.get_collection(build_collection_name(topic_name))
     return topic_instance_col.find(conditions)
 
 
-def get_topic_instances_all(topic_name):
+def get_topic_instances_all(topic_name)->List[Topic]:
     topic_instance_col = client.get_collection(build_collection_name(topic_name))
     result = topic_instance_col.find()
     return list(result)
 
 
-def find_topic_data_by_id_and_topic_name(topic_name, object_id):
+def find_topic_data_by_id_and_topic_name(topic_name, object_id)->Topic:
     topic_instance_col = client.get_collection(build_collection_name(topic_name))
     return find_topic_data_by_id(topic_instance_col, ObjectId(object_id))
 
