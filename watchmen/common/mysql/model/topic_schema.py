@@ -25,7 +25,7 @@ class TopicSchema(Base):
     type = Column(String)
     description = Column(String)
     version = Column(Integer, nullable=False)
-    facotrs = Column(JSON)
+    factors = Column(JSON)
     createTime = Column(DateTime)
     lastModifyTime = Column(DateTime)
 
