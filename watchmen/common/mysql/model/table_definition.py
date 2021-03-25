@@ -28,7 +28,7 @@ class topics(Base):
 class console_space_subjects(Base):
     __tablename__ = 'console_space_subjects'
 
-    subjectId = Column(Integer, primary_key=True)
+    subjectId = Column(String, primary_key=True)
     name = Column(String, nullable=True)
     topicCount = Column(Integer, nullable=False)
     graphicsCount = Column(Integer, nullable=False)
