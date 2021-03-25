@@ -3,19 +3,15 @@ from datetime import datetime
 from operator import eq
 
 import pymongo
-from sqlalchemy.engine import reflection
-
+from bson import regex
+from sqlalchemy import Column, Integer, String, JSON, DateTime, update, DECIMAL, MetaData, Table
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
-from sqlalchemy import Column, Integer, String, JSON, DateTime, update, DECIMAL, MetaData, Table
 from sqlalchemy.orm import declarative_base
 
 from watchmen.common.mysql.mysql_engine import engine
-from watchmen.common.storage.collection_list import CollectionList
 from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.common.utils.date_utils import DateTimeEncoder
-
-from bson import regex
 
 Base = declarative_base()
 

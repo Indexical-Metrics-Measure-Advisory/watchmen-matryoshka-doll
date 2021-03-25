@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, JSON, DateTime
+from sqlalchemy.orm import Session
 from sqlalchemy.orm import declarative_base
 
 from watchmen.common.mysql.mysql_engine import engine

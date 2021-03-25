@@ -1,16 +1,9 @@
 import logging
-from decimal import Decimal
 from typing import List
-
-from bson.codec_options import TypeCodec
-from bson.decimal128 import Decimal128
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_data_pages
-
-
-
 
 client = get_client()
 
@@ -29,6 +22,11 @@ def update_one(collection_name, query_dict, instance, base_model):
     collections = client.get_collection(collection_name)
     collections.update_one(query_dict, {"$set": __convert_to_dict(instance)})
     return base_model.parse_obj(instance)
+
+
+def update_many(collection_name, query_dict,update_dict):
+    collections = client.get_collection(collection_name)
+    return collections.update_many(query_dict,update_dict)
 
 
 def remove(collection_name, query_dict):
@@ -98,3 +96,8 @@ def __convert_to_dict(instance) -> dict:
         return instance.dict()
     else:
         return instance
+
+
+def find_modify(collection_name: str, query_dict: dict, update_dict: dict):
+    collections = client.get_collection(collection_name)
+    return collections.find_and_modify(query=query_dict,update= update_dict)

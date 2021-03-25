@@ -1,6 +1,4 @@
-
 from watchmen.config.config import settings
-
 
 MYSQL = "mysql"
 MONGO = "mongo"
