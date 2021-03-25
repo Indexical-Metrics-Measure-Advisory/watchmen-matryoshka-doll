@@ -69,7 +69,6 @@ async def save_query_monitor_data(query_monitor):
 
 
 async def load_chart_dataset(report_id):
-    print(report_id)
     # assert report_id is None
     report = load_report_by_id(report_id)
     query_monitor = build_query_monitor_report(report, query_type="report")

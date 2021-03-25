@@ -1,6 +1,7 @@
 import logging
 import statistics
 from datetime import datetime
+from decimal import Decimal
 from functools import reduce
 
 import numpy as np
@@ -191,7 +192,9 @@ def __get_operator(source_type):
 
 
 def __process_operator(operator, value_list):
-    return reduce(operator, value_list)
+    result = reduce(operator, value_list)
+    # print("result",result)
+    return result
 
 
 def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
@@ -216,16 +219,15 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
                 value_list.append(value)
         # print("value :", value_list)
 
-        return __process_operator(operator, value_list).tolist()
+        return __process_operator(operator, value_list)
 
 
 def get_source_value_list(pipeline_topic, raw_data, parameter, result=[]):
     if parameter.kind == parameter_constants.TOPIC:
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
-        # print(source_factor)
         return get_source_factor_value(raw_data, [], source_factor)
     elif parameter.kind == parameter_constants.CONSTANT:
-        return parameter.value
+        return Decimal(parameter.value)
     elif parameter.kind == parameter_constants.COMPUTED:
         return __process_compute_kind(parameter, raw_data, pipeline_topic)
     else:
@@ -315,7 +317,8 @@ def __get_source_and_target_parameter(condition, pipeline_topic: Topic):
 def __process_parameter_constants(parameter: Parameter, context):
     variable_type, context_target_name = process_variable(parameter.value)
     if variable_type == parameter_constants.CONSTANT:
-        return parameter.value
+        # print("parameter",parameter.value)
+        return Decimal(parameter.value)
     elif variable_type == parameter_constants.MEMORY:
         if context_target_name in context:
             return context[context_target_name]
@@ -357,7 +360,7 @@ def __process_compute_calculation_condition(parameter, pipeline_topic, target_to
         if pipeline_constants.NAME in parameter_result:
             raise Exception("target_topic in compute parameter is not supported")
 
-    return __process_operator(operator, value_list).tolist()
+    return __process_operator(operator, value_list)
 
 
 def __process_compute_date(parameter, pipeline_topic, raw_data):

@@ -1,3 +1,5 @@
+import logging
+
 import pymongo
 from pydantic.main import BaseModel
 
@@ -10,6 +12,11 @@ from sqlalchemy import update
 from watchmen.common.mysql.mysql_engine import engine
 from watchmen.common.utils.data_utils import convert_to_dict
 from bson import regex
+
+
+log = logging.getLogger("app." + __name__)
+
+log.info("mysql template initialized")
 
 
 def create(collection_name: str, instance, base_model: BaseModel):

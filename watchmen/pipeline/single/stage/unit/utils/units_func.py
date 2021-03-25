@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 
 from watchmen.common.constants import parameter_constants, pipeline_constants
 from watchmen.topic.factor.factor import Factor
@@ -104,7 +105,7 @@ def convert_factor_type(value, factor_type):
         return str(value)
     elif factor_type == NUMBER:
         # TODO process number type
-        return float(value)
+        return Decimal(value)
     elif factor_type == DATETIME:
         return datetime.fromisoformat(value)
     elif factor_type == BOOLEAN:

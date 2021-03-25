@@ -1,13 +1,22 @@
+import logging
+from decimal import Decimal
 from typing import List
+
+from bson.codec_options import TypeCodec
+from bson.decimal128 import Decimal128
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_data_pages
 
+
+
+
 client = get_client()
 
+log = logging.getLogger("app." + __name__)
 
-print("mongo in")
+log.info("mongo template initialized")
 
 
 def create(collection_name, instance, base_model):
@@ -43,7 +52,7 @@ def find_all(collection_name, base_model):
     return [base_model.parse_obj(result) for result in result_list]
 
 
-def find(collection_name, query_dict, base_model, sort_dict=None)->List:
+def find(collection_name, query_dict, base_model, sort_dict=None) -> List:
     collections = client.get_collection(collection_name)
     cursor = collections.find(query_dict)
     result_list = list(cursor)
