@@ -5,7 +5,7 @@ from pydantic import BaseModel, BaseConfig
 
 
 class MongoModel(BaseModel):
-    last_modified: datetime = datetime.utcnow()
+    lastModified: datetime = datetime.utcnow()
     createTime: str = None
 
     # lastModifyTime: str = None

@@ -47,7 +47,7 @@ def __check_when_condition(children, data):
 
 
 def run_pipeline(pipeline: Pipeline, data):
-    pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId,uid=get_surrogate_key(),start_time=datetime.now())
+    pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId,uid=get_surrogate_key(),startTime=datetime.now())
     pipeline_status.oldValue = data[pipeline_constants.OLD]
     pipeline_status.newValue = data[pipeline_constants.NEW]
 
@@ -56,6 +56,9 @@ def run_pipeline(pipeline: Pipeline, data):
         # TODO pipeline when  condition
         log.info("start run pipeline {0}".format(pipeline.name))
         context = {PIPELINE_UID: pipeline_status.uid}
+
+
+
 
         try:
             start = time.time()
@@ -86,7 +89,7 @@ def run_pipeline(pipeline: Pipeline, data):
 
             elapsed_time = time.time() - start
             pipeline_status.stages.append(stage_run_status)
-            pipeline_status.complete_time = elapsed_time
+            pipeline_status.completeTime = elapsed_time
             pipeline_status.status = FINISHED
             log.info("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))
 
@@ -100,6 +103,6 @@ def run_pipeline(pipeline: Pipeline, data):
             if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                 log.info("pipeline_status is {0}".format(pipeline_status))
             else:
-                # if pipeline_status.oldValue is not None:
-                #     print(pipeline_status.json())
+                if pipeline_status.oldValue is not None:
+                    print(pipeline_status.json())
                 sync_pipeline_monitor_data(pipeline_status)
