@@ -53,7 +53,6 @@ def update_user_storage(user: User):
 
 
 def query_users_by_name_with_pagination(query_name: str, pagination: Pagination):
-
     return template.query_with_pagination(USERS, pagination, User, {"name": regex.Regex(query_name)})
 
 

@@ -1,7 +1,3 @@
-from decimal import Decimal
-
-from bson import Decimal128
-
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.mongo.index import build_code_options
 from watchmen.common.storage.engine.storage_engine import get_client
@@ -10,17 +6,10 @@ from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE
 from watchmen.topic.storage.topic_data_storage import find_topic_data_by_id
-from bson.codec_options import TypeRegistry, TypeCodec
-from bson.codec_options import CodecOptions
-
-
-
-
 
 db = get_client()
 
 
-# @topic_event_trigger
 def insert_topic_data(topic_name, mapping_result, pipeline_uid):
     collection_name = build_collection_name(topic_name)
     codec_options = build_code_options()
@@ -32,10 +21,6 @@ def insert_topic_data(topic_name, mapping_result, pipeline_uid):
                      TriggerType.insert)
 
 
-
-
-
-# @topic_event_trigger
 def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     collection_name = build_collection_name(topic_name)
     codec_options = build_code_options()

@@ -33,8 +33,7 @@ def init_superuser():
         pass
 
 
-def sync_user_to_user_groups(user:User):
-
+def sync_user_to_user_groups(user: User):
     update_many(collection_name=USER_GROUPS, query_dict={"userIds": {"$in": [user.userId]}},
                 update_dict={"$pull": {"userIds": {"$in": [user.userId]}}})
     user_groups = get_user_group_list_by_ids(user.groupIds)
@@ -42,7 +41,3 @@ def sync_user_to_user_groups(user:User):
         if user.userId not in user_group.userIds:
             user_group.userIds.append(user.userId)
             update_user_group_storage(user_group)
-
-
-
-

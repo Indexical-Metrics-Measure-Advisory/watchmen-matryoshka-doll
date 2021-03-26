@@ -24,9 +24,9 @@ def update_one(collection_name, query_dict, instance, base_model):
     return base_model.parse_obj(instance)
 
 
-def update_many(collection_name, query_dict,update_dict):
+def update_many(collection_name, query_dict, update_dict):
     collections = client.get_collection(collection_name)
-    return collections.update_many(query_dict,update_dict)
+    return collections.update_many(query_dict, update_dict)
 
 
 def remove(collection_name, query_dict):
@@ -100,4 +100,4 @@ def __convert_to_dict(instance) -> dict:
 
 def find_one_and_update(collection_name: str, query_dict: dict, update_dict: dict):
     collections = client.get_collection(collection_name)
-    return collections.find_one_and_update(filter=query_dict,update= update_dict)
+    return collections.find_one_and_update(filter=query_dict, update=update_dict)

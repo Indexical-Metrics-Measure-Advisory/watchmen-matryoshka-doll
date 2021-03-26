@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, JSON, DateTime, Boolean
+from sqlalchemy.orm import Session
 from sqlalchemy.orm import declarative_base
 
 from watchmen.common.mysql.mysql_engine import engine
@@ -94,4 +94,4 @@ def get_primary_key(table_name):
     elif table_name == 'console_space_subjects':
         return 'subjectId'
     elif table_name == 'pipelines':
-        return  'pipelineId'
+        return 'pipelineId'
