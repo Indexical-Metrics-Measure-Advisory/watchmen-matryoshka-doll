@@ -131,10 +131,6 @@ def check_model_field_in_schema(name, model_schema: ModelSchema):
         return True
     else:
         return False
-    # if model_schema.businessFields[name] is not None:
-    #     return True
-    # else:
-    #     return False
 
 
 def get_model_schema_set_by_code(code):
