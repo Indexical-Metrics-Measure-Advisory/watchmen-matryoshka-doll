@@ -6,11 +6,13 @@ from datetime import datetime
 from functools import lru_cache
 
 from watchmen.common.constants import pipeline_constants
+from watchmen.common.parameter import ParameterJoint
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
 from watchmen.monitor.services.pipeline_monitor_service import sync_pipeline_monitor_data
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
@@ -46,8 +48,34 @@ def __check_when_condition(children, data):
         #     return factor.name not in data
 
 
+def __check_pipeline_condition(pipeline, data):
+    if pipeline.conditional and pipeline.on is not None:
+        newValue = data[pipeline_constants.NEW]
+        condition:ParameterJoint = pipeline.on
+        if condition.filters:
+            joint_type = condition.jointType
+            for filter in condition.filters:
+                topic = get_topic_by_id(filter.left.topicId)
+                factor = get_factor(condition.left.factorId,topic)
+                get_source_factor_value(newValue,[],factor)
+
+
+
+
+
+
+
+
+
+
+
+    else:
+        return True
+
+
 def run_pipeline(pipeline: Pipeline, data):
-    pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId,uid=get_surrogate_key(),startTime=datetime.now())
+    pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),
+                                        startTime=datetime.now())
     pipeline_status.oldValue = data[pipeline_constants.OLD]
     pipeline_status.newValue = data[pipeline_constants.NEW]
 
@@ -56,9 +84,6 @@ def run_pipeline(pipeline: Pipeline, data):
         # TODO pipeline when  condition
         log.info("start run pipeline {0}".format(pipeline.name))
         context = {PIPELINE_UID: pipeline_status.uid}
-
-
-
 
         try:
             start = time.time()
