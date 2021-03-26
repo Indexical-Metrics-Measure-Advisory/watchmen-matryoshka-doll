@@ -5,6 +5,8 @@ from watchmen.common.constants import parameter_constants, pipeline_constants
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
+SPLIT_FLAG = ","
+
 INSERT = "insert"
 UPDATE = "update"
 SEQUENCE = "sequence"
@@ -83,7 +85,7 @@ OBJECT = "object"
 ARRAY = "array"
 
 
-def check_condition(operator, left_value, right_value):
+def check_condition(operator:str, left_value, right_value)->bool:
     if operator == "equals":
         return left_value == right_value
     elif operator == "not-equals":
@@ -96,8 +98,23 @@ def check_condition(operator, left_value, right_value):
         return left_value > right_value
     elif operator == "more-equals":
         return left_value >= right_value
+    elif operator == "empty":
+        return left_value is None
+    elif operator == "not-empty":
+        return left_value is not None
+    elif operator == "in":
+        return left_value in __split_value(right_value)
+    elif operator == "not-in":
+        return left_value not in __split_value(right_value)
     else:
         raise Exception("NotImplemented:", operator)
+
+
+def __split_value(value):
+    if SPLIT_FLAG not in value:
+        return [value]
+    else:
+        return value.split(SPLIT_FLAG)
 
 
 def convert_factor_type(value, factor_type):
