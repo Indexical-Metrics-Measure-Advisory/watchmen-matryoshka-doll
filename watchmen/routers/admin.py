@@ -22,7 +22,7 @@ from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
 from watchmen.enum.model.enum import Enum
 from watchmen.enum.storage.enum_storage import save_enum_to_storage, query_enum_list_with_pagination, load_enum_by_id, \
-    load_enum_by_parent_id
+    load_enum_by_parent_id, load_enum_list
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
@@ -48,6 +48,11 @@ log = logging.getLogger("app." + __name__)
 class AdminDashboard(BaseModel):
     dashboard: ConsoleDashboard = None
     reports: List[Report] = []
+
+
+# class QueryEnum(BaseModel):
+#     enumeration:Enum = None
+#     parents:List[Enum]=[]
 
 
 # ADMIN
@@ -352,17 +357,18 @@ async def save_enum(enum: Enum):
     return save_enum_to_storage(enum)
 
 
-@router.get("/enum/id", tags=["admin"], response_model=Enum)
+@router.get("/enum/id", tags=["admin"], response_model=dict)
 async def load_enum(enum_id):
     return load_enum_by_id(enum_id)
 
-
-@router.get("enum/parent", tags=["admin"], response_model=Enum)
-async def load_enum_by_parent(enum_parent_id):
-    return load_enum_by_parent_id(enum_parent_id)
 
 
 @router.post("/enum/name", tags=["admin"], response_model=DataPage)
 async def query_enum_list_by_name(query_name: str, pagination: Pagination = Body(...),
                                   current_user: User = Depends(deps.get_current_user)):
     return query_enum_list_with_pagination(query_name, pagination)
+
+
+@router.get("/enum/all", tags=["admin"], response_model=List[Enum])
+async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
+    return load_enum_list()

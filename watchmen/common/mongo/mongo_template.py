@@ -18,6 +18,12 @@ def create(collection_name, instance, base_model):
     return base_model.parse_obj(instance)
 
 
+def create_or_update(collection_name,query_dict, instance, base_model):
+    collections = client.get_collection(collection_name)
+    collections.update_one(query_dict, {"$set": __convert_to_dict(instance)},upsert=True)
+    return base_model.parse_obj(instance)
+
+
 def update_one(collection_name, query_dict, instance, base_model):
     collections = client.get_collection(collection_name)
     collections.update_one(query_dict, {"$set": __convert_to_dict(instance)})

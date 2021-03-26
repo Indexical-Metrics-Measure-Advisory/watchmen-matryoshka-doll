@@ -64,41 +64,6 @@ class SubjectDataSet(BaseModel):
     joins: List[SubjectDataSetJoin] = []
 
 
-'''
-class ReportIndicator(BaseModel):
-    name: str = None
-    arithmetic: str = None
-
-
-class ReportDimension(BaseModel):
-    name: str = None
-
-
-class ChartSettings(BaseModel):
-    backgroundColor: str = None
-    border: Any = None
-    borderColor: str = None
-    borderRadius: Any = None
-    colorSeries: Any = None
-
-
-class Chart(BaseModel):
-    type: str = None
-    settings: ChartSettings = None
-
-
-class Report(MongoModel):
-    reportId: str = None
-    name: str = None
-    indicators: List[ReportIndicator] = None
-    dimensions: List[ReportDimension] = None
-    description: str = None
-    rect: Any = None
-    chart: Chart = None
-    lastVisitTime: str = None
-'''
-
-
 class ConsoleSpaceSubject(MongoModel):
     subjectId: str = None
     name: str = None
@@ -109,13 +74,6 @@ class ConsoleSpaceSubject(MongoModel):
     reports: List[Report] = []
     reportIds: list = []
     dataset: SubjectDataSet = None
-    # graphics: List[ConsoleSpaceSubjectChart] = []
-
-    # subjectId: string;
-    # name: string;
-    # reports?: Array < Report >;
-    # dataset: SubjectDataSet;
-    # lastVisitTime: string;
 
 
 class ConsoleSpaceGroup(MongoModel):
