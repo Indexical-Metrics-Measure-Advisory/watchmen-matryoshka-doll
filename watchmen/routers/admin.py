@@ -50,27 +50,6 @@ class AdminDashboard(BaseModel):
     reports: List[Report] = []
 
 
-#
-# class TopicSuggestionIn(BaseModel):
-#     lake_schema_set: ModelSchemaSet = None
-#     master_schema: Space = None
-#
-#
-# class FactorSuggestionIn(BaseModel):
-#     lake_schema: ModelSchema = None
-#     topic: Topic = None
-
-
-# @router.post("/admin/suggestion/topic", tags=["admin"])
-# async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
-#     return generate_suggestion_topic_service(topic_suggestion.lake_schema, topic_suggestion.master_schema)
-#
-#
-# @router.post("/admin/suggestion/factors", tags=["admin"])
-# async def generate_suggestion_factor(factor_suggestion: FactorSuggestionIn):
-#     return generate_suggestion_factor(factor_suggestion.lake_schema, factor_suggestion.topic)
-
-
 # ADMIN
 
 
