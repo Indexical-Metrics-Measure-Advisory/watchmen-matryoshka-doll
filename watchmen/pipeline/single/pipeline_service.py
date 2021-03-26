@@ -11,6 +11,7 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
 from watchmen.monitor.services.pipeline_monitor_service import sync_pipeline_monitor_data
 from watchmen.pipeline.model.pipeline import Pipeline
+from watchmen.pipeline.single.stage.unit.mongo.index import get_source_factor_value
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
@@ -57,18 +58,8 @@ def __check_pipeline_condition(pipeline, data):
             for filter in condition.filters:
                 topic = get_topic_by_id(filter.left.topicId)
                 factor = get_factor(condition.left.factorId,topic)
-                get_source_factor_value(newValue,[],factor)
-
-
-
-
-
-
-
-
-
-
-
+                value_list = get_source_factor_value(newValue,[],factor)
+                
     else:
         return True
 
