@@ -53,6 +53,6 @@ def find_and_modify_topic_data(topic_name, query, update_data, target_data):
     codec_options = build_code_options()
     collection = db.get_collection(collection_name,codec_options=codec_options)
     old_data = find_topic_data_by_id(collection, target_data["_id"])
-    collection.find_one_and_update(query=query, update=update_data)
+    collection.find_one_and_update(filter=query, update=update_data)
     trigger_pipeline(topic_name, {pipeline_constants.NEW: update_data, pipeline_constants.OLD: old_data},
                      TriggerType.update)

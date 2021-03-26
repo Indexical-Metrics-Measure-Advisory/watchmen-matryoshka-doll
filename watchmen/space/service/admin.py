@@ -1,7 +1,7 @@
 from typing import List
 
 from watchmen.auth.storage.user_group import get_user_group_list_by_ids, update_user_group_storage, USER_GROUPS
-from watchmen.common.mongo.mongo_template import find_modify, update_many
+from watchmen.common.mongo.mongo_template import update_many
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.space.space import Space

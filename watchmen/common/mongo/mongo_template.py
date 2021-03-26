@@ -98,6 +98,6 @@ def __convert_to_dict(instance) -> dict:
         return instance
 
 
-def find_modify(collection_name: str, query_dict: dict, update_dict: dict):
+def find_one_and_update(collection_name: str, query_dict: dict, update_dict: dict):
     collections = client.get_collection(collection_name)
-    return collections.find_and_modify(query=query_dict,update= update_dict)
+    return collections.find_one_and_update(filter=query_dict,update= update_dict)

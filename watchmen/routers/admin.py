@@ -4,7 +4,8 @@ from typing import List
 from fastapi import APIRouter, Body, Depends
 from pydantic import BaseModel
 
-from watchmen.auth.service.user_group import sync_user_group_to_space
+from watchmen.auth.service.user import sync_user_to_user_groups
+from watchmen.auth.service.user_group import sync_user_group_to_space, sync_user_group_to_user
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
     get_user, load_user_list_by_name, update_user_storage
 from watchmen.auth.storage.user_group import create_user_group_storage, query_user_groups_by_name_with_paginate, \
@@ -186,10 +187,13 @@ async def query_topic_list_by_ids(topic_ids: List[str], current_user: User = Dep
 # User
 
 @router.post("/user", tags=["admin"], response_model=User)
-async def save_user(user: User):
+async def save_user(user: User) -> User:
     if user.userId is None or check_fake_id(user.userId):
-        return create_user_storage(user)
+        result = create_user_storage(user)
+        sync_user_to_user_groups(result)
+        return result
     else:
+        sync_user_to_user_groups(user)
         return update_user_storage(user)
 
 
@@ -223,15 +227,18 @@ async def save_user_group(user_group: UserGroup, current_user: User = Depends(de
     if user_group.userGroupId is None or check_fake_id(user_group.userGroupId):
         result = create_user_group_storage(user_group)
         sync_user_group_to_space(result)
+        sync_user_group_to_user(result)
         return result
     else:
         sync_user_group_to_space(user_group)
+        sync_user_group_to_user(user_group)
         return update_user_group_storage(user_group)
 
 
 @router.post("/update/user_group", tags=["admin"], response_model=UserGroup)
 async def update_user_group(user_group: UserGroup, current_user: User = Depends(deps.get_current_user)):
     sync_user_group_to_space(user_group)
+    sync_user_group_to_user(user_group)
     return update_user_group_storage(user_group)
 
 
