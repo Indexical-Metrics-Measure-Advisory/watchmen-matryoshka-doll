@@ -41,14 +41,14 @@ class InsertAction(UnitActionStatus, MappingHolder):
 
 
 class WhereCondition(BaseModel):
-    factor:str =None
-    operator:str = None
-    value:Any=None
+    factor: str = None
+    operator: str = None
+    value: Any = None
 
 
 class InsertAndMergeRowAction(UnitActionStatus, MappingHolder):
     type: str = "InsertAndMergeRow"
-    whereConditions:List[WhereCondition] =[]
+    whereConditions: List[WhereCondition] = []
 
 
 class UnitRunStatus(ConditionHolder):

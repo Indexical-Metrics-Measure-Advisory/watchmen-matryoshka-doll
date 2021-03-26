@@ -1,17 +1,16 @@
 import logging
+from operator import eq
 
 import pymongo
+from bson import regex
 from pydantic.main import BaseModel
-
-from watchmen.common.mysql.model.table_definition import get_table_model, parse_obj, count_table, get_primary_key
-from watchmen.common.utils.data_utils import build_data_pages
-from operator import eq
+from sqlalchemy import update, MetaData, DECIMAL, Column, Table, String, insert, and_, or_
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
-from sqlalchemy import update, MetaData, DECIMAL, Column, Table, String, insert, and_, or_, bindparam
+
 from watchmen.common.mysql.mysql_engine import engine
+from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
-from bson import regex
 
 log = logging.getLogger("app." + __name__)
 
@@ -210,6 +209,3 @@ def build_where_expression(table, conditions):
             f = table.c.key == value
         filters.append(f)
     return filters
-
-
-

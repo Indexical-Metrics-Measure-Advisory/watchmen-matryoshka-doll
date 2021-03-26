@@ -74,14 +74,12 @@ async def load_space_list_by_user(current_user: User = Depends(deps.get_current_
         available_space.name = space.name
         available_space.description = space.description
         available_space.topicIds = space.topicIds
-        # available_space.topicRelations =load_relationships_by_topic_ids(space.topicIds)
         available_space_list.append(available_space)
     return available_space_list
 
 
 @router.get("/space/connect", tags=["console"], response_model=ConsoleSpace)
 async def connect_to_space(space_id, name, current_user: User = Depends(deps.get_current_user)):
-    # space = get_space_by_id(space_id)
     topic_list = load_topic_list_by_space_id(space_id)
     console_space = ConsoleSpace()
     console_space.topics = topic_list
@@ -103,10 +101,8 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
     console_space_list = load_console_space_list_by_user(user_id)
     result = []
     for console_space in console_space_list:
-        # console_space = ConsoleSpace.parse_obj(data)
         topic_list = load_topic_list_by_space_id(console_space.spaceId)
         console_space.topics = topic_list
-
         if console_space.subjectIds is not None:
             subjects = load_console_subject_list_by_ids(console_space.subjectIds)
             for subject in subjects:

@@ -23,7 +23,7 @@ class Topic(MongoModel):
     kind: str = None
     factors: List[Factor] = []
     description: str = None
-    #factorIds: list = []
+    # factorIds: list = []
 
     '''
     indexKey : List[str] = None

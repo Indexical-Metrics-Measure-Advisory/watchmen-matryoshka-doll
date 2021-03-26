@@ -53,13 +53,8 @@ def update_user_storage(user: User):
 
 
 def query_users_by_name_with_pagination(query_name: str, pagination: Pagination):
-    # items_count = users.find({"name": regex.Regex(query_name)}).count()
-    # skips = pagination.pageSize * (pagination.pageNumber - 1)
-    # result = users.find({"name": regex.Regex(query_name)}).skip(skips).limit(pagination.pageSize)
-    # return build_data_pages(pagination, list(result), items_count)
     return template.query_with_pagination(USERS, pagination, User, {"name": regex.Regex(query_name)})
 
 
 def import_user_to_db(user):
-    # users.insert_one(user.dict())
     template.create(USERS, user, User)

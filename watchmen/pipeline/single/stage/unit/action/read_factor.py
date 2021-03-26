@@ -1,7 +1,7 @@
 import time
 
 from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import  ReadFactorAction
+from watchmen.monitor.model.pipeline_monitor import ReadFactorAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import process_variable, build_query_conditions, \
     __build_mongo_query
@@ -9,9 +9,6 @@ from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topi
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
-
-
-
 
 
 def init(action: UnitAction, pipeline_topic: Topic):

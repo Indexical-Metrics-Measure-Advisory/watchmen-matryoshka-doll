@@ -4,6 +4,8 @@ from typing import List
 from fastapi import APIRouter, Body, Depends
 from pydantic import BaseModel
 
+from watchmen.auth.service.user import sync_user_to_user_groups
+from watchmen.auth.service.user_group import sync_user_group_to_space, sync_user_group_to_user
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
     get_user, load_user_list_by_name, update_user_storage
 from watchmen.auth.storage.user_group import create_user_group_storage, query_user_groups_by_name_with_paginate, \
@@ -29,7 +31,7 @@ from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_p
     update_pipeline_name, load_pipeline_by_id
 from watchmen.report.model.report import Report
 from watchmen.report.storage.report_storage import query_report_list_with_pagination, load_reports_by_ids
-from watchmen.space.service.admin import create_space, update_space_by_id
+from watchmen.space.service.admin import create_space, update_space_by_id, sync_space_to_user_group
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
     load_space_list_by_name
@@ -48,40 +50,24 @@ class AdminDashboard(BaseModel):
     reports: List[Report] = []
 
 
-#
-# class TopicSuggestionIn(BaseModel):
-#     lake_schema_set: ModelSchemaSet = None
-#     master_schema: Space = None
-#
-#
-# class FactorSuggestionIn(BaseModel):
-#     lake_schema: ModelSchema = None
-#     topic: Topic = None
-
-
-# @router.post("/admin/suggestion/topic", tags=["admin"])
-# async def generate_suggestion_topic(topic_suggestion: TopicSuggestionIn):
-#     return generate_suggestion_topic_service(topic_suggestion.lake_schema, topic_suggestion.master_schema)
-#
-#
-# @router.post("/admin/suggestion/factors", tags=["admin"])
-# async def generate_suggestion_factor(factor_suggestion: FactorSuggestionIn):
-#     return generate_suggestion_factor(factor_suggestion.lake_schema, factor_suggestion.topic)
-
-
 # ADMIN
 
 
 @router.post("/space", tags=["admin"], response_model=Space)
 async def save_space(space: Space, current_user: User = Depends(deps.get_current_user)):
     if space.spaceId is None or check_fake_id(space.spaceId):
-        return create_space(space)
+        # sync space group id
+        result = create_space(space)
+        sync_space_to_user_group(result)
+        return result
     else:
+        sync_space_to_user_group(space)
         return update_space_by_id(space.spaceId, space)
 
 
 @router.post("/update/space", tags=["admin"], response_model=Space)
 async def update_space(space_id, space: Space = Body(...), current_user: User = Depends(deps.get_current_user)):
+    sync_space_to_user_group(space)
     return update_space_by_id(space_id, space)
 
 
@@ -180,10 +166,13 @@ async def query_topic_list_by_ids(topic_ids: List[str], current_user: User = Dep
 # User
 
 @router.post("/user", tags=["admin"], response_model=User)
-async def save_user(user: User):
+async def save_user(user: User) -> User:
     if user.userId is None or check_fake_id(user.userId):
-        return create_user_storage(user)
+        result = create_user_storage(user)
+        sync_user_to_user_groups(result)
+        return result
     else:
+        sync_user_to_user_groups(user)
         return update_user_storage(user)
 
 
@@ -215,13 +204,20 @@ async def save_user_group(user_group: UserGroup, current_user: User = Depends(de
     if check_fake_id(user_group.userGroupId):
         user_group.userGroupId = None
     if user_group.userGroupId is None or check_fake_id(user_group.userGroupId):
-        return create_user_group_storage(user_group)
+        result = create_user_group_storage(user_group)
+        sync_user_group_to_space(result)
+        sync_user_group_to_user(result)
+        return result
     else:
+        sync_user_group_to_space(user_group)
+        sync_user_group_to_user(user_group)
         return update_user_group_storage(user_group)
 
 
 @router.post("/update/user_group", tags=["admin"], response_model=UserGroup)
 async def update_user_group(user_group: UserGroup, current_user: User = Depends(deps.get_current_user)):
+    sync_user_group_to_space(user_group)
+    sync_user_group_to_user(user_group)
     return update_user_group_storage(user_group)
 
 
@@ -351,22 +347,22 @@ async def load_admin_dashboard(current_user: User = Depends(deps.get_current_use
 
 ## ENUM
 
-@router.post("/enum" ,tags=["admin"],response_model=Enum)
+@router.post("/enum", tags=["admin"], response_model=Enum)
 async def save_enum(enum: Enum):
     return save_enum_to_storage(enum)
 
 
-@router.get("/enum/id",tags=["admin"],response_model=Enum)
+@router.get("/enum/id", tags=["admin"], response_model=Enum)
 async def load_enum(enum_id):
     return load_enum_by_id(enum_id)
 
 
-@router.get("enum/parent",tags=["admin"],response_model=Enum)
+@router.get("enum/parent", tags=["admin"], response_model=Enum)
 async def load_enum_by_parent(enum_parent_id):
     return load_enum_by_parent_id(enum_parent_id)
 
 
 @router.post("/enum/name", tags=["admin"], response_model=DataPage)
 async def query_enum_list_by_name(query_name: str, pagination: Pagination = Body(...),
-                                         current_user: User = Depends(deps.get_current_user)):
+                                  current_user: User = Depends(deps.get_current_user)):
     return query_enum_list_with_pagination(query_name, pagination)

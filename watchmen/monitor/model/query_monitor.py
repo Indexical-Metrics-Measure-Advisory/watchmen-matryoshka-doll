@@ -30,4 +30,3 @@ class QueryMonitor(MongoModel):
     executionTime: int = None
     success: bool = True
     error: str = None
-

@@ -12,7 +12,9 @@ from watchmen.topic.topic import Topic
 TOPICS = "topics"
 
 template = find_template()
-#template = mysql_template
+
+
+# template = mysql_template
 
 
 def save_topic(topic: Topic) -> Topic:
