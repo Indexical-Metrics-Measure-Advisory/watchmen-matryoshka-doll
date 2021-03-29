@@ -29,13 +29,14 @@ from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
     load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status, \
     update_pipeline_name, load_pipeline_by_id
+from watchmen.raw_data.service.generate_schema import create_raw_data_model_set
 from watchmen.report.model.report import Report
 from watchmen.report.storage.report_storage import query_report_list_with_pagination, load_reports_by_ids
 from watchmen.space.service.admin import create_space, update_space_by_id, sync_space_to_user_group
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
     load_space_list_by_name
-from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema
+from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic
 from watchmen.topic.topic import Topic
@@ -372,3 +373,9 @@ async def query_enum_list_by_name(query_name: str, pagination: Pagination = Body
 @router.get("/enum/all", tags=["admin"], response_model=List[Enum])
 async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
     return load_enum_list()
+
+
+@router.post("/topic/raw/generation")
+async def create_raw_topic_schema(topic_name: str, data: List[dict]):
+    result = create_raw_data_model_set(topic_name, data)
+    return build_topic(result)
