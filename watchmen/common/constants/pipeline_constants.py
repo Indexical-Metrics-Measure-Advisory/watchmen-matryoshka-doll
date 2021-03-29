@@ -9,6 +9,6 @@ VALUE = "value"
 
 OPERATOR = "operator"
 
-INSERT_TIME = "insert_time"
+INSERT_TIME = "insertTime"
 
-UPDATE_TIME = "update_time"
+UPDATE_TIME = "updateTime"

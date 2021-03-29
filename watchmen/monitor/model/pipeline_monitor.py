@@ -22,7 +22,7 @@ class MappingHolder(BaseModel):
 
 
 class ConditionHolder(BaseModel):
-    condition_result: bool = None
+    conditionResult: bool = None
 
 
 class ReadFactorAction(UnitActionStatus):
@@ -64,8 +64,8 @@ class PipelineRunStatus(MongoModel, ConditionHolder):
     status: str = None  # DONE ,ERROR
     pipelineId: str = None
     uid: str = None
-    start_time: datetime = None
-    complete_time: int = None
+    startTime: datetime = None
+    completeTime: int = None
     stages: List[StageRunStatus] = []
     error: str = None
     oldValue: Any = None

@@ -12,7 +12,7 @@ from watchmen.common.mysql.mysql_engine import engine
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
 
-log = logging.getLogger("app." + __name__)
+log = logging.getLogger("app." + __name__)  
 
 log.info("mysql template initialized")
 

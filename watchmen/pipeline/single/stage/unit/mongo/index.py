@@ -227,7 +227,10 @@ def get_source_value_list(pipeline_topic, raw_data, parameter, result=[]):
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, [], source_factor)
     elif parameter.kind == parameter_constants.CONSTANT:
-        return Decimal(parameter.value)
+        if parameter.value is None or  not parameter.value:
+            return None
+        else:
+            return Decimal(parameter.value)
     elif parameter.kind == parameter_constants.COMPUTED:
         return __process_compute_kind(parameter, raw_data, pipeline_topic)
     else:
@@ -271,13 +274,13 @@ def get_max_value_size(mapping_results):
     return index
 
 
-def __process_parameter_join(parameter_join: ParameterJoint):
-    if parameter_join.jointType == "and":
-        pass
-    elif parameter_join.jointType == "or":
-        pass
-    else:
-        raise Exception("unknown parameter join type {0}".format(parameter_join.jointType))
+# def __process_parameter_join(parameter_join: ParameterJoint):
+#     if parameter_join.jointType == "and":
+#         pass
+#     elif parameter_join.jointType == "or":
+#         pass
+#     else:
+#         raise Exception("unknown parameter join type {0}".format(parameter_join.jointType))
 
 
 def is_sub_field(factor):
