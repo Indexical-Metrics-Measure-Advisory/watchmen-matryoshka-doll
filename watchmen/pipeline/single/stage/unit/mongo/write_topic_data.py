@@ -33,11 +33,17 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     trigger_pipeline(topic_name, {pipeline_constants.NEW: data, pipeline_constants.OLD: old_data}, TriggerType.update)
 
 
-def find_and_modify_topic_data(topic_name, query, update_data, target_data):
+def find_and_modify_topic_data(topic_name, query, update_data):
     collection_name = build_collection_name(topic_name)
     codec_options = build_code_options()
     collection = db.get_collection(collection_name,codec_options=codec_options)
-    old_data = find_topic_data_by_id(collection, target_data["_id"])
-    collection.find_one_and_update(filter=query, update=update_data)
-    trigger_pipeline(topic_name, {pipeline_constants.NEW: update_data, pipeline_constants.OLD: old_data},
+    print("target_data", query)
+    print("update_data", update_data)
+
+    # if target_data
+    # old_data = find_topic_data_by_id(collection, target_data["_id"])
+
+
+    old_value = collection.find_one_and_update(filter=query, update=update_data,upsert=True)
+    trigger_pipeline(topic_name, {pipeline_constants.NEW: update_data, pipeline_constants.OLD: old_value},
                      TriggerType.update)

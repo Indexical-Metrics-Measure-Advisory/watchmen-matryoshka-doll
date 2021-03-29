@@ -419,10 +419,10 @@ def __convert_to_list(value):
 
 
 def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list):
+    print("arithmetic",arithmetic)
     if arithmetic == "sum":
         if old_value_list is not None:
             dif_update_value = {target_factor.name: update_data[target_factor.name] - old_value_list}
-
             return {"$inc": dif_update_value}
         else:
             return {"$inc": update_data}

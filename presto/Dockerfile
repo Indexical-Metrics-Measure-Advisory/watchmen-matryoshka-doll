@@ -1,4 +1,5 @@
-FROM prestosql/presto:324
+FROM trinodb/trino
+
 
 # COPY config /usr/lib/presto
-COPY config /usr/lib/presto/default/etc
+COPY config /etc/trino
