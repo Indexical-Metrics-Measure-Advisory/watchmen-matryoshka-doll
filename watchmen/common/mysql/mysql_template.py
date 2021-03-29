@@ -3,7 +3,6 @@ from operator import eq
 
 import pymongo
 from bson import regex
-from pydantic.main import BaseModel
 from sqlalchemy import update, MetaData, DECIMAL, Column, Table, String, insert, and_, or_
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
@@ -18,7 +17,7 @@ log = logging.getLogger("app." + __name__)
 log.info("mysql template initialized")
 
 
-def create(collection_name: str, instance, base_model: BaseModel):
+def create(collection_name, instance, base_model):
     table_instance = get_table_model(collection_name)()
     instance_dict: dict = convert_to_dict(instance)
     for key, value in instance_dict.items():
@@ -207,6 +206,6 @@ def build_where_expression(table, conditions):
         elif key == "$or":
             f = or_(*build_where_expression(value))
         else:
-            f = table.c.key == value
+            f = (table.c.key == value)
         filters.append(f)
     return filters
