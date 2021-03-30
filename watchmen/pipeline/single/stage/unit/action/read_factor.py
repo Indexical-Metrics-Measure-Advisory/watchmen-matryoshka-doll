@@ -16,7 +16,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
         unit_action_status = ReadFactorAction(type=action.type)
         start = time.time()
-
         variable_type, context_target_name = process_variable(action.variableName)
         topic = get_topic_by_id(action.topicId)
         factor = get_factor(action.factorId, topic)
@@ -28,7 +27,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
             read_value = target_data[factor.name]
             context[context_target_name] = target_data[factor.name]
             unit_action_status.value = read_value
-
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time

@@ -118,10 +118,10 @@ def __split_value(value):
 
 
 def convert_factor_type(value, factor_type):
+
     if factor_type == TEXT:
         return str(value)
     elif factor_type == NUMBER:
-        # TODO process number type
         return Decimal(value)
     elif factor_type == DATETIME:
         return datetime.fromisoformat(value)
@@ -161,7 +161,10 @@ def get_execute_time(start_time):
 def get_value(factor: Factor, data):
     if factor.name in data:
         value = data[factor.name]
-        return convert_factor_type(value, factor.type)
+        if value is None:
+            return value
+        else:
+            return convert_factor_type(value, factor.type)
     elif factor.type == "number":
         return
     elif factor.type == "text":

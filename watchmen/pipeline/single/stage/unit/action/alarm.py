@@ -18,6 +18,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
         start_time = datetime.utcnow()
 
         log.info("alert data")
+
+
         # context_target_name = action.targetName
         # topic = get_topic_by_id(action.topicId)
         # factor = get_factor(action.factorId, topic)
