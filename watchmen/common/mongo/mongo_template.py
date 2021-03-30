@@ -2,6 +2,7 @@ import logging
 from typing import List
 
 from watchmen.common.data_page import DataPage
+from watchmen.common.mongo.index import build_code_options
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_data_pages
 
@@ -89,12 +90,16 @@ def __sort(cursor, sort_dict):
         return cursor.sort(*sort_dict)
 
 
-def query_with_pagination(collection_name, pagination, base_model, query_dict=None, sort_dict=None) -> DataPage:
-    collections = client.get_collection(collection_name)
+def query_with_pagination(collection_name, pagination, base_model=None, query_dict=None, sort_dict=None) -> DataPage:
+    codec_options = build_code_options()
+    collections = client.get_collection(collection_name,codec_options=codec_options)
     items_count = __find_with_count(collections, query_dict)
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     cursor = __sort(__find_with_page(collections, query_dict, pagination, skips), sort_dict)
-    return build_data_pages(pagination, [base_model.parse_obj(result) for result in list(cursor)], items_count)
+    if base_model is not None:
+        return build_data_pages(pagination, [base_model.parse_obj(result) for result in list(cursor)], items_count)
+    else:
+        return build_data_pages(pagination, list(cursor), items_count)
 
 
 def __convert_to_dict(instance) -> dict:
