@@ -141,7 +141,7 @@ def run_pipeline(pipeline: Pipeline, data):
             finally:
                 # log.info("insert_pipeline_monitor")
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
-                    log.info("pipeline_status is {0}".format(pipeline_status))
+                    log.debug("pipeline_status is {0}".format(pipeline_status))
                 else:
                     # if pipeline_status.oldValue is not None:
                     #     print(pipeline_status.json())
