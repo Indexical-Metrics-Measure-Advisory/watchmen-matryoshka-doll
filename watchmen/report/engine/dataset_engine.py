@@ -12,7 +12,7 @@ from watchmen.monitor.model.query_monitor import QueryMonitor
 from watchmen.monitor.services.query_monitor_service import build_query_summary, \
     build_result_summary, build_query_monitor, sync_query_monitor_data, build_query_monitor_report
 from watchmen.report.engine.sql_builder import _from, _select, _join, _filter, _groupby, _indicator, _orderby, \
-    _dimension
+    _dimension, _limit
 from watchmen.report.model.report import ChartType
 from watchmen.report.storage.report_storage import load_report_by_id
 
@@ -169,10 +169,27 @@ def build_query_for_subject_chart(chart_id, report=None):
             q = _filter(q, dataset.filters)
         for indicator in report.indicators:
             q = _indicator(q, indicator, columns_dict.get(indicator.columnId))
+
+        truncation = report.chart.settings.get('truncation', None)
+        if truncation is not None:
+            truncation_type = truncation['type']
+            count = truncation['count']
+
         for dimension in report.dimensions:
             q = _dimension(q, dimension, columns_dict.get(dimension.columnId))
             q = _groupby(q, columns_dict.get(dimension.columnId))
-            q = _orderby(q, columns_dict.get(dimension.columnId))
+            if truncation is not None:
+                if truncation_type == "top":
+                    q = _orderby(q, columns_dict.get(dimension.columnId), "asc")
+                if truncation_type == "bottom":
+                    q = _orderby(q, columns_dict.get(dimension.columnId), "desc")
+                if truncation_type == "none":
+                    q = _orderby(q, columns_dict.get(dimension.columnId), "none")
+            else:
+                q = _orderby(q, columns_dict.get(dimension.columnId), "none")
+
+        if truncation is not None:
+            q = _limit(q, count)
     return q
 
 

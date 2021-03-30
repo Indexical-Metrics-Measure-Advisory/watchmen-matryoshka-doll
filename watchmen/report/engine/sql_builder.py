@@ -1,7 +1,7 @@
 import operator
 from typing import List
 
-from pypika import Query, Table, JoinType
+from pypika import Query, Table, JoinType, Order
 from pypika import functions as fn
 from pypika.queries import QueryBuilder
 
@@ -213,5 +213,14 @@ def _dimension(q: QueryBuilder, dimension: ReportDimension, column: Column):
     return q.select(fn.Max(parse_parameter(column.parameter)))
 
 
-def _orderby(q: QueryBuilder, column: Column) -> QueryBuilder:
-    return q.orderby(parse_parameter(column.parameter))
+def _orderby(q: QueryBuilder, column: Column, order: str) -> QueryBuilder:
+    if order == "asc":
+        return q.orderby(parse_parameter(column.parameter), order=Order.asc)
+    elif order == "desc":
+        return q.orderby(parse_parameter(column.parameter), order=Order.desc)
+    elif order == "none":
+        return q.orderby(parse_parameter(column.parameter))
+
+
+def _limit(q: QueryBuilder, count) -> QueryBuilder:
+    return q.limit(count)
