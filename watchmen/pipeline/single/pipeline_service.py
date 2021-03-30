@@ -13,7 +13,7 @@ from watchmen.common.parameter import ParameterJoint
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
 from watchmen.monitor.services.pipeline_monitor_service import sync_pipeline_monitor_data
-from watchmen.pipeline.model.pipeline import Pipeline
+from watchmen.pipeline.model.pipeline import Pipeline, Conditional
 from watchmen.pipeline.single.stage.unit.mongo.index import get_source_value_list
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
 from watchmen.pipeline.single.stage.unit.utils.units_func import check_condition
@@ -80,9 +80,9 @@ def __check_on_condition(match_result: ConditionResult) -> bool:
         raise NotImplemented("not support {0}".format(match_result.logicOperator))
 
 
-def __check_pipeline_condition(pipeline, pipeline_topic, data):
-    if pipeline.conditional and pipeline.on is not None:
-        condition: ParameterJoint = pipeline.on
+def __check_condition(condition_holder: Conditional, pipeline_topic, data):
+    if condition_holder.conditional and condition_holder.on is not None:
+        condition: ParameterJoint = condition_holder.on
         return __check_on_condition(__build_on_condition(condition, pipeline_topic, data[pipeline_constants.NEW]))
     else:
         return True
@@ -96,36 +96,31 @@ def run_pipeline(pipeline: Pipeline, data):
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
-        # TODO pipeline when  condition
         log.info("start run pipeline {0}".format(pipeline.name))
         context = {PIPELINE_UID: pipeline_status.uid}
-        if __check_pipeline_condition(pipeline, pipeline_topic, data):
+        if __check_condition(pipeline, pipeline_topic, data):
             try:
                 start = time.time()
                 for stage in pipeline.stages:
-                    stage_run_status = StageRunStatus()
-                    stage_run_status.name = stage.name
-                    log.info("stage name {0}".format(stage.name))
-                    for unit in stage.units:
-                        # TODO __check_when_condition
-                        # if unit.on is not None:
-                        #     result = __check_when_condition(unit.on.children, data)
-                        #     if result:
-                        #         continue
-
-                        if unit.do is not None:
-                            unit_run_status = UnitRunStatus()
-                            for action in unit.do:
-                                func = find_action_type_func(convert_action_type(action.type), action, pipeline_topic)
-                                # call dynamic action in action folder
-                                # TODO [future] custom folder
-                                out_result, unit_action_status = func(data, context)
-                                log.debug("out_result :{0}".format(out_result))
-                                context = {**context, **out_result}
-                                unit_run_status.actions.append(unit_action_status)
-                            stage_run_status.units.append(unit_run_status)
-                        else:
-                            log.info("action stage unit  {0} do is None".format(stage.name))
+                    if __check_condition(stage, pipeline_topic, data):
+                        stage_run_status = StageRunStatus()
+                        stage_run_status.name = stage.name
+                        log.info("stage name {0}".format(stage.name))
+                        for unit in stage.units:
+                            if unit.do is not None and __check_condition(unit, pipeline_topic, data):
+                                unit_run_status = UnitRunStatus()
+                                for action in unit.do:
+                                    func = find_action_type_func(convert_action_type(action.type), action,
+                                                                 pipeline_topic)
+                                    # call dynamic action in action folder
+                                    # TODO [future] custom folder
+                                    out_result, unit_action_status = func(data, context)
+                                    log.debug("out_result :{0}".format(out_result))
+                                    context = {**context, **out_result}
+                                    unit_run_status.actions.append(unit_action_status)
+                                stage_run_status.units.append(unit_run_status)
+                            else:
+                                log.info("action stage unit  {0} do is None".format(stage.name))
 
                 elapsed_time = time.time() - start
                 pipeline_status.stages.append(stage_run_status)
@@ -139,10 +134,7 @@ def run_pipeline(pipeline: Pipeline, data):
                 pipeline_status.status = ERROR
                 log.error(pipeline_status)
             finally:
-                # log.info("insert_pipeline_monitor")
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                     log.debug("pipeline_status is {0}".format(pipeline_status))
                 else:
-                    # if pipeline_status.oldValue is not None:
-                    #     print(pipeline_status.json())
                     sync_pipeline_monitor_data(pipeline_status)

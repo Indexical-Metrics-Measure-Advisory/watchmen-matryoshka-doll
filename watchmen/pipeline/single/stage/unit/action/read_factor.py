@@ -28,7 +28,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
             read_value = target_data[factor.name]
             context[context_target_name] = target_data[factor.name]
             unit_action_status.value = read_value
-            # build_action_log(factor, read_value, topic, unit_action_status)
+
+
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
         return context, unit_action_status
