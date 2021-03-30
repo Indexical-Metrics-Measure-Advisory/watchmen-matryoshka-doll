@@ -60,8 +60,7 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
 def __check_on_condition(match_result: ConditionResult) -> bool:
     if match_result.logicOperator is None:
         return True
-
-    if match_result.logicOperator == "and":
+    elif match_result.logicOperator == "and":
         result = True
         for result in match_result.resultList:
             if type(result) == ConditionResult:
