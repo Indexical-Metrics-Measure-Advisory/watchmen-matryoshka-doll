@@ -54,7 +54,7 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
                 right_value_list = get_source_value_list(topic, data, filter_condition.right)
                 result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
                 condition_result.resultList.append(result)
-    return condition_result
+        return condition_result
 
 
 def __check_on_condition(match_result: ConditionResult) -> bool:
