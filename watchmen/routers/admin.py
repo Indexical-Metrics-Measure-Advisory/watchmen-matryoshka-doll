@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Body, Depends
@@ -60,9 +61,8 @@ class MonitorLogCriteria(BaseModel):
 
 
 class MonitorLogQuery(BaseModel):
-    criterion:MonitorLogCriteria = None
-    pagination:Pagination=None
-
+    criteria: MonitorLogCriteria = None
+    pagination: Pagination = None
 
 
 # ADMIN
@@ -381,19 +381,26 @@ async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
     return load_enum_list()
 
 
-@router.post("/topic/raw/generation",tags=["admin"])
+@router.post("/topic/raw/generation", tags=["admin"])
 async def create_raw_topic_schema(topic_name: str, data: List[dict]):
     result = create_raw_data_model_set(topic_name, data)
     return build_topic(result)
 
 
 ### LOG
-@router.post("/pipeline/log/query",tags=["admin"])
-async def query_log_by_critical(query:MonitorLogQuery):
+@router.post("/pipeline/log/query", tags=["admin"])
+async def query_log_by_critical(query: MonitorLogQuery):
     query_dict = {}
-    if query.criterion.topicId is not None:
-        query_dict["topicId"] = query.criterion.topicId
-    if query.criterion.pipelineId is not None:
-        query_dict["pipelineId"] = query.criterion.pipelineId
+    if query.criteria.topicId is not None:
+        query_dict["topicId"] = query.criteria.topicId
+    if query.criteria.pipelineId is not None:
+        query_dict["pipelineId"] = query.criteria.pipelineId
+    if query.criteria.startDate is not None and query.criteria.endDate is not None:
+        query_dict["insert_time"] = {
+            "$gte": datetime.strptime(query.criteria.startDate,'%Y/%m/%d %H:%M:%S'),
+            "$lt": datetime.strptime(query.criteria.endDate,'%Y/%m/%d %H:%M:%S')
+        }
 
-    return query_pipeline_monitor("raw_pipeline_monitor",query_dict,query.pagination)
+    print("query",query_dict)
+
+    return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
