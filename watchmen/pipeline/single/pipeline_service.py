@@ -12,7 +12,7 @@ from watchmen.common.constants import pipeline_constants
 from watchmen.common.parameter import ParameterJoint
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
-from watchmen.monitor.services.pipeline_monitor_service import sync_pipeline_monitor_data
+import watchmen.monitor.services.pipeline_monitor_service
 from watchmen.pipeline.model.pipeline import Pipeline, Conditional
 from watchmen.pipeline.single.stage.unit.mongo.index import get_source_value_list
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
@@ -58,7 +58,9 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
 
 
 def __check_on_condition(match_result: ConditionResult) -> bool:
-    if match_result.logicOperator == "and":
+    if match_result.logicOperator is None:
+        return True
+    elif match_result.logicOperator == "and":
         result = True
         for result in match_result.resultList:
             if type(result) == ConditionResult:
@@ -137,4 +139,4 @@ def run_pipeline(pipeline: Pipeline, data):
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                     log.debug("pipeline_status is {0}".format(pipeline_status))
                 else:
-                    sync_pipeline_monitor_data(pipeline_status)
+                    watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)

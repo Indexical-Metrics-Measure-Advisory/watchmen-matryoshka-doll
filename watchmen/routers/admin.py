@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Body, Depends
@@ -22,7 +23,8 @@ from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
 from watchmen.enum.model.enum import Enum
 from watchmen.enum.storage.enum_storage import save_enum_to_storage, query_enum_list_with_pagination, load_enum_by_id, \
-    load_enum_by_parent_id, load_enum_list
+    load_enum_list
+from watchmen.monitor.services.query_service import query_pipeline_monitor
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_flow import PipelineFlow
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
@@ -51,14 +53,19 @@ class AdminDashboard(BaseModel):
     reports: List[Report] = []
 
 
-# class QueryEnum(BaseModel):
-#     enumeration:Enum = None
-#     parents:List[Enum]=[]
+class MonitorLogCriteria(BaseModel):
+    topicId: str = None
+    pipelineId: str = None
+    startDate: str = None
+    endDate: str = None
+
+
+class MonitorLogQuery(BaseModel):
+    criteria: MonitorLogCriteria = None
+    pagination: Pagination = None
 
 
 # ADMIN
-
-
 @router.post("/space", tags=["admin"], response_model=Space)
 async def save_space(space: Space, current_user: User = Depends(deps.get_current_user)):
     if space.spaceId is None or check_fake_id(space.spaceId):
@@ -363,7 +370,6 @@ async def load_enum(enum_id):
     return load_enum_by_id(enum_id)
 
 
-
 @router.post("/enum/name", tags=["admin"], response_model=DataPage)
 async def query_enum_list_by_name(query_name: str, pagination: Pagination = Body(...),
                                   current_user: User = Depends(deps.get_current_user)):
@@ -375,7 +381,26 @@ async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
     return load_enum_list()
 
 
-@router.post("/topic/raw/generation")
+@router.post("/topic/raw/generation", tags=["admin"])
 async def create_raw_topic_schema(topic_name: str, data: List[dict]):
     result = create_raw_data_model_set(topic_name, data)
     return build_topic(result)
+
+
+### LOG
+@router.post("/pipeline/log/query", tags=["admin"])
+async def query_log_by_critical(query: MonitorLogQuery):
+    query_dict = {}
+    if query.criteria.topicId is not None:
+        query_dict["topicId"] = query.criteria.topicId
+    if query.criteria.pipelineId is not None:
+        query_dict["pipelineId"] = query.criteria.pipelineId
+    if query.criteria.startDate is not None and query.criteria.endDate is not None:
+        query_dict["insert_time"] = {
+            "$gte": datetime.strptime(query.criteria.startDate,'%Y/%m/%d %H:%M:%S'),
+            "$lt": datetime.strptime(query.criteria.endDate,'%Y/%m/%d %H:%M:%S')
+        }
+
+    print("query",query_dict)
+
+    return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
