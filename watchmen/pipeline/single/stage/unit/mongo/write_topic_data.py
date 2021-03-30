@@ -39,11 +39,6 @@ def find_and_modify_topic_data(topic_name, query, update_data):
     collection = db.get_collection(collection_name,codec_options=codec_options)
     print("target_data", query)
     print("update_data", update_data)
-
-    # if target_data
-    # old_data = find_topic_data_by_id(collection, target_data["_id"])
-
-
     old_value = collection.find_one_and_update(filter=query, update=update_data,upsert=True)
     trigger_pipeline(topic_name, {pipeline_constants.NEW: update_data, pipeline_constants.OLD: old_value},
                      TriggerType.update)

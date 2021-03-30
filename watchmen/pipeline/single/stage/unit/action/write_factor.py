@@ -7,8 +7,7 @@ from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import build_query_conditions, get_source_value_list, \
     __build_mongo_query, __build_mongo_update
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import find_and_modify_topic_data
-from watchmen.pipeline.single.stage.unit.utils import PIPELINE_UID
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value, build_factor_dict
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, get_value
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
 
@@ -50,7 +49,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
             target_factor = get_factor(action.factorId, target_topic)
             update_data = {target_factor.name: source_value_list}
             mongo_query = __build_mongo_query(joint_type, where_condition)
-            # target_data = query_topic_data(mongo_query, target_topic.name)
             condition_factors = {"$set": get_condition_factor_value(raw_data, where_condition, joint_type)}
             if old_value is not None:
                 old_value_list = get_source_value_list(pipeline_topic, old_value, action.source)
@@ -63,8 +61,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 find_and_modify_topic_data(target_topic.name,
                                            mongo_query,
                                            __merge_condition_factor(
-                                               __build_mongo_update(update_data, action.arithmetic, target_factor,
-                                                                    None), condition_factors))
+                                               __build_mongo_update(update_data, action.arithmetic, target_factor),
+                                               condition_factors))
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time

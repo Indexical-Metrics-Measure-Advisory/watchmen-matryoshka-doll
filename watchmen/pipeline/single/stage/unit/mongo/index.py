@@ -418,7 +418,7 @@ def __convert_to_list(value):
         pass
 
 
-def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list):
+def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list=None):
     print("arithmetic",arithmetic)
     if arithmetic == "sum":
         if old_value_list is not None:
