@@ -404,6 +404,4 @@ async def query_log_by_critical(query: MonitorLogQuery):
     if query.criteria.status is not None:
         query_dict["status"] = query.criteria.status.upper()
 
-    print(query_dict)
-
     return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
