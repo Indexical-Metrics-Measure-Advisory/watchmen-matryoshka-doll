@@ -58,6 +58,7 @@ def __sync_alarm_message(alarm_message:AlarmMessage):
     sync_alarm_message(alarm_message)
 
 
+
 def init(action: UnitAction, pipeline_topic: Topic):
     def alarm(instance, context):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]

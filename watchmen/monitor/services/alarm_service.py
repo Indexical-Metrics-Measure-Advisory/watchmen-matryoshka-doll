@@ -1,6 +1,9 @@
+import asyncio
+
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.alarm import AlarmMessage
 from watchmen.common.constants import pipeline_constants
+from watchmen.common.notify.notify_service import send_notifier
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
@@ -18,4 +21,5 @@ def sync_alarm_message(alarm: AlarmMessage):
     trigger_pipeline(topic_event.code,
                      {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
                      TriggerType.insert)
+    asyncio.ensure_future(send_notifier(alarm))
 
