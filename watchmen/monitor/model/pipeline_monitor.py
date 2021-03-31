@@ -66,6 +66,7 @@ class PipelineRunStatus(MongoModel, ConditionHolder):
     uid: str = None
     startTime: datetime = None
     completeTime: int = None
+    topicId:str = None
     stages: List[StageRunStatus] = []
     error: str = None
     oldValue: Any = None

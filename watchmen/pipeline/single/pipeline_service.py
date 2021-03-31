@@ -37,12 +37,9 @@ def convert_action_type(action_type: str):
     return action_type.replace("-", "_")
 
 
-
-
-
 def run_pipeline(pipeline: Pipeline, data):
     pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),
-                                        startTime=datetime.now())
+                                        startTime=datetime.now(),topicId=pipeline.pipelineId)
     pipeline_status.oldValue = data[pipeline_constants.OLD]
     pipeline_status.newValue = data[pipeline_constants.NEW]
 
