@@ -58,6 +58,7 @@ class MonitorLogCriteria(BaseModel):
     pipelineId: str = None
     startDate: str = None
     endDate: str = None
+    status:str = None
 
 
 class MonitorLogQuery(BaseModel):
@@ -400,6 +401,8 @@ async def query_log_by_critical(query: MonitorLogQuery):
             "$gte": datetime.strptime(query.criteria.startDate,'%Y/%m/%d %H:%M:%S'),
             "$lt": datetime.strptime(query.criteria.endDate,'%Y/%m/%d %H:%M:%S')
         }
+    if query.criteria.status is not None:
+        query_dict["status"] = query.criteria.status.upper()
 
     print(query_dict)
 
