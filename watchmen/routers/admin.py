@@ -396,9 +396,11 @@ async def query_log_by_critical(query: MonitorLogQuery):
     if query.criteria.pipelineId is not None:
         query_dict["pipelineId"] = query.criteria.pipelineId
     if query.criteria.startDate is not None and query.criteria.endDate is not None:
-        query_dict["insert_time"] = {
+        query_dict["insertTime"] = {
             "$gte": datetime.strptime(query.criteria.startDate,'%Y/%m/%d %H:%M:%S'),
             "$lt": datetime.strptime(query.criteria.endDate,'%Y/%m/%d %H:%M:%S')
         }
+
+    print(query_dict)
 
     return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
