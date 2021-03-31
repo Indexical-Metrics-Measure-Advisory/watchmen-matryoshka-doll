@@ -38,7 +38,6 @@ class Settings(BaseSettings):
     MYSQL_POOL_MINCACHED = 2
     MYSQL_POOL_MAXCACHED = 5
 
-
     NOTIFIER_PROVIDER="email"
     EMAILS_ENABLED: bool = False
     SMTP_TLS: bool = True
@@ -49,11 +48,6 @@ class Settings(BaseSettings):
     EMAILS_FROM_EMAIL: Optional[str] = None
     EMAILS_FROM_NAME: Optional[str] = None
     EMAILS_TO:Optional[str]=None
-
-
-
-
-
 
     @validator("STORAGE_ENGINE", pre=True)
     def get_emails_enabled(cls, v: str, values: Dict[str, Any]) -> bool:
@@ -82,43 +76,6 @@ class Settings(BaseSettings):
         env_file_encoding = 'utf-8'
         case_sensitive = True
 
-    # POSTGRES_SERVER: str
-    # POSTGRES_USER: str
-    # POSTGRES_PASSWORD: str
-    # POSTGRES_DB: str
-    # SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
-    #
-    # @validator("SQLALCHEMY_DATABASE_URI", pre=True)
-    # def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
-    #     if isinstance(v, str):
-    #         return v
-    #     return PostgresDsn.build(
-    #         scheme="postgresql",
-    #         user=values.get("POSTGRES_USER"),
-    #         password=values.get("POSTGRES_PASSWORD"),
-    #         host=values.get("POSTGRES_SERVER"),
-    #         path=f"/{values.get('POSTGRES_DB') or ''}",
-    #     )
-
-
-    #
-    # @validator("EMAILS_FROM_NAME")
-    # def get_project_name(cls, v: Optional[str], values: Dict[str, Any]) -> str:
-    #     if not v:
-    #         return values["PROJECT_NAME"]
-    #     return v
-    #
-    # EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
-    # EMAIL_TEMPLATES_DIR: str = "/app/app/email-templates/build"
-    #
-    #
-
-    #
-    # EMAIL_TEST_USER: EmailStr = "test@example.com"  # type: ignore
-    # FIRST_SUPERUSER: EmailStr
-    # FIRST_SUPERUSER_PASSWORD: str
-    # USERS_OPEN_REGISTRATION: bool = False
-    #
 
 
 settings = Settings()
