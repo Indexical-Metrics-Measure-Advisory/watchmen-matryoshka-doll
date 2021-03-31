@@ -152,6 +152,12 @@ def get_factor(factor_id, target_topic):
             return factor
 
 
+def get_factor_by_name(factor_name, target_topic):
+    for factor in target_topic.factors:
+        if factor.name == factor_name:
+            return factor
+
+
 def get_execute_time(start_time):
     time_elapsed = datetime.utcnow() - start_time
     execution_time = time_elapsed.microseconds / 1000

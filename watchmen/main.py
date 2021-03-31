@@ -19,7 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# h2o.init()
 
 log.info("system init rest api")
 

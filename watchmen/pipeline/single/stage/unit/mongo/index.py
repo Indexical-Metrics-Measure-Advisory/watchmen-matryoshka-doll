@@ -227,7 +227,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
 def get_source_value_list(pipeline_topic, raw_data, parameter, result=[]):
     if parameter.kind == parameter_constants.TOPIC:
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
-        return get_source_factor_value(raw_data, [], source_factor)
+        return get_source_factor_value(raw_data, source_factor)
     elif parameter.kind == parameter_constants.CONSTANT:
         if parameter.value is None or  not parameter.value:
             return None
@@ -239,7 +239,7 @@ def get_source_value_list(pipeline_topic, raw_data, parameter, result=[]):
         raise Exception("Unknown source kind {0}".format(parameter.kind))
 
 
-def get_source_factor_value(raw_data, result, source_factor):
+def get_source_factor_value(raw_data, source_factor,result=[]):
     if is_sub_field(source_factor):
         factor_list = build_factor_list(source_factor)
         # print("factor_list",factor_list)
