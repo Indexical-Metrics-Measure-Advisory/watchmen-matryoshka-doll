@@ -14,7 +14,7 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
 import watchmen.monitor.services.pipeline_monitor_service
 from watchmen.pipeline.model.pipeline import Pipeline, Conditional
-from watchmen.pipeline.single.stage.unit.mongo.index import get_source_value_list
+from watchmen.pipeline.single.stage.unit.mongo.index import get_source_value_list, __check_condition
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
 from watchmen.pipeline.single.stage.unit.utils.units_func import check_condition
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
@@ -37,57 +37,7 @@ def convert_action_type(action_type: str):
     return action_type.replace("-", "_")
 
 
-class ConditionResult(BaseModel):
-    logicOperator: str = None
-    resultList: List = []
 
-
-def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
-    if parameter_joint.filters:
-        joint_type = parameter_joint.jointType
-        condition_result = ConditionResult(logicOperator=joint_type)
-        for filter_condition in parameter_joint.filters:
-            if filter_condition.jointType is not None:
-                condition_result.resultList.append(__build_on_condition(filter_condition, topic, data))
-            else:
-                left_value_list = get_source_value_list(topic, data, filter_condition.left)
-                right_value_list = get_source_value_list(topic, data, filter_condition.right)
-                result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
-                condition_result.resultList.append(result)
-        return condition_result
-
-
-def __check_on_condition(match_result: ConditionResult) -> bool:
-    if match_result.logicOperator is None:
-        return True
-    elif match_result.logicOperator == "and":
-        result = True
-        for result in match_result.resultList:
-            if type(result) == ConditionResult:
-                if not __check_on_condition(result):
-                    result = False
-            else:
-                if not result:
-                    result = False
-        return result
-    elif match_result.logicOperator == "or":
-        for result in match_result.resultList:
-            if type(result) == ConditionResult:
-                if __check_on_condition(result):
-                    return True
-            else:
-                if result:
-                    return True
-    else:
-        raise NotImplemented("not support {0}".format(match_result.logicOperator))
-
-
-def __check_condition(condition_holder: Conditional, pipeline_topic, data):
-    if condition_holder.conditional and condition_holder.on is not None:
-        condition: ParameterJoint = condition_holder.on
-        return __check_on_condition(__build_on_condition(condition, pipeline_topic, data[pipeline_constants.NEW]))
-    else:
-        return True
 
 
 def run_pipeline(pipeline: Pipeline, data):
@@ -123,9 +73,8 @@ def run_pipeline(pipeline: Pipeline, data):
                                 stage_run_status.units.append(unit_run_status)
                             else:
                                 log.info("action stage unit  {0} do is None".format(stage.name))
-
+                        pipeline_status.stages.append(stage_run_status)
                 elapsed_time = time.time() - start
-                pipeline_status.stages.append(stage_run_status)
                 pipeline_status.completeTime = elapsed_time
                 pipeline_status.status = FINISHED
                 log.info("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))

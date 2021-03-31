@@ -9,8 +9,10 @@ import pandas as pd
 
 from watchmen.common.constants import pipeline_constants, parameter_constants, mongo_constants
 from watchmen.common.constants.pipeline_constants import VALUE
-from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable
+from watchmen.common.utils.condition_result import ConditionResult
+from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
+    check_condition
 from watchmen.plugin.service.plugin_service import run_plugin
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
@@ -416,6 +418,54 @@ def __convert_to_list(value):
     else:
         # TODO for in and not in operator
         pass
+
+
+def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
+    if parameter_joint.filters:
+        joint_type = parameter_joint.jointType
+        condition_result = ConditionResult(logicOperator=joint_type)
+        for filter_condition in parameter_joint.filters:
+            if filter_condition.jointType is not None:
+                condition_result.resultList.append(__build_on_condition(filter_condition, topic, data))
+            else:
+                left_value_list = get_source_value_list(topic, data, filter_condition.left)
+                right_value_list = get_source_value_list(topic, data, filter_condition.right)
+                result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
+                condition_result.resultList.append(result)
+        return condition_result
+
+
+def __check_on_condition(match_result: ConditionResult) -> bool:
+    if match_result.logicOperator is None:
+        return True
+    elif match_result.logicOperator == "and":
+        result = True
+        for result in match_result.resultList:
+            if type(result) == ConditionResult:
+                if not __check_on_condition(result):
+                    result = False
+            else:
+                if not result:
+                    result = False
+        return result
+    elif match_result.logicOperator == "or":
+        for result in match_result.resultList:
+            if type(result) == ConditionResult:
+                if __check_on_condition(result):
+                    return True
+            else:
+                if result:
+                    return True
+    else:
+        raise NotImplemented("not support {0}".format(match_result.logicOperator))
+
+
+def __check_condition(condition_holder: Conditional, pipeline_topic, data):
+    if condition_holder.conditional and condition_holder.on is not None:
+        condition: ParameterJoint = condition_holder.on
+        return __check_on_condition(__build_on_condition(condition, pipeline_topic, data[pipeline_constants.NEW]))
+    else:
+        return True
 
 
 def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list=None):

@@ -4,6 +4,7 @@ from datetime import datetime
 from watchmen.common.constants import pipeline_constants
 from watchmen.monitor.model.pipeline_monitor import UnitActionStatus
 from watchmen.pipeline.model.pipeline import UnitAction
+from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition
 from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
@@ -18,6 +19,16 @@ def init(action: UnitAction, pipeline_topic: Topic):
         start_time = datetime.utcnow()
 
         log.info("alert data")
+
+        if __check_condition(action,pipeline_topic,raw_data):
+            pass
+
+            ## build_alerm message with severity
+            ## process message ${}
+            ## sent to raw_alarm topic
+
+
+
 
 
         # context_target_name = action.targetName
