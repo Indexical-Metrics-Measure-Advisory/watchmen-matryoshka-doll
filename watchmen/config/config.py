@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     MONGO_USERNAME: str = None
     MONGO_PASSWORD: str = None
     PRESTO_HTTP_URL = "http://localhost:8080"
-    PRESTO_HOST:str = None
-    PRESTO_PORT:int = None
+    PRESTO_HOST: str = None
+    PRESTO_PORT: int = None
     PRESTO_USER = "the_user"
     PRESTO_CATALOG = "mongo"
     PRESTO_SCHEMA = "watchmen"
@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     MYSQL_POOL_MINCACHED = 2
     MYSQL_POOL_MAXCACHED = 5
 
-    NOTIFIER_PROVIDER="email"
+    NOTIFIER_PROVIDER = "email"
     EMAILS_ENABLED: bool = False
     SMTP_TLS: bool = True
     SMTP_PORT: Optional[int] = None
@@ -47,7 +47,7 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: Optional[str] = None
     EMAILS_FROM_EMAIL: Optional[str] = None
     EMAILS_FROM_NAME: Optional[str] = None
-    EMAILS_TO:Optional[str]=None
+    EMAILS_TO: Optional[str] = None
 
     @validator("STORAGE_ENGINE", pre=True)
     def get_emails_enabled(cls, v: str, values: Dict[str, Any]) -> bool:
@@ -75,7 +75,6 @@ class Settings(BaseSettings):
         env_file = '.env'
         env_file_encoding = 'utf-8'
         case_sensitive = True
-
 
 
 settings = Settings()

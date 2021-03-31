@@ -19,9 +19,9 @@ def create(collection_name, instance, base_model):
     return base_model.parse_obj(instance)
 
 
-def create_or_update(collection_name,query_dict, instance, base_model):
+def create_or_update(collection_name, query_dict, instance, base_model):
     collections = client.get_collection(collection_name)
-    collections.update_one(query_dict, {"$set": __convert_to_dict(instance)},upsert=True)
+    collections.update_one(query_dict, {"$set": __convert_to_dict(instance)}, upsert=True)
     return base_model.parse_obj(instance)
 
 
@@ -92,7 +92,7 @@ def __sort(cursor, sort_dict):
 
 def query_with_pagination(collection_name, pagination, base_model=None, query_dict=None, sort_dict=None) -> DataPage:
     codec_options = build_code_options()
-    collections = client.get_collection(collection_name,codec_options=codec_options)
+    collections = client.get_collection(collection_name, codec_options=codec_options)
     items_count = __find_with_count(collections, query_dict)
     skips = pagination.pageSize * (pagination.pageNumber - 1)
     cursor = __sort(__find_with_page(collections, query_dict, pagination, skips), sort_dict)

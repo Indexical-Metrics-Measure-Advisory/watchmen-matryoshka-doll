@@ -22,4 +22,3 @@ def sync_alarm_message(alarm: AlarmMessage):
                      {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
                      TriggerType.insert)
     asyncio.ensure_future(send_notifier(alarm))
-

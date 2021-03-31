@@ -60,7 +60,7 @@ class MonitorLogCriteria(BaseModel):
     pipelineId: str = None
     startDate: str = None
     endDate: str = None
-    status:str = None
+    status: str = None
 
 
 class MonitorLogQuery(BaseModel):

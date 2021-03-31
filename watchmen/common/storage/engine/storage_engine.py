@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from watchmen.common.utils.data_utils import WATCHMEN, MONITOR
+from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.config.config import settings
 
 client = MongoClient(settings.MONGO_HOST, settings.MONGO_PORT, username=settings.MONGO_USERNAME,

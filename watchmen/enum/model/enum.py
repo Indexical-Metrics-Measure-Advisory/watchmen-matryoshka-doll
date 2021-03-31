@@ -4,12 +4,12 @@ from watchmen.common.mongo_model import MongoModel
 
 
 class EnumItem(MongoModel):
-    itemId:str = None
+    itemId: str = None
     code: str = None
     label: str = None
     parentCode: str = None
     replaceCode: str = None
-    enumId:str = None
+    enumId: str = None
 
 
 class Enum(MongoModel):

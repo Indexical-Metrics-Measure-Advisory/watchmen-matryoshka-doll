@@ -85,7 +85,7 @@ OBJECT = "object"
 ARRAY = "array"
 
 
-def check_condition(operator:str, left_value, right_value)->bool:
+def check_condition(operator: str, left_value, right_value) -> bool:
     if operator == "equals":
         return left_value == right_value
     elif operator == "not-equals":
@@ -118,7 +118,6 @@ def __split_value(value):
 
 
 def convert_factor_type(value, factor_type):
-
     if factor_type == TEXT:
         return str(value)
     elif factor_type == NUMBER:

@@ -4,19 +4,14 @@ import time
 import traceback
 from datetime import datetime
 from functools import lru_cache
-from typing import List
 
-from pydantic.main import BaseModel
-
+import watchmen.monitor.services.pipeline_monitor_service
 from watchmen.common.constants import pipeline_constants
-from watchmen.common.parameter import ParameterJoint
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
-import watchmen.monitor.services.pipeline_monitor_service
-from watchmen.pipeline.model.pipeline import Pipeline, Conditional
-from watchmen.pipeline.single.stage.unit.mongo.index import get_source_value_list, __check_condition
+from watchmen.pipeline.model.pipeline import Pipeline
+from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition
 from watchmen.pipeline.single.stage.unit.utils import STAGE_MODULE_PATH, PIPELINE_UID, ERROR, FINISHED
-from watchmen.pipeline.single.stage.unit.utils.units_func import check_condition
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
@@ -39,7 +34,7 @@ def convert_action_type(action_type: str):
 
 def run_pipeline(pipeline: Pipeline, data):
     pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),
-                                        startTime=datetime.now(),topicId=pipeline.pipelineId)
+                                        startTime=datetime.now(), topicId=pipeline.pipelineId)
     pipeline_status.oldValue = data[pipeline_constants.OLD]
     pipeline_status.newValue = data[pipeline_constants.NEW]
 
