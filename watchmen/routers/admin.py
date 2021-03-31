@@ -401,6 +401,4 @@ async def query_log_by_critical(query: MonitorLogQuery):
             "$lt": datetime.strptime(query.criteria.endDate,'%Y/%m/%d %H:%M:%S')
         }
 
-    print("query",query_dict)
-
     return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
