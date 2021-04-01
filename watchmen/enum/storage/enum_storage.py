@@ -38,7 +38,7 @@ def load_enum_items_by_enum_id(enum_id) -> List[EnumItem]:
 
 def save_enum_to_storage(enum: Enum):
     if check_fake_id(enum.enumId):
-        enum.enumId= get_surrogate_key()
+        enum.enumId = get_surrogate_key()
         items_copy = enum.items.copy()
         enum.items = []
         result = template.create(ENUMS, enum, Enum)
@@ -53,31 +53,31 @@ def save_enum_to_storage(enum: Enum):
         return template.update_one(ENUMS, {"enumId": enum.enumId}, enum, Enum)
 
 
-def load_enum_by_id(enum_id)->Enum:
+def load_enum_by_id(enum_id) -> Enum:
     result = template.find_one(ENUMS, {"enumId": enum_id}, Enum)
     result.items = load_enum_items_by_enum_id(enum_id)
     return result
 
 
-def load_enum_by_parent_id(parent_id)->Enum:
+def load_enum_by_parent_id(parent_id) -> Enum:
     result = template.find_one(ENUMS, {"parentEnumId": parent_id}, Enum)
     if result is not None:
         result.items = load_enum_items_by_enum_id(result.enumId)
         return result or []
 
 
-def load_enum_list_by_name(enum_name)->List[Enum]:
+def load_enum_list_by_name(enum_name) -> List[Enum]:
     return template.find(ENUMS, {"name": regex.Regex(enum_name)}, Enum)
 
 
-def load_all_enum_list(pagination: Pagination)->DataPage:
+def load_all_enum_list(pagination: Pagination) -> DataPage:
     return template.query_with_pagination(ENUMS, pagination, Enum, sort_dict={"last_modified": pymongo.DESCENDING})
 
 
-def query_enum_list_with_pagination(query_name: str, pagination: Pagination)->DataPage:
+def query_enum_list_with_pagination(query_name: str, pagination: Pagination) -> DataPage:
     return template.query_with_pagination(ENUMS, pagination, Enum, query_dict={"name": regex.Regex(query_name)},
                                           sort_dict=["last_modified", pymongo.DESCENDING])
 
 
 def load_enum_list():
-    return template.find_all(ENUMS,Enum)
+    return template.find_all(ENUMS, Enum)

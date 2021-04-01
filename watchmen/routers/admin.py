@@ -43,6 +43,8 @@ from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pa
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic
 from watchmen.topic.topic import Topic
 
+DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
+
 router = APIRouter()
 
 log = logging.getLogger("app." + __name__)
@@ -58,6 +60,7 @@ class MonitorLogCriteria(BaseModel):
     pipelineId: str = None
     startDate: str = None
     endDate: str = None
+    status: str = None
 
 
 class MonitorLogQuery(BaseModel):
@@ -393,14 +396,17 @@ async def query_log_by_critical(query: MonitorLogQuery):
     query_dict = {}
     if query.criteria.topicId is not None:
         query_dict["topicId"] = query.criteria.topicId
+
     if query.criteria.pipelineId is not None:
         query_dict["pipelineId"] = query.criteria.pipelineId
+
     if query.criteria.startDate is not None and query.criteria.endDate is not None:
-        query_dict["insert_time"] = {
-            "$gte": datetime.strptime(query.criteria.startDate,'%Y/%m/%d %H:%M:%S'),
-            "$lt": datetime.strptime(query.criteria.endDate,'%Y/%m/%d %H:%M:%S')
+        query_dict["insertTime"] = {
+            "$gte": datetime.strptime(query.criteria.startDate, DATE_FORMAT),
+            "$lt": datetime.strptime(query.criteria.endDate, DATE_FORMAT)
         }
 
-    print("query",query_dict)
+    if query.criteria.status is not None:
+        query_dict["status"] = query.criteria.status.upper()
 
     return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)

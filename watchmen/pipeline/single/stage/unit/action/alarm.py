@@ -1,51 +1,76 @@
 import logging
-from datetime import datetime
+import re
+import time
+from typing import Any
 
+from pydantic.main import BaseModel
+
+from watchmen.common.alarm import AlarmMessage
 from watchmen.common.constants import pipeline_constants
 from watchmen.monitor.model.pipeline_monitor import UnitActionStatus
+from watchmen.monitor.services.alarm_service import sync_alarm_message
 from watchmen.pipeline.model.pipeline import UnitAction
-from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition
+from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition, get_source_factor_value
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor_by_name
 from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 
 
-# TODO alert for validation 
+class VariableModel(BaseModel):
+    variable: str = None
+    value: Any = None
+    variableType: str = None
+
+
+def __find_variable(message):
+    return re.findall('{(.+?)}', message)
+
+
+def __build_message(message, pipeline_topic, raw_data, context):
+    variable_list = __find_variable(message)
+    print(variable_list)
+    variable_results = []
+    for variable in variable_list:
+        factor = get_factor_by_name(variable, pipeline_topic)
+        if variable in context:
+            value = context[variable]
+            variable_model = VariableModel(variable=variable, value=value, variableType="context")
+            variable_results.append(variable_model)
+        elif factor:
+            value = get_source_factor_value(raw_data, factor)
+            variable_model = VariableModel(variable=variable, value=value, variableType="factor")
+            variable_results.append(variable_model)
+        else:
+            variable_model = VariableModel(variable=variable, value=variable, variableType="constants")
+            variable_results.append(variable_model)
+
+    for variable_model in variable_results:
+        message = message.replace("${" + variable_model.variable + "}", str(variable_model.value))
+
+    return message
+
+
+def __sync_alarm_message(alarm_message: AlarmMessage):
+    sync_alarm_message(alarm_message)
+
+
 def init(action: UnitAction, pipeline_topic: Topic):
     def alarm(instance, context):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
         unit_action_status = UnitActionStatus()
         unit_action_status.type = action.type
-        start_time = datetime.utcnow()
-
+        start = time.time()
         log.info("alert data")
+        match_result = __check_condition(action, pipeline_topic, instance)
 
-        if __check_condition(action,pipeline_topic,raw_data):
-            pass
+        if match_result:
+            alarm_message = AlarmMessage(severity=action.severity)
+            alarm_message.message = __build_message(action.message, pipeline_topic, raw_data, context)
+            __sync_alarm_message(alarm_message)
 
-            ## build_alerm message with severity
-            ## process message ${}
-            ## sent to raw_alarm topic
-
-
-
-
-
-        # context_target_name = action.targetName
-        # topic = get_topic_by_id(action.topicId)
-        # factor = get_factor(action.factorId, topic)
-        # condition = action.by
-        # where_condition = build_right_query(condition, pipeline_topic, raw_data, topic)
-        # filter_where_condition = filter_condition(where_condition, 0)
-        # target_data = read_topic_data(filter_where_condition, topic.name, condition.mode)
-        # # print("target_data :", target_data)
-        # # print("factor.name  :", factor.name)
-        # if factor.name in target_data:
-        #     context[context_target_name] = target_data[factor.name]
-        # # print("context :", context)
-        time_elapsed = datetime.utcnow() - start_time
-        execution_time = time_elapsed.microseconds / 1000
-        unit_action_status.complete_time = execution_time
+        elapsed_time = time.time() - start
+        unit_action_status.complete_time = elapsed_time
         return context, unit_action_status
 
     return alarm

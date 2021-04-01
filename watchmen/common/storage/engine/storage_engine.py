@@ -1,13 +1,13 @@
 from pymongo import MongoClient
 
-from watchmen.common.utils.data_utils import WATCHMEN, MONITOR
+from watchmen.common.utils.data_utils import WATCHMEN
 from watchmen.config.config import settings
 
 client = MongoClient(settings.MONGO_HOST, settings.MONGO_PORT, username=settings.MONGO_USERNAME,
                      password=settings.MONGO_PASSWORD)
 
-monitor_client = MongoClient(settings.MONGO_MONITOR_HOST, settings.MONGO_MONITOR_PORT,
-                             username=settings.MONGO_MONITOR_USERNAME, password=settings.MONGO_MONITOR_PASSWORD)
+# monitor_client = MongoClient(settings.MONGO_MONITOR_HOST, settings.MONGO_MONITOR_PORT,
+#                              username=settings.MONGO_MONITOR_USERNAME, password=settings.MONGO_MONITOR_PASSWORD)
 
 db = client[WATCHMEN]
 
@@ -22,6 +22,6 @@ def get_client():
 def get_client_db():
     return client
 
-
-def get_monitor_db():
-    return monitor_client[MONITOR]
+#
+# def get_monitor_db():
+#     return monitor_client[MONITOR]

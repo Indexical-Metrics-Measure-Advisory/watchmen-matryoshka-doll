@@ -22,7 +22,6 @@ def delete_console_space_and_sub_data(connect_id):
 
     # console_space.subjectIds
 
-
 # def delete_console_group(group_ids):
 #     group_list = load_console_group_list_by_ids(group_ids)
 #     for group in group_list:

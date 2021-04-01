@@ -144,4 +144,3 @@ def get_model_schema_set_by_code(code):
 
 def check_value_duplicate(values, value):
     return value in values
-

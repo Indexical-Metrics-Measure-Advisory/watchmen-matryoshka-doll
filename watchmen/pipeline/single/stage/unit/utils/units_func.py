@@ -85,7 +85,7 @@ OBJECT = "object"
 ARRAY = "array"
 
 
-def check_condition(operator:str, left_value, right_value)->bool:
+def check_condition(operator: str, left_value, right_value) -> bool:
     if operator == "equals":
         return left_value == right_value
     elif operator == "not-equals":
@@ -118,7 +118,6 @@ def __split_value(value):
 
 
 def convert_factor_type(value, factor_type):
-
     if factor_type == TEXT:
         return str(value)
     elif factor_type == NUMBER:
@@ -149,6 +148,12 @@ def build_factor_dict(topic: Topic):
 def get_factor(factor_id, target_topic):
     for factor in target_topic.factors:
         if factor.factorId == factor_id:
+            return factor
+
+
+def get_factor_by_name(factor_name, target_topic):
+    for factor in target_topic.factors:
+        if factor.name == factor_name:
             return factor
 
 

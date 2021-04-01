@@ -13,7 +13,7 @@ db = get_client()
 def insert_topic_data(topic_name, mapping_result, pipeline_uid):
     collection_name = build_collection_name(topic_name)
     codec_options = build_code_options()
-    collection = db.get_collection(collection_name,codec_options=codec_options)
+    collection = db.get_collection(collection_name, codec_options=codec_options)
     add_audit_columns(mapping_result, INSERT)
     add_trace_columns(mapping_result, "insert_row", pipeline_uid)
     collection.insert(mapping_result)
@@ -24,7 +24,7 @@ def insert_topic_data(topic_name, mapping_result, pipeline_uid):
 def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     collection_name = build_collection_name(topic_name)
     codec_options = build_code_options()
-    collection = db.get_collection(collection_name,codec_options=codec_options)
+    collection = db.get_collection(collection_name, codec_options=codec_options)
     old_data = find_topic_data_by_id(collection, target_data["_id"])
     add_audit_columns(mapping_result, UPDATE)
     add_trace_columns(mapping_result, "update_row", pipeline_uid)
@@ -37,8 +37,6 @@ def find_and_modify_topic_data(topic_name, query, update_data):
     collection_name = build_collection_name(topic_name)
     codec_options = build_code_options()
     collection = db.get_collection(collection_name, codec_options=codec_options)
-    print("target_data", query)
-    print("update_data", update_data)
     old_value = collection.find_one_and_update(filter=query, update=update_data, upsert=True)
     trigger_pipeline(topic_name, {pipeline_constants.NEW: update_data, pipeline_constants.OLD: old_value},
                      TriggerType.update)

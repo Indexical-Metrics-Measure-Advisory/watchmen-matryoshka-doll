@@ -31,7 +31,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
         joint_type, where_condition = build_query_conditions(action.by, pipeline_topic, raw_data, target_topic, context)
         unit_action_status.whereConditions = where_condition
         unit_action_status.mapping = mapping_results
-        for index,mapping_result in enumerate(mapping_results):
+        for index, mapping_result in enumerate(mapping_results):
             mongo_query = __build_mongo_query(joint_type, index_conditions(where_condition, index))
             target_data = query_topic_data(mongo_query, target_topic.name)
             if target_data is None:
