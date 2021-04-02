@@ -40,7 +40,7 @@ def upsert(where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel
     return template.upsert(where, updates, model, name)
 
 
-def update(where: dict, updates: dict, model: BaseModel, name: str):
+def update_(where: dict, updates: dict, model: BaseModel, name: str):
     template.update(where, updates, model, name)
 
 
@@ -48,7 +48,7 @@ def delete_one(id: str, name: str):
     template.delete_one(id, name)
 
 
-def delete(where: dict, model: BaseModel, name: str):
+def delete_(where: dict, model: BaseModel, name: str):
     template.delete(where, model, name)
 
 
@@ -73,7 +73,7 @@ def list_all(model: BaseModel, name: str) -> list[BaseModel]:
 
 
 def list_all(select: dict, model: BaseModel, name: str) -> list[any]:
-    pass
+    pass  # need to do
 
 
 def list_(where: dict, model: BaseModel, name: str) -> list:
@@ -81,7 +81,7 @@ def list_(where: dict, model: BaseModel, name: str) -> list:
 
 
 def list_(select: dict, where: dict, model: BaseModel, name: str) -> list:
-    pass # need to do
+    pass  # need to do
 
 
 def page(sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
@@ -90,5 +90,3 @@ def page(sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPag
 
 def page(where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
     return template.page(where, sort, pageable, model, name)
-
-

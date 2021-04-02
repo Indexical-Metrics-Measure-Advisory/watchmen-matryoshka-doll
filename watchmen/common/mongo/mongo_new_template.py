@@ -45,7 +45,7 @@ def update_one(where, updates, model, name):
 
 
 # equal create_or_update, To avoid multiple upserts, ensure that the filter fields are uniquely indexed.
-def upsert(where, updates, model, name: str):
+def upsert(where, updates, model, name):
     collections = client.get_collection(name)
     collections.update_one(where, {"$set": __convert_to_dict(updates)}, upsert=True)
     return model.parse_obj(updates)
@@ -67,10 +67,10 @@ def delete(where, model, name):
     collection.remove(where)
 
 
-def find_by_id(id, model, name):
+def find_by_id(id_, model, name):
     collections = client.get_collection(name)
     primary_key = get_primary_key(name)
-    result = collections.find_one({primary_key: id})
+    result = collections.find_one({primary_key: id_})
     if result is None:
         return
     else:

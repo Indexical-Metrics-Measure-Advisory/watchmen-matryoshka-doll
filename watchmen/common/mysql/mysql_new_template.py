@@ -3,12 +3,14 @@ from operator import eq
 
 import pymongo
 from bson import regex
-from sqlalchemy import update, MetaData, DECIMAL, Column, Table, String, insert, and_, or_
+from sqlalchemy import update, MetaData, DECIMAL, Column, Table, String, and_, or_, delete
+from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
 from watchmen.common.mysql.model.table_definition import get_table_model, get_primary_key, parse_obj, count_table
 from watchmen.common.mysql.mysql_engine import engine
+from watchmen.common.storage.storage_template import DataPage
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
 
@@ -18,13 +20,15 @@ log.info("mysql template initialized")
 
 
 def insert_one(one, model, name):
-    table_instance = get_table_model(name)()
-    instance_dict: dict = convert_to_dict(one)
-    for key, value in instance_dict.items():
-        setattr(table_instance, key, value)
+    table = get_table_model(name)
     session = Session(engine, future=True)
+    stmt = insert(table)
+    instance_dict: dict = convert_to_dict(one)
+    values = {}
+    for key, value in instance_dict.items():
+        values[key] = value
     try:
-        session.add(table_instance)
+        session.execute(stmt, values)
         session.commit()
     except:
         session.rollback()
@@ -34,22 +38,90 @@ def insert_one(one, model, name):
     return model.parse_obj(one)
 
 
-def update_one(collection_name, query_dict, instance, base_model):
-    table = get_table_model(collection_name)
-    session = Session(engine, future=True)
+def insert_all(data, model, name):
+    metadata = MetaData()
+    table = Table(name, metadata, autoload=True, autoload_with=engine)
+    stmt = insert(table)
+    value_list = []
+    for item in data:
+        instance_dict: dict = convert_to_dict(item)
+        values = {}
+        for key in table.c.keys():
+            values[key] = instance_dict.get(key)
+        value_list.append(values)
+    with engine.connect() as conn:
+        result = conn.execute(stmt, value_list)
+        conn.commit()
+
+
+def update_one(one, model, name) -> any:
+    table = get_table_model(name)
     stmt = update(table)
-
-    for key, value in query_dict.items():
-        stmt = stmt.where(eq(getattr(table, key), value))
-
-    instance_dict: dict = convert_to_dict(instance)
-
+    instance_dict: dict = convert_to_dict(one)
+    primary_key = get_primary_key(name)
+    stmt = stmt.where(eq(getattr(table, primary_key), instance_dict.get(primary_key)))
     values = {}
     for key, value in instance_dict.items():
-        if key != get_primary_key(collection_name):
+        if key != get_primary_key(name):
             values[key] = value
-
     stmt = stmt.values(values)
+    session = Session(engine, future=True)
+    try:
+        session.execute(stmt)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+    return model.parse_obj(one)
+
+
+def update_one(where, updates, model, name):
+    table = get_table_model(name)
+    stmt = update(table)
+    stmt = stmt.where(build_where_expression(where))
+    instance_dict: dict = convert_to_dict(updates)
+    values = {}
+    for key, value in instance_dict.items():
+        if key != get_primary_key(name):
+            values[key] = value
+    stmt = stmt.values(values)
+    session = Session(engine, future=True)
+    try:
+        session.execute(stmt)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+    return model.parse_obj(updates)
+
+
+def upsert(where, updates, model, name):
+    table = get_table_model(name)
+    instance_dict: dict = convert_to_dict(updates)
+    stmt = insert(table)
+    stmt = stmt.values(updates)
+    stmt = stmt.on_duplicate_key_update(instance_dict)
+    with engine.connect() as conn:
+        conn.execute(stmt)
+        conn.commit()
+    return model.parse_obj(updates)
+
+
+def update_(where, updates, model, name):
+    table = get_table_model(name)
+    stmt = update(table)
+    stmt = stmt.where(build_where_expression(where))
+    instance_dict: dict = convert_to_dict(updates)
+    values = {}
+    for key, value in instance_dict.items():
+        if key != get_primary_key(name):
+            values[key] = value
+    stmt = stmt.values(values)
+    session = Session(engine, future=True)
     try:
         session.execute(stmt)
         session.commit()
@@ -59,143 +131,100 @@ def update_one(collection_name, query_dict, instance, base_model):
     finally:
         session.close()
 
-    return base_model.parse_obj(instance)
 
-
-def find_one(collection_name, query_dict, base_model):
-    table = get_table_model(collection_name)
-    stmt = select(table)
-    for key in query_dict.keys():
-        value = query_dict[key]
-        stmt = stmt.where(eq(getattr(table, key), value))
-    session = Session(engine, future=True)
-    res = session.execute(stmt).first()
-    return parse_obj(base_model, res[0])
-
-
-def query_with_pagination(collection_name, pagination, base_model, query_dict=None, sort_dict=None):
-    count = count_table(collection_name)
-    table = get_table_model(collection_name)
-    result = []
-    session = Session(engine, future=True)
-    stmt = select(table)
-    for key in query_dict.keys():
-        if isinstance(query_dict.get(key), regex.Regex):
-            value = query_dict.get(key)
-            pattern = getattr(value, 'pattern')
-            if len(pattern) > 0:
-                stmt = stmt.where(eq(getattr(table, key), pattern))
-        else:
-            stmt = stmt.where(eq(getattr(table, key), pattern))
-
-    if isinstance(sort_dict[0], str):
-        order_field = sort_dict[0]
-        if sort_dict[1] == pymongo.DESCENDING:
-            order_seq = "desc"
-        else:
-            order_seq = "asc"
-        if order_seq == "desc":
-            stmt = stmt.order_by(getattr(table, order_field).desc())
-    else:
-        for tup in sort_dict:
-            order_field = tup[0]
-            if tup[1] == pymongo.DESCENDING:
-                order_seq = "desc"
-            if tup[1] == pymongo.ASCENDING:
-                order_seq = "asc"
-            if order_seq == "desc":
-                stmt = stmt.order_by(order_field.desc())
-
-    offset = pagination.pageSize * (pagination.pageNumber - 1)
-    stmt = stmt.offset(offset).limit(pagination.pageSize)
-    res = session.execute(stmt)
-    for row in res:
-        for item in row:
-            result.append(parse_obj(base_model, item))
-    return build_data_pages(pagination, result, count)
-
-
-def create_topic_table(instance):
-    metadata = MetaData()
-    instance_dict: dict = convert_to_dict(instance)
-    topic_name = instance_dict.get('name')
-    factors = instance_dict.get('factors')
-    table = Table('topic_' + topic_name, metadata)
-    key = Column(name="id", type_=DECIMAL(50), primary_key=True)
-    table.append_column(key)
-    for factor in factors:
-        col = Column(name=factor.get('name'), type_=String(20), nullable=True)
-        table.append_column(col)
-    table.create(engine)
-
-
-def alert_topic_table(session, instance):
-    metadata = MetaData()
-    instance_dict: dict = convert_to_dict(instance)
-    topic_name = instance_dict.get('name')
-    table_name = 'topic_' + topic_name
-    table = Table('topic_' + topic_name, metadata, autoload=True, autoload_with=engine)
-    factors = instance_dict.get('factors')
-    existed_cols = []
-    for col in table.columns:
-        existed_cols.append(col.name)
-    for factor in factors:
-        if factor.get('name') in existed_cols:
-            continue
-        else:
-            column = Column(factor.get('name'), String(20))
-            add_column(session, table_name, column)
-
-
-def add_column(session, table_name, column):
-    column_name = column.compile(dialect=engine.dialect)
-    column_type = column.type.compile(engine.dialect)
-    session.execute('ALTER TABLE %s ADD COLUMN %s %s' % (table_name, column_name, column_type))
-
-
-def insert_topic_instances(topic_name, instances):
-    metadata = MetaData()
-    table = Table('topic_' + topic_name, metadata, autoload=True, autoload_with=engine)
-    values = []
-    for instance in instances:
-        instance_dict: dict = convert_to_dict(instance)
-        value = {}
-        for key in table.c.keys():
-            value[key] = instance_dict.get(key)
-        values.append(value)
-    stmt = insert(table)
+def delete_one(id: str, name: str):
+    table = get_table_model(name)
+    key = get_primary_key(name)
+    stmt = delete(table).where(table.c.get(key) == id)
     with engine.connect() as conn:
-        result = conn.execute(stmt, values)
+        conn.execute(stmt)
         conn.commit()
 
 
-def insert_topic_instance(topic_name, instance):
-    return insert_topic_instances(topic_name, [instance])
-
-
-def update_topic_instance(topic_name, query_dict, instance):
-    metadata = MetaData()
-    table = Table('topic_' + topic_name, metadata, autoload=True, autoload_with=engine)
-    stmt = (update(table).
-            where(*build_where_expression(table, query_dict)))
-    instance_dict: dict = convert_to_dict(instance)
-    values = {}
-    for key, value in instance_dict.items():
-        if key != 'id':
-            values[key] = value
-    stmt = stmt.values(values)
-    with engine.begin() as conn:
+def delete_(where, model, name):
+    table = get_table_model(name)
+    stmt = delete(table).where(where)
+    with engine.connect() as conn:
         conn.execute(stmt)
+        conn.commit()
 
 
-def query_topic_instance(topic_name, conditions):
-    metadata = MetaData()
-    table = Table('topic_' + topic_name, metadata, autoload=True, autoload_with=engine)
-    stmt = select(table).where(*build_where_expression(table, conditions))
+def find_by_id(id, model, name):
+    table = get_table_model(name)
+    primary_key = get_primary_key(name)
+    stmt = select(table).where(eq(getattr(table, primary_key), id))
     with engine.connect() as conn:
         result = conn.execute(stmt)
         conn.commit()
-        return result
+    return parse_obj(model, result[0])
+
+
+def find_one(where, model, name):
+    table = get_table_model(name)
+    stmt = select(table)
+    stmt = stmt.where(build_where_expression(table, where))
+    with engine.connect() as conn:
+        result = conn.execute(stmt).first()
+        conn.commit()
+    return parse_obj(model, result[0])
+
+
+def list_all(model, name):
+    table = get_table_model(name)
+    stmt = select(table)
+    with engine.connect() as conn:
+        res = conn.execute(stmt)
+        conn.commit()
+    result = []
+    for row in res:
+        for item in row:
+            result.append(parse_obj(model, item))
+    return result
+
+
+def list_(where, model, name) -> list:
+    table = get_table_model(name)
+    stmt = select(table).where(where)
+    with engine.connect() as conn:
+        res = conn.execute(stmt)
+        conn.commit()
+    result = []
+    for row in res:
+        for item in row:
+            result.append(parse_obj(model, item))
+    return result
+
+
+def page(sort, pageable, model, name) -> DataPage:
+    count = count_table(name)
+    table = get_table_model(name)
+    stmt = select(table).order_by(sort)
+    offset = pageable.pageSize * (pageable.pageNumber - 1)
+    stmt = stmt.offset(offset).limit(pageable.pageSize)
+    result = []
+    with engine.connect() as conn:
+        res = conn.execute(stmt)
+        conn.commit()
+    for row in res:
+        for item in row:
+            result.append(parse_obj(model, item))
+    return build_data_pages(pageable, result, count)
+
+
+def page(where, sort, pageable, model, name) -> DataPage:
+    count = count_table(name)
+    table = get_table_model(name)
+    stmt = select(table).where(build_where_expression(where)).order_by(sort)
+    offset = pageable.pageSize * (pageable.pageNumber - 1)
+    stmt = stmt.offset(offset).limit(pageable.pageSize)
+    result = []
+    with engine.connect() as conn:
+        res = conn.execute(stmt)
+        conn.commit()
+    for row in res:
+        for item in row:
+            result.append(parse_obj(model, item))
+    return build_data_pages(pageable, result, count)
 
 
 def build_where_expression(table, conditions):

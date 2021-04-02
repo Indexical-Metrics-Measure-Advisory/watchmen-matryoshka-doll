@@ -38,17 +38,13 @@ def update_one(collection_name, query_dict, instance, base_model):
     table = get_table_model(collection_name)
     session = Session(engine, future=True)
     stmt = update(table)
-
     for key, value in query_dict.items():
         stmt = stmt.where(eq(getattr(table, key), value))
-
     instance_dict: dict = convert_to_dict(instance)
-
     values = {}
     for key, value in instance_dict.items():
         if key != get_primary_key(collection_name):
             values[key] = value
-
     stmt = stmt.values(values)
     try:
         session.execute(stmt)
