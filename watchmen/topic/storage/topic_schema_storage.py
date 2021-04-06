@@ -44,6 +44,10 @@ def load_topic_list_by_name(topic_name: str) -> List[Topic]:
     return template.find(TOPICS, {"name": regex.Regex(topic_name)}, Topic)
 
 
+def load_topic_by_name(topic_name: str) -> Topic:
+    return template.find_one(TOPICS, {"name": topic_name}, Topic)
+
+
 def check_topic_exist(topic_name: str, topic_type: str) -> bool:
     result = template.find_one(
         TOPICS, {"name", topic_name, "type", topic_type}, Topic)

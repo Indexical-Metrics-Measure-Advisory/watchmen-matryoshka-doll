@@ -37,8 +37,8 @@ def load_space_by_user(group_ids) -> List[Space]:
     return template.find(SPACES, {"groupIds": {"$in": group_ids}}, Space)
 
 
-def load_space_by_name(name) -> List[Space]:
-    return mongo_template.find(SPACES, {"name": name}, Space)
+def load_space_by_name(name) -> Space:
+    return mongo_template.find_one(SPACES, {"name": name}, Space)
 
 
 def load_space_list_by_name(name) -> List[Space]:
