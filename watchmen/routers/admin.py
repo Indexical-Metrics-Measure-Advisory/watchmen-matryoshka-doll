@@ -37,10 +37,10 @@ from watchmen.report.storage.report_storage import query_report_list_with_pagina
 from watchmen.space.service.admin import create_space, update_space_by_id, sync_space_to_user_group
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
-    load_space_list_by_name
+    load_space_list_by_name, load_space_by_name
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
-    get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic
+    get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name
 from watchmen.topic.topic import Topic
 
 DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
@@ -109,6 +109,14 @@ async def query_space_list_for_user_group(query_name: str, current_user: User = 
     return load_space_list_by_name(query_name)
 
 
+@router.post("/space/list/name",tags=["admin"], response_model=List[Space])
+async def load_space_list_by_name_list(name_list:List[str],current_user: User = Depends(deps.get_current_user))->List[Space]:
+    results = []
+    for name in name_list:
+        results.append(load_space_by_name(name))
+    return results
+
+
 # Topic
 
 @router.get("/topic", tags=["admin"], response_model=Topic)
@@ -151,6 +159,20 @@ async def query_topic_list_by_name(query_name: str, pagination: Pagination = Bod
     return result
 
 
+@router.get("/topic/query",tags=["admin"],response_model=List[Topic])
+async def load_topic_list_by_name_without_page(query_name,current_user: User = Depends(deps.get_current_user)):
+    return load_topic_list_by_name(query_name)
+
+
+@router.post("/topic/list/name",tags=["admin"], response_model=List[Topic])
+async def load_topic_list_by_name_list(name_list:List[str],current_user: User = Depends(deps.get_current_user))->List[Topic]:
+    results =[]
+    for name in name_list:
+        results.append(load_topic_by_name(name))
+    return results
+
+
+
 @router.post("/report/name", tags=["admin"], response_model=DataPage)
 async def query_topic_list_by_name(query_name: str, pagination: Pagination = Body(...),
                                    current_user: User = Depends(deps.get_current_user)):
@@ -161,6 +183,7 @@ async def query_topic_list_by_name(query_name: str, pagination: Pagination = Bod
 async def query_all_topic_list(current_user: User = Depends(deps.get_current_user)):
     result = load_all_topic()
     return result
+
 
 
 @router.post("/topic/all/pages", tags=["admin"], response_model=DataPage)

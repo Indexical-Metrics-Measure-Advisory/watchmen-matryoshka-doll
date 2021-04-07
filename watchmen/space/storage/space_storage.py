@@ -6,7 +6,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.mongo import mongo_template
 from watchmen.common.pagination import Pagination
 from watchmen.common.storage.engine_adaptor import find_template
-from watchmen.common.storage.storage_template import insert_one, find_by_id, update_one, page_, find_
+from watchmen.common.storage.storage_template import insert_one, find_by_id, update_one, page_, find_, find_one
 from watchmen.space.space import Space
 
 SPACES = "spaces"
@@ -43,9 +43,9 @@ def load_space_by_user(group_ids) -> List[Space]:
     return find_({"groupIds": {"in": group_ids}}, Space, SPACES)
 
 
-def load_space_by_name(name) -> List[Space]:
+def load_space_by_name(name) -> Space:
     # return mongo_template.find(SPACES, {"name": name}, Space)
-    return find_({"name": name}, Space, SPACES)
+    return find_one({"name": name}, Space, SPACES)
 
 
 def load_space_list_by_name(name) -> List[Space]:
