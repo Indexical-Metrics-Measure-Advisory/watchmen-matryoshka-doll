@@ -51,17 +51,17 @@ def build_factors(factors: list, parent: str, model_schema: ModelSchema, model_s
     for key, value in model_schema.businessFields.items():
         if value.type == "array" or value.type == "dict":
             if parent == "":
-                parent = key
+                build_factors(factors, key, model_schema_set.schemas[key], model_schema_set)
             else:
-                parent = parent + "." + key
-            build_factors(factors, parent, model_schema_set.schemas[key], model_schema_set)
+                build_factors(factors, parent + "." + key, model_schema_set.schemas[key], model_schema_set)
         else:
             factor = Factor()
             if parent != "":
                 factor.name = parent + "." + key
+                factor.label = parent + "." + key
             else:
                 factor.name = key
+                factor.label = key
             factor.type = value.type
             factor.factorId = get_surrogate_key()
-            factor.label = factor.name
             factors.append(factor)
