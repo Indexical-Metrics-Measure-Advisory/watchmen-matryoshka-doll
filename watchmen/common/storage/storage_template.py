@@ -111,6 +111,10 @@ def page_(where: dict, sort: list, pageable: Pageable, model: BaseModel, name: s
     return template.page_(where, sort, pageable, model, name)
 
 
+def find_one_and_update(where: dict, updates: dict, name: str) -> any:
+    return template.find_one_and_update(where, updates, name)
+
+
 '''
 for topic data storage interface
 '''

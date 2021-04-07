@@ -68,6 +68,7 @@ def find_topic_data_by_id_and_topic_name(topic_name, object_id) -> Topic:
     '''
     return topic_data_find_by_id(object_id, topic_name)
 
+
 '''
 def find_topic_data_by_id(collection, id):
     result = collection.find_one({"_id": id})
