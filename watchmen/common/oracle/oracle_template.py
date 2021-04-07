@@ -16,7 +16,7 @@ from watchmen.common.utils.data_utils import convert_to_dict
 
 log = logging.getLogger("app." + __name__)
 
-log.info("mysql template initialized")
+log.info("oralce template initialized")
 
 
 def insert_one(one, model, name):
@@ -77,10 +77,10 @@ def update_one(one, model, name) -> any:
     return model.parse_obj(one)
 
 
-def update_one_first(where, updates, model, name):
+def update_one(where, updates, model, name):
     table = get_table_model(name)
     stmt = update(table)
-    stmt = stmt.where(build_mysql_where_expression(where))
+    stmt = stmt.where(build_where_expression(where))
     instance_dict: dict = convert_to_dict(updates)
     values = {}
     for key, value in instance_dict.items():
@@ -99,7 +99,7 @@ def update_one_first(where, updates, model, name):
     return model.parse_obj(updates)
 
 
-def upsert_(where, updates, model, name):
+def upsert(where, updates, model, name):
     table = get_table_model(name)
     instance_dict: dict = convert_to_dict(updates)
     stmt = insert(table)
@@ -114,7 +114,7 @@ def upsert_(where, updates, model, name):
 def update_(where, updates, model, name):
     table = get_table_model(name)
     stmt = update(table)
-    stmt = stmt.where(build_mysql_where_expression(where))
+    stmt = stmt.where(build_where_expression(where))
     instance_dict: dict = convert_to_dict(updates)
     values = {}
     for key, value in instance_dict.items():
@@ -149,10 +149,10 @@ def delete_(where, model, name):
         conn.commit()
 
 
-def find_by_id(id_, model, name):
+def find_by_id(id, model, name):
     table = get_table_model(name)
     primary_key = get_primary_key(name)
-    stmt = select(table).where(eq(getattr(table, primary_key), id_))
+    stmt = select(table).where(eq(getattr(table, primary_key), id))
     with engine.connect() as conn:
         result = conn.execute(stmt)
         conn.commit()
@@ -162,7 +162,7 @@ def find_by_id(id_, model, name):
 def find_one(where, model, name):
     table = get_table_model(name)
     stmt = select(table)
-    stmt = stmt.where(build_mysql_where_expression(table, where))
+    stmt = stmt.where(build_where_expression(table, where))
     with engine.connect() as conn:
         result = conn.execute(stmt).first()
         conn.commit()
@@ -195,7 +195,7 @@ def list_(where, model, name) -> list:
     return result
 
 
-def page_all(sort, pageable, model, name) -> DataPage:
+def page(sort, pageable, model, name) -> DataPage:
     count = count_table(name)
     table = get_table_model(name)
     stmt = select(table).order_by(sort)
@@ -211,10 +211,10 @@ def page_all(sort, pageable, model, name) -> DataPage:
     return build_data_pages(pageable, result, count)
 
 
-def page_(where, sort, pageable, model, name) -> DataPage:
+def page(where, sort, pageable, model, name) -> DataPage:
     count = count_table(name)
     table = get_table_model(name)
-    stmt = select(table).where(build_mysql_where_expression(where)).order_by(sort)
+    stmt = select(table).where(build_where_expression(where)).order_by(sort)
     offset = pageable.pageSize * (pageable.pageNumber - 1)
     stmt = stmt.offset(offset).limit(pageable.pageSize)
     result = []
@@ -227,22 +227,14 @@ def page_(where, sort, pageable, model, name) -> DataPage:
     return build_data_pages(pageable, result, count)
 
 
-def build_mysql_where_expression(table, where):
-    for key, value in where.item():
-        if key == "and" or key == "or":
-            if isinstance(value, list):
-                filters = []
-                for express in value:
-                    result = build_mysql_where_expression(express)
-                    filters.append(result)
-            if key == "and":
-                return and_(*filters)
-            if key == "or":
-                return or_(*filters)
+def build_where_expression(table, conditions):
+    filters: list = []
+    for key, value in conditions.item():
+        if key == "$and":
+            f = and_(*build_where_expression(value))
+        elif key == "$or":
+            f = or_(*build_where_expression(value))
         else:
-            if isinstance(value, dict):
-                for k, v in value:
-                    if k == "=":
-                        return table.c.get(key) == v
-            else:
-                return table.c.get(key) == value
+            f = (table.c.key == value)
+        filters.append(f)
+    return filters
