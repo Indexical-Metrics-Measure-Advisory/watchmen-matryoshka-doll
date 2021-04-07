@@ -208,7 +208,7 @@ def __convert_to_dict(instance) -> dict:
 def find_one_and_update(where: dict, updates: dict, name: str):
     codec_options = build_code_options()
     collection = client.get_collection(name, codec_options=codec_options)
-    return collection.find_one_and_update(filter=where, update=updates, upsert=True)
+    return collection.find_one_and_update(filter=build_mongo_where_expression(where), update=updates, upsert=True)
 
 
 '''
@@ -238,22 +238,26 @@ def topic_data_update_one(id_, one, topic_name):
 
 
 def topic_data_find_by_id(id_, topic_name):
-    topic_data_col = client.get_collection(build_collection_name(topic_name))
+    codec_options = build_code_options()
+    topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
     result = topic_data_col.find_one({"_id": ObjectId(id_)})
     return result
 
 
 def topic_data_find_one(where, topic_name):
-    topic_data_col = client.get_collection(build_collection_name(topic_name))
+    codec_options = build_code_options()
+    topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
     return topic_data_col.find_one(where)
 
 
 def topic_data_find_(where, topic_name):
-    topic_data_col = client.get_collection(build_collection_name(topic_name))
+    codec_options = build_code_options()
+    topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
     return topic_data_col.find(where)
 
 
 def topic_data_list_all(topic_name) -> list:
-    topic_data_col = client.get_collection(build_collection_name(topic_name))
+    codec_options = build_code_options()
+    topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
     result = topic_data_col.find()
     return list(result)
