@@ -1,6 +1,7 @@
 import logging
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
@@ -9,6 +10,11 @@ from watchmen.topic.storage.topic_schema_storage import save_topic, update_topic
 from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
+
+
+template = find_template()
+
+
 
 
 def create_topic_schema(topic):

@@ -99,6 +99,8 @@ def create_model_schema(model_schema_set, name, record, is_root):
         model_schema.model_id = get_surrogate_key()
         model_schema.name = name
         model_schema.isRoot = is_root
+
+        # print(record)
         for key, value in record.items():
             model_field = create_model_field(model_schema_set, model_schema, key, value)
             model_schema.businessFields[model_field.name] = model_field

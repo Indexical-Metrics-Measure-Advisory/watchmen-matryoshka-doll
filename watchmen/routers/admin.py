@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import datetime
 from typing import List
@@ -408,8 +409,12 @@ async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
 
 
 @router.post("/topic/raw/generation", tags=["admin"])
-async def create_raw_topic_schema(topic_name: str, data: List[dict]):
-    result = create_raw_data_model_set(topic_name, data)
+async def create_raw_topic_schema(topic_name: str, data_list: List = Body(...)):
+    json_list =[]
+    for data in data_list:
+        json_list.append(json.loads(data))
+
+    result = create_raw_data_model_set(topic_name, json_list)
     return build_topic(result)
 
 
