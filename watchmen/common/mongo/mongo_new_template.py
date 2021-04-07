@@ -116,7 +116,7 @@ def upsert_(where, updates, model, name):
 
 def update_(where, updates, model, name):
     collection = client.get_collection(name)
-    collection.update_many(build_mongo_where_expression(where), updates)
+    collection.update_many(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)})
 
 
 def delete_one(id_, name):
@@ -125,7 +125,7 @@ def delete_one(id_, name):
     collection.delete_one({key: id_})
 
 
-def delete(where, model, name):
+def delete_(where, model, name):
     collection = client.get_collection(name)
     collection.delete_many(build_mongo_where_expression(where))
 

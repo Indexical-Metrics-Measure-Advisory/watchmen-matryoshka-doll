@@ -14,6 +14,7 @@ class OrderType(Enum):
     """Descending sort order."""
     DESCENDING = -1
 
+
 '''
 class SqlOperator(Enum):
     AND = "and"
@@ -113,6 +114,8 @@ def page_(where: dict, sort: list, pageable: Pageable, model: BaseModel, name: s
 '''
 for topic data storage interface
 '''
+
+
 def create_topic_data_table(topic):
     pass
 
@@ -151,4 +154,3 @@ def topic_data_find_(where, topic_name):
 
 def topic_data_list_all(topic_name) -> list:
     return template.topic_data_list_all(topic_name)
-
