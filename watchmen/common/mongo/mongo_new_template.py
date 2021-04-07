@@ -206,8 +206,9 @@ def __convert_to_dict(instance) -> dict:
 
 
 def find_one_and_update(where: dict, updates: dict, name: str):
-    collection = client.get_collection(name)
-    return collection.find_one_and_update(filter=where, update=updates)
+    codec_options = build_code_options()
+    collection = client.get_collection(name, codec_options=codec_options)
+    return collection.find_one_and_update(filter=where, update=updates, upsert=True)
 
 
 '''
