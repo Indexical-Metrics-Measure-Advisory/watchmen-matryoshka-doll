@@ -108,3 +108,47 @@ def page_all(sort: list, pageable: Pageable, model: BaseModel, name: str) -> Dat
 
 def page_(where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
     return template.page_(where, sort, pageable, model, name)
+
+
+'''
+for topic data storage interface
+'''
+def create_topic_data_table(topic):
+    pass
+
+
+def create_topic_data_table_index(name: str, index_name: list, index_type: str):
+    pass
+
+
+def alter_topic_data_table(topic):
+    pass
+
+
+def topic_data_insert_one(one: any, topic_name: str) -> tuple:
+    return template.topic_data_insert_one(one, topic_name)
+
+
+def topic_data_insert_(data: list, topic_name: str):
+    template.topic_data_insert_(data, topic_name)
+
+
+def topic_data_update_one(id_: str, one: any, topic_name: str):
+    template.topic_data_update_one(id_, one, topic_name)
+
+
+def topic_data_find_by_id(id_: str, topic_name: str) -> any:
+    return template.topic_data_find_by_id(id_, topic_name)
+
+
+def topic_data_find_one(where: dict, topic_name: str) -> any:
+    return template.topic_data_find_one(where, topic_name)
+
+
+def topic_data_find_(where, topic_name):
+    return template.topic_data_find_(where, topic_name)
+
+
+def topic_data_list_all(topic_name) -> list:
+    return template.topic_data_list_all(topic_name)
+

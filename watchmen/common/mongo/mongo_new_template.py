@@ -1,13 +1,13 @@
 import logging
 
 import pymongo
-from bson import regex
+from bson import regex, ObjectId
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.mongo.index import build_code_options
 from watchmen.common.mysql.model.table_definition import get_primary_key
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.utils.data_utils import build_data_pages
+from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
 
 client = get_client()
 
@@ -193,7 +193,8 @@ def page_(where, sort, pageable, model, name) -> DataPage:
     collection = client.get_collection(name, codec_options=codec_options)
     total = collection.find(build_mongo_where_expression(where)).count()
     skips = pageable.pageSize * (pageable.pageNumber - 1)
-    cursor = collection.find(build_mongo_where_expression(where)).skip(skips).limit(pageable.pageSize).sort(build_mongo_order(sort))
+    cursor = collection.find(build_mongo_where_expression(where)).skip(skips).limit(pageable.pageSize).sort(
+        build_mongo_order(sort))
     return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
 
 
@@ -207,3 +208,51 @@ def __convert_to_dict(instance) -> dict:
 def find_one_and_update(where: dict, updates: dict, name: str):
     collection = client.get_collection(name)
     return collection.find_one_and_update(filter=where, update=updates)
+
+
+'''
+for topic data impl
+'''
+
+
+# save_topic_instance, insert one
+def topic_data_insert_one(one, topic_name):
+    codec_options = build_code_options()
+    topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
+    topic_data_col.insert(one)
+    return topic_name, one
+
+
+# save_topic_instances, insert many
+def topic_data_insert_(data, topic_name):
+    codec_options = build_code_options()
+    topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
+    topic_data_col.insert_many(data)
+
+
+def topic_data_update_one(id_, one, topic_name):
+    codec_options = build_code_options()
+    topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
+    topic_data_col.update_one({"_id": ObjectId(id_)}, {"$set": one})
+
+
+def topic_data_find_by_id(id_, topic_name):
+    topic_data_col = client.get_collection(build_collection_name(topic_name))
+    result = topic_data_col.find_one({"_id": ObjectId(id_)})
+    return result
+
+
+def topic_data_find_one(where, topic_name):
+    topic_data_col = client.get_collection(build_collection_name(topic_name))
+    return topic_data_col.find_one(where)
+
+
+def topic_data_find_(where, topic_name):
+    topic_data_col = client.get_collection(build_collection_name(topic_name))
+    return topic_data_col.find(where)
+
+
+def topic_data_list_all(topic_name) -> list:
+    topic_data_col = client.get_collection(build_collection_name(topic_name))
+    result = topic_data_col.find()
+    return list(result)
