@@ -1,6 +1,7 @@
 import logging
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
@@ -11,12 +12,22 @@ from watchmen.topic.topic import Topic
 log = logging.getLogger("app." + __name__)
 
 
+template = find_template()
+
+
+
+
 def create_topic_schema(topic):
     if topic.topicId is None or check_fake_id(topic.topicId):
         topic.topicId = get_surrogate_key()
     if type(topic) is not dict:
         topic = topic.dict()
     save_topic(topic)
+
+    # template.create_table(topic)
+    #
+    # template.create_index(topic)
+
 
     ## TODO create table
 
@@ -59,5 +70,5 @@ def build_factors(factors: list, parent: str, model_schema: ModelSchema, model_s
                 factor.name = key
             factor.type = value.type
             factor.factorId = get_surrogate_key()
-            factor.label = key
+            factor.label = factor.name
             factors.append(factor)

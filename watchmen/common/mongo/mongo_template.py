@@ -4,7 +4,7 @@ from typing import List
 from watchmen.common.data_page import DataPage
 from watchmen.common.mongo.index import build_code_options
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.utils.data_utils import build_data_pages
+from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
 
 client = get_client()
 
@@ -112,3 +112,24 @@ def __convert_to_dict(instance) -> dict:
 def find_one_and_update(collection_name: str, query_dict: dict, update_dict: dict):
     collections = client.get_collection(collection_name)
     return collections.find_one_and_update(filter=query_dict, update=update_dict)
+
+
+def create_table(topic):
+    client.create_collection(build_collection_name(topic.name))
+
+
+def __find_modify_index(index_information, topic):
+    pass
+
+
+def create_index(topic):
+
+    collection = client.get_collection(build_collection_name(topic.name))
+    index_information= collection.index_information()
+
+    __find_modify_index(index_information,topic)
+    client.get_collection(build_collection_name(topic.name)).create_index()
+
+
+def update_index(topic):
+    pass
