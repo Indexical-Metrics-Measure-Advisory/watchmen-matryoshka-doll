@@ -46,6 +46,7 @@ from watchmen.topic.topic import Topic
 
 DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
 
+
 router = APIRouter()
 
 log = logging.getLogger("app." + __name__)
