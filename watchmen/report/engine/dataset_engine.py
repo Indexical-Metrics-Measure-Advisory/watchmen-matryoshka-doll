@@ -24,6 +24,34 @@ def build_pagination(pagination):
     return "OFFSET {0} LIMIT {1}".format(offset_num, pagination.pageSize)
 
 
+def __find_factor_index(field_list, factor_name):
+    for i in range(len(field_list)):
+        field = field_list[i]
+        if field[0] == factor_name:
+            return i
+    return None
+
+
+def get_factor_value_by_subject_and_condition(console_subject,factor_name,filter_list):
+    query = build_query_for_subject(console_subject)
+    if filter_list:
+        query = _filter(query,filter_list)
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(query.get_sql())
+    rows = cur.fetchall()
+    # print(cur.description)
+    index = __find_factor_index(cur.description,factor_name)
+    # print(rows)
+    if index is not None:
+        results=[]
+        for rw in rows:
+            results.append(rw[index])
+        return results
+    else:
+        raise KeyError("factor_name :{0} can't find in subject {1}".format(factor_name,console_subject.name))
+
+
 async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
     console_subject = load_console_subject_by_id(subject_id)
     query_monitor: QueryMonitor = build_query_monitor(console_subject, query_type="dataset")

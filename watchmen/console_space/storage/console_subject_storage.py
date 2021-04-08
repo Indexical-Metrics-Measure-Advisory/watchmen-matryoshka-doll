@@ -30,7 +30,7 @@ def update_console_subject(console_subject: ConsoleSpaceSubject):
     return update_one(console_subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
-def load_console_subject_by_id(subject_id):
+def load_console_subject_by_id(subject_id)->ConsoleSpaceSubject:
     # return template.find_one(CONSOLE_SPACE_SUBJECTS, {"subjectId": subject_id}, ConsoleSpaceSubject)
     return find_by_id(subject_id, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
