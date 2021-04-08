@@ -202,17 +202,20 @@ def page_all(sort, pageable, model, name) -> DataPage:
 def page_(where, sort, pageable, model, name) -> DataPage:
     codec_options = build_code_options()
     collection = client.get_collection(name, codec_options=codec_options)
-    total = collection.find(build_mongo_where_expression(where)).count()
+
+    mongo_where = build_mongo_where_expression(where)
+    print(mongo_where)
+    total = collection.find(mongo_where).count()
     skips = pageable.pageSize * (pageable.pageNumber - 1)
     if sort is not None:
-        cursor = collection.find(build_mongo_where_expression(where)).skip(skips).limit(pageable.pageSize).sort(
+        cursor = collection.find(mongo_where).skip(skips).limit(pageable.pageSize).sort(
             build_mongo_order(sort))
     else:
-        cursor = collection.find(build_mongo_where_expression(where)).skip(skips).limit(pageable.pageSize)
+        cursor = collection.find(mongo_where).skip(skips).limit(pageable.pageSize)
     if model is not None:
         return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
     else:
-        build_data_pages(pageable, list(cursor), total)
+        return build_data_pages(pageable, list(cursor), total)
 
 
 def __convert_to_dict(instance) -> dict:

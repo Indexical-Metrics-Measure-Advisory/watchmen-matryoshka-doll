@@ -18,7 +18,7 @@ from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
-from watchmen.common.utils.data_utils import check_fake_id
+from watchmen.common.utils.data_utils import check_fake_id, build_collection_name
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
@@ -453,4 +453,5 @@ async def query_log_by_critical(query: MonitorLogQuery):
     else:
         query_dict = query_list[0]
 
-    return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
+    print(query_dict)
+    return query_pipeline_monitor(build_collection_name("raw_pipeline_monitor"), query_dict, query.pagination)

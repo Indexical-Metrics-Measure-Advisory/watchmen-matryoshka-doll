@@ -106,7 +106,6 @@ def __find_column_by_alias(name,columns):
 
 
 def __build_subject_filter(conditions,console_subject:ConsoleSpaceSubject):
-
     filter_list = []
     for query_filter in conditions.filters:
         column = __find_column_by_alias(query_filter.columnName,console_subject.dataset.columns)
@@ -114,9 +113,7 @@ def __build_subject_filter(conditions,console_subject:ConsoleSpaceSubject):
         right = Parameter(kind=CONSTANT,value=query_filter.value)
         subject_filter = Filter(left=left,operator=query_filter.operator,right=right)
         filter_list.append(subject_filter)
-
     subject_conditions = Filter(jointType=conditions.jointType,filters=filter_list)
-
     return subject_conditions
 
 
