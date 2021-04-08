@@ -470,6 +470,7 @@ def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list=
             return {"$inc": {target_factor.name: 0}}
         else:
             return {"$inc": {target_factor.name: 1}}
+    ## TODO re-factor max and min
     elif arithmetic == "max":
         return {"$max": update_data}
     elif arithmetic == "min":

@@ -12,9 +12,6 @@ client = MongoClient(settings.MONGO_HOST, settings.MONGO_PORT, username=settings
 db = client[WATCHMEN]
 
 
-#   TODO adapter relationship db
-
-
 def get_client():
     return db
 
