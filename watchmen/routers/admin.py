@@ -46,7 +46,6 @@ from watchmen.topic.topic import Topic
 
 DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
 
-
 router = APIRouter()
 
 log = logging.getLogger("app." + __name__)
@@ -111,8 +110,9 @@ async def query_space_list_for_user_group(query_name: str, current_user: User = 
     return load_space_list_by_name(query_name)
 
 
-@router.post("/space/list/name",tags=["admin"], response_model=List[Space])
-async def load_space_list_by_name_list(name_list:List[str],current_user: User = Depends(deps.get_current_user))->List[Space]:
+@router.post("/space/list/name", tags=["admin"], response_model=List[Space])
+async def load_space_list_by_name_list(name_list: List[str], current_user: User = Depends(deps.get_current_user)) -> \
+List[Space]:
     results = []
     for name in name_list:
         results.append(load_space_by_name(name))
@@ -161,18 +161,18 @@ async def query_topic_list_by_name(query_name: str, pagination: Pagination = Bod
     return result
 
 
-@router.get("/topic/query",tags=["admin"],response_model=List[Topic])
-async def load_topic_list_by_name_without_page(query_name,current_user: User = Depends(deps.get_current_user)):
+@router.get("/topic/query", tags=["admin"], response_model=List[Topic])
+async def load_topic_list_by_name_without_page(query_name, current_user: User = Depends(deps.get_current_user)):
     return load_topic_list_by_name(query_name)
 
 
-@router.post("/topic/list/name",tags=["admin"], response_model=List[Topic])
-async def load_topic_list_by_name_list(name_list:List[str],current_user: User = Depends(deps.get_current_user))->List[Topic]:
-    results =[]
+@router.post("/topic/list/name", tags=["admin"], response_model=List[Topic])
+async def load_topic_list_by_name_list(name_list: List[str], current_user: User = Depends(deps.get_current_user)) -> \
+List[Topic]:
+    results = []
     for name in name_list:
         results.append(load_topic_by_name(name))
     return results
-
 
 
 @router.post("/report/name", tags=["admin"], response_model=DataPage)
@@ -185,7 +185,6 @@ async def query_topic_list_by_name(query_name: str, pagination: Pagination = Bod
 async def query_all_topic_list(current_user: User = Depends(deps.get_current_user)):
     result = load_all_topic()
     return result
-
 
 
 @router.post("/topic/all/pages", tags=["admin"], response_model=DataPage)
@@ -411,7 +410,7 @@ async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
 
 @router.post("/topic/raw/generation", tags=["admin"])
 async def create_raw_topic_schema(topic_name: str, data_list: List = Body(...)):
-    json_list =[]
+    json_list = []
     for data in data_list:
         json_list.append(json.loads(data))
 
@@ -423,19 +422,36 @@ async def create_raw_topic_schema(topic_name: str, data_list: List = Body(...)):
 @router.post("/pipeline/log/query", tags=["admin"])
 async def query_log_by_critical(query: MonitorLogQuery):
     query_dict = {}
+    query_list = []
     if query.criteria.topicId is not None:
-        query_dict["topicId"] = query.criteria.topicId
+        # query_dict["topicId"] = query.criteria.topicId
+        query_list.append({"topicId": query.criteria.topicId})
 
     if query.criteria.pipelineId is not None:
-        query_dict["pipelineId"] = query.criteria.pipelineId
+        # query_dict["pipelineId"] = query.criteria.pipelineId
+        query_list.append({"pipelineId": query.criteria.pipelineId})
 
     if query.criteria.startDate is not None and query.criteria.endDate is not None:
+        '''
         query_dict["insertTime"] = {
             "$gte": datetime.strptime(query.criteria.startDate, DATE_FORMAT),
             "$lt": datetime.strptime(query.criteria.endDate, DATE_FORMAT)
         }
+        '''
+        query_list.append({"insertTime": {
+            "between": (
+                datetime.strptime(query.criteria.startDate, DATE_FORMAT),
+                datetime.strptime(query.criteria.endDate, DATE_FORMAT)
+            )
+        }})
 
     if query.criteria.status is not None:
-        query_dict["status"] = query.criteria.status.upper()
+        # query_dict["status"] = query.criteria.status.upper()
+        query_list.append({"status": query.criteria.status.upper()})
 
-    return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
+    if len(query_list) > 1:
+        query_dict['and'] = query_list
+    else:
+        query_dict = query_list[0]
+
+    return query_pipeline_monitor("raw_pipeline_monitor", query.pagination)

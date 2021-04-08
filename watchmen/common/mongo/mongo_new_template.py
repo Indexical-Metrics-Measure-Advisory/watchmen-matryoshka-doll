@@ -63,6 +63,17 @@ def build_mongo_where_expression(where: dict):
                         return {key: regex.Regex(v)}
                     if k == "in":
                         return {key: {"$in": v}}
+                    if k == ">":
+                        return {key: {"$gt": v}}
+                    if k == ">=":
+                        return {key: {"$gte": v}}
+                    if k == "<":
+                        return {key: {"$lt": v}}
+                    if k == "<=":
+                        return {key: {"$lte": v}}
+                    if k == "between":
+                        if (isinstance(v, tuple)) and len(v) == 2:
+                            return {key: {"$gte": v[0], "$lt": v[1]}}
             else:
                 return {key: {"$eq": value}}
 
@@ -193,10 +204,15 @@ def page_(where, sort, pageable, model, name) -> DataPage:
     collection = client.get_collection(name, codec_options=codec_options)
     total = collection.find(build_mongo_where_expression(where)).count()
     skips = pageable.pageSize * (pageable.pageNumber - 1)
-    cursor = collection.find(build_mongo_where_expression(where)).skip(skips).limit(pageable.pageSize).sort(
-        build_mongo_order(sort))
-    return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
-
+    if sort is not None:
+        cursor = collection.find(build_mongo_where_expression(where)).skip(skips).limit(pageable.pageSize).sort(
+            build_mongo_order(sort))
+    else:
+        cursor = collection.find(build_mongo_where_expression(where)).skip(skips).limit(pageable.pageSize)
+    if model is not None:
+        return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
+    else:
+        build_data_pages(pageable, list(cursor), total)
 
 def __convert_to_dict(instance) -> dict:
     if type(instance) is not dict:
