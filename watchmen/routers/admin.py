@@ -453,4 +453,4 @@ async def query_log_by_critical(query: MonitorLogQuery):
     else:
         query_dict = query_list[0]
 
-    return query_pipeline_monitor("raw_pipeline_monitor", query.pagination)
+    return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
