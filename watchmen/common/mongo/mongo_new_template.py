@@ -214,6 +214,7 @@ def page_(where, sort, pageable, model, name) -> DataPage:
     else:
         build_data_pages(pageable, list(cursor), total)
 
+
 def __convert_to_dict(instance) -> dict:
     if type(instance) is not dict:
         return instance.dict()
