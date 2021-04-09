@@ -68,7 +68,7 @@ def delete_(where: dict, model: BaseModel, name: str):
 
 
 def delete_all(model: BaseModel, name: str) -> list:
-    pass  # don't need to do
+    raise NotImplementedError("delete_all not implemented")
 
 
 def find_by_id(id_: str, model: BaseModel, name: str) -> BaseModel:
