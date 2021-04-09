@@ -128,7 +128,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source))
 
-        # print(source_value_list)
+        print(source_value_list)
         target_factor = get_factor(mapping.factorId, target_topic)
         target_value_list = __convert_to_target_value_list(target_factor,source_value_list)
         result = __process_factor_type(target_factor, source_value_list)
@@ -250,8 +250,7 @@ def get_source_factor_value(raw_data, source_factor):
     if is_sub_field(source_factor):
         factor_list = build_factor_list(source_factor)
         # print("factor_list",factor_list)
-        result = []
-        source_value_list = get_factor_value(0, factor_list, raw_data, result)
+        source_value_list = get_factor_value(0, factor_list, raw_data, [])
     else:
         source_value_list = get_value(source_factor, raw_data)
     return source_value_list
@@ -291,19 +290,18 @@ def is_sub_field(factor):
 
 
 def get_factor_value(index, factor_list, raw_data, result):
-    results=[]
+    # results=[]
     factor = factor_list[index]
     data = get_value(factor, raw_data)
     if type(data) is list:
         for raw in data:
-            get_factor_value(index + 1, factor_list, raw, results)
+            get_factor_value(index + 1, factor_list, raw, result)
     elif type(data) is dict:
-        get_factor_value(index + 1, factor_list, data, results)
+        get_factor_value(index + 1, factor_list, data, result)
     else:
+        result.append(data)
 
-        results.append(data)
-
-    return results
+    return result
 
 
 def __is_current_topic(parameter: Parameter, pipeline_topic: Topic):
