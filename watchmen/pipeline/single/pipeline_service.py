@@ -40,7 +40,7 @@ def run_pipeline(pipeline: Pipeline, data):
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
-        log.info("start run pipeline {0}".format(pipeline.name))
+        log.debug("start run pipeline {0}".format(pipeline.name))
         context = {PIPELINE_UID: pipeline_status.uid}
         if __check_condition(pipeline, pipeline_topic, data):
             try:
@@ -49,7 +49,7 @@ def run_pipeline(pipeline: Pipeline, data):
                     if __check_condition(stage, pipeline_topic, data):
                         stage_run_status = StageRunStatus()
                         stage_run_status.name = stage.name
-                        log.info("stage name {0}".format(stage.name))
+                        log.debug("stage name {0}".format(stage.name))
                         for unit in stage.units:
                             if unit.do is not None and __check_condition(unit, pipeline_topic, data):
                                 unit_run_status = UnitRunStatus()
@@ -64,12 +64,12 @@ def run_pipeline(pipeline: Pipeline, data):
                                     unit_run_status.actions.append(unit_action_status)
                                 stage_run_status.units.append(unit_run_status)
                             else:
-                                log.info("action stage unit  {0} do is None".format(stage.name))
+                                log.debug("action stage unit  {0} do is None".format(stage.name))
                         pipeline_status.stages.append(stage_run_status)
                 elapsed_time = time.time() - start
                 pipeline_status.completeTime = elapsed_time
                 pipeline_status.status = FINISHED
-                log.info("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))
+                log.debug("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))
 
             except Exception as e:
                 log.exception(e)

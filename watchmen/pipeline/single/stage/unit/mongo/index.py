@@ -438,12 +438,12 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
                 condition_result.resultList.append(__build_on_condition(filter_condition, topic, data))
             else:
                 left_value_list = get_source_value_list(topic, data, filter_condition.left)
-                print("left_value_list", left_value_list)
+
                 right_value_list = get_source_value_list(topic, data, filter_condition.right)
-                print("right_value_list", right_value_list)
+
                 result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
                 condition_result.resultList.append(result)
-        print("condition_result", condition_result)
+        log.debug("condition_result:{0}".format(condition_result))
         return condition_result
 
 
