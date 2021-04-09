@@ -18,7 +18,7 @@ PIPELINE_GRAPH = "pipeline_graph"
 def create_pipeline(pipeline: Pipeline) -> Pipeline:
     pipeline.pipelineId = get_surrogate_key()
     # return template.create(PIPELINES, pipeline, Pipeline)
-    insert_one(pipeline, Pipeline, PIPELINES)
+    return insert_one(pipeline, Pipeline, PIPELINES)
 
 def update_pipeline(pipeline: Pipeline) -> Pipeline:
     load_pipeline_by_topic_id.cache_clear()

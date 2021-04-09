@@ -412,7 +412,7 @@ async def create_raw_topic_schema(topic_name: str, data_list: List = Body(...)):
     json_list = []
     for data in data_list:
         json_list.append(json.loads(data))
-
+    print(len(json_list))
     result = create_raw_data_model_set(topic_name, json_list)
     return build_topic(result)
 
