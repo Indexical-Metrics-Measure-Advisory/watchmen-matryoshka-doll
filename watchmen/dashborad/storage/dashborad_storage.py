@@ -1,5 +1,4 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.storage.storage_template import insert_one, update_one, find_by_id, delete_one, update_, find_
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
@@ -8,7 +7,8 @@ DASHBOARD_ID = "dashboardId"
 
 DASHBOARDS = "console_dashboards"
 
-#template = find_template()
+
+# template = find_template()
 
 
 def create_dashboard_to_storage(dashboard: ConsoleDashboard):
@@ -46,4 +46,3 @@ def rename_dashboard_by_id(dashboard_id, name):
 def import_dashboard_to_db(dashboard):
     # template.create(DASHBOARDS, dashboard, ConsoleDashboard)
     insert_one(dashboard, ConsoleDashboard, DASHBOARDS)
-

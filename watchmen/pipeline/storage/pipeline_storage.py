@@ -1,7 +1,6 @@
 from functools import lru_cache
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.storage.storage_template import insert_one, update_one, find_, find_by_id, update_, list_all
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
@@ -12,6 +11,7 @@ PIPELINES = "pipelines"
 
 PIPELINE_GRAPH = "pipeline_graph"
 
+
 # template = find_template()
 
 
@@ -19,6 +19,7 @@ def create_pipeline(pipeline: Pipeline) -> Pipeline:
     pipeline.pipelineId = get_surrogate_key()
     # return template.create(PIPELINES, pipeline, Pipeline)
     return insert_one(pipeline, Pipeline, PIPELINES)
+
 
 def update_pipeline(pipeline: Pipeline) -> Pipeline:
     load_pipeline_by_topic_id.cache_clear()

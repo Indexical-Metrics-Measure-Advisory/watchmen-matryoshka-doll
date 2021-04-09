@@ -99,34 +99,35 @@ class QuerySubjectRequest(BaseModel):
     conditions: QueryConditions = None
 
 
-def __find_column_by_alias(name,columns):
+def __find_column_by_alias(name, columns):
     for column in columns:
         if column.alias == name:
             return column
 
 
-def __build_subject_filter(conditions,console_subject:ConsoleSpaceSubject):
+def __build_subject_filter(conditions, console_subject: ConsoleSpaceSubject):
     filter_list = []
     for query_filter in conditions.filters:
-        column = __find_column_by_alias(query_filter.columnName,console_subject.dataset.columns)
-        left = Parameter(kind=TOPIC,type=column.parameter.type,topicId=column.parameter.topicId,factorId=column.parameter.factorId)
-        right = Parameter(kind=CONSTANT,value=query_filter.value)
-        subject_filter = Filter(left=left,operator=query_filter.operator,right=right)
+        column = __find_column_by_alias(query_filter.columnName, console_subject.dataset.columns)
+        left = Parameter(kind=TOPIC, type=column.parameter.type, topicId=column.parameter.topicId,
+                         factorId=column.parameter.factorId)
+        right = Parameter(kind=CONSTANT, value=query_filter.value)
+        subject_filter = Filter(left=left, operator=query_filter.operator, right=right)
         filter_list.append(subject_filter)
-    subject_conditions = Filter(jointType=conditions.jointType,filters=filter_list)
+    subject_conditions = Filter(jointType=conditions.jointType, filters=filter_list)
     return subject_conditions
 
 
-def __get_factor_name_by_alias(column_name,console_subject):
+def __get_factor_name_by_alias(column_name, console_subject):
     column = __find_column_by_alias(column_name, console_subject.dataset.columns)
-    factor = get_factor(column.parameter.factorId,get_topic_by_id(column.parameter.topicId))
+    factor = get_factor(column.parameter.factorId, get_topic_by_id(column.parameter.topicId))
     return factor.name
 
 
 @router.post("/subject/query", tags=["common"])
 async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubjectRequest):
     console_subject = load_console_subject_by_id(query_subject.subjectId)
-    subject_filter = __build_subject_filter(query_subject.conditions,console_subject)
-    factor_name = __get_factor_name_by_alias(query_subject.columnName,console_subject)
+    subject_filter = __build_subject_filter(query_subject.conditions, console_subject)
+    factor_name = __get_factor_name_by_alias(query_subject.columnName, console_subject)
     return get_factor_value_by_subject_and_condition(console_subject, factor_name,
                                                      subject_filter)

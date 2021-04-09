@@ -32,10 +32,10 @@ def __find_factor_index(field_list, factor_name):
     return None
 
 
-def get_factor_value_by_subject_and_condition(console_subject,factor_name,filter_list):
+def get_factor_value_by_subject_and_condition(console_subject, factor_name, filter_list):
     query = build_query_for_subject(console_subject)
     if filter_list:
-        query = _filter(query,filter_list)
+        query = _filter(query, filter_list)
     conn = get_connection()
     cur = conn.cursor()
     sql = query.get_sql()
@@ -44,15 +44,15 @@ def get_factor_value_by_subject_and_condition(console_subject,factor_name,filter
     rows = cur.fetchall()
     print(rows)
     print(cur.description)
-    index = __find_factor_index(cur.description,factor_name)
+    index = __find_factor_index(cur.description, factor_name)
     # print(rows)
     if index is not None:
-        results=[]
+        results = []
         for rw in rows:
             results.append(rw[index])
         return results
     else:
-        raise KeyError("factor_name :{0} can't find in subject {1}".format(factor_name,console_subject.name))
+        raise KeyError("factor_name :{0} can't find in subject {1}".format(factor_name, console_subject.name))
 
 
 async def load_dataset_by_subject_id(subject_id, pagination: Pagination):

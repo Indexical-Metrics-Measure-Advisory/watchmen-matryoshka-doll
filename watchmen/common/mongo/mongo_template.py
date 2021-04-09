@@ -123,11 +123,10 @@ def __find_modify_index(index_information, topic):
 
 
 def create_index(topic):
-
     collection = client.get_collection(build_collection_name(topic.name))
-    index_information= collection.index_information()
+    index_information = collection.index_information()
 
-    __find_modify_index(index_information,topic)
+    __find_modify_index(index_information, topic)
     client.get_collection(build_collection_name(topic.name)).create_index()
 
 

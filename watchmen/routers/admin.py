@@ -112,7 +112,7 @@ async def query_space_list_for_user_group(query_name: str, current_user: User = 
 
 @router.post("/space/list/name", tags=["admin"], response_model=List[Space])
 async def load_space_list_by_name_list(name_list: List[str], current_user: User = Depends(deps.get_current_user)) -> \
-List[Space]:
+        List[Space]:
     results = []
     for name in name_list:
         results.append(load_space_by_name(name))
@@ -168,7 +168,7 @@ async def load_topic_list_by_name_without_page(query_name, current_user: User = 
 
 @router.post("/topic/list/name", tags=["admin"], response_model=List[Topic])
 async def load_topic_list_by_name_list(name_list: List[str], current_user: User = Depends(deps.get_current_user)) -> \
-List[Topic]:
+        List[Topic]:
     results = []
     for name in name_list:
         results.append(load_topic_by_name(name))

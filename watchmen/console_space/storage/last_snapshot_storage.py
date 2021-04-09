@@ -1,14 +1,14 @@
-from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.storage.storage_template import insert_one, find_one, update_one
 from watchmen.console_space.model.last_snapshot import LastSnapshot
 
 LAST_SNAPSHOT = "console_space_last_snapshot"
 
+
 # template = find_template()
 
 
 def create_last_snapshot(last_snapshot):
-    #return template.create(LAST_SNAPSHOT, last_snapshot, LastSnapshot)
+    # return template.create(LAST_SNAPSHOT, last_snapshot, LastSnapshot)
     return insert_one(last_snapshot, LastSnapshot, LAST_SNAPSHOT)
 
 

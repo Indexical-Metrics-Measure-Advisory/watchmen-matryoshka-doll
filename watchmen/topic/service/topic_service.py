@@ -11,10 +11,7 @@ from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 
-
 template = find_template()
-
-
 
 
 def create_topic_schema(topic):

@@ -1,5 +1,3 @@
-from bson import regex
-
 from watchmen.auth.service.security import get_password_hash
 from watchmen.auth.user import User
 from watchmen.common.pagination import Pagination
@@ -25,11 +23,12 @@ def get_user(user_id):
     # return template.find_one(USERS, {"userId": user_id}, User)
     return find_by_id(user_id, User, USERS)
 
+
 def get_user_list_by_ids(user_ids: list):
     # result = users.find({"userId": {"$in": user_ids}})
     # return list(result)
     # return template.find(USERS, {"userId": {"$in": user_ids}}, User)
-    return find_( {"userId": {"in": user_ids}}, User, USERS)
+    return find_({"userId": {"in": user_ids}}, User, USERS)
 
 
 def load_user_list_by_name(query_name):

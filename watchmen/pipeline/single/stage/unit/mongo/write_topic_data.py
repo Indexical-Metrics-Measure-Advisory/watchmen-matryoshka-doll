@@ -1,15 +1,10 @@
 from watchmen.common.constants import pipeline_constants
-from watchmen.common.mongo.index import build_code_options
-from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.storage.storage_template import topic_data_find_by_id, topic_data_update_one, \
-    topic_data_insert_one, find_one_and_update, topic_find_one_and_update
-from watchmen.common.utils.data_utils import build_collection_name
+    topic_data_insert_one, topic_find_one_and_update
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE
-# from watchmen.topic.storage.topic_data_storage import find_topic_data_by_id
 
-# db = get_client()
 
 
 def insert_topic_data(topic_name, mapping_result, pipeline_uid):

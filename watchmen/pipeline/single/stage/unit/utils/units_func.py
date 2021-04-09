@@ -6,8 +6,6 @@ from watchmen.config.config import settings
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
-
-
 SPLIT_FLAG = ","
 
 INSERT = "insert"
@@ -126,7 +124,7 @@ def convert_factor_type(value, factor_type):
     elif factor_type == NUMBER:
         return Decimal(value)
     elif factor_type == DATETIME:
-        return datetime.strptime(value,settings.TOPIC_DATE_FORMAT)
+        return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
     elif factor_type == BOOLEAN:
         return bool(value)
     elif factor_type == SEQUENCE:

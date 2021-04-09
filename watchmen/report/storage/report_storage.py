@@ -1,12 +1,9 @@
-import pymongo
-from bson import regex
-
 from watchmen.common.pagination import Pagination
-from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.storage.storage_template import insert_one, update_one, find_by_id, find_, delete_one, page_
 from watchmen.console_space.model.console_space import Report
 
 CONSOLE_REPORTS = "console_reports"
+
 
 # template = find_template()
 

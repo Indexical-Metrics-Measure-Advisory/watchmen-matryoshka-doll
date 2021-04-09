@@ -1,17 +1,14 @@
 from functools import lru_cache
 from typing import List
 
-import pymongo
-from bson import regex
-
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
-from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.storage.storage_template import insert_one, list_all, update_one, page_all, OrderType, find_one, \
     exists, page_, find_, find_by_id
 from watchmen.topic.topic import Topic
 
 TOPICS = "topics"
+
 
 # template = find_template()
 # template = mysql_template
@@ -53,9 +50,9 @@ def load_topic_list_by_name(topic_name: str) -> List[Topic]:
 
 
 def load_topic_by_name(topic_name: str) -> Topic:
-
     # return template.find_one(TOPICS, {"name": topic_name}, Topic)
-    return find_one({"name": topic_name},Topic,TOPICS)
+    return find_one({"name": topic_name}, Topic, TOPICS)
+
 
 def check_topic_exist(topic_name: str, topic_type: str) -> bool:
     '''
@@ -68,7 +65,6 @@ def check_topic_exist(topic_name: str, topic_type: str) -> bool:
     '''
     where = {"name", topic_name, "type", topic_type}
     return exists(where, Topic, topic_name)
-
 
 
 @lru_cache(maxsize=50)

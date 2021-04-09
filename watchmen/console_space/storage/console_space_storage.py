@@ -1,12 +1,12 @@
 from typing import List
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.engine_adaptor import find_template
-from watchmen.common.storage.storage_template import insert_one, update_one, update_one_first, find_one, delete_one, \
-    list_all, list_, find_
+from watchmen.common.storage.storage_template import insert_one, update_one_first, find_one, delete_one, \
+    list_, find_
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics
 from watchmen.console_space.model.console_space import ConsoleSpace
+
 
 # template = find_template()
 
@@ -64,7 +64,8 @@ def update_console_space_graph(console_space_graph: ConnectedSpaceGraphics) -> C
     return template.update_one("console_space_graph", {"connectId": console_space_graph.connectId}, console_space_graph,
                                ConnectedSpaceGraphics)
     '''
-    return update_one_first({"connectId": console_space_graph.connectId}, console_space_graph, ConnectedSpaceGraphics, "console_space_graph")
+    return update_one_first({"connectId": console_space_graph.connectId}, console_space_graph, ConnectedSpaceGraphics,
+                            "console_space_graph")
 
 
 def load_console_space_graph_by_user_id(user_id: str) -> List[ConnectedSpaceGraphics]:

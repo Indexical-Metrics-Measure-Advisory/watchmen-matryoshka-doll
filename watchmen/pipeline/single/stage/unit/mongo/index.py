@@ -66,7 +66,7 @@ def __convert_value_to_datetime(value):
     if type(value) == datetime:
         return value
     else:
-        return datetime.strptime(value,settings.TOPIC_DATE_FORMAT)
+        return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
 
 
 def __run_arithmetic(arithmetic, value):
@@ -85,8 +85,7 @@ def __run_arithmetic(arithmetic, value):
 
 
 def run_arithmetic_value_list(arithmetic, value_list):
-
-    print("value_list",value_list)
+    print("value_list", value_list)
     if type(value_list) == list:
         results = []
         for source_value in value_list:
@@ -118,7 +117,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source))
 
-        print("source_value_list",source_value_list)
+        print("source_value_list", source_value_list)
         target_factor = get_factor(mapping.factorId, target_topic)
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
@@ -249,7 +248,7 @@ def merge_mapping_data(mapping_results):
     max_value_size = get_max_value_size(mapping_results)
     mapping_data_list = []
 
-    print("mapping_results",mapping_results)
+    print("mapping_results", mapping_results)
     for i in range(max_value_size):
         mapping_data = {}
         for mapping_result in mapping_results:
@@ -425,7 +424,7 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
 
 
 def __check_on_condition(match_result: ConditionResult) -> bool:
-    if match_result is None or  match_result.logicOperator is None:
+    if match_result is None or match_result.logicOperator is None:
         return True
     elif match_result.logicOperator == "and":
         result = True

@@ -1,6 +1,4 @@
-from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.storage.storage_template import page_
-from watchmen.common.utils.data_utils import build_collection_name
 
 
 # template = find_template()

@@ -1,9 +1,7 @@
 import logging
 from operator import eq
 
-import pymongo
-from bson import regex
-from sqlalchemy import update, MetaData, DECIMAL, Column, Table, String, and_, or_, delete
+from sqlalchemy import update, MetaData, Table, and_, or_, delete
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session

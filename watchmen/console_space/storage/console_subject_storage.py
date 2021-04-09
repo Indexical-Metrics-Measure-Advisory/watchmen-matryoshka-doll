@@ -1,11 +1,11 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.storage.storage_template import insert_one, find_, update_one, find_by_id, delete_one, delete_, \
     find_one, update_one_first
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 
 CONSOLE_SPACE_SUBJECTS = "console_space_subjects"
+
 
 # template = find_template()
 
@@ -30,7 +30,7 @@ def update_console_subject(console_subject: ConsoleSpaceSubject):
     return update_one(console_subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
-def load_console_subject_by_id(subject_id)->ConsoleSpaceSubject:
+def load_console_subject_by_id(subject_id) -> ConsoleSpaceSubject:
     # return template.find_one(CONSOLE_SPACE_SUBJECTS, {"subjectId": subject_id}, ConsoleSpaceSubject)
     return find_by_id(subject_id, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 

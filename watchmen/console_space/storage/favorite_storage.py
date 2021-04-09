@@ -1,8 +1,8 @@
-from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.storage.storage_template import insert_one, find_by_id, update_one
 from watchmen.console_space.model.favorite import Favorite
 
 CONSOLE_SPACE_FAVORITES = "console_space_favorites"
+
 
 # template = find_template()
 

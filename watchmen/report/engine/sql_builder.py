@@ -146,7 +146,7 @@ def _connective_filter(filter: Filter):
 
 def _filter_criterion(filter: Filter) -> any:
     left = parse_parameter(filter.left)
-    print("left",left)
+    print("left", left)
     right = parse_parameter(filter.right)
     print("right", right)
     if filter.operator == "equals":
