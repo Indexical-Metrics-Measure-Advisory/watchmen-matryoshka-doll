@@ -119,12 +119,17 @@ def __split_value(value):
 
 
 def convert_factor_type(value, factor_type):
-    if factor_type == TEXT:
+    if value is None:
+        return None
+    elif factor_type == TEXT:
         return str(value)
     elif factor_type == NUMBER:
         return Decimal(value)
     elif factor_type == DATETIME:
-        return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
+        if isinstance(value,datetime):
+            return value
+        else:
+            return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
     elif factor_type == BOOLEAN:
         return bool(value)
     elif factor_type == SEQUENCE:
@@ -147,6 +152,7 @@ def build_factor_dict(topic: Topic):
 
 
 def get_factor(factor_id, target_topic):
+    # print(target_topic.json())
     for factor in target_topic.factors:
         if factor.factorId == factor_id:
             return factor

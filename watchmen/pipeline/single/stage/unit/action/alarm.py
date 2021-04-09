@@ -29,7 +29,6 @@ def __find_variable(message):
 
 def __build_message(message, pipeline_topic, raw_data, context):
     variable_list = __find_variable(message)
-    print(variable_list)
     variable_results = []
     for variable in variable_list:
         factor = get_factor_by_name(variable, pipeline_topic)

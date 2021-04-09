@@ -108,7 +108,7 @@ def _join(q: QueryBuilder, join: Join) -> QueryBuilder:
 def _filter(q: QueryBuilder, filter: Filter) -> QueryBuilder:
     if len(filter.filters) > 0:
         where = _connective_filter(filter)
-        print(where)
+        #print(where)
         return q.where(where)
     else:
         return q
@@ -124,7 +124,7 @@ def _connective_filter(filter: Filter):
         if item.jointType:
             criterion_list.append(_connective_filter(item))
         else:
-            print(item)
+           # print(item)
             criterion_list.append(_filter_criterion(item))
 
     if filter.jointType == ConnectiveType.and_type:
@@ -146,9 +146,9 @@ def _connective_filter(filter: Filter):
 
 def _filter_criterion(filter: Filter) -> any:
     left = parse_parameter(filter.left)
-    print("left", left)
+    #print("left", left)
     right = parse_parameter(filter.right)
-    print("right", right)
+    #print("right", right)
     if filter.operator == "equals":
         if right.isdigit():
             return operator.eq(left, int(right))

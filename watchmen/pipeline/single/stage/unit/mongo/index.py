@@ -13,7 +13,7 @@ from watchmen.common.utils.condition_result import ConditionResult
 from watchmen.config.config import settings
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
-    check_condition
+    check_condition, convert_factor_type
 from watchmen.plugin.service.plugin_service import run_plugin
 # from watchmen.routers.admin import DATE_FORMAT, DATE_FORMAT_2
 from watchmen.topic.factor.factor import Factor
@@ -85,7 +85,7 @@ def __run_arithmetic(arithmetic, value):
 
 
 def run_arithmetic_value_list(arithmetic, value_list):
-    print("value_list", value_list)
+    #print("value_list", value_list)
     if type(value_list) == list:
         results = []
         for source_value in value_list:
@@ -109,6 +109,17 @@ def __process_factor_type(target_factor, source_value_list):
             return run_plugin(target_factor.type, source_value_list)
 
 
+def __convert_to_target_value_list(target_factor,source_value_list):
+
+    if isinstance(source_value_list,list):
+        target_value_list = []
+        for source_value in source_value_list:
+            target_value_list.append( convert_factor_type(source_value,target_factor.type))
+        return target_value_list
+    else:
+        return convert_factor_type(source_value_list,target_factor.type)
+
+
 def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
     mapping_results = []
 
@@ -117,11 +128,12 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source))
 
-        print("source_value_list", source_value_list)
+        # print(source_value_list)
         target_factor = get_factor(mapping.factorId, target_topic)
+        target_value_list = __convert_to_target_value_list(target_factor,source_value_list)
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
-        mapping_results.append({target_factor.name: source_value_list})
+        mapping_results.append({target_factor.name: target_value_list})
 
     mapping_data_list = merge_mapping_data(mapping_results)
     return mapping_data_list
@@ -238,7 +250,8 @@ def get_source_factor_value(raw_data, source_factor):
     if is_sub_field(source_factor):
         factor_list = build_factor_list(source_factor)
         # print("factor_list",factor_list)
-        source_value_list = get_factor_value(0, factor_list, raw_data, [])
+        result = []
+        source_value_list = get_factor_value(0, factor_list, raw_data, result)
     else:
         source_value_list = get_value(source_factor, raw_data)
     return source_value_list
@@ -248,7 +261,7 @@ def merge_mapping_data(mapping_results):
     max_value_size = get_max_value_size(mapping_results)
     mapping_data_list = []
 
-    print("mapping_results", mapping_results)
+    #print("mapping_results", mapping_results)
     for i in range(max_value_size):
         mapping_data = {}
         for mapping_result in mapping_results:
@@ -278,17 +291,19 @@ def is_sub_field(factor):
 
 
 def get_factor_value(index, factor_list, raw_data, result):
+    results=[]
     factor = factor_list[index]
     data = get_value(factor, raw_data)
     if type(data) is list:
         for raw in data:
-            get_factor_value(index + 1, factor_list, raw, result)
+            get_factor_value(index + 1, factor_list, raw, results)
     elif type(data) is dict:
-        get_factor_value(index + 1, factor_list, data, result)
+        get_factor_value(index + 1, factor_list, data, results)
     else:
-        result.append(data)
 
-    return result
+        results.append(data)
+
+    return results
 
 
 def __is_current_topic(parameter: Parameter, pipeline_topic: Topic):

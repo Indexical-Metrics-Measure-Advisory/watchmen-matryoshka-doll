@@ -34,7 +34,7 @@ def __convert_presto_type(factor_type):
         return presto_constants.DATE
     elif factor_type == TIME:
         return presto_constants.TIMESTAMP
-    elif factor_type == NUMBER or factor_type:
+    elif factor_type == NUMBER:
         return presto_constants.DECIMAL
     else:
         return presto_constants.VARCHAR
