@@ -48,7 +48,7 @@ def get_topic(topic_name: str) -> Topic:
 
 def load_topic_list_by_name(topic_name: str) -> List[Topic]:
     # return template.find(TOPICS, {"name": regex.Regex(topic_name)}, Topic)
-    where = {"name": regex.Regex(topic_name)}
+    where = {"name": {"like": topic_name}}
     return find_(where, Topic, TOPICS)
 
 

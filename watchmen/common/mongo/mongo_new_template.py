@@ -281,3 +281,9 @@ def topic_data_list_all(topic_name) -> list:
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
     result = topic_data_col.find()
     return list(result)
+
+
+def topic_find_one_and_update(where: dict, updates: dict, name: str):
+    codec_options = build_code_options()
+    collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
+    return collection.find_one_and_update(filter=build_mongo_where_expression(where), update=updates, upsert=True)

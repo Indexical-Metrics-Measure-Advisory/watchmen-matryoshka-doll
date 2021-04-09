@@ -158,3 +158,7 @@ def topic_data_find_(where, topic_name):
 
 def topic_data_list_all(topic_name) -> list:
     return template.topic_data_list_all(topic_name)
+
+
+def topic_find_one_and_update(where: dict, updates: dict, name: str) -> any:
+    return template.topic_find_one_and_update(where, updates, name)
