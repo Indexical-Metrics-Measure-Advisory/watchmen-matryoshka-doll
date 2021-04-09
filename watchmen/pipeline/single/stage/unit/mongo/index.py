@@ -85,7 +85,7 @@ def __run_arithmetic(arithmetic, value):
 
 
 def run_arithmetic_value_list(arithmetic, value_list):
-    #print("value_list", value_list)
+    # print("value_list", value_list)
     if type(value_list) == list:
         results = []
         for source_value in value_list:
@@ -109,15 +109,14 @@ def __process_factor_type(target_factor, source_value_list):
             return run_plugin(target_factor.type, source_value_list)
 
 
-def __convert_to_target_value_list(target_factor,source_value_list):
-
-    if isinstance(source_value_list,list):
+def __convert_to_target_value_list(target_factor, source_value_list):
+    if isinstance(source_value_list, list):
         target_value_list = []
         for source_value in source_value_list:
-            target_value_list.append( convert_factor_type(source_value,target_factor.type))
+            target_value_list.append(convert_factor_type(source_value, target_factor.type))
         return target_value_list
     else:
-        return convert_factor_type(source_value_list,target_factor.type)
+        return convert_factor_type(source_value_list, target_factor.type)
 
 
 def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
@@ -125,12 +124,14 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
 
     for mapping in mapping_list:
         source = mapping.source
-        source_value_list = run_arithmetic_value_list(mapping.arithmetic,
-                                                      get_source_value_list(pipeline_topic, raw_data, source))
-
-        print(source_value_list)
         target_factor = get_factor(mapping.factorId, target_topic)
-        target_value_list = __convert_to_target_value_list(target_factor,source_value_list)
+        source_value_list = run_arithmetic_value_list(mapping.arithmetic,
+                                                      get_source_value_list(pipeline_topic, raw_data, source,
+                                                                            target_factor))
+
+        # print(source_value_list)
+        # target_factor = get_factor(mapping.factorId, target_topic)
+        target_value_list = __convert_to_target_value_list(target_factor, source_value_list)
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
         mapping_results.append({target_factor.name: target_value_list})
@@ -208,9 +209,9 @@ def __process_operator(operator, value_list):
     return result
 
 
-def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
+def __process_compute_kind(source: Parameter, raw_data, pipeline_topic,target_factor=None):
     if __is_date_func(source.type):
-        value_list = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(source.parameters[0]))
+        value_list = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(source.parameters[0]),target_factor)
         if type(value_list) == list:
             result = []
             for value in value_list:
@@ -222,7 +223,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
         operator = __get_operator(source.type)
         value_list = []
         for parameter in source.parameters:
-            value = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(parameter))
+            value = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(parameter),target_factor)
             if type(value) is list:
                 value_list.append(np.array(value))
             else:
@@ -231,7 +232,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic):
         return __process_operator(operator, value_list)
 
 
-def get_source_value_list(pipeline_topic, raw_data, parameter):
+def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target_factor=None):
     if parameter.kind == parameter_constants.TOPIC:
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, source_factor)
@@ -239,9 +240,13 @@ def get_source_value_list(pipeline_topic, raw_data, parameter):
         if parameter.value is None or not parameter.value:
             return None
         else:
-            return Decimal(parameter.value)
+            # print("target_factor",target_factor.type)
+            if target_factor is not None:
+                return convert_factor_type(parameter.value, target_factor.type)
+            else:
+                return parameter.value
     elif parameter.kind == parameter_constants.COMPUTED:
-        return __process_compute_kind(parameter, raw_data, pipeline_topic)
+        return __process_compute_kind(parameter, raw_data, pipeline_topic,target_factor)
     else:
         raise Exception("Unknown source kind {0}".format(parameter.kind))
 
@@ -249,8 +254,11 @@ def get_source_value_list(pipeline_topic, raw_data, parameter):
 def get_source_factor_value(raw_data, source_factor):
     if is_sub_field(source_factor):
         factor_list = build_factor_list(source_factor)
-        # print("factor_list",factor_list)
         source_value_list = get_factor_value(0, factor_list, raw_data, [])
+        if len(source_value_list) == 1:
+            return source_value_list[0]
+        else:
+            return source_value_list
     else:
         source_value_list = get_value(source_factor, raw_data)
     return source_value_list
@@ -260,7 +268,7 @@ def merge_mapping_data(mapping_results):
     max_value_size = get_max_value_size(mapping_results)
     mapping_data_list = []
 
-    #print("mapping_results", mapping_results)
+    # print("mapping_results", mapping_results)
     for i in range(max_value_size):
         mapping_data = {}
         for mapping_result in mapping_results:
@@ -430,9 +438,12 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
                 condition_result.resultList.append(__build_on_condition(filter_condition, topic, data))
             else:
                 left_value_list = get_source_value_list(topic, data, filter_condition.left)
+                print("left_value_list", left_value_list)
                 right_value_list = get_source_value_list(topic, data, filter_condition.right)
+                print("right_value_list", right_value_list)
                 result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
                 condition_result.resultList.append(result)
+        print("condition_result", condition_result)
         return condition_result
 
 

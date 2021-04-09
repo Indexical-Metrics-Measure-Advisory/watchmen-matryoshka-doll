@@ -45,13 +45,14 @@ def init(action: UnitAction, pipeline_topic: Topic):
             conditions = action.by
             joint_type, where_condition = build_query_conditions(conditions, pipeline_topic, raw_data, target_topic,
                                                                  context)
-            source_value_list = get_source_value_list(pipeline_topic, raw_data, action.source)
             target_factor = get_factor(action.factorId, target_topic)
+            source_value_list = get_source_value_list(pipeline_topic, raw_data, action.source,target_factor)
+
             update_data = {target_factor.name: source_value_list}
             mongo_query = __build_mongo_query(joint_type, where_condition)
             condition_factors = {"$set": get_condition_factor_value(raw_data, where_condition, joint_type)}
             if old_value is not None:
-                old_value_list = get_source_value_list(pipeline_topic, old_value, action.source)
+                old_value_list = get_source_value_list(pipeline_topic, old_value, action.source,target_factor)
                 find_and_modify_topic_data(target_topic.name,
                                            mongo_query,
                                            __merge_condition_factor(
