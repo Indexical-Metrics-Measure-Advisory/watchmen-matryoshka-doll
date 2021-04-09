@@ -43,7 +43,7 @@ def get_factor_value_by_subject_and_condition(console_subject,factor_name,filter
     cur.execute(sql)
     rows = cur.fetchall()
     print(rows)
-    # print(cur.description)
+    print(cur.description)
     index = __find_factor_index(cur.description,factor_name)
     # print(rows)
     if index is not None:

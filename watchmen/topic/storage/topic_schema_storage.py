@@ -53,8 +53,9 @@ def load_topic_list_by_name(topic_name: str) -> List[Topic]:
 
 
 def load_topic_by_name(topic_name: str) -> Topic:
-    return template.find_one(TOPICS, {"name": topic_name}, Topic)
 
+    # return template.find_one(TOPICS, {"name": topic_name}, Topic)
+    return find_one({"name": topic_name},Topic,TOPICS)
 
 def check_topic_exist(topic_name: str, topic_type: str) -> bool:
     '''
@@ -78,6 +79,7 @@ def get_topic_by_id(topic_id: str) -> Topic:
 
 def get_topic_list_by_ids(topic_ids: List[str]) -> List[Topic]:
     # return template.find(TOPICS, {"topicId": {"$in": topic_ids}}, Topic)
+    print(topic_ids)
     where = {"topicId": {"in": topic_ids}}
     return find_(where, Topic, TOPICS)
 
