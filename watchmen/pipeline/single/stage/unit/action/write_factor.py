@@ -36,7 +36,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
         unit_action_status = WriteFactorAction(type=action.type)
         start = time.time()
-        # pipeline_uid = context[PIPELINE_UID]
 
         if action.topicId is not None:
             target_topic = get_topic_by_id(action.topicId)
