@@ -70,7 +70,7 @@ def run_pipeline(pipeline: Pipeline, data):
                 pipeline_status.completeTime = elapsed_time
                 pipeline_status.status = FINISHED
                 log.debug("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))
-                print(context)
+                # print(context)
 
             except Exception as e:
                 log.exception(e)
