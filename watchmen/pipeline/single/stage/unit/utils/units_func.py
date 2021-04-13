@@ -126,7 +126,7 @@ def convert_factor_type(value, factor_type):
     elif factor_type == NUMBER:
         return Decimal(value)
     elif factor_type == DATETIME:
-        if isinstance(value,datetime):
+        if isinstance(value, datetime):
             return value
         else:
             return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)

@@ -6,7 +6,6 @@ from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE
 
 
-
 def insert_topic_data(topic_name, mapping_result, pipeline_uid):
     """
     collection_name = build_collection_name(topic_name)
