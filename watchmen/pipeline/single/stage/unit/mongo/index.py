@@ -505,9 +505,9 @@ def __process_where_condition(where_condition):
     if where_condition[pipeline_constants.OPERATOR] == parameter_constants.EQUALS:
         return {where_condition[pipeline_constants.NAME].name: where_condition[pipeline_constants.VALUE]}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.EMPTY:
-        return {where_condition[pipeline_constants.NAME].name: None}
+        return {where_condition[pipeline_constants.NAME].name: {"$eq": None}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EMPTY:
-        return {where_condition[pipeline_constants.NAME].name: {"$exists": True}}
+        return {where_condition[pipeline_constants.NAME].name: {"$ne": None}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EQUALS:
         return {where_condition[pipeline_constants.NAME].name: {"$ne": where_condition[pipeline_constants.VALUE]}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE:
