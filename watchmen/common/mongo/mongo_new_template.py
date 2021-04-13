@@ -99,7 +99,8 @@ def insert_one(one, model, name):
 
 def insert_all(data, model, name):
     collection = client.get_collection(name)
-    collection.insert_many(__convert_to_dict(data))
+    collection.insert_many(__convert_list_to_dict(data))
+    return data
 
 
 def update_one(one, model, name) -> any:
@@ -160,6 +161,10 @@ def find_one(where: dict, model, name: str):
         return model.parse_obj(result)
 
 
+def drop_(name:str):
+    return client.get_collection(name).drop()
+
+
 def find_(where: dict, model, name: str) -> list:
     collection = client.get_collection(name)
     cursor = collection.find(build_mongo_where_expression(where))
@@ -216,6 +221,13 @@ def page_(where, sort, pageable, model, name) -> DataPage:
         return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
     else:
         return build_data_pages(pageable, list(cursor), total)
+
+
+def __convert_list_to_dict(items:list):
+    result= []
+    for item in items:
+        result.append(__convert_to_dict(item))
+    return result
 
 
 def __convert_to_dict(instance) -> dict:
