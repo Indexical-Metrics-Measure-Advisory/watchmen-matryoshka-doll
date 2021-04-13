@@ -93,6 +93,7 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
         query_monitor.success = False
     finally:
         await save_query_monitor_data(query_monitor)
+        return [],0
 
 
 async def save_query_monitor_data(query_monitor):

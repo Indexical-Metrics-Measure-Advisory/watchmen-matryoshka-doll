@@ -30,6 +30,11 @@ class ReadFactorAction(UnitActionStatus):
     value: Any = None
 
 
+class CopyToMemoryAction(UnitActionStatus):
+    type: str = "CopyToMemory"
+    value: Any = None
+
+
 class WriteFactorAction(UnitActionStatus):
     type: str = "WriteFactor"
     value: Any = None
