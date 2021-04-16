@@ -2,6 +2,7 @@ import logging
 
 import pymongo
 from bson import regex, ObjectId
+from pymongo import ReturnDocument
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.mongo.index import build_code_options
@@ -10,6 +11,7 @@ from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
 
 client = get_client()
+
 
 log = logging.getLogger("app." + __name__)
 
@@ -298,4 +300,4 @@ def topic_data_list_all(topic_name) -> list:
 def topic_find_one_and_update(where: dict, updates: dict, name: str):
     codec_options = build_code_options()
     collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
-    return collection.find_one_and_update(filter=build_mongo_where_expression(where), update=updates, upsert=True)
+    return collection.find_one_and_update(filter=build_mongo_where_expression(where), update=updates, upsert=True,return_document=ReturnDocument.AFTER)

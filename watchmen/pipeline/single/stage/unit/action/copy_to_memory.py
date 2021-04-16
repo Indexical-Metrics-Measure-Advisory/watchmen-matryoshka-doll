@@ -17,6 +17,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
         context[context_target_name] = value_list
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
-        return context, unit_action_status
+        return context, unit_action_status,[]
 
     return copy_to_memory
