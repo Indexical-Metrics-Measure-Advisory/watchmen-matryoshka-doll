@@ -86,11 +86,11 @@ def create_model_schema(model_schema_set, name, record, is_root):
                 if check_value_type(value) == ValueType.LIST.value or check_value_type(
                         value) == ValueType.DICT.value:
                     create_schema(model_schema_set, key, value, False)
-                else:
-                    if check_value_duplicate(model_schema.businessFields[key].values, value):
-                        continue
-                    else:
-                        model_schema.businessFields[key].values.append(value)
+                # else:
+                #     if check_value_duplicate(model_schema.businessFields[key].values, value):
+                #         continue
+                #     else:
+                #         model_schema.businessFields[key].values.append(value)
             else:
                 model_field = create_model_field(model_schema_set, model_schema, key, value)
                 model_schema.businessFields[model_field.name] = model_field
@@ -112,7 +112,7 @@ def create_model_field(model_schema_set, model_schema, key, value):
         'field_id': get_surrogate_key(),
         'name': key,
         'type': check_value_type(value),
-        'values': [value]
+        # 'values': [value]
     })
     if type(value) == list and len(value) == 0:
         return model_filed

@@ -21,14 +21,17 @@ def _from(column: Column) -> QueryBuilder:
     return Query.from_(Table(topic_col_name))
 
 
-def parse_parameter(parameter: Parameter):
+def parse_parameter(parameter: Parameter,factor=None):
     if parameter.kind == "topic":
         topic = get_topic_by_id(parameter.topicId)
         topic_col_name = build_collection_name(topic.name)
         factor = get_factor(parameter.factorId, topic)
         return Table(topic_col_name)[factor.name]
     elif parameter.kind == 'constant':
-        return parameter.value
+        # if factor.type =="text":
+        #     return "\'"+parameter.value+"\'"
+        # else:
+            return parameter.value
     elif parameter.kind == 'computed':
         if parameter.type == Operator.add:
             result = None
@@ -108,7 +111,7 @@ def _join(q: QueryBuilder, join: Join) -> QueryBuilder:
 def _filter(q: QueryBuilder, filter: Filter) -> QueryBuilder:
     if len(filter.filters) > 0:
         where = _connective_filter(filter)
-        #print(where)
+        # print(where)
         return q.where(where)
     else:
         return q
@@ -124,7 +127,7 @@ def _connective_filter(filter: Filter):
         if item.jointType:
             criterion_list.append(_connective_filter(item))
         else:
-           # print(item)
+            # print(item)
             criterion_list.append(_filter_criterion(item))
 
     if filter.jointType == ConnectiveType.and_type:
@@ -146,14 +149,19 @@ def _connective_filter(filter: Filter):
 
 def _filter_criterion(filter: Filter) -> any:
     left = parse_parameter(filter.left)
-    #print("left", left)
-    right = parse_parameter(filter.right)
-    #print("right", right)
+
+    topic = get_topic_by_id(filter.left.topicId)
+    factor = get_factor(filter.left.factorId, topic)
+    # print("left", left)
+    # print("type",type(left))
+    right = parse_parameter(filter.right,factor)
+    # print("right", right)
+    # print("type", type(right))
     if filter.operator == "equals":
-        if right.isdigit():
-            return operator.eq(left, int(right))
-        else:
-            return operator.eq(left, right)
+        # if right.isdigit():
+        #     return operator.eq(left, int(right))
+        # else:
+        return operator.eq(left, right)
     elif filter.operator == "not-equals":
         if right.isdigit():
             return left.__ne__(int(right))

@@ -99,7 +99,7 @@ def get_primary_key(table_name):
         return 'userId'
     elif table_name == 'console_dashboards':
         return 'dashboardId'
-    elif table_name == 'enum_items':
+    elif table_name == 'enums':
         return 'enumId'
     elif table_name == 'pipelines':
         return 'pipelineId'

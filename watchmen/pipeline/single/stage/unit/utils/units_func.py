@@ -104,9 +104,9 @@ def check_condition(operator: str, left_value, right_value) -> bool:
     elif operator == "not-empty":
         return left_value is not None
     elif operator == "in":
-        return left_value in __split_value(right_value)
+        return left_value in right_value
     elif operator == "not-in":
-        return left_value not in __split_value(right_value)
+        return left_value not in right_value
     else:
         raise Exception("NotImplemented:", operator)
 
@@ -124,9 +124,11 @@ def convert_factor_type(value, factor_type):
     elif factor_type == TEXT:
         return str(value)
     elif factor_type == NUMBER:
+        # print("value",value)
+        # print("type",type(value))
         return Decimal(value)
     elif factor_type == DATETIME:
-        if isinstance(value,datetime):
+        if isinstance(value, datetime):
             return value
         else:
             return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)

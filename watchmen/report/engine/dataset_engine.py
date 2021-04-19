@@ -39,11 +39,11 @@ def get_factor_value_by_subject_and_condition(console_subject, factor_name, filt
     conn = get_connection()
     cur = conn.cursor()
     sql = query.get_sql()
-    #print(sql)
+    # print(sql)
     cur.execute(sql)
     rows = cur.fetchall()
-    #print(rows)
-    #print(cur.description)
+    # print(rows)
+    # print(cur.description)
     index = __find_factor_index(cur.description, factor_name)
     # print(rows)
     if index is not None:
@@ -93,6 +93,7 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
         query_monitor.success = False
     finally:
         await save_query_monitor_data(query_monitor)
+        # return [],0
 
 
 async def save_query_monitor_data(query_monitor):

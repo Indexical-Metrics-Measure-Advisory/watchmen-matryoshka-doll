@@ -30,14 +30,13 @@ def init(action: UnitAction, pipeline_topic: Topic):
         mapping_results = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic)
         log.debug("mapping_results:{0}".format(mapping_results))
         unit_action_status.mapping = mapping_results
+        trigger_pipeline_data_list =[]
         for index, item in enumerate(mapping_results):
-            insert_topic_data(target_topic.name, item, pipeline_uid)
+            trigger_pipeline_data_list.append(insert_topic_data(target_topic.name, item, pipeline_uid))
             unit_action_status.insertCount = unit_action_status.insertCount + 1
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
-        return context, unit_action_status
-
-
+        return context, unit_action_status,trigger_pipeline_data_list
 
     return insert_topic

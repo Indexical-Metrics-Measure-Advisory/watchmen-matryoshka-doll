@@ -1,7 +1,6 @@
 import logging
 import statistics
 from datetime import datetime
-from decimal import Decimal
 from functools import reduce
 
 import numpy as np
@@ -13,7 +12,7 @@ from watchmen.common.utils.condition_result import ConditionResult
 from watchmen.config.config import settings
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
-    check_condition, convert_factor_type
+    check_condition, convert_factor_type, __split_value, SPLIT_FLAG
 from watchmen.plugin.service.plugin_service import run_plugin
 # from watchmen.routers.admin import DATE_FORMAT, DATE_FORMAT_2
 from watchmen.topic.factor.factor import Factor
@@ -209,9 +208,10 @@ def __process_operator(operator, value_list):
     return result
 
 
-def __process_compute_kind(source: Parameter, raw_data, pipeline_topic,target_factor=None):
+def __process_compute_kind(source: Parameter, raw_data, pipeline_topic, target_factor=None):
     if __is_date_func(source.type):
-        value_list = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(source.parameters[0]),target_factor)
+        value_list = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(source.parameters[0]),
+                                           target_factor)
         if type(value_list) == list:
             result = []
             for value in value_list:
@@ -223,7 +223,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic,target_fa
         operator = __get_operator(source.type)
         value_list = []
         for parameter in source.parameters:
-            value = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(parameter),target_factor)
+            value = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(parameter), target_factor)
             if type(value) is list:
                 value_list.append(np.array(value))
             else:
@@ -232,7 +232,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic,target_fa
         return __process_operator(operator, value_list)
 
 
-def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target_factor=None):
+def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target_factor=None, context=None):
     if parameter.kind == parameter_constants.TOPIC:
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, source_factor)
@@ -240,13 +240,25 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
         if parameter.value is None or not parameter.value:
             return None
         else:
-            # print("target_factor",target_factor.type)
-            if target_factor is not None:
-                return convert_factor_type(parameter.value, target_factor.type)
+            variable_type, context_target_name = process_variable(parameter.value)
+            if variable_type == "memory":
+                return context[context_target_name]
             else:
-                return parameter.value
+                if target_factor is not None:
+                    if SPLIT_FLAG in parameter.value:
+                        value_list = __split_value(parameter.value)
+                        result = []
+                        for value in value_list:
+                            result.append(convert_factor_type(value, target_factor.type))
+                        return result
+                    else:
+                        return convert_factor_type(parameter.value, target_factor.type)
+                else:
+                    return parameter.value
+            # else:
+            #
     elif parameter.kind == parameter_constants.COMPUTED:
-        return __process_compute_kind(parameter, raw_data, pipeline_topic,target_factor)
+        return __process_compute_kind(parameter, raw_data, pipeline_topic, target_factor)
     else:
         raise Exception("Unknown source kind {0}".format(parameter.kind))
 
@@ -307,7 +319,10 @@ def get_factor_value(index, factor_list, raw_data, result):
     elif type(data) is dict:
         get_factor_value(index + 1, factor_list, data, result)
     else:
-        result.append(data)
+        if data is None and factor.defaultValue is not None:
+            result.append( convert_factor_type(factor.defaultValue,factor.type))
+        else:
+            result.append(data)
 
     return result
 
@@ -328,11 +343,21 @@ def __get_source_and_target_parameter(condition, pipeline_topic: Topic):
         return None, None
 
 
-def __process_parameter_constants(parameter: Parameter, context):
+def __process_parameter_constants(parameter: Parameter, context, target_factor=None):
     variable_type, context_target_name = process_variable(parameter.value)
     if variable_type == parameter_constants.CONSTANT:
-        # print("parameter",parameter.value)
-        return Decimal(parameter.value)
+        if target_factor is not None:
+            if SPLIT_FLAG in parameter.value:
+                value_list = __split_value(parameter.value)
+                result = []
+                for value in value_list:
+                    result.append(convert_factor_type(value, target_factor.type))
+                return result
+            else:
+                return convert_factor_type(parameter.value, target_factor.type)
+        else:
+            return parameter.value
+
     elif variable_type == parameter_constants.MEMORY:
         if context_target_name in context:
             return context[context_target_name]
@@ -342,7 +367,16 @@ def __process_parameter_constants(parameter: Parameter, context):
         raise ValueError("variable_type is invalid")
 
 
-def build_parameter_condition(parameter: Parameter, pipeline_topic: Topic, target_topic: Topic, raw_data, context):
+def __get_factor_for_condition(parameter, pipeline_topic, target_topic):
+    if parameter.kind == parameter_constants.TOPIC:
+        if __is_current_topic(parameter, pipeline_topic):
+            return get_factor(parameter.factorId, pipeline_topic)
+        elif __is_current_topic(parameter, target_topic):
+            return get_factor(parameter.factorId, target_topic)
+
+
+def build_parameter_condition(parameter: Parameter, pipeline_topic: Topic, target_topic: Topic, raw_data, context,
+                              type_factor=None):
     if parameter.kind == parameter_constants.TOPIC:
         if __is_current_topic(parameter, pipeline_topic):
             return {pipeline_constants.VALUE: get_source_value_list(pipeline_topic, raw_data, parameter)}
@@ -350,7 +384,7 @@ def build_parameter_condition(parameter: Parameter, pipeline_topic: Topic, targe
             target_factor = get_factor(parameter.factorId, target_topic)
             return {pipeline_constants.NAME: target_factor}
     elif parameter.kind == parameter_constants.CONSTANT:
-        return {pipeline_constants.VALUE: __process_parameter_constants(parameter, context)}
+        return {pipeline_constants.VALUE: __process_parameter_constants(parameter, context, type_factor)}
     elif parameter.kind == parameter_constants.COMPUTED:
         if __is_date_func(parameter.type):
             return {pipeline_constants.VALUE: __process_compute_date(parameter, pipeline_topic, raw_data)}
@@ -390,10 +424,11 @@ def __process_compute_date(parameter, pipeline_topic, raw_data):
 
 def __process_condition(condition, pipeline_topic, target_topic, raw_data, context):
     where = {pipeline_constants.OPERATOR: condition.operator}
+    factor = __get_factor_for_condition(condition.left, pipeline_topic, target_topic)
     process_parameter_result(build_parameter_condition(condition.left, pipeline_topic, target_topic, raw_data, context),
                              where)
     process_parameter_result(
-        build_parameter_condition(condition.right, pipeline_topic, target_topic, raw_data, context), where)
+        build_parameter_condition(condition.right, pipeline_topic, target_topic, raw_data, context, factor), where)
     return where
 
 
@@ -429,6 +464,11 @@ def __convert_to_list(value):
         pass
 
 
+def __get_condition_factor(parameter: Parameter, topic):
+    if parameter.kind == parameter_constants.TOPIC:
+        return get_factor(parameter.factorId, topic)
+
+
 def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
     if parameter_joint.filters:
         joint_type = parameter_joint.jointType
@@ -438,12 +478,14 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
                 condition_result.resultList.append(__build_on_condition(filter_condition, topic, data))
             else:
                 left_value_list = get_source_value_list(topic, data, filter_condition.left)
-
-                right_value_list = get_source_value_list(topic, data, filter_condition.right)
-
+                # log.info("left_value_list:{0}".format(type(left_value_list)))
+                factor = __get_condition_factor(filter_condition.left, topic)
+                right_value_list = get_source_value_list(topic, data, filter_condition.right,
+                                                         factor)
+                # log.info("right_value_list:{0}".format(type(right_value_list)))
                 result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
                 condition_result.resultList.append(result)
-        log.debug("condition_result:{0}".format(condition_result))
+        log.info("condition_result:{0}".format(condition_result))
         return condition_result
 
 
@@ -482,6 +524,7 @@ def __check_condition(condition_holder: Conditional, pipeline_topic, data):
 
 def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list=None):
     # print("arithmetic",arithmetic)
+    # print(update_data)
     if arithmetic == "sum":
         if old_value_list is not None:
             dif_update_value = {target_factor.name: update_data[target_factor.name] - old_value_list}
@@ -494,21 +537,22 @@ def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list=
         else:
             return {"$inc": {target_factor.name: 1}}
     ## TODO re-factor max and min
+
     elif arithmetic == "max":
         return {"$max": update_data}
     elif arithmetic == "min":
         return {"$min": update_data}
     else:
-        return update_data
+        return {"$set": update_data}
 
 
 def __process_where_condition(where_condition):
     if where_condition[pipeline_constants.OPERATOR] == parameter_constants.EQUALS:
         return {where_condition[pipeline_constants.NAME].name: where_condition[pipeline_constants.VALUE]}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.EMPTY:
-        return {where_condition[pipeline_constants.NAME].name: None}
+        return {where_condition[pipeline_constants.NAME].name: {"$eq": None}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EMPTY:
-        return {where_condition[pipeline_constants.NAME].name: {"$exists": True}}
+        return {where_condition[pipeline_constants.NAME].name: {"$ne": None}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EQUALS:
         return {where_condition[pipeline_constants.NAME].name: {"$ne": where_condition[pipeline_constants.VALUE]}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE:

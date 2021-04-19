@@ -40,7 +40,7 @@ def insert_one(one: any, model: BaseModel, name: str) -> BaseModel:
 
 
 def insert_all(data: list, model: BaseModel, name: str):
-    template.insert_all(data, model, name)
+    return template.insert_all(data, model, name)
 
 
 def update_one(one: any, model: BaseModel, name: str) -> any:
@@ -69,6 +69,10 @@ def delete_(where: dict, model: BaseModel, name: str):
 
 def delete_all(model: BaseModel, name: str) -> list:
     raise NotImplementedError("delete_all not implemented")
+
+
+def drop_(name:str):
+    template.drop_(name)
 
 
 def find_by_id(id_: str, model: BaseModel, name: str) -> BaseModel:

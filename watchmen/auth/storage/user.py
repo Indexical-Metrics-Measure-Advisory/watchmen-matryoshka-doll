@@ -35,7 +35,7 @@ def load_user_list_by_name(query_name):
     # result = users.find({"name": regex.Regex(query_name)})
     # return list(result)
     # return template.find(USERS, {"name": regex.Regex(query_name)}, User)
-    find_({"name": {"like": query_name}}, User, USERS)
+    return find_({"name": {"like": query_name}}, User, USERS)
 
 
 def load_user_by_name(user_name):
@@ -64,4 +64,4 @@ def query_users_by_name_with_pagination(query_name: str, pagination: Pagination)
 
 def import_user_to_db(user):
     # template.create(USERS, user, User)
-    insert_one(user, User, USERS)
+    return insert_one(user, User, USERS)

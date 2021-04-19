@@ -412,7 +412,7 @@ async def create_raw_topic_schema(topic_name: str, data_list: List = Body(...)):
     json_list = []
     for data in data_list:
         json_list.append(json.loads(data))
-   # print(len(json_list))
+    # print(len(json_list))
     result = create_raw_data_model_set(topic_name, json_list)
     return build_topic(result)
 
@@ -453,5 +453,5 @@ async def query_log_by_critical(query: MonitorLogQuery):
     else:
         query_dict = query_list[0]
 
-    #print(query_dict)
+    # print(query_dict)
     return query_pipeline_monitor(build_collection_name("raw_pipeline_monitor"), query_dict, query.pagination)

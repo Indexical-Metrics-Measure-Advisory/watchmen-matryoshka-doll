@@ -28,18 +28,20 @@ def init(action: UnitAction, pipeline_topic: Topic):
         joint_type, where_condition = build_query_conditions(action.by, pipeline_topic, raw_data, target_topic, context)
         unit_action_status.whereConditions = where_condition
         unit_action_status.mapping = mapping_results
+        trigger_pipeline_data_list = []
         for index, mapping_result in enumerate(mapping_results):
             mongo_query = __build_mongo_query(joint_type, index_conditions(where_condition, index))
             target_data = query_topic_data(mongo_query, target_topic.name)
             if target_data is None:
-                insert_topic_data(target_topic.name, mapping_result, pipeline_uid)
+                trigger_pipeline_data_list.append(insert_topic_data(target_topic.name, mapping_result, pipeline_uid))
                 unit_action_status.insertCount = unit_action_status.insertCount + 1
             else:
-                update_topic_data(target_topic.name, mapping_result, target_data, pipeline_uid)
+                trigger_pipeline_data_list.append(
+                    update_topic_data(target_topic.name, mapping_result, target_data, pipeline_uid))
                 unit_action_status.updateCount = unit_action_status.updateCount + 1
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
-        return context, unit_action_status
+        return context, unit_action_status, trigger_pipeline_data_list
 
     return merge_or_insert_topic

@@ -73,7 +73,7 @@ def is_presto_varchar_type(factor_type):
 def is_presto_int_type(factor_type):
     date_types = [HALF_YEAR, QUARTER, SEASON, MONTH, HALF_MONTH, TEN_DAYS, WEEK_OF_YEAR, WEEK_OF_MONTH, HALF_WEEK,
                   DAY_OF_MONTH, DAY_OF_WEEK,
-                  DAY_KIND, HOUR, HOUR_KIND, MINUTE, SECOND, AM_PM, UNSIGNED,SEQUENCE]
+                  DAY_KIND, HOUR, HOUR_KIND, MINUTE, SECOND, AM_PM, UNSIGNED, SEQUENCE]
     if factor_type in date_types:
         return True
     else:
