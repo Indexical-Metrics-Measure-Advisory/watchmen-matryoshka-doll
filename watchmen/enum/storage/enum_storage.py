@@ -86,7 +86,7 @@ def query_enum_list_with_pagination(query_name: str, pagination: Pagination) -> 
     return template.query_with_pagination(ENUMS, pagination, Enum, query_dict={"name": regex.Regex(query_name)},
                                           sort_dict=["last_modified", pymongo.DESCENDING])
     '''
-    return page_({"name": {"like": query_name}}, [("last_modified", "desc")], pagination, Enum, ENUMS)
+    return page_({"name": {"like": query_name}}, [("lastmodified", "desc")], pagination, Enum, ENUMS)
 
 
 def load_enum_list():

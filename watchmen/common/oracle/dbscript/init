@@ -1,0 +1,14 @@
+
+ CREATE TABLE users (
+  userId VARCHAR2(60) NOT NULL,
+  name VARCHAR2(45) NULL,
+  nickName VARCHAR2(45) NULL,
+  password VARCHAR2(45) NULL,
+  description VARCHAR2(45) NULL,
+  is_active VARCHAR2 (1) NULL,
+  groupIds VARCHAR2(50) NULL,
+  role VARCHAR2(45),
+  createTime TIMESTAMP NULL,
+  last_modified TIMESTAMP NULL,
+  PRIMARY KEY (userId),
+  CONSTRAINT users_groupIds_json CHECK (groupIds IS JSON));

@@ -38,6 +38,13 @@ class Settings(BaseSettings):
     MYSQL_POOL_MINCACHED = 2
     MYSQL_POOL_MAXCACHED = 5
 
+    ORACLE_LIB_DIR: str = ""
+    ORACLE_HOST: str = ""
+    ORACLE_PORT: int = 1521
+    ORACLE_USER: str = ""
+    ORACLE_PASSWORD: str = ""
+    ORACLE_SERVICE: str = "XE"
+
     NOTIFIER_PROVIDER = "email"
     EMAILS_ENABLED: bool = False
     SMTP_TLS: bool = True
@@ -69,6 +76,18 @@ class Settings(BaseSettings):
             )
             if not result:
                 raise ValueError("STORAGE_ENGINE dependency check MYSQL_HOST and MYSQL_PORT and MYSQL_USER")
+            else:
+                return v
+        elif v == "oracle":
+            result = bool(
+                values.get("ORACLE_HOST")
+                and values.get("ORACLE_PORT")
+                and values.get("ORACLE_USER")
+                and values.get("ORACLE_LIB_DIR")
+                and values.get("ORACLE_SERVICE")
+            )
+            if not result:
+                raise ValueError("STORAGE_ENGINE dependency check ORACLE_HOST and ORACLE_PORT and ORACLE_USER")
             else:
                 return v
 

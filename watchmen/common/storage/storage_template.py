@@ -121,7 +121,7 @@ for topic data storage interface
 
 
 def create_topic_data_table(topic):
-    pass
+    template.create_topic_data_table(topic)
 
 
 def create_topic_data_table_index(name: str, index_name: list, index_type: str):
@@ -129,7 +129,7 @@ def create_topic_data_table_index(name: str, index_name: list, index_type: str):
 
 
 def alter_topic_data_table(topic):
-    pass
+    template.alter_topic_data_table(topic)
 
 
 def topic_data_insert_one(one: any, topic_name: str) -> tuple:

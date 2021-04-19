@@ -1,0 +1,125 @@
+from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime
+
+metadata = MetaData()
+
+users_table = Table("users", metadata,
+                    Column('userid', String(60), primary_key=True),
+                    Column('name', String(45), nullable=False),
+                    Column('nickname', String(45), nullable=True),
+                    Column('password', String(100), nullable=True),
+                    Column('is_active', String(5), nullable=True),
+                    Column('groupids', CLOB, nullable=True),
+                    Column('role', String(45), nullable=True),
+                    Column('createtime', String(50), nullable=True),
+                    Column('lastmodified', Date, nullable=True)
+                    )
+
+console_space_last_snapshot_table = Table("console_space_last_snapshot", metadata,
+                                          Column('userid', String(60), primary_key=True),
+                                          Column('language', String(5), nullable=True),
+                                          Column('lastdashboardid', String(25), nullable=True),
+                                          Column('admindashboardid', String(25), nullable=True),
+                                          Column('favoritepin', String(5), nullable=True),
+                                          Column('createtime', String(50), nullable=True),
+                                          Column('lastmodified', Date, nullable=True)
+                                          )
+
+console_dashboards_table = Table("console_dashboards", metadata,
+                                 Column('dashboardid', String(60), primary_key=True),
+                                 Column('name', String(25), nullable=False),
+                                 Column('reports', CLOB, nullable=True),
+                                 Column('paragraphs', CLOB, nullable=True),
+                                 Column('lastvisittime', String(25), nullable=False),
+                                 Column('userid', String(60), nullable=False),
+                                 Column('createtime', String(50), nullable=True),
+                                 Column('lastmodified', DateTime, nullable=True)
+                                 )
+
+topics_table = Table("topics", metadata,
+                     Column("topicid", String(60), primary_key=True),
+                     Column("name", String(25), nullable=False),
+                     Column("kind", String(10), nullable=True),
+                     Column("type", String(10), nullable=True),
+                     Column("description", String(50), nullable=True),
+                     Column("factors", CLOB, nullable=True),
+                     Column('createtime', String(50), nullable=True),
+                     Column('last_modified', DateTime, nullable=True),
+                     Column('lastmodified', DateTime, nullable=True)
+                     )
+
+enums_table = Table("enums", metadata,
+                    Column("enumid", String(60), primary_key=True),
+                    Column("name", String(25), nullable=False),
+                    Column("description", String(25), nullable=True),
+                    Column("parentenumid", String(60), nullable=True),
+                    Column("items", CLOB, nullable=True),
+                    Column('createtime', String(50), nullable=True),
+                    Column('lastmodified', DateTime, nullable=True)
+                    )
+
+spaces_table = Table("spaces", metadata,
+                     Column("spaceid", String(60), primary_key=True),
+                     Column("topicids", CLOB, nullable=True),
+                     Column("groupids", CLOB, nullable=True),
+                     Column("name", String(25), nullable=False),
+                     Column("description", String(25), nullable=True),
+                     Column('createtime', String(50), nullable=True),
+                     Column('last_modified', DateTime, nullable=True),
+                     Column('lastmodified', DateTime, nullable=True)
+                     )
+
+console_space_favorites_table = Table("console_space_favorites", metadata,
+                                      Column("userid", String(60), primary_key=True),
+                                      Column("connectedspaceids", CLOB, nullable=True),
+                                      Column("dashboardids", CLOB, nullable=True),
+                                      Column('createtime', String(50), nullable=True),
+                                      Column('last_modified', DateTime, nullable=True),
+                                      Column('lastmodified', DateTime, nullable=True)
+                                      )
+
+console_space_graph_table = Table("console_space_graph", metadata,
+                                  Column("connectid", String(60), primary_key=True),
+                                  Column("topics", CLOB, nullable=True),
+                                  Column("subjects", CLOB, nullable=True),
+                                  Column("userid", String(60), nullable=False),
+                                  Column('createtime', String(50), nullable=True),
+                                  Column('last_modified', DateTime, nullable=True),
+                                  Column('lastmodified', DateTime, nullable=True)
+                                  )
+
+console_spaces_table = Table("console_spaces", metadata,
+                             Column("spaceid", String(60), primary_key=True),
+                             Column("topics", CLOB, nullable=True),
+                             Column("groupids", CLOB, nullable=True),
+                             Column("name", String(25), nullable=False),
+                             Column("connectid", String(25), nullable=False),
+                             Column("type", String(10), nullable=True),
+                             Column('lastvisittime', DateTime, nullable=True),
+                             Column("userid", String(60), nullable=True),
+                             Column("subjectids", CLOB, nullable=True),
+                             Column("subjects", CLOB, nullable=True),
+                             Column('createtime', String(50), nullable=True),
+                             Column('last_modified', DateTime, nullable=True),
+                             Column('lastmodified', DateTime, nullable=True)
+                             )
+
+
+def get_table_by_name(table_name):
+    if table_name == "users":
+        return users_table
+    elif table_name == "console_space_last_snapshot":
+        return console_space_last_snapshot_table
+    elif table_name == "console_dashboards":
+        return console_dashboards_table
+    elif table_name == "topics":
+        return topics_table
+    elif table_name == "enums":
+        return enums_table
+    elif table_name == "spaces":
+        return spaces_table
+    elif table_name == "console_space_favorites":
+        return console_space_favorites_table
+    elif table_name == "console_space_graph":
+        return console_space_graph_table
+    elif table_name == "console_spaces":
+        return console_spaces_table

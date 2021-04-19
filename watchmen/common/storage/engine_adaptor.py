@@ -13,4 +13,5 @@ def find_template():
         from watchmen.common.mysql import mysql_template
         return mysql_template
     elif settings.STORAGE_ENGINE == ORACLE:
-        raise Exception("do not support Oracle")
+        from watchmen.common.oracle import oracle_template
+        return oracle_template
