@@ -250,6 +250,14 @@ for topic data impl
 '''
 
 
+def create_topic_data_table(topic):
+    pass
+
+
+def alter_topic_data_table(topic):
+    pass
+
+
 # save_topic_instance, insert one
 def topic_data_insert_one(one, topic_name):
     codec_options = build_code_options()

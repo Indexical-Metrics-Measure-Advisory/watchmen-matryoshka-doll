@@ -76,8 +76,11 @@ def get_topic_by_id(topic_id: str) -> Topic:
 def get_topic_list_by_ids(topic_ids: List[str]) -> List[Topic]:
     # return template.find(TOPICS, {"topicId": {"$in": topic_ids}}, Topic)
     # print(topic_ids)
-    where = {"topicId": {"in": topic_ids}}
-    return find_(where, Topic, TOPICS)
+    if len(topic_ids) > 0:
+        where = {"topicId": {"in": topic_ids}}
+        return find_(where, Topic, TOPICS)
+    else:
+        return list_all(Topic, TOPICS)
 
 
 def query_topic_list_with_pagination(query_name: str, pagination: Pagination) -> DataPage:
