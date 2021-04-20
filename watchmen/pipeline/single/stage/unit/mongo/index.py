@@ -242,7 +242,11 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
         else:
             variable_type, context_target_name = process_variable(parameter.value)
             if variable_type == "memory":
-                return context[context_target_name]
+                # print("context2",context)
+                if context_target_name in context:
+                    return context[context_target_name]
+                else:
+                    return None
             else:
                 if target_factor is not None:
                     if SPLIT_FLAG in parameter.value:
@@ -469,7 +473,7 @@ def __get_condition_factor(parameter: Parameter, topic):
         return get_factor(parameter.factorId, topic)
 
 
-def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
+def __build_on_condition(parameter_joint: ParameterJoint, topic, data,context=None):
     if parameter_joint.filters:
         joint_type = parameter_joint.jointType
         condition_result = ConditionResult(logicOperator=joint_type)
@@ -477,11 +481,11 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data):
             if filter_condition.jointType is not None:
                 condition_result.resultList.append(__build_on_condition(filter_condition, topic, data))
             else:
-                left_value_list = get_source_value_list(topic, data, filter_condition.left)
+                left_value_list = get_source_value_list(topic, data, filter_condition.left,context=context)
                 # log.info("left_value_list:{0}".format(type(left_value_list)))
                 factor = __get_condition_factor(filter_condition.left, topic)
                 right_value_list = get_source_value_list(topic, data, filter_condition.right,
-                                                         factor)
+                                                         factor,context)
                 # log.info("right_value_list:{0}".format(type(right_value_list)))
                 result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
                 condition_result.resultList.append(result)
@@ -514,10 +518,10 @@ def __check_on_condition(match_result: ConditionResult) -> bool:
         raise NotImplemented("not support {0}".format(match_result.logicOperator))
 
 
-def __check_condition(condition_holder: Conditional, pipeline_topic, data):
+def __check_condition(condition_holder: Conditional, pipeline_topic, data,context=None):
     if condition_holder.conditional and condition_holder.on is not None:
         condition: ParameterJoint = condition_holder.on
-        return __check_on_condition(__build_on_condition(condition, pipeline_topic, data[pipeline_constants.NEW]))
+        return __check_on_condition(__build_on_condition(condition, pipeline_topic, data[pipeline_constants.NEW],context))
     else:
         return True
 

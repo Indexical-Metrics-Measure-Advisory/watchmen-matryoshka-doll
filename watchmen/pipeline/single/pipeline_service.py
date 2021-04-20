@@ -115,7 +115,7 @@ def run_pipeline(pipeline: Pipeline, data):
                         for unit in stage.units:
 
                             if unit.do is not None:
-                                match_result = __check_condition(unit, pipeline_topic, data)
+                                match_result = __check_condition(unit, pipeline_topic, data,context)
                                 # print("match_result",match_result)
                                 if match_result:
                                     unit_run_status = UnitRunStatus()
@@ -153,5 +153,5 @@ def run_pipeline(pipeline: Pipeline, data):
                     # log.debug("pipeline_status is {0}".format(pipeline_status))
                     pass
                 else:
-                    print("sync pipeline monitor")
+                    # print("sync pipeline monitor")
                     watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)

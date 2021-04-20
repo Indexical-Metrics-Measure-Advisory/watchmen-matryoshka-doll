@@ -31,7 +31,7 @@ def parse_parameter(parameter: Parameter,factor=None):
         # if factor.type =="text":
         #     return "\'"+parameter.value+"\'"
         # else:
-            return parameter.value
+        return parameter.value
     elif parameter.kind == 'computed':
         if parameter.type == Operator.add:
             result = None
@@ -149,24 +149,20 @@ def _connective_filter(filter: Filter):
 
 def _filter_criterion(filter: Filter) -> any:
     left = parse_parameter(filter.left)
-
     topic = get_topic_by_id(filter.left.topicId)
     factor = get_factor(filter.left.factorId, topic)
-    # print("left", left)
-    # print("type",type(left))
     right = parse_parameter(filter.right,factor)
-    # print("right", right)
-    # print("type", type(right))
+
     if filter.operator == "equals":
-        # if right.isdigit():
-        #     return operator.eq(left, int(right))
-        # else:
-        return operator.eq(left, right)
-    elif filter.operator == "not-equals":
-        if right.isdigit():
-            return left.__ne__(int(right))
+        if factor is not None and factor.type == "text":
+            return operator.eq(left, right)
         else:
+            return operator.eq(left, int(right))
+    elif filter.operator == "not-equals":
+        if factor is not None and factor.type == "text":
             return left.__ne__(right)
+        else:
+            return left.__ne__(int(right))
     elif filter.operator == 'empty':
         return left.isnull()
     elif filter.operator == 'not-empty':

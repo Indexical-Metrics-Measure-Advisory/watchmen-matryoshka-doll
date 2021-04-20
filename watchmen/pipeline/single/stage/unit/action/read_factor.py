@@ -13,6 +13,7 @@ from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 
+
 def init(action: UnitAction, pipeline_topic: Topic):
     def read_factor(instance, context):
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
@@ -33,7 +34,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 unit_action_status.value = read_value
         else:
             context[context_target_name] = convert_factor_type(factor.defaultValue,factor.type)
-            log.error("target_data is empty ,conditions {0}".format(mongo_query))
+            log.warn("target_data is empty ,conditions {0}".format(mongo_query))
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
