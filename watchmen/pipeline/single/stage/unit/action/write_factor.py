@@ -56,7 +56,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
                                                                        target_factor, context))
 
             update_data = {target_factor.name: source_value_list}
-            print("update_data", update_data)
+            # print("update_data", update_data)
             mongo_query = __build_mongo_query(joint_type, where_condition)
             condition_factors = {"$set": get_condition_factor_value(raw_data, where_condition, joint_type)}
             trigger_pipeline_data_list = []
