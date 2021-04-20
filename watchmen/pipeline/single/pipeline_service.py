@@ -101,7 +101,7 @@ def run_pipeline(pipeline: Pipeline, data):
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
-        log.debug("start run pipeline {0}".format(pipeline.name))
+        log.info("start run pipeline {0}".format(pipeline.name))
         context = {PIPELINE_UID: pipeline_status.uid}
         if __check_condition(pipeline, pipeline_topic, data):
             try:

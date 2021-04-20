@@ -14,7 +14,6 @@ from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditio
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
     check_condition, convert_factor_type, __split_value, SPLIT_FLAG
 from watchmen.plugin.service.plugin_service import run_plugin
-# from watchmen.routers.admin import DATE_FORMAT, DATE_FORMAT_2
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
@@ -69,7 +68,8 @@ def __convert_value_to_datetime(value):
 
 
 def __run_arithmetic(arithmetic, value):
-    if arithmetic == NONE:
+    # print("arithmetic {0} value {1}".format(arithmetic,value))
+    if arithmetic is None or arithmetic ==NONE or type(value) != list:
         return value
     elif arithmetic == SUM:
         return sum(value)
@@ -228,7 +228,6 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic, target_f
                 value_list.append(np.array(value))
             else:
                 value_list.append(value)
-
         return __process_operator(operator, value_list)
 
 
@@ -575,11 +574,36 @@ def __process_where_condition(where_condition):
             "$nin": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
 
 
+# def __build_index_condition_result(result,condition_values,where_condition,index):
+#     if type(condition_values[VALUE]) == list:
+#         result[VALUE] = where_condition[index]
+#         return result
+#     else:
+#         return result
+
 def index_conditions(where_condition, index):
     result = where_condition.copy()
-    condition_values = where_condition[pipeline_constants.VALUE]
-    if type(condition_values) == list:
-        result[VALUE] = condition_values[index]
+    if type(where_condition) ==list:
+        for index, condition in enumerate(where_condition):
+            condition_values = condition[pipeline_constants.VALUE]
+            if type(condition_values) == list:
+                result[index][VALUE] = condition[pipeline_constants.VALUE]
+            return result
+    else:
+        condition_values = where_condition[pipeline_constants.VALUE]
+        if type(condition_values) == list:
+            result[VALUE] = where_condition[index]
+            return result
+        else:
+            return result
+
+
+
+    result = where_condition.copy()
+    print("where_condition",where_condition)
+    condition_values = where_condition[index]
+    if type(condition_values[VALUE]) == list:
+        result[VALUE] = where_condition[index]
         return result
     else:
         return result
