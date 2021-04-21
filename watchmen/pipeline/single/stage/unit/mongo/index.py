@@ -128,14 +128,18 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic,conte
                                                       get_source_value_list(pipeline_topic, raw_data, source,
                                                                             target_factor,context))
 
-        # print(source_value_list)
+        # print("source_value_list 2",source_value_list)
         # target_factor = get_factor(mapping.factorId, target_topic)
         target_value_list = __convert_to_target_value_list(target_factor, source_value_list)
+
+        # print("target_value_list 2", target_value_list)
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
         mapping_results.append({target_factor.name: target_value_list})
 
+    # print("mapping_results 2", mapping_results)
     mapping_data_list = merge_mapping_data(mapping_results)
+    # print("mapping_data_list 2", mapping_data_list)
     return mapping_data_list
 
 
@@ -240,7 +244,7 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
             return None
         else:
             variable_type, context_target_name = process_variable(parameter.value)
-            print("variable_type",context_target_name)
+            # print("variable_type",context_target_name)
             if variable_type == MEMORY:
                 if context_target_name in context:
                     return context[context_target_name]
@@ -270,8 +274,9 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
 
 def get_source_factor_value(raw_data, source_factor):
     if is_sub_field(source_factor):
+        results=[]
         factor_list = build_factor_list(source_factor)
-        source_value_list = get_factor_value(0, factor_list, raw_data, [])
+        source_value_list = get_factor_value(0, factor_list, raw_data, results)
         if len(source_value_list) == 1:
             return source_value_list[0]
         else:
@@ -285,7 +290,7 @@ def merge_mapping_data(mapping_results):
     max_value_size = get_max_value_size(mapping_results)
     mapping_data_list = []
 
-    # print("mapping_results", mapping_results)
+    print("max_value_size", max_value_size)
     for i in range(max_value_size):
         mapping_data = {}
         for mapping_result in mapping_results:
@@ -304,9 +309,10 @@ def get_max_value_size(mapping_results):
         for key, value in mapping_result.items():
             if type(value) is list:
                 if len(value) > index:
-                    index = len(value)
+                    return len(value)
+                    # print("index",index)
             else:
-                index = 1
+                return 1
     return index
 
 

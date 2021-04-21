@@ -15,7 +15,6 @@ log = logging.getLogger("app." + __name__)
 
 def init(action: UnitAction, pipeline_topic: Topic):
     def insert_topic(instance, context):
-        # log.info("run insert_row {0}".format(action.))
         raw_data, old_value = instance[pipeline_constants.NEW], instance[pipeline_constants.OLD]
         unit_action_status = InsertAction(type=action.type)
         start = time.time()

@@ -29,6 +29,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
         unit_action_status.whereConditions = where_condition
         unit_action_status.mapping = mapping_results
         trigger_pipeline_data_list = []
+
+        print("mapping_results",mapping_results)
         for index, mapping_result in enumerate(mapping_results):
             mongo_query = __build_mongo_query(joint_type, index_conditions(where_condition, index))
             target_data = query_topic_data(mongo_query, target_topic.name)
