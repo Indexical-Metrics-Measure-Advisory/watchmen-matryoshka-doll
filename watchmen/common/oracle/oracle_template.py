@@ -26,7 +26,7 @@ def build_raw_sql_with_json_table(check_result, where, name):
     if check_result["table_name"] == "spaces" and check_result["column_name"] == "groupIds":
         json_table_stmt = "select s.*, jt.group_id " \
                           "from spaces s ,json_table(groupids,'$[*]' " \
-                          "COLUMNS (group_id varchar2(60) PATH '$') ) as jt"
+                          "COLUMNS (group_id varchar2(60) PATH '$[*]') ) as jt"
         where_stmt = ""
         for id_ in where["groupIds"]["in"]:
             if where_stmt == "":
@@ -404,7 +404,7 @@ def alter_topic_data_table(topic):
 
 
 def topic_data_insert_one(one, topic_name):
-    table = Table('topic_' + topic_name, metadata, autoload=True, autoload_with=engine)
+    table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
     one_dict: dict = convert_to_dict(one)
     value = {}
     for key in table.c.keys:
@@ -416,7 +416,7 @@ def topic_data_insert_one(one, topic_name):
 
 
 def topic_data_insert_(data, topic_name):
-    table = Table('topic_' + topic_name, metadata, autoload=True, autoload_with=engine)
+    table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
     values = []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
@@ -431,8 +431,7 @@ def topic_data_insert_(data, topic_name):
 
 
 def topic_data_update_(topic_name, query_dict, instance):
-    metadata = MetaData()
-    table = Table('topic_' + topic_name, metadata, autoload=True, autoload_with=engine)
+    table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
     stmt = (update(table).
             where(build_oracle_where_expression(table, query_dict)))
     instance_dict: dict = convert_to_dict(instance)
@@ -445,11 +444,30 @@ def topic_data_update_(topic_name, query_dict, instance):
         conn.execute(stmt)
 
 
-def query_topic_instance(topic_name, conditions):
-    metadata = MetaData()
-    table = Table('topic_' + topic_name, metadata, autoload=True, autoload_with=engine)
-    stmt = select(table).where(build_oracle_where_expression(table, conditions))
+def topic_data_find_one(where, topic_name) -> any:
+    table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    stmt = select(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
-        result = conn.execute(stmt)
-        conn.commit()
+        cursor = conn.execute(stmt).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        result = cursor.fetchone()
+    if result is None:
+        return
+    else:
         return result
+
+
+def topic_find_one_and_update(where, updates, name):
+    table = Table('topic_' + name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    data_dict: dict = convert_to_dict(updates)
+    select_stmt = select(table). \
+        with_for_update(nowait=True). \
+        where(build_oracle_where_expression(table, where))
+    update_stmt = update(table).where(build_oracle_where_expression(table, where)).values(data_dict)
+    with engine.connect() as conn:
+        with conn.begin():
+            row = conn.execute(select_stmt).fetchone()
+            if row is not None:
+                conn.execute(update_stmt)
+    return row, data_dict

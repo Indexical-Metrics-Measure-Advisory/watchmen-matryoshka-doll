@@ -561,25 +561,40 @@ def __process_where_condition(where_condition):
     if where_condition[pipeline_constants.OPERATOR] == parameter_constants.EQUALS:
         return {where_condition[pipeline_constants.NAME].name: where_condition[pipeline_constants.VALUE]}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.EMPTY:
-        return {where_condition[pipeline_constants.NAME].name: {"$eq": None}}
+        # return {where_condition[pipeline_constants.NAME].name: {"$eq": None}}
+        return {where_condition[pipeline_constants.NAME].name: {"=": None}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EMPTY:
-        return {where_condition[pipeline_constants.NAME].name: {"$ne": None}}
+        # return {where_condition[pipeline_constants.NAME].name: {"$ne": None}}
+        return {where_condition[pipeline_constants.NAME].name: {"!=": None}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_EQUALS:
-        return {where_condition[pipeline_constants.NAME].name: {"$ne": where_condition[pipeline_constants.VALUE]}}
+        # return {where_condition[pipeline_constants.NAME].name: {"$ne": where_condition[pipeline_constants.VALUE]}}
+        return {where_condition[pipeline_constants.NAME].name: {"!=": where_condition[pipeline_constants.VALUE]}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE:
-        return {where_condition[pipeline_constants.NAME].name: {"$gt": where_condition[pipeline_constants.VALUE]}}
+        # return {where_condition[pipeline_constants.NAME].name: {"$gt": where_condition[pipeline_constants.VALUE]}}
+        return {where_condition[pipeline_constants.NAME].name: {">": where_condition[pipeline_constants.VALUE]}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.LESS:
-        return {where_condition[pipeline_constants.NAME].name: {"$lt": where_condition[pipeline_constants.VALUE]}}
+        # return {where_condition[pipeline_constants.NAME].name: {"$lt": where_condition[pipeline_constants.VALUE]}}
+        return {where_condition[pipeline_constants.NAME].name: {"<": where_condition[pipeline_constants.VALUE]}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.MORE_EQUALS:
-        return {where_condition[pipeline_constants.NAME].name: {"$gte": where_condition[pipeline_constants.VALUE]}}
+        # return {where_condition[pipeline_constants.NAME].name: {"$gte": where_condition[pipeline_constants.VALUE]}}
+        return {where_condition[pipeline_constants.NAME].name: {">=": where_condition[pipeline_constants.VALUE]}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.LESS_EQUALS:
-        return {where_condition[pipeline_constants.NAME].name: {"$lte": where_condition[pipeline_constants.VALUE]}}
+        # return {where_condition[pipeline_constants.NAME].name: {"$lte": where_condition[pipeline_constants.VALUE]}}
+        return {where_condition[pipeline_constants.NAME].name: {"<=": where_condition[pipeline_constants.VALUE]}}
     elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.IN:
+        '''
         return {where_condition[pipeline_constants.NAME].name: {
             "$in": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
-    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.IN:
+        '''
+        return {where_condition[pipeline_constants.NAME].name: {
+            "in": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
+    elif where_condition[pipeline_constants.OPERATOR] == parameter_constants.NOT_IN:
+        '''
         return {where_condition[pipeline_constants.NAME].name: {
             "$nin": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
+        '''
+        return {where_condition[pipeline_constants.NAME].name: {
+            "not in": __convert_to_list(where_condition[pipeline_constants.VALUE])}}
 
 
 # def __build_index_condition_result(result,condition_values,where_condition,index):
@@ -623,11 +638,14 @@ def __build_mongo_query(joint_type, where_condition):
     else:
         where_condition_result = {}
         if joint_type == parameter_constants.AND:
-            where_condition_result[mongo_constants.MONGO_AND] = []
+            # where_condition_result[mongo_constants.MONGO_AND] = []
+            where_condition_result["and"] = []
             for condition in where_condition:
-                where_condition_result[mongo_constants.MONGO_AND].append(__process_where_condition(condition))
+                # where_condition_result[mongo_constants.MONGO_AND].append(__process_where_condition(condition))
+                where_condition_result["and"].append(__process_where_condition(condition))
         elif joint_type == parameter_constants.OR:
-            where_condition_result[mongo_constants.MONGO_OR] = []
+            # where_condition_result[mongo_constants.MONGO_OR] = []
+            where_condition_result["or"] = []
             for condition in where_condition:
-                where_condition_result[mongo_constants.MONGO_OR].append(__process_where_condition(condition))
+                where_condition_result["or"].append(__process_where_condition(condition))
         return where_condition_result

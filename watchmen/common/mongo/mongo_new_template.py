@@ -61,6 +61,8 @@ def build_mongo_where_expression(where: dict):
                 for k, v in value.items():
                     if k == "=":
                         return {key: {"$eq": v}}
+                    if k == "!=":
+                        return {key: {"$ne": v}}
                     if k == "like":
                         return {key: regex.Regex(v)}
                     if k == "in":
