@@ -123,11 +123,16 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic,conte
 
     for mapping in mapping_list:
         source = mapping.source
+        # if target_topic.name == "baoviet_policy_cash_change":
+        #     print("source", source)
+        #     print("raw_data",raw_data["cash"])
         target_factor = get_factor(mapping.factorId, target_topic)
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source,
                                                                             target_factor,context))
 
+        # if target_topic.name =="baoviet_policy_cash_change":
+        #     print("source_value_list",source_value_list)
         # print("source_value_list 2",source_value_list)
         # target_factor = get_factor(mapping.factorId, target_topic)
         target_value_list = __convert_to_target_value_list(target_factor, source_value_list)
