@@ -129,7 +129,7 @@ def run_pipeline(pipeline: Pipeline, data):
                                             pipeline_trigger_merge_list += trigger_pipeline_data_list
                                         log.debug("out_result :{0}".format(out_result))
                                         context = {**context, **out_result}
-                                        print("context : ",context)
+                                        # print("context : ",context)
                                         unit_run_status.actions.append(unit_action_status)
                                     stage_run_status.units.append(unit_run_status)
                             else:

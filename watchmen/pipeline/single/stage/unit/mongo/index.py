@@ -290,7 +290,7 @@ def merge_mapping_data(mapping_results):
     max_value_size = get_max_value_size(mapping_results)
     mapping_data_list = []
 
-    print("max_value_size", max_value_size)
+    # print("max_value_size", max_value_size)
     for i in range(max_value_size):
         mapping_data = {}
         for mapping_result in mapping_results:
@@ -608,7 +608,7 @@ def index_conditions(where_condition, index):
 
 
     result = where_condition.copy()
-    print("where_condition",where_condition)
+    # print("where_condition",where_condition)
     condition_values = where_condition[index]
     if type(condition_values[VALUE]) == list:
         result[VALUE] = where_condition[index]
