@@ -2,9 +2,14 @@ from datetime import datetime
 from decimal import Decimal
 
 from watchmen.common.constants import parameter_constants, pipeline_constants
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.config.config import settings
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
+
+MEMORY = "memory"
+
+SNOWFLAKE = "snowflake"
 
 SPLIT_FLAG = ","
 
@@ -84,6 +89,7 @@ ENUM = "enum"
 
 OBJECT = "object"
 ARRAY = "array"
+
 
 
 def check_condition(operator: str, left_value, right_value) -> bool:
@@ -201,7 +207,9 @@ def add_trace_columns(dictionary, trace_type, pipeline_uid):
 
 
 def process_variable(variable_name):
-    if variable_name.startswith("{"):
-        return "memory", variable_name.replace("{", "").replace("}", "")
+    if "{snowflake}" in variable_name:
+        return SNOWFLAKE, get_surrogate_key()
+    elif variable_name.startswith("{"):
+        return MEMORY, variable_name.replace("{", "").replace("}", "")
     else:
         return parameter_constants.CONSTANT, variable_name

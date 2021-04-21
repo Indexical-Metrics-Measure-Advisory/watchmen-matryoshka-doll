@@ -24,7 +24,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             raise ValueError("action.topicId is empty {0}".format(action.name))
 
         target_topic = get_topic_by_id(action.topicId)
-        mapping_results = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic)
+        mapping_results = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic,context)
         joint_type, where_condition = build_query_conditions(action.by, pipeline_topic, raw_data, target_topic, context)
         unit_action_status.whereConditions = where_condition
         unit_action_status.mapping = mapping_results

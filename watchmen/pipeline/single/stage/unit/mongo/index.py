@@ -12,7 +12,7 @@ from watchmen.common.utils.condition_result import ConditionResult
 from watchmen.config.config import settings
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
-    check_condition, convert_factor_type, __split_value, SPLIT_FLAG
+    check_condition, convert_factor_type, __split_value, SPLIT_FLAG, MEMORY, SNOWFLAKE
 from watchmen.plugin.service.plugin_service import run_plugin
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
@@ -118,7 +118,7 @@ def __convert_to_target_value_list(target_factor, source_value_list):
         return convert_factor_type(source_value_list, target_factor.type)
 
 
-def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
+def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic,context=None):
     mapping_results = []
 
     for mapping in mapping_list:
@@ -126,7 +126,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic):
         target_factor = get_factor(mapping.factorId, target_topic)
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source,
-                                                                            target_factor))
+                                                                            target_factor,context))
 
         # print(source_value_list)
         # target_factor = get_factor(mapping.factorId, target_topic)
@@ -240,12 +240,13 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
             return None
         else:
             variable_type, context_target_name = process_variable(parameter.value)
-            if variable_type == "memory":
-                # print("context2",context)
+            if variable_type == MEMORY:
                 if context_target_name in context:
                     return context[context_target_name]
                 else:
                     return None
+            elif variable_type == SNOWFLAKE:
+                return context_target_name
             else:
                 if target_factor is not None:
                     if SPLIT_FLAG in parameter.value:

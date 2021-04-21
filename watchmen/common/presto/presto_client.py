@@ -6,7 +6,7 @@ from watchmen.config.config import settings
 conn = trino.dbapi.connect(
     host=settings.PRESTO_HOST,
     port=settings.PRESTO_PORT,
-    user=settings.PRESTO_HOST,
+    user=settings.PRESTO_USER,
     catalog=settings.PRESTO_CATALOG,
     schema=settings.PRESTO_SCHEMA,
 )
