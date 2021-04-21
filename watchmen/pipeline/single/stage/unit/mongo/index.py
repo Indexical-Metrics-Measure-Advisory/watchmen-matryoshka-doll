@@ -240,6 +240,7 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
             return None
         else:
             variable_type, context_target_name = process_variable(parameter.value)
+            print("variable_type",context_target_name)
             if variable_type == MEMORY:
                 if context_target_name in context:
                     return context[context_target_name]
