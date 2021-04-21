@@ -11,7 +11,8 @@ from watchmen.auth.service.user_group import sync_user_group_to_space, sync_user
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
     get_user, load_user_list_by_name, update_user_storage
 from watchmen.auth.storage.user_group import create_user_group_storage, query_user_groups_by_name_with_paginate, \
-    get_user_group_list_by_ids, get_user_group, load_group_list_by_name, update_user_group_storage
+    get_user_group_list_by_ids, get_user_group, load_group_list_by_name, update_user_group_storage, \
+    get_user_group_by_name
 from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
@@ -281,6 +282,13 @@ async def query_user_groups_list_by_name(query_name: str, pagination: Pagination
                                          current_user: User = Depends(deps.get_current_user)):
     return query_user_groups_by_name_with_paginate(query_name, pagination)
 
+
+@router.post("/user_group/list/name", tags=["admin"], response_model=List[UserGroup])
+async def load_user_group_list_by_name_list(name_list:List[str],current_user: User = Depends(deps.get_current_user))->List[UserGroup]:
+    results = []
+    for name in name_list:
+        results.append(get_user_group_by_name(name))
+    return results
 
 # pipeline
 

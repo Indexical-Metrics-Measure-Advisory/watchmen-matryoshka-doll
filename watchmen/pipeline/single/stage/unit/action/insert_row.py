@@ -30,6 +30,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
         # log.info("mapping_results:{0}".format(mapping_results))
         unit_action_status.mapping = mapping_results
         trigger_pipeline_data_list =[]
+        # if target_topic.name =="baoviet_policy_coverage_change":
+        #     print("mapping_results",mapping_results)
         for index, item in enumerate(mapping_results):
             trigger_pipeline_data_list.append(insert_topic_data(target_topic.name, item, pipeline_uid))
             unit_action_status.insertCount = unit_action_status.insertCount + 1
