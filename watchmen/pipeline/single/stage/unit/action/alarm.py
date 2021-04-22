@@ -61,7 +61,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
         unit_action_status.type = action.type
         start = time.time()
         log.info("alert data")
-        match_result = __check_condition(action, pipeline_topic, instance)
+        match_result = __check_condition(action, pipeline_topic, instance,context)
 
         if match_result:
             alarm_message = AlarmMessage(severity=action.severity)

@@ -445,7 +445,7 @@ async def query_log_by_critical(query: MonitorLogQuery):
             "$lt": datetime.strptime(query.criteria.endDate, DATE_FORMAT)
         }
         '''
-        query_list.append({"insertTime": {
+        query_list.append({"sys_insertTime": {
             "between": (
                 datetime.strptime(query.criteria.startDate, DATE_FORMAT),
                 datetime.strptime(query.criteria.endDate, DATE_FORMAT)

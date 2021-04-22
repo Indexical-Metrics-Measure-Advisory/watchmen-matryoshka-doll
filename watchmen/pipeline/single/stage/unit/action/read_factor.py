@@ -25,7 +25,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
         factor = get_factor(action.factorId, topic)
         joint_type, where_condition = build_query_conditions(action.by, pipeline_topic, raw_data, topic, context)
         mongo_query = __build_mongo_query(joint_type, where_condition)
-        # print(mongo_query)
+        # print("mongo_query",mongo_query)
         target_data = query_topic_data(mongo_query, topic.name)
         if target_data is not None:
             if factor.name in target_data:
@@ -38,7 +38,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
-        # print("context",context)
+        # print("read context",context)
         return context, unit_action_status,[]
 
     return read_factor

@@ -55,7 +55,8 @@ class Settings(BaseSettings):
     EMAILS_FROM_EMAIL: Optional[str] = None
     EMAILS_FROM_NAME: Optional[str] = None
     EMAILS_TO: Optional[str] = None
-    TOPIC_DATE_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
+    TOPIC_DATE_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+    DECIMAL = "decimal(32,2)"
 
     @validator("STORAGE_ENGINE", pre=True)
     def get_emails_enabled(cls, v: str, values: Dict[str, Any]) -> bool:

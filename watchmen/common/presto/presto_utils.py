@@ -5,6 +5,7 @@ from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_collection_name, is_presto_varchar_type, is_presto_int_type, \
     is_presto_datetime
+from watchmen.config.config import settings
 from watchmen.pipeline.single.stage.unit.utils.units_func import BOOLEAN, NUMBER, TIME
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
@@ -35,7 +36,7 @@ def __convert_presto_type(factor_type):
     elif factor_type == TIME:
         return presto_constants.TIMESTAMP
     elif factor_type == NUMBER:
-        return presto_constants.DECIMAL
+        return settings.DECIMAL
     else:
         return presto_constants.VARCHAR
 
