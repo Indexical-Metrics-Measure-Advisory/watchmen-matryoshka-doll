@@ -35,7 +35,8 @@ def build_raw_sql_with_json_table(check_result, where, name):
             else:
                 where_stmt = where_stmt + ", " + id_
         where_stmt = where_stmt + ")"
-        stmt = "select t.* from (" + json_table_stmt + ") t where t.group_id in " + where_stmt
+        stmt = "select t.* from (" + json_table_stmt + \
+        ") t where t.group_id in " + where_stmt
         return stmt
 
     if check_result["table_name"] == "user_groups" and check_result["column_name"] == "userIds":
@@ -49,7 +50,8 @@ def build_raw_sql_with_json_table(check_result, where, name):
             else:
                 where_stmt = where_stmt + ", " + id_
         where_stmt = where_stmt + ")"
-        stmt = "select t.* from (" + json_table_stmt + ") t where t.user_id in " + where_stmt
+        stmt = "select t.* from (" + json_table_stmt + \
+        ") t where t.user_id in " + where_stmt
         return stmt
 
     if check_result["table_name"] == "user_groups" and check_result["column_name"] == "spaceIds":
@@ -63,7 +65,8 @@ def build_raw_sql_with_json_table(check_result, where, name):
             else:
                 where_stmt = where_stmt + ", " + id_
         where_stmt = where_stmt + ")"
-        stmt = "select t.* from (" + json_table_stmt + ") t where t.space_id in " + where_stmt
+        stmt = "select t.* from (" + json_table_stmt + \
+        ") t where t.space_id in " + where_stmt
         return stmt
 
     if check_result["table_name"] == "users" and check_result["column_name"] == "groupIds":
@@ -77,7 +80,8 @@ def build_raw_sql_with_json_table(check_result, where, name):
             else:
                 where_stmt = where_stmt + ", " + id_
         where_stmt = where_stmt + ")"
-        stmt = "select t.* from (" + json_table_stmt + ") t where t.group_id in " + where_stmt
+        stmt = "select t.* from (" + json_table_stmt + \
+        ") t where t.group_id in " + where_stmt
         return stmt
 
 
@@ -181,7 +185,8 @@ def update_one(one, model, name) -> any:
     stmt = update(table)
     one_dict: dict = convert_to_dict(one)
     primary_key = get_primary_key(name)
-    stmt = stmt.where(eq(table.c[primary_key.lower()], one_dict.get(primary_key)))
+    stmt = stmt.where(
+        eq(table.c[primary_key.lower()], one_dict.get(primary_key)))
     values = {}
     for key, value in one_dict.items():
         if isinstance(table.c[key.lower()].type, CLOB):
@@ -266,7 +271,7 @@ def update_(where, updates, model, name):
 
 
 def pull_update(where, updates, model, name):
-    results = find_(where, model, name);
+    results = find_(where, model, name)
     updates_dict = convert_to_dict(updates)
     for key, value in updates_dict.items():
         for res in results:
@@ -341,6 +346,7 @@ def find_(where: dict, model, name: str) -> list:
         columns = [col[0] for col in cursor.description]
         cursor.rowfactory = lambda *args: dict(zip(columns, args))
         result = cursor.fetchall()
+        print("result", result)
     if result is not None:
         return [parse_obj(model, row, table) for row in result]
     else:
@@ -423,25 +429,30 @@ topic data interface
 def get_datatype_by_factor_type(type: str):
     if type == "text":
         return String(20)
-    if type == "sequence":
-        return BigInteger(10)
-    if type == "number":
+    elif type == "sequence":
+        return BigInteger
+    elif type == "number":
         return DECIMAL(32)
     if type == 'datetime':
         return DateTime
     if type == "boolean":
         return String(5)
-    if type == "enum":
+    elif type == "enum":
         return String(20)
-    if type == "object":
+    elif type == "object":
         return String(20)
-    if type == "array":
+    elif type == "array":
+        return String(20)
+    elif type == "date":
+        return DateTime
+    else:
         return String(20)
 
 
 def check_topic_type_is_raw(topic_name):
     table = get_table_by_name("topics")
-    select_stmt = select(table).where(build_oracle_where_expression(table, {"name": topic_name}))
+    select_stmt = select(table).where(
+        build_oracle_where_expression(table, {"name": topic_name}))
     with engine.connect() as conn:
         cursor = conn.execute(select_stmt).cursor
         columns = [col[0] for col in cursor.description]
@@ -450,7 +461,7 @@ def check_topic_type_is_raw(topic_name):
         if result is None:
             raise
         else:
-            if result['type'] == "raw":
+            if result['TYPE'] == "raw":
                 return True
             else:
                 return False
@@ -494,7 +505,8 @@ def alter_topic_data_table(topic):
     topic_dict: dict = convert_to_dict(topic)
     topic_name = topic_dict.get('name')
     table_name = 'topic_' + topic_name
-    table = Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    table = Table(table_name, metadata, extend_existing=True,
+                  autoload=True, autoload_with=engine)
     factors = topic_dict.get('factors')
     existed_cols = []
     for col in table.columns:
@@ -506,7 +518,8 @@ def alter_topic_data_table(topic):
             column = Column(factor.get('name'), String(20))
             column_name = column.compile(dialect=engine.dialect)
             column_type = column.type.compile(engine.dialect)
-            stmt = 'ALTER TABLE %s ADD %s %s' % (table_name, column_name, column_type)
+            stmt = 'ALTER TABLE %s ADD %s %s' % (
+                table_name, column_name, column_type)
             with engine.connect() as conn:
                 conn.execute(text(stmt))
                 conn.commit()
@@ -514,7 +527,8 @@ def alter_topic_data_table(topic):
 
 def drop_topic_data_table(topic_name):
     table_name = 'topic_' + topic_name
-    table = Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    table = Table(table_name, metadata, extend_existing=True,
+                  autoload=True, autoload_with=engine)
     table.drop(engine)
 
 
@@ -522,7 +536,8 @@ def topic_data_insert_one(one, topic_name):
     if check_topic_type_is_raw(topic_name):
         raw_topic_data_insert_one(one, topic_name)
     else:
-        table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+        table = Table('topic_' + topic_name, metadata,
+                      extend_existing=True, autoload=True, autoload_with=engine)
         one_dict: dict = convert_to_dict(one)
         value = {}
         for key in table.c.keys:
@@ -534,9 +549,10 @@ def topic_data_insert_one(one, topic_name):
 
 
 def raw_topic_data_insert_one(one, topic_name):
-    table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    table = Table('topic_' + topic_name, metadata,
+                  extend_existing=True, autoload=True, autoload_with=engine)
     one_dict: dict = convert_to_dict(one)
-    value = {'id_': get_surrogate_key(), 'data_': json.dumps(one_dict)}
+    value = {'id_': get_surrogate_key(), 'data_': dumps(one_dict)}
     stmt = insert(table)
     with engine.connect() as conn:
         conn.execute(stmt, value)
@@ -546,7 +562,8 @@ def topic_data_insert_(data, topic_name):
     if check_topic_type_is_raw(topic_name):
         raw_topic_data_insert_(data, topic_name)
     else:
-        table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+        table = Table('topic_' + topic_name, metadata,
+                      extend_existing=True, autoload=True, autoload_with=engine)
         values = []
         for instance in data:
             instance_dict: dict = convert_to_dict(instance)
@@ -573,7 +590,8 @@ def raw_topic_data_insert_(data, topic_name)
 
 
 def topic_data_update_(topic_name, query_dict, instance):
-    table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    table = Table('topic_' + topic_name, metadata,
+                  extend_existing=True, autoload=True, autoload_with=engine)
     stmt = (update(table).
             where(build_oracle_where_expression(table, query_dict)))
     instance_dict: dict = convert_to_dict(instance)
@@ -587,7 +605,8 @@ def topic_data_update_(topic_name, query_dict, instance):
 
 
 def topic_data_find_one(where, topic_name) -> any:
-    table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    table = Table('topic_' + topic_name, metadata,
+                  extend_existing=True, autoload=True, autoload_with=engine)
     stmt = select(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
@@ -601,12 +620,14 @@ def topic_data_find_one(where, topic_name) -> any:
 
 
 def topic_find_one_and_update(where, updates, name):
-    table = Table('topic_' + name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    table = Table('topic_' + name, metadata, extend_existing=True,
+                  autoload=True, autoload_with=engine)
     data_dict: dict = convert_to_dict(updates)
     select_stmt = select(table). \
         with_for_update(nowait=True). \
         where(build_oracle_where_expression(table, where))
-    update_stmt = update(table).where(build_oracle_where_expression(table, where)).values(data_dict)
+    update_stmt = update(table).where(
+        build_oracle_where_expression(table, where)).values(data_dict)
     with engine.connect() as conn:
         with conn.begin():
             row = conn.execute(select_stmt).fetchone()

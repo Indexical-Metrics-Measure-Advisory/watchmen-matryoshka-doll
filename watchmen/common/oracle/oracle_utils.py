@@ -11,7 +11,10 @@ def parse_obj(base_model, result, table):
         if attr[:1] != '_':
             if isinstance(table.c[attr.lower()].type, CLOB):
                 if attr == "on":
-                    setattr(model, attr, json.loads(result[attr]))
+                    if result[attr] is not None:
+                        setattr(model, attr, json.loads(result[attr]))
+                    else:
+                        setattr(model, attr, None)
                 else:
                     if result[attr.upper()] is not None:
                         setattr(model, attr, json.loads(result[attr.upper()]))
@@ -19,7 +22,7 @@ def parse_obj(base_model, result, table):
                         setattr(model, attr, None)
             else:
                 setattr(model, attr, result[attr.upper()])
-    return model
+    return base_model.parse_obj(model)
 
 
 def get_db_primary_key(table_name):

@@ -91,6 +91,8 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list):
 
 
 def run_pipeline(pipeline: Pipeline, data):
+
+
     pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),
                                         startTime=datetime.now(), topicId=pipeline.pipelineId)
     pipeline_status.oldValue = data[pipeline_constants.OLD]
@@ -98,7 +100,7 @@ def run_pipeline(pipeline: Pipeline, data):
 
     # trigger_context =
 
-
+    # pipeline = Pipeline.parse_obj(pipeline)
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
         log.info("start run pipeline {0}".format(pipeline.name))
@@ -109,7 +111,7 @@ def run_pipeline(pipeline: Pipeline, data):
 
                 pipeline_trigger_merge_list = []
                 for stage in pipeline.stages:
-
+                    print(stage)
                     if __check_condition(stage, pipeline_topic, data,context):
                         stage_run_status = StageRunStatus()
                         stage_run_status.name = stage.name
