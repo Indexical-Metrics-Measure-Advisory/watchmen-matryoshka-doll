@@ -4,8 +4,8 @@ from bson import Decimal128
 from bson.codec_options import TypeCodec, TypeRegistry, CodecOptions
 
 from watchmen.common.storage.engine.storage_engine import get_client
-from watchmen.common.storage.storage_template import drop_topic_data_table
-from watchmen.common.utils.data_utils import build_collection_name
+# from watchmen.common.storage.storage_template import drop_topic_data_table
+# from watchmen.common.utils.data_utils import build_collection_name
 
 client = get_client()
 
@@ -21,7 +21,7 @@ def delete_topic_collection(collection_name):
     topic_name = build_collection_name(collection_name)
     client.get_collection(topic_name).drop()
     '''
-    drop_topic_data_table(collection_name)
+    watchmen.common.storage.storage_template.drop_topic_data_table(collection_name)
 
 
 class DecimalCodec(TypeCodec):
