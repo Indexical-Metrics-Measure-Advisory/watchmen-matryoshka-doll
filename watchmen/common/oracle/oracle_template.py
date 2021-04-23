@@ -341,6 +341,7 @@ def find_(where: dict, model, name: str) -> list:
         columns = [col[0] for col in cursor.description]
         cursor.rowfactory = lambda *args: dict(zip(columns, args))
         result = cursor.fetchall()
+        print("result",result)
     if result is not None:
         return [parse_obj(model, row, table) for row in result]
     else:
@@ -423,20 +424,25 @@ topic data interface
 def get_datatype_by_factor_type(type: str):
     if type == "text":
         return String(20)
-    if type == "sequence":
-        return BigInteger(10)
-    if type == "number":
+    elif type == "sequence":
+        return BigInteger
+    elif type == "number":
         return DECIMAL(32)
-    if type == 'datetime':
+    elif type == 'datetime':
         return DateTime;
-    if type == "boolean":
+    elif type == "boolean":
         return String(5)
-    if type == "enum":
+    elif type == "enum":
         return String(20)
-    if type == "object":
+    elif type == "object":
         return String(20)
-    if type == "array":
+    elif type == "array":
         return String(20)
+    elif type == "date":
+        return DateTime
+    else:
+        return String(20)
+
 
 
 def check_topic_type_is_raw(topic_name):
@@ -450,7 +456,7 @@ def check_topic_type_is_raw(topic_name):
         if result is None:
             raise
         else:
-            if result['type'] == "raw":
+            if result['TYPE'] == "raw":
                 return True
             else:
                 return False
@@ -530,7 +536,7 @@ def topic_data_insert_one(one, topic_name):
 def raw_topic_data_insert_one(one, topic_name):
     table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
     one_dict: dict = convert_to_dict(one)
-    value = {'id_': get_surrogate_key(), 'data_': json.dumps(one_dict)}
+    value = {'id_': get_surrogate_key(), 'data_': dumps(one_dict)}
     stmt = insert(table)
     with engine.connect() as conn:
         conn.execute(stmt, value)
