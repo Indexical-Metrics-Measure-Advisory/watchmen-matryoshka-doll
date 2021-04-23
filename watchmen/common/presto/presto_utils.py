@@ -1,8 +1,11 @@
 import logging
 
+from pydantic.main import BaseModel
+
 from watchmen.common.constants import presto_constants
 from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.storage.engine.storage_engine import get_client
+from watchmen.common.storage.storage_template import delete_, find_one, insert_one, delete_one
 from watchmen.common.utils.data_utils import build_collection_name, is_presto_varchar_type, is_presto_int_type, \
     is_presto_datetime
 from watchmen.config.config import settings
@@ -10,16 +13,21 @@ from watchmen.pipeline.single.stage.unit.utils.units_func import BOOLEAN, NUMBER
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
-db = get_client()
+# db = get_client()
 
-collection = db.get_collection('_schema')
+# collection = db.get_collection('_schema')
 
 log = logging.getLogger("app." + __name__)
 
 
+class Schema(BaseModel):
+    table: str = ""
+    fields: list = []
+
+
 def remove_presto_schema_by_name(topic_name):
     try:
-        collection.delete_one({"table": build_collection_name(topic_name)})
+        delete_one({"table": build_collection_name(topic_name)}, "_schema")
     except Exception as e:
         log.exception(e)
 
@@ -54,14 +62,19 @@ def __build_presto_fields(factors):
 
 
 def create_or_update_presto_schema_fields(topic: Topic):
+    if settings.STORAGE_ENGINE == "mongo":
+        create_or_update_presto_schema_fields_for_mongo(topic)
+
+
+def create_or_update_presto_schema_fields_for_mongo(topic: Topic):
     if topic.type == RAW:
         log.info("raw topic ignore presto update")
     else:
         topic_name = build_collection_name(topic.name)
-        presto_schema = collection.find_one({"table": topic_name})
+        presto_schema = find_one({"table": topic_name}, Schema, "_schema")
         new_schema = {"table": topic_name, "fields": __build_presto_fields(topic.factors)}
         if presto_schema is None:
-            collection.insert(new_schema)
+            insert_one(new_schema, Schema, "_schema")
         else:
-            collection.delete_one({"table": topic_name})
-            collection.insert(new_schema)
+            delete_one({"table": topic_name}, "_schema")
+            insert_one(new_schema, Schema, "_schema")

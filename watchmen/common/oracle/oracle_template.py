@@ -36,7 +36,7 @@ def build_raw_sql_with_json_table(check_result, where, name):
                 where_stmt = where_stmt + ", " + id_
         where_stmt = where_stmt + ")"
         stmt = "select t.* from (" + json_table_stmt + \
-        ") t where t.group_id in " + where_stmt
+               ") t where t.group_id in " + where_stmt
         return stmt
 
     if check_result["table_name"] == "user_groups" and check_result["column_name"] == "userIds":
@@ -51,7 +51,7 @@ def build_raw_sql_with_json_table(check_result, where, name):
                 where_stmt = where_stmt + ", " + id_
         where_stmt = where_stmt + ")"
         stmt = "select t.* from (" + json_table_stmt + \
-        ") t where t.user_id in " + where_stmt
+               ") t where t.user_id in " + where_stmt
         return stmt
 
     if check_result["table_name"] == "user_groups" and check_result["column_name"] == "spaceIds":
@@ -66,7 +66,7 @@ def build_raw_sql_with_json_table(check_result, where, name):
                 where_stmt = where_stmt + ", " + id_
         where_stmt = where_stmt + ")"
         stmt = "select t.* from (" + json_table_stmt + \
-        ") t where t.space_id in " + where_stmt
+               ") t where t.space_id in " + where_stmt
         return stmt
 
     if check_result["table_name"] == "users" and check_result["column_name"] == "groupIds":
@@ -81,7 +81,7 @@ def build_raw_sql_with_json_table(check_result, where, name):
                 where_stmt = where_stmt + ", " + id_
         where_stmt = where_stmt + ")"
         stmt = "select t.* from (" + json_table_stmt + \
-        ") t where t.group_id in " + where_stmt
+               ") t where t.group_id in " + where_stmt
         return stmt
 
 
@@ -282,10 +282,18 @@ def pull_update(where, updates, model, name):
     # update_(where, results, model, name)
 
 
-def delete_one(id_: str, name: str):
+def delete_by_id(id_, name):
     table = get_table_by_name(name)
     key = get_primary_key(name)
     stmt = delete(table).where(eq(table.c[key.lower()], id_))
+    with engine.connect() as conn:
+        conn.execute(stmt)
+        conn.commit()
+
+
+def delete_one(where: dict, name: str):
+    table = get_table_by_name(name)
+    stmt = delete(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         conn.execute(stmt)
         conn.commit()
@@ -579,7 +587,7 @@ def topic_data_insert_(data, topic_name):
 
 def raw_topic_data_insert_(data, topic_name):
     table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
-    values= []
+    values = []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
         value = {'id_': get_surrogate_key(), 'data_': dumps(instance_dict)}

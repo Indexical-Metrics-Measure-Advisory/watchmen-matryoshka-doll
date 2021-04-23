@@ -12,7 +12,6 @@ from watchmen.common.utils.data_utils import build_data_pages, build_collection_
 
 client = get_client()
 
-
 log = logging.getLogger("app." + __name__)
 
 log.info("mongo template initialized")
@@ -146,13 +145,19 @@ def update_(where, updates, model, name):
 
 def pull_update(where, updates, model, name):
     collection = client.get_collection(name)
-    collection.update_many(build_mongo_where_expression(where), {"$pull": build_mongo_update_expression(__convert_to_dict(updates))})
+    collection.update_many(build_mongo_where_expression(where),
+                           {"$pull": build_mongo_update_expression(__convert_to_dict(updates))})
 
 
-def delete_one(id_, name):
+def delete_by_id(id_, name):
     collection = client.get_collection(name)
     key = get_primary_key(name)
     collection.delete_one({key: id_})
+
+
+def delete_one(where, name):
+    collection = client.get_collection(name)
+    collection.delete_one(build_mongo_where_expression(where))
 
 
 def delete_(where, model, name):
@@ -179,7 +184,7 @@ def find_one(where: dict, model, name: str):
         return model.parse_obj(result)
 
 
-def drop_(name:str):
+def drop_(name: str):
     return client.get_collection(name).drop()
 
 
@@ -241,8 +246,8 @@ def page_(where, sort, pageable, model, name) -> DataPage:
         return build_data_pages(pageable, list(cursor), total)
 
 
-def __convert_list_to_dict(items:list):
-    result= []
+def __convert_list_to_dict(items: list):
+    result = []
     for item in items:
         result.append(__convert_to_dict(item))
     return result
@@ -329,4 +334,5 @@ def topic_data_list_all(topic_name) -> list:
 def topic_find_one_and_update(where: dict, updates: dict, name: str):
     codec_options = build_code_options()
     collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
-    return collection.find_one_and_update(filter=build_mongo_where_expression(where), update=updates, upsert=True,return_document=ReturnDocument.AFTER)
+    return collection.find_one_and_update(filter=build_mongo_where_expression(where), update=updates, upsert=True,
+                                          return_document=ReturnDocument.AFTER)

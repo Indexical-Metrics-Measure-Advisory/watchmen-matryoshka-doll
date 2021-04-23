@@ -63,12 +63,16 @@ def pull_update(where: dict, updates: dict, model: BaseModel, name: str):
     template.pull_update(where, updates, model, name)
 
 
-def delete_one(id: str, name: str):
-    template.delete_one(id, name)
+def delete_by_id(id_: str, name: str):
+    template.delete_by_id(id_, name)
+
+
+def delete_one(where: dict, name: str):
+    template.delete_one(where, name)
 
 
 def delete_(where: dict, model: BaseModel, name: str):
-    template.delete(where, model, name)
+    template.delete_(where, model, name)
 
 
 def delete_all(model: BaseModel, name: str) -> list:
