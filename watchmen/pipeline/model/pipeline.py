@@ -39,6 +39,7 @@ class UnitAction(Conditional):
 
 class ProcessUnit(Conditional):
     unitId: str = None
+    name:str =None
     do: List[UnitAction] = []
 
 

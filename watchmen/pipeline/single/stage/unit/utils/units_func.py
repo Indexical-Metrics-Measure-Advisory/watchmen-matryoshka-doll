@@ -91,20 +91,31 @@ OBJECT = "object"
 ARRAY = "array"
 
 
-
-def check_condition(operator: str, left_value, right_value) -> bool:
+def     check_condition(operator: str, left_value, right_value) -> bool:
     if operator == "equals":
         return left_value == right_value
     elif operator == "not-equals":
         return left_value != right_value
     elif operator == "less":
-        return left_value < right_value
+        if left_value is None:
+            return False
+        else:
+            return left_value < right_value
     elif operator == "less-equals":
-        return left_value <= right_value
+        if left_value is None:
+            return False
+        else:
+            return left_value <= right_value
     elif operator == "more":
-        return left_value > right_value
+        if left_value is None:
+            return False
+        else:
+            return left_value > right_value
     elif operator == "more-equals":
-        return left_value >= right_value
+        if left_value is None:
+            return False
+        else:
+            return left_value >= right_value
     elif operator == "empty":
         return left_value is None
     elif operator == "not-empty":
@@ -147,7 +158,7 @@ def convert_factor_type(value, factor_type):
     elif factor_type == MONTH:
         return int(value)
     elif factor_type == TIME:
-        return datetime.fromisoformat(value)
+        return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
     else:
         return value
 

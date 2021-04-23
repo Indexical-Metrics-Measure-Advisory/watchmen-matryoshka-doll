@@ -22,9 +22,9 @@ def init(action: UnitAction, pipeline_topic: Topic):
         target_data = query_topic_data(mongo_query, topic.name)
 
         if target_data is not None:
-            context[context_target_name] = True
+            context[context_target_name] = "true"
         else:
-            context[context_target_name] = False
+            context[context_target_name] = "false"
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time

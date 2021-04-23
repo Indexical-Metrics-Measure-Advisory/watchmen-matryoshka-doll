@@ -137,7 +137,8 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic,conte
         # target_factor = get_factor(mapping.factorId, target_topic)
         target_value_list = __convert_to_target_value_list(target_factor, source_value_list)
 
-        # print("target_value_list 2", target_value_list)
+        # if target_factor.name =="rule_category":
+        #     print("source_value_list 2", source_value_list)
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
         mapping_results.append({target_factor.name: target_value_list})
@@ -240,7 +241,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic, target_f
         return __process_operator(operator, value_list)
 
 
-def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target_factor=None, context=None):
+def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target_factor:Factor=None, context=None):
     if parameter.kind == parameter_constants.TOPIC:
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, source_factor)
@@ -249,12 +250,15 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
             return None
         else:
             variable_type, context_target_name = process_variable(parameter.value)
-            # print("variable_type",context_target_name)
             if variable_type == MEMORY:
                 if context_target_name in context:
-                    return context[context_target_name]
+                    result = context[context_target_name]
+                    if result is None:
+                        return __check_default_value(target_factor)
+                    else:
+                        return result
                 else:
-                    return None
+                    return __check_default_value(target_factor)
             elif variable_type == SNOWFLAKE:
                 return context_target_name
             else:
@@ -277,6 +281,13 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
         raise Exception("Unknown source kind {0}".format(parameter.kind))
 
 
+def __check_default_value(target_factor):
+    if target_factor is not None and target_factor.defaultValue is not None:
+        return convert_factor_type(target_factor.defaultValue, target_factor.type)
+    else:
+        return None
+
+
 def get_source_factor_value(raw_data, source_factor):
     if is_sub_field(source_factor):
         results=[]
@@ -295,7 +306,8 @@ def merge_mapping_data(mapping_results):
     max_value_size = get_max_value_size(mapping_results)
     mapping_data_list = []
 
-    # print("max_value_size", max_value_size)
+    # print("mapping_results", mapping_results)
+    # print("max_value_size",max_value_size)
     for i in range(max_value_size):
         mapping_data = {}
         for mapping_result in mapping_results:
@@ -485,20 +497,20 @@ def __get_condition_factor(parameter: Parameter, topic):
         return get_factor(parameter.factorId, topic)
 
 
-def __build_on_condition(parameter_joint: ParameterJoint, topic, data,context=None):
+def __build_on_condition(parameter_joint: ParameterJoint, topic, data,context):
     if parameter_joint.filters:
         joint_type = parameter_joint.jointType
         condition_result = ConditionResult(logicOperator=joint_type)
         for filter_condition in parameter_joint.filters:
             if filter_condition.jointType is not None:
-                condition_result.resultList.append(__build_on_condition(filter_condition, topic, data))
+                condition_result.resultList.append(__build_on_condition(filter_condition, topic, data,context))
             else:
-                left_value_list = get_source_value_list(topic, data, filter_condition.left,context=context)
-                # log.info("left_value_list:{0}".format(type(left_value_list)))
+                left_value_list = get_source_value_list(topic, data, filter_condition.left,target_factor=None,context=context)
+                log.info("left_value_list:{0}".format(left_value_list))
                 factor = __get_condition_factor(filter_condition.left, topic)
                 right_value_list = get_source_value_list(topic, data, filter_condition.right,
                                                          factor,context)
-                # log.info("right_value_list:{0}".format(type(right_value_list)))
+                log.info("right_value_list:{0}".format(right_value_list))
                 result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
                 condition_result.resultList.append(result)
         log.info("condition_result:{0}".format(condition_result))
@@ -530,7 +542,7 @@ def __check_on_condition(match_result: ConditionResult) -> bool:
         raise NotImplemented("not support {0}".format(match_result.logicOperator))
 
 
-def __check_condition(condition_holder: Conditional, pipeline_topic, data,context=None):
+def __check_condition(condition_holder: Conditional, pipeline_topic, data,context):
     if condition_holder.conditional and condition_holder.on is not None:
         condition: ParameterJoint = condition_holder.on
         return __check_on_condition(__build_on_condition(condition, pipeline_topic, data[pipeline_constants.NEW],context))
