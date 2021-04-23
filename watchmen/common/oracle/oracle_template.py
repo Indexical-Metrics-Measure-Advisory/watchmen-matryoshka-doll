@@ -52,6 +52,34 @@ def build_raw_sql_with_json_table(check_result, where, name):
         stmt = "select t.* from (" + json_table_stmt + ") t where t.user_id in " + where_stmt
         return stmt
 
+    if check_result["table_name"] == "user_groups" and check_result["column_name"] == "spaceIds":
+        json_table_stmt = "select s.*, jt.space_id " \
+                          "from user_groups s ,json_table(spaceids,'$[*]' " \
+                          "COLUMNS (space_id varchar2(60) PATH '$[*]') ) as jt"
+        where_stmt = ""
+        for id_ in where["spaceIds"]["in"]:
+            if where_stmt == "":
+                where_stmt = "(" + id_
+            else:
+                where_stmt = where_stmt + ", " + id_
+        where_stmt = where_stmt + ")"
+        stmt = "select t.* from (" + json_table_stmt + ") t where t.space_id in " + where_stmt
+        return stmt
+
+    if check_result["table_name"] == "users" and check_result["column_name"] == "groupIds":
+        json_table_stmt = "select s.*, jt.group_id " \
+                          "from users s ,json_table(groupids,'$[*]' " \
+                          "COLUMNS (group_id varchar2(60) PATH '$[*]') ) as jt"
+        where_stmt = ""
+        for id_ in where["groupIds"]["in"]:
+            if where_stmt == "":
+                where_stmt = "(" + id_
+            else:
+                where_stmt = where_stmt + ", " + id_
+        where_stmt = where_stmt + ")"
+        stmt = "select t.* from (" + json_table_stmt + ") t where t.group_id in " + where_stmt
+        return stmt
+
 
 def check_where_column_type(name, where):
     if name == "spaces":
@@ -60,6 +88,11 @@ def check_where_column_type(name, where):
     elif name == "user_groups":
         if "userIds" in where:
             return {"table_name": "user_groups", "column_name": "userIds"}
+        if "spaceIds" in where:
+            return {"table_name": "user_groups", "column_name": "spaceIds"}
+    elif name == "users":
+        if "groupIds" in where:
+            return {"table_name": "users", "column_name": "groupIds"}
     else:
         return None
 
