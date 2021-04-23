@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from watchmen.common.mongo_model import MongoModel
 from watchmen.common.parameter import Parameter, ParameterJoint

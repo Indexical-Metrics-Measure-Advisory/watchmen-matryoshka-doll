@@ -20,7 +20,11 @@ def get_user_group(user_group_id) -> UserGroup:
 
 def get_user_group_list_by_ids(user_group_ids: list) -> List[UserGroup]:
     # return template.find(USER_GROUPS, {"userGroupId": {"$in": user_group_ids}}, UserGroup)
-    return find_({"userGroupId": {"in": user_group_ids}}, UserGroup, USER_GROUPS)
+    if user_group_ids:
+        return find_({"userGroupId": {"in": user_group_ids}}, UserGroup, USER_GROUPS)
+    else:
+        return []
+
 
 
 def load_group_list_by_name(query_name) -> List[UserGroup]:

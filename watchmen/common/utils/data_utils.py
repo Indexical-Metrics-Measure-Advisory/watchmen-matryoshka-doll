@@ -90,6 +90,6 @@ def is_presto_datetime(factor_type):
 
 def convert_to_dict(instance):
     if type(instance) is not dict:
-        return instance.dict()
+        return instance.dict(by_alias=True)
     else:
         return instance

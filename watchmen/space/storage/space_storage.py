@@ -38,7 +38,10 @@ def get_space_list_by_ids(space_ids) -> List[Space]:
 
 def load_space_by_user(group_ids) -> List[Space]:
     # return template.find(SPACES, {"groupIds": {"$in": group_ids}}, Space)
-    return find_({"groupIds": {"in": group_ids}}, Space, SPACES)
+    if group_ids:
+        return find_({"groupIds": {"in": group_ids}}, Space, SPACES)
+    else:
+        return []
 
 
 def load_space_by_name(name) -> Space:
