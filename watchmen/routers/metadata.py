@@ -123,9 +123,6 @@ async def import_dashboard(dashboard: ConsoleDashboard):
     else:
         update_dashboard_to_storage(dashboard)
 
-# TODO  import monitor meta
-## import monitor meta
-
 
 ### search
 

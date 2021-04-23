@@ -10,7 +10,7 @@ client = get_client()
 
 log = logging.getLogger("app." + __name__)
 
-log.info("mongo template initialized")
+log.info("mongo2 template initialized")
 
 
 def create(collection_name, instance, base_model):
