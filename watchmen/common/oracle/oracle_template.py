@@ -562,12 +562,14 @@ def topic_data_insert_(data, topic_name):
 
 def raw_topic_data_insert_(data, topic_name)
     table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    values= []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
         value = {'id_': get_surrogate_key(), 'data_': dumps(instance_dict)}
+        values.append(value)
     stmt = insert(table)
     with engine.connect() as conn:
-        conn.execute(stmt, value)
+        conn.execute(stmt, values)
 
 
 def topic_data_update_(topic_name, query_dict, instance):
