@@ -82,6 +82,15 @@ def build_mongo_where_expression(where: dict):
                 return {key: {"$eq": value}}
 
 
+# used in pull_update, just allowed to update one field
+def build_mongo_update_expression(updates):
+    for key, value in updates.items():
+        if isinstance(value, dict):
+            for k, v in value.items():
+                if k == "in":
+                    return {key: {"$in": v}}
+
+
 def build_mongo_order(order_: list):
     result = []
     for item in order_:
@@ -133,6 +142,11 @@ def upsert_(where, updates, model, name):
 def update_(where, updates, model, name):
     collection = client.get_collection(name)
     collection.update_many(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)})
+
+
+def pull_update(where, updates, model, name):
+    collection = client.get_collection(name)
+    collection.update_many(build_mongo_where_expression(where), {"$pull": build_mongo_update_expression(__convert_to_dict(updates))})
 
 
 def delete_one(id_, name):

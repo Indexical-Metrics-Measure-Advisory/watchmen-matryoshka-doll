@@ -38,11 +38,28 @@ def build_raw_sql_with_json_table(check_result, where, name):
         stmt = "select t.* from (" + json_table_stmt + ") t where t.group_id in " + where_stmt
         return stmt
 
+    if check_result["table_name"] == "user_groups" and check_result["column_name"] == "userIds":
+        json_table_stmt = "select s.*, jt.user_id " \
+                          "from user_groups s ,json_table(userids,'$[*]' " \
+                          "COLUMNS (user_id varchar2(60) PATH '$[*]') ) as jt"
+        where_stmt = ""
+        for id_ in where["userIds"]["in"]:
+            if where_stmt == "":
+                where_stmt = "(" + id_
+            else:
+                where_stmt = where_stmt + ", " + id_
+        where_stmt = where_stmt + ")"
+        stmt = "select t.* from (" + json_table_stmt + ") t where t.user_id in " + where_stmt
+        return stmt
+
 
 def check_where_column_type(name, where):
     if name == "spaces":
         if "groupIds" in where:
             return {"table_name": "spaces", "column_name": "groupIds"}
+    elif name == "user_groups":
+        if "userIds" in where:
+            return {"table_name": "user_groups", "column_name": "userIds"}
     else:
         return None
 
@@ -215,6 +232,16 @@ def update_(where, updates, model, name):
         session.close()
 
 
+def pull_update(where, updates, model, name):
+    results = find_(where, model, name);
+    updates_dict = convert_to_dict(updates)
+    for key, value in updates_dict.items():
+        for res in results:
+            if isinstance(getattr(res, key), list):
+                setattr(res, key, getattr(res, key).remove(value["in"][0]))
+    update_(where, results, model, name)
+
+
 def delete_one(id_: str, name: str):
     table = get_table_by_name(name)
     key = get_primary_key(name)
@@ -364,7 +391,7 @@ def get_datatype_by_factor_type(type: str):
 
 
 def check_topic_type_is_raw(topic_name):
-    table= get_table_by_name("topics")
+    table = get_table_by_name("topics")
     select_stmt = select(table).where(build_oracle_where_expression(table, {"name": topic_name}))
     with engine.connect() as conn:
         cursor = conn.execute(select_stmt).cursor

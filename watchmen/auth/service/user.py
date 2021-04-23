@@ -5,9 +5,11 @@ from watchmen.auth.service.security import verify_password
 from watchmen.auth.storage.user import load_user_by_name
 from watchmen.auth.storage.user_group import USER_GROUPS, get_user_group_list_by_ids, update_user_group_storage
 from watchmen.auth.user import User
+from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
 ## TODO
 from watchmen.common.mongo.mongo_template import update_many
+from watchmen.common.storage.storage_template import pull_update
 
 
 def authenticate(username, password):
@@ -35,8 +37,12 @@ def init_superuser():
 
 
 def sync_user_to_user_groups(user: User):
+    '''
     update_many(collection_name=USER_GROUPS, query_dict={"userIds": {"$in": [user.userId]}},
                 update_dict={"$pull": {"userIds": {"$in": [user.userId]}}})
+    '''
+    pull_update({"userIds": {"in": [user.userId]}}, {"userIds": {"in": [user.userId]}}, UserGroup, USER_GROUPS)
+
     user_groups = get_user_group_list_by_ids(user.groupIds)
     for user_group in user_groups:
         if user.userId not in user_group.userIds:

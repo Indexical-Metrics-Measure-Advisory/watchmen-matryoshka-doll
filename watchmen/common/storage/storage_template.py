@@ -59,6 +59,10 @@ def update_(where: dict, updates: dict, model: BaseModel, name: str):
     template.update_(where, updates, model, name)
 
 
+def pull_update(where: dict, updates: dict, model: BaseModel, name: str):
+    template.pull_update(where, updates, model, name)
+
+
 def delete_one(id: str, name: str):
     template.delete_one(id, name)
 
@@ -71,7 +75,7 @@ def delete_all(model: BaseModel, name: str) -> list:
     raise NotImplementedError("delete_all not implemented")
 
 
-def drop_(name:str):
+def drop_(name: str):
     template.drop_(name)
 
 
