@@ -140,6 +140,10 @@ def alter_topic_data_table(topic):
     template.alter_topic_data_table(topic)
 
 
+def drop_topic_data_table(name):
+    template.drop_topic_data_table(name)
+
+
 def topic_data_insert_one(one: any, topic_name: str) -> tuple:
     return template.topic_data_insert_one(one, topic_name)
 

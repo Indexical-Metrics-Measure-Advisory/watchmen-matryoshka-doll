@@ -428,7 +428,7 @@ def get_datatype_by_factor_type(type: str):
     if type == "number":
         return DECIMAL(32)
     if type == 'datetime':
-        return DateTime;
+        return DateTime
     if type == "boolean":
         return String(5)
     if type == "enum":
@@ -510,6 +510,12 @@ def alter_topic_data_table(topic):
             with engine.connect() as conn:
                 conn.execute(text(stmt))
                 conn.commit()
+
+
+def drop_topic_data_table(topic_name):
+    table_name = 'topic_' + topic_name
+    table = Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    table.drop(engine)
 
 
 def topic_data_insert_one(one, topic_name):

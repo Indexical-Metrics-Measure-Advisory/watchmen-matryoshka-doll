@@ -274,6 +274,11 @@ def alter_topic_data_table(topic):
     pass
 
 
+def drop_topic_data_table(name):
+    topic_name = build_collection_name(name)
+    client.get_collection(topic_name).drop()
+
+
 # save_topic_instance, insert one
 def topic_data_insert_one(one, topic_name):
     codec_options = build_code_options()
