@@ -272,7 +272,9 @@ def pull_update(where, updates, model, name):
         for res in results:
             if isinstance(getattr(res, key), list):
                 setattr(res, key, getattr(res, key).remove(value["in"][0]))
-    update_(where, results, model, name)
+                update_one(res, model,name)
+    # can't use update_, because the where have the json filed query
+    # update_(where, results, model, name)
 
 
 def delete_one(id_: str, name: str):
