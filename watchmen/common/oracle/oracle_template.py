@@ -577,7 +577,7 @@ def topic_data_insert_(data, topic_name):
             conn.commit()
 
 
-def raw_topic_data_insert_(data, topic_name)
+def raw_topic_data_insert_(data, topic_name):
     table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
     values= []
     for instance in data:
