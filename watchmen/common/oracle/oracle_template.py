@@ -3,7 +3,7 @@ import logging
 from operator import eq
 
 from sqlalchemy import update, MetaData, Table, and_, or_, delete, Column, DECIMAL, String, Text, Date, CLOB, desc, asc, \
-    text, func
+    text, func, DateTime, BigInteger
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
@@ -272,7 +272,7 @@ def pull_update(where, updates, model, name):
         for res in results:
             if isinstance(getattr(res, key), list):
                 setattr(res, key, getattr(res, key).remove(value["in"][0]))
-                update_one(res, model,name)
+                update_one(res, model, name)
     # can't use update_, because the where have the json filed query
     # update_(where, results, model, name)
 
@@ -422,6 +422,20 @@ topic data interface
 
 def get_datatype_by_factor_type(type: str):
     if type == "text":
+        return String(20)
+    if type == "sequence":
+        return BigInteger(10)
+    if type == "number":
+        return DECIMAL(32)
+    if type == 'datetime':
+        return DateTime;
+    if type == "boolean":
+        return String(5)
+    if type == "enum":
+        return String(20)
+    if type == "object":
+        return String(20)
+    if type == "array":
         return String(20)
 
 
