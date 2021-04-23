@@ -423,6 +423,7 @@ topic data interface
 def get_datatype_by_factor_type(type: str):
     if type == "text":
         return String(20)
+    
 
 
 def check_topic_type_is_raw(topic_name):
@@ -467,7 +468,7 @@ def create_raw_topic_data_table(topic):
     table = Table('topic_' + topic_name, metadata)
     key = Column(name="id_", type_=DECIMAL(30), primary_key=True)
     table.append_column(key)
-    col = Column(name="data_", type_="CLOB", nullable=True)
+    col = Column(name="data_", type_=CLOB, nullable=True)
     table.append_column(col)
     table.create(engine)
 

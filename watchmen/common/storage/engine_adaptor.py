@@ -6,7 +6,7 @@ ORACLE = "oracle"
 
 
 def find_template():
-    print(settings.STORAGE_ENGINE)
+    # print(settings.STORAGE_ENGINE)
     if settings.STORAGE_ENGINE == MONGO:
         from watchmen.common.mongo import mongo_new_template
         return mongo_new_template
