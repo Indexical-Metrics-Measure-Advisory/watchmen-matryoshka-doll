@@ -33,12 +33,12 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 context[context_target_name] = target_data[factor.name]
                 unit_action_status.value = read_value
         else:
-            context[context_target_name] = convert_factor_type(factor.defaultValue,factor.type)
+            context[context_target_name] = convert_factor_type(factor.defaultValue, factor.type)
             log.warn("target_data is empty ,conditions {0}".format(mongo_query))
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
         # print("read context",context)
-        return context, unit_action_status,[]
+        return context, unit_action_status, []
 
     return read_factor

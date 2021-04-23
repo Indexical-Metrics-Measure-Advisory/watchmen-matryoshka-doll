@@ -1,8 +1,7 @@
-import json
 import logging
 from operator import eq
 
-from sqlalchemy import update, MetaData, Table, and_, or_, delete, Column, DECIMAL, String, Text, Date, CLOB, desc, asc, \
+from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
     text, func, DateTime, BigInteger
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
@@ -10,7 +9,6 @@ from sqlalchemy.orm import Session
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.mysql.model.table_definition import get_primary_key
-
 from watchmen.common.oracle.oracle_engine import engine, dumps
 from watchmen.common.oracle.oracle_utils import parse_obj, count_table
 from watchmen.common.oracle.table_definition import get_table_by_name, metadata

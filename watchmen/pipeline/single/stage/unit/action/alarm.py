@@ -61,7 +61,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
         unit_action_status.type = action.type
         start = time.time()
         log.info("alert data")
-        match_result = __check_condition(action, pipeline_topic, instance,context)
+        match_result = __check_condition(action, pipeline_topic, instance, context)
 
         if match_result:
             alarm_message = AlarmMessage(severity=action.severity)
@@ -70,6 +70,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
-        return context, unit_action_status,[]
+        return context, unit_action_status, []
 
     return alarm

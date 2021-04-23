@@ -1,6 +1,5 @@
 import logging
 
-
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.storage.engine_adaptor import find_template
 from watchmen.common.storage.storage_template import create_topic_data_table, alter_topic_data_table

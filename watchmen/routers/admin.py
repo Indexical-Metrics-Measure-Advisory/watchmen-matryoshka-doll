@@ -284,11 +284,13 @@ async def query_user_groups_list_by_name(query_name: str, pagination: Pagination
 
 
 @router.post("/user_group/list/name", tags=["admin"], response_model=List[UserGroup])
-async def load_user_group_list_by_name_list(name_list:List[str],current_user: User = Depends(deps.get_current_user))->List[UserGroup]:
+async def load_user_group_list_by_name_list(name_list: List[str],
+                                            current_user: User = Depends(deps.get_current_user)) -> List[UserGroup]:
     results = []
     for name in name_list:
         results.append(get_user_group_by_name(name))
     return results
+
 
 # pipeline
 

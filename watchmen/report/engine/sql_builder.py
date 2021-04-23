@@ -21,7 +21,7 @@ def _from(column: Column) -> QueryBuilder:
     return Query.from_(Table(topic_col_name))
 
 
-def parse_parameter(parameter: Parameter,factor=None):
+def parse_parameter(parameter: Parameter, factor=None):
     if parameter.kind == "topic":
         topic = get_topic_by_id(parameter.topicId)
         topic_col_name = build_collection_name(topic.name)
@@ -151,7 +151,7 @@ def _filter_criterion(filter: Filter) -> any:
     left = parse_parameter(filter.left)
     topic = get_topic_by_id(filter.left.topicId)
     factor = get_factor(filter.left.factorId, topic)
-    right = parse_parameter(filter.right,factor)
+    right = parse_parameter(filter.right, factor)
 
     if filter.operator == "equals":
         if factor is not None and factor.type == "text":

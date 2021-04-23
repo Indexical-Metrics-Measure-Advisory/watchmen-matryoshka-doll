@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import Table, Column, String, JSON, Date, Text, CLOB, text
+from sqlalchemy import CLOB, text
 
 from watchmen.common.oracle.oracle_engine import engine
 

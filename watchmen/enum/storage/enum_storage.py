@@ -3,7 +3,7 @@ from typing import List
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.storage_template import upsert_, find_by_id, insert_one, update_one, find_one, find_, \
+from watchmen.common.storage.storage_template import find_by_id, insert_one, update_one, find_one, find_, \
     page_, page_all, list_all, drop_, insert_all
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.enum.model.enum import Enum, EnumItem
@@ -25,18 +25,18 @@ def __add_enum_id(items: List[EnumItem], enum_id):
 
 
 def __build_enum_item_name(enum_name):
-    return "e_"+enum_name
+    return "e_" + enum_name
 
 
-def save_enum_items_to_storage(items: List[EnumItem],enum_name):
+def save_enum_items_to_storage(items: List[EnumItem], enum_name):
     enum_name_collection = __build_enum_item_name(enum_name)
     drop_(enum_name_collection)
-    return insert_all(items,EnumItem,enum_name_collection)
+    return insert_all(items, EnumItem, enum_name_collection)
 
 
 def load_enum_items_by_enum_name(enum_name) -> List[EnumItem]:
     enum_name_collection = __build_enum_item_name(enum_name)
-    return list_all(EnumItem,enum_name_collection)
+    return list_all(EnumItem, enum_name_collection)
     # return template.find(ENUM_ITEMS, {"enumId": enum_id}, EnumItem)
 
 
@@ -48,13 +48,13 @@ def save_enum_to_storage(enum: Enum):
         # result = template.create(ENUMS, enum, Enum)
         result = insert_one(enum, Enum, ENUMS)
         # items = __add_enum_id(items_copy, result.enumId)
-        save_enum_items_to_storage(items_copy,enum.name)
+        save_enum_items_to_storage(items_copy, enum.name)
         return result
     else:
         items_copy = enum.items.copy()
         # enum.items = []
         # items = __add_enum_id(items_copy, enum.enumId)
-        save_enum_items_to_storage(items_copy,enum.name)
+        save_enum_items_to_storage(items_copy, enum.name)
         # return template.update_one(ENUMS, {"enumId": enum.enumId}, enum, Enum)
         return update_one(enum, Enum, ENUMS)
 

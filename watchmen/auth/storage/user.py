@@ -38,8 +38,6 @@ def load_user_list_by_name(query_name):
     return find_({"name": {"like": query_name}}, User, USERS)
 
 
-
-
 def load_user_by_name(user_name):
     # return users.find_one({"name": user_name})
     # return template.find_one(USERS, {"name": user_name}, User)

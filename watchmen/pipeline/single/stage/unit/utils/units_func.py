@@ -91,7 +91,7 @@ OBJECT = "object"
 ARRAY = "array"
 
 
-def     check_condition(operator: str, left_value, right_value) -> bool:
+def check_condition(operator: str, left_value, right_value) -> bool:
     if operator == "equals":
         return left_value == right_value
     elif operator == "not-equals":

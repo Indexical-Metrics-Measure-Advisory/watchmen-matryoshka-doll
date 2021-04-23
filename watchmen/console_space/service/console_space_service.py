@@ -19,4 +19,3 @@ def delete_console_space_and_sub_data(connect_id):
     # if console_space.groupIds:
     #     delete_console_group(console_space.groupIds)
     delete_console_space_storage(connect_id)
-

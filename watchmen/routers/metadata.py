@@ -19,7 +19,7 @@ from watchmen.space.service.admin import update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import import_space_to_db, get_space_by_id
 from watchmen.topic.service.topic_service import update_topic_schema, create_topic_schema
-from watchmen.topic.storage.topic_schema_storage import import_topic_to_db, get_topic_by_id
+from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
 
 router = APIRouter()
@@ -123,7 +123,6 @@ async def import_dashboard(dashboard: ConsoleDashboard):
         import_dashboard_to_db(dashboard)
     else:
         update_dashboard_to_storage(dashboard)
-
 
 ### search
 

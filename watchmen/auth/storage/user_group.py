@@ -26,10 +26,10 @@ def get_user_group_list_by_ids(user_group_ids: list) -> List[UserGroup]:
         return []
 
 
-
 def load_group_list_by_name(query_name) -> List[UserGroup]:
     # return template.find(USER_GROUPS, {"name": regex.Regex(query_name)}, UserGroup)
     return find_({"name": {"like": query_name}}, UserGroup, USER_GROUPS)
+
 
 def get_user_group_by_name(name):
     return find_one({"name": name}, UserGroup, USER_GROUPS)

@@ -14,9 +14,6 @@ def init_pipeline_monitor():
 def init_stage_monitor():
     pass
 
-
 # def __check_init_status():
 #     # TODO check db record
 #     return False
-
-

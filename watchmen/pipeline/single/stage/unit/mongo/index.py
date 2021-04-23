@@ -6,7 +6,7 @@ from functools import reduce
 import numpy as np
 import pandas as pd
 
-from watchmen.common.constants import pipeline_constants, parameter_constants, mongo_constants
+from watchmen.common.constants import pipeline_constants, parameter_constants
 from watchmen.common.constants.pipeline_constants import VALUE
 from watchmen.common.utils.condition_result import ConditionResult
 from watchmen.config.config import settings
@@ -69,7 +69,7 @@ def __convert_value_to_datetime(value):
 
 def __run_arithmetic(arithmetic, value):
     # print("arithmetic {0} value {1}".format(arithmetic,value))
-    if arithmetic is None or arithmetic ==NONE or type(value) != list:
+    if arithmetic is None or arithmetic == NONE or type(value) != list:
         return value
     elif arithmetic == SUM:
         return sum(value)
@@ -118,7 +118,7 @@ def __convert_to_target_value_list(target_factor, source_value_list):
         return convert_factor_type(source_value_list, target_factor.type)
 
 
-def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic,context=None):
+def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic, context=None):
     mapping_results = []
 
     for mapping in mapping_list:
@@ -129,7 +129,7 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic,conte
         target_factor = get_factor(mapping.factorId, target_topic)
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source,
-                                                                            target_factor,context))
+                                                                            target_factor, context))
 
         # if target_topic.name =="baoviet_policy_cash_change":
         #     print("source_value_list",source_value_list)
@@ -241,7 +241,7 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic, target_f
         return __process_operator(operator, value_list)
 
 
-def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target_factor:Factor=None, context=None):
+def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target_factor: Factor = None, context=None):
     if parameter.kind == parameter_constants.TOPIC:
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, source_factor)
@@ -290,7 +290,7 @@ def __check_default_value(target_factor):
 
 def get_source_factor_value(raw_data, source_factor):
     if is_sub_field(source_factor):
-        results=[]
+        results = []
         factor_list = build_factor_list(source_factor)
         source_value_list = get_factor_value(0, factor_list, raw_data, results)
         if len(source_value_list) == 1:
@@ -348,7 +348,7 @@ def get_factor_value(index, factor_list, raw_data, result):
         get_factor_value(index + 1, factor_list, data, result)
     else:
         if data is None and factor.defaultValue is not None:
-            result.append( convert_factor_type(factor.defaultValue,factor.type))
+            result.append(convert_factor_type(factor.defaultValue, factor.type))
         else:
             result.append(data)
 
@@ -497,19 +497,20 @@ def __get_condition_factor(parameter: Parameter, topic):
         return get_factor(parameter.factorId, topic)
 
 
-def __build_on_condition(parameter_joint: ParameterJoint, topic, data,context):
+def __build_on_condition(parameter_joint: ParameterJoint, topic, data, context):
     if parameter_joint.filters:
         joint_type = parameter_joint.jointType
         condition_result = ConditionResult(logicOperator=joint_type)
         for filter_condition in parameter_joint.filters:
             if filter_condition.jointType is not None:
-                condition_result.resultList.append(__build_on_condition(filter_condition, topic, data,context))
+                condition_result.resultList.append(__build_on_condition(filter_condition, topic, data, context))
             else:
-                left_value_list = get_source_value_list(topic, data, filter_condition.left,target_factor=None,context=context)
+                left_value_list = get_source_value_list(topic, data, filter_condition.left, target_factor=None,
+                                                        context=context)
                 log.info("left_value_list:{0}".format(left_value_list))
                 factor = __get_condition_factor(filter_condition.left, topic)
                 right_value_list = get_source_value_list(topic, data, filter_condition.right,
-                                                         factor,context)
+                                                         factor, context)
                 log.info("right_value_list:{0}".format(right_value_list))
                 result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
                 condition_result.resultList.append(result)
@@ -542,10 +543,11 @@ def __check_on_condition(match_result: ConditionResult) -> bool:
         raise NotImplemented("not support {0}".format(match_result.logicOperator))
 
 
-def __check_condition(condition_holder: Conditional, pipeline_topic, data,context):
+def __check_condition(condition_holder: Conditional, pipeline_topic, data, context):
     if condition_holder.conditional and condition_holder.on is not None:
         condition: ParameterJoint = condition_holder.on
-        return __check_on_condition(__build_on_condition(condition, pipeline_topic, data[pipeline_constants.NEW],context))
+        return __check_on_condition(
+            __build_on_condition(condition, pipeline_topic, data[pipeline_constants.NEW], context))
     else:
         return True
 
@@ -623,7 +625,7 @@ def __process_where_condition(where_condition):
 
 def index_conditions(where_condition, index):
     result = where_condition.copy()
-    if type(where_condition) ==list:
+    if type(where_condition) == list:
         for index, condition in enumerate(where_condition):
             condition_values = condition[pipeline_constants.VALUE]
             if type(condition_values) == list:
@@ -636,8 +638,6 @@ def index_conditions(where_condition, index):
             return result
         else:
             return result
-
-
 
     result = where_condition.copy()
     # print("where_condition",where_condition)

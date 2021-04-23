@@ -7,7 +7,7 @@ from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_colum
 
 
 def __build_trigger_pipeline_data(topic_name: str, data, trigger_type):
-    return TriggerData(topicName=topic_name,triggerType=trigger_type,data=data)
+    return TriggerData(topicName=topic_name, triggerType=trigger_type, data=data)
 
 
 def insert_topic_data(topic_name, mapping_result, pipeline_uid):
@@ -29,9 +29,6 @@ def insert_topic_data(topic_name, mapping_result, pipeline_uid):
 
 
 def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
-
-
-
     '''
     collection_name = build_collection_name(topic_name)
     codec_options = build_code_options()
@@ -52,7 +49,7 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
                                          TriggerType.update)
 
 
-def find_and_modify_topic_data(topic_name, query, update_data,target_data):
+def find_and_modify_topic_data(topic_name, query, update_data, target_data):
     '''
     collection_name = build_collection_name(topic_name)
     codec_options = build_code_options()
@@ -60,11 +57,10 @@ def find_and_modify_topic_data(topic_name, query, update_data,target_data):
     old_value = collection.find_one_and_update(filter=query, update=update_data, upsert=True)
     '''
 
-
     if target_data is not None:
         old_data = topic_data_find_by_id(target_data["_id"], topic_name)
     else:
-        old_data=None
+        old_data = None
     new_data = topic_find_one_and_update(query, update_data, topic_name)
     return __build_trigger_pipeline_data(topic_name,
                                          {pipeline_constants.NEW: new_data, pipeline_constants.OLD: old_data},

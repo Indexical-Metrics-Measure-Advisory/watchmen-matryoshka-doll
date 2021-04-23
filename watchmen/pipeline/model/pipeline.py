@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from watchmen.common.mongo_model import MongoModel
 from watchmen.common.parameter import Parameter, ParameterJoint
@@ -39,7 +39,7 @@ class UnitAction(Conditional):
 
 class ProcessUnit(Conditional):
     unitId: str = None
-    name:str =None
+    name: str = None
     do: List[UnitAction] = []
 
 

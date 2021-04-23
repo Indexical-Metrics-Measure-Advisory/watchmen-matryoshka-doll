@@ -4,6 +4,7 @@ from bson import Decimal128
 from bson.codec_options import TypeCodec, TypeRegistry, CodecOptions
 
 from watchmen.common.storage.engine.storage_engine import get_client
+
 # from watchmen.common.storage.storage_template import drop_topic_data_table
 # from watchmen.common.utils.data_utils import build_collection_name
 

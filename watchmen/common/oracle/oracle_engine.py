@@ -1,10 +1,10 @@
 import json
 
+import cx_Oracle
 from sqlalchemy import create_engine
 
 from watchmen.common.utils.date_utils import DateTimeEncoder
 from watchmen.config.config import settings
-import cx_Oracle
 
 
 def dumps(o):
