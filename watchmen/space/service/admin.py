@@ -1,6 +1,7 @@
 from typing import List
 
 from watchmen.auth.storage.user_group import get_user_group_list_by_ids, update_user_group_storage, USER_GROUPS
+## TODO
 from watchmen.common.mongo.mongo_template import update_many
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
@@ -27,6 +28,7 @@ def load_space(name: str) -> List[Space]:
 
 
 def sync_space_to_user_group(space: Space):
+    ## TODO mongo
     update_many(collection_name=USER_GROUPS, query_dict={"spaceIds": {"$in": [space.spaceId]}},
                 update_dict={"$pull": {"spaceIds": {"$in": [space.spaceId]}}})
     user_group_list = get_user_group_list_by_ids(space.groupIds)
