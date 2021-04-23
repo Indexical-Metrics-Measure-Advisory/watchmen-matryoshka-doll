@@ -543,18 +543,31 @@ def raw_topic_data_insert_one(one, topic_name):
 
 
 def topic_data_insert_(data, topic_name):
+    if check_topic_type_is_raw(topic_name):
+        raw_topic_data_insert_(data, topic_name)
+    else:
+        table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+        values = []
+        for instance in data:
+            instance_dict: dict = convert_to_dict(instance)
+            value = {}
+            for key in table.c.keys():
+                value[key] = instance_dict.get(key)
+            values.append(value)
+        stmt = insert(table)
+        with engine.connect() as conn:
+            conn.execute(stmt, values)
+            conn.commit()
+
+
+def raw_topic_data_insert_(data, topic_name)
     table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
-    values = []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
-        value = {}
-        for key in table.c.keys():
-            value[key] = instance_dict.get(key)
-        values.append(value)
+        value = {'id_': get_surrogate_key(), 'data_': dumps(instance_dict)}
     stmt = insert(table)
     with engine.connect() as conn:
-        conn.execute(stmt, values)
-        conn.commit()
+        conn.execute(stmt, value)
 
 
 def topic_data_update_(topic_name, query_dict, instance):
