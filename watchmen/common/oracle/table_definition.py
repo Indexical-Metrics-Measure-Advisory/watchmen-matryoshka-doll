@@ -14,6 +14,16 @@ users_table = Table("users", metadata,
                     Column('lastmodified', Date, nullable=True)
                     )
 
+user_groups_table = Table("user_groups", metadata,
+                          Column('usergroupid', String(60), primary_key=True),
+                          Column('name', String(45), nullable=False),
+                          Column('description', String(45), nullable=True),
+                          Column('userids', CLOB, nullable=True),
+                          Column('spaceids', CLOB, nullable=True),
+                          Column('createtime', String(50), nullable=True),
+                          Column('lastmodified', Date, nullable=True)
+                          )
+
 console_space_last_snapshot_table = Table("console_space_last_snapshot", metadata,
                                           Column('userid', String(60), primary_key=True),
                                           Column('language', String(5), nullable=True),
@@ -123,3 +133,5 @@ def get_table_by_name(table_name):
         return console_space_graph_table
     elif table_name == "console_spaces":
         return console_spaces_table
+    elif table_name == "user_groups":
+        return user_groups_table
