@@ -14,6 +14,7 @@ from watchmen.common.mysql.model.table_definition import get_primary_key
 from watchmen.common.oracle.oracle_engine import engine, dumps
 from watchmen.common.oracle.oracle_utils import parse_obj, count_table
 from watchmen.common.oracle.table_definition import get_table_by_name, metadata
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
 
@@ -362,18 +363,50 @@ def get_datatype_by_factor_type(type: str):
         return String(20)
 
 
+def check_topic_type_is_raw(topic_name):
+    table= get_table_by_name("topics")
+    select_stmt = select(table).where(build_oracle_where_expression(table, {"name": topic_name}))
+    with engine.connect() as conn:
+        cursor = conn.execute(select_stmt).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        result = cursor.fetchone()
+        if result is None:
+            raise
+        else:
+            if result['type'] == "raw":
+                return True
+            else:
+                return False
+
+
 def create_topic_data_table(topic):
     topic_dict: dict = convert_to_dict(topic)
+    topic_type = topic_dict.get("type")
+    if topic_type == "raw":
+        create_raw_topic_data_table(topic)
+    else:
+        topic_name = topic_dict.get('name')
+        factors = topic_dict.get('factors')
+        table = Table('topic_' + topic_name, metadata)
+        key = Column(name="id_", type_=DECIMAL(30), primary_key=True)
+        table.append_column(key)
+        for factor in factors:
+            name_ = factor.get('name').lower()
+            type_ = get_datatype_by_factor_type(factor.get('type'))
+            col = Column(name=name_, type_=type_, nullable=True)
+            table.append_column(col)
+        table.create(engine)
+
+
+def create_raw_topic_data_table(topic):
+    topic_dict: dict = convert_to_dict(topic)
     topic_name = topic_dict.get('name')
-    factors = topic_dict.get('factors')
     table = Table('topic_' + topic_name, metadata)
     key = Column(name="id_", type_=DECIMAL(30), primary_key=True)
     table.append_column(key)
-    for factor in factors:
-        name_ = factor.get('name').lower()
-        type_ = get_datatype_by_factor_type(factor.get('type'))
-        col = Column(name=name_, type_=type_, nullable=True)
-        table.append_column(col)
+    col = Column(name="data_", type_="CLOB", nullable=True)
+    table.append_column(col)
     table.create(engine)
 
 
@@ -404,15 +437,27 @@ def alter_topic_data_table(topic):
 
 
 def topic_data_insert_one(one, topic_name):
+    if check_topic_type_is_raw(topic_name):
+        raw_topic_data_insert_one(one, topic_name)
+    else:
+        table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+        one_dict: dict = convert_to_dict(one)
+        value = {}
+        for key in table.c.keys:
+            value[key] = one_dict.get(key)
+        stmt = insert(table)
+        with engine.connect() as conn:
+            conn.execute(stmt, value)
+            conn.commit()
+
+
+def raw_topic_data_insert_one(one, topic_name):
     table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
     one_dict: dict = convert_to_dict(one)
-    value = {}
-    for key in table.c.keys:
-        value[key] = one_dict.get(key)
+    value = {'id_': get_surrogate_key(), 'data_': json.dumps(one_dict)}
     stmt = insert(table)
     with engine.connect() as conn:
         conn.execute(stmt, value)
-        conn.commit()
 
 
 def topic_data_insert_(data, topic_name):
