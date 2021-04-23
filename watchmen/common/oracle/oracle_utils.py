@@ -10,10 +10,13 @@ def parse_obj(base_model, result, table):
     for attr, value in model.__dict__.items():
         if attr[:1] != '_':
             if isinstance(table.c[attr.lower()].type, CLOB):
-                if result[attr.upper()] is not None:
-                    setattr(model, attr, json.loads(result[attr.upper()]))
+                if attr == "on":
+                    setattr(model, attr, json.loads(result[attr]))
                 else:
-                    setattr(model, attr, None)
+                    if result[attr.upper()] is not None:
+                        setattr(model, attr, json.loads(result[attr.upper()]))
+                    else:
+                        setattr(model, attr, None)
             else:
                 setattr(model, attr, result[attr.upper()])
     return model

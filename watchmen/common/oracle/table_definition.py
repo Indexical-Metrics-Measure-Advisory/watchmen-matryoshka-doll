@@ -121,7 +121,7 @@ pipelines_table = Table("pipelines", metadata,
                         Column("stages", CLOB, nullable=True),
                         Column("conditional", String(5), nullable=True),
                         Column("enabled", String(5), nullable=True),
-                        Column("on_body", CLOB, nullable=True),
+                        Column("on", CLOB, nullable=True),
                         Column('createtime', String(50), nullable=True),
                         Column('last_modified', DateTime, nullable=True),
                         Column('lastmodified', DateTime, nullable=True)
@@ -130,7 +130,8 @@ pipelines_table = Table("pipelines", metadata,
 pipeline_graph_table = Table("pipeline_graph", metadata,
                              Column("userid", String(60), nullable=False),
                              Column("topics", CLOB, nullable=True),
-                             Column('lastmodified', DateTime, nullable=True)
+                             Column('lastmodified', DateTime, nullable=True),
+                             Column('createtime', String(50), nullable=True)
                              )
 
 
