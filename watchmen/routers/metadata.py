@@ -18,7 +18,7 @@ from watchmen.report.storage.report_storage import import_report_to_db, load_rep
 from watchmen.space.service.admin import update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import import_space_to_db, get_space_by_id
-from watchmen.topic.service.topic_service import update_topic_schema
+from watchmen.topic.service.topic_service import update_topic_schema, create_topic_schema
 from watchmen.topic.storage.topic_schema_storage import import_topic_to_db, get_topic_by_id
 from watchmen.topic.topic import Topic
 
@@ -67,7 +67,8 @@ async def import_space(space: Space):
 async def import_topic(topic: Topic):
     result = get_topic_by_id(topic.topicId)
     if result is None:
-        import_topic_to_db(topic)
+        # import_topic_to_db(topic)
+        create_topic_schema(topic)
     else:
         update_topic_schema(topic.topicId, topic)
 
