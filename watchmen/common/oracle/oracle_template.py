@@ -2,7 +2,7 @@ import logging
 from operator import eq
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
-    text, func, DateTime, BigInteger
+    text, func, DateTime, BigInteger, Date
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
@@ -440,9 +440,9 @@ def get_datatype_by_factor_type(type: str):
     elif type == "number":
         return DECIMAL(32)
     if type == 'datetime':
-        return DateTime
+        return Date
     if type == 'date':
-        return DateTime
+        return Date
     if type == "boolean":
         return String(5)
     elif type == "enum":
@@ -552,7 +552,10 @@ def topic_data_insert_one(one, topic_name):
             if key == "id_":
                 value[key] = get_surrogate_key()
             else:
-                value[key] = one_dict.get(key)
+                # if key=="date_factor":
+                #     pass #
+                # else:
+                    value[key] = one_dict.get(key)
         stmt = insert(table)
         with engine.connect() as conn:
             conn.execute(stmt, value)

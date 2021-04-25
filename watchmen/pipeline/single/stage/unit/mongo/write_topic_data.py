@@ -1,6 +1,7 @@
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.storage.storage_template import topic_data_find_by_id, topic_data_update_one, \
     topic_data_insert_one, topic_find_one_and_update
+from watchmen.config.config import settings
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.model.trigger_data import TriggerData
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE
@@ -28,6 +29,13 @@ def insert_topic_data(topic_name, mapping_result, pipeline_uid):
                                          TriggerType.insert)
 
 
+def __get_key():
+    if settings.STORAGE_ENGINE =="mongo":
+        return "_id"
+    elif settings.STORAGE_ENGINE=="oracle":
+        return "id_"
+
+
 def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     '''
     collection_name = build_collection_name(topic_name)
@@ -35,13 +43,14 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     collection = db.get_collection(collection_name, codec_options=codec_options)
     old_data = find_topic_data_by_id(collection, target_data["_id"])
     '''
-    old_data = topic_data_find_by_id(target_data["_id"], topic_name)
+    # print("target_data",target_data)
+    old_data = topic_data_find_by_id(target_data[__get_key()], topic_name)
     add_audit_columns(mapping_result, UPDATE)
     add_trace_columns(mapping_result, "update_row", pipeline_uid)
     '''
     collection.update_one({"_id": target_data["_id"]}, {"$set": mapping_result})
     '''
-    topic_data_update_one(target_data["_id"], mapping_result, topic_name)
+    topic_data_update_one(target_data[__get_key()], mapping_result, topic_name)
     data = {**target_data, **mapping_result}
 
     return __build_trigger_pipeline_data(topic_name,
@@ -58,7 +67,7 @@ def find_and_modify_topic_data(topic_name, query, update_data, target_data):
     '''
 
     if target_data is not None:
-        old_data = topic_data_find_by_id(target_data["_id"], topic_name)
+        old_data = topic_data_find_by_id(target_data[__get_key()], topic_name)
     else:
         old_data = None
     new_data = topic_find_one_and_update(query, update_data, topic_name)
