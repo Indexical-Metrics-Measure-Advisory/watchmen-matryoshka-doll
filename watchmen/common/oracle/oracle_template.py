@@ -1,4 +1,5 @@
 import logging
+import operator
 from operator import eq
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
@@ -130,6 +131,37 @@ def build_oracle_where_expression(table, where):
             else:
                 return table.c[key.lower()] == value
 
+
+def build_oracle_updates_expression_for_insert(table, updates):
+    new_updates = {}
+    for key, value in updates.items():
+        if key == "$inc":
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    new_updates[k] = v
+        elif key == "$set":
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    new_updates[k] = v
+        else:
+            new_updates[key] = value
+    return new_updates
+
+
+def build_oracle_updates_expression_for_update(table, updates):
+    new_updates = {}
+    for key, value in updates.items():
+        if key == "$inc":
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    new_updates[k] = operator.add(table.c[k], v)
+        elif key == "$set":
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    new_updates[k] = v
+        else:
+            new_updates[key] = value
+    return new_updates
 
 def build_oracle_order(table, order_: list):
     result = []
@@ -671,16 +703,28 @@ def topic_find_one_and_update(where, updates, name):
     table = Table('topic_' + name, metadata, extend_existing=True,
                   autoload=True, autoload_with=engine)
     data_dict: dict = convert_to_dict(updates)
+
     select_stmt = select(table). \
         with_for_update(nowait=True). \
         where(build_oracle_where_expression(table, where))
+
+    if "id_" in updates:
+        pass
+    else:
+        updates["id_"] = get_surrogate_key()
+
+    insert_stmt = insert(table).values(build_oracle_updates_expression_for_insert(table, data_dict))
+
     update_stmt = update(table).where(
-        build_oracle_where_expression(table, where)).values(data_dict)
+        build_oracle_where_expression(table, where)).values(build_oracle_updates_expression_for_update(table, data_dict))
+
     with engine.connect() as conn:
         with conn.begin():
             row = conn.execute(select_stmt).fetchone()
             if row is not None:
                 conn.execute(update_stmt)
+            else:
+                conn.execute(insert_stmt)
             conn.commit()
     return row, data_dict
 
