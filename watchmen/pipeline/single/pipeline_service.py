@@ -162,5 +162,6 @@ def run_pipeline(pipeline: Pipeline, data):
                     # log.debug("pipeline_status is {0}".format(pipeline_status))
                     pass
                 else:
+                    pass
                     # print("sync pipeline monitor")
-                    watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
+                    # watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
