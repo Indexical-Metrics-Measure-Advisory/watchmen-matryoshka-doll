@@ -352,7 +352,7 @@ def find_(where: dict, model, name: str) -> list:
         columns = [col[0] for col in cursor.description]
         cursor.rowfactory = lambda *args: dict(zip(columns, args))
         result = cursor.fetchall()
-        print("result", result)
+        # print("result", result)
     if result is not None:
         return [parse_obj(model, row, table) for row in result]
     else:

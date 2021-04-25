@@ -23,7 +23,7 @@ def delete_topic_collection(collection_name):
     topic_name = build_collection_name(collection_name)
     client.get_collection(topic_name).drop()
     '''
-    watchmen.common.storage.storage_template.drop_topic_data_table(collection_name)
+    watchmen.common.storage.storage_template.delete_(None,None,collection_name)
 
 
 class DecimalCodec(TypeCodec):

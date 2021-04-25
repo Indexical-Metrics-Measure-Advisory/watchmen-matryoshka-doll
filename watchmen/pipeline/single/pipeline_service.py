@@ -108,7 +108,7 @@ def run_pipeline(pipeline: Pipeline, data):
 
                 pipeline_trigger_merge_list = []
                 for stage in pipeline.stages:
-                    print(stage)
+
                     if __check_condition(stage, pipeline_topic, data, context):
                         stage_run_status = StageRunStatus()
                         stage_run_status.name = stage.name

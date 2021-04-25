@@ -158,7 +158,7 @@ def convert_factor_type(value, factor_type):
     elif factor_type == TIME:
         return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
     elif factor_type == DATE:
-        print("factor type",type(value))
+        ## TODO date format
         if isinstance(value, datetime):
             return value
         else:
