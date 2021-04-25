@@ -441,6 +441,8 @@ def get_datatype_by_factor_type(type: str):
         return DECIMAL(32)
     if type == 'datetime':
         return DateTime
+    if type == 'date':
+        return DateTime
     if type == "boolean":
         return String(5)
     elif type == "enum":
