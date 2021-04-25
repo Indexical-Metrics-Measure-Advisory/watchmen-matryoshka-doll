@@ -299,7 +299,10 @@ def delete_one(where: dict, name: str):
 
 def delete_(where, model, name):
     table = get_table_by_name(name)
-    stmt = delete(table).where(build_oracle_where_expression(table, where))
+    if where is None:
+        stmt = delete(table)
+    else:
+        stmt = delete(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         conn.execute(stmt)
         conn.commit()
@@ -552,12 +555,7 @@ def topic_data_insert_one(one, topic_name):
             if key == "id_":
                 value[key] = get_surrogate_key()
             else:
-                # if key=="date_factor":
-                #     print("-----------------")
-                #     print(one_dict.get(key))
-                #     print(type(one_dict.get(key)))
-                # else:
-                    value[key] = one_dict.get(key)
+                value[key] = one_dict.get(key)
         stmt = insert(table)
         with engine.connect() as conn:
             conn.execute(stmt, value)
@@ -653,8 +651,6 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
 def topic_data_find_one(where, topic_name) -> any:
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
-
-
     stmt = select(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
