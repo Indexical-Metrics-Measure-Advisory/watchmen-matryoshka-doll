@@ -618,6 +618,22 @@ def topic_data_update_(topic_name, query_dict, instance):
         conn.execute(stmt)
 
 
+def topic_data_find_by_id(id_: str, topic_name: str) -> any:
+    table = Table('topic_' + topic_name, metadata,
+                  extend_existing=True, autoload=True, autoload_with=engine)
+
+    stmt = select(table).where(eq(table.c['id_'], id_))
+    with engine.connect() as conn:
+        cursor = conn.execute(stmt).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        result = cursor.fetchone()
+    if result is None:
+        return
+    else:
+        return capital_to_lower(result)
+
+
 def topic_data_find_one(where, topic_name) -> any:
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
@@ -648,3 +664,10 @@ def topic_find_one_and_update(where, updates, name):
             if row is not None:
                 conn.execute(update_stmt)
     return row, data_dict
+
+
+def capital_to_lower(dict_info):
+    new_dict = {}
+    for i, j in dict_info.items():
+        new_dict[i.lower()] = j
+    return new_dict
