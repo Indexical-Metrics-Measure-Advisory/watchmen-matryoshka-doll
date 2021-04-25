@@ -650,10 +650,10 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
 
 
 def topic_data_find_one(where, topic_name) -> any:
-
-
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
+
+
     stmt = select(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor

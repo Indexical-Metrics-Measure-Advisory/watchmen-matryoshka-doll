@@ -33,6 +33,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
         # print("mapping_results",mapping_results)
         for index, mapping_result in enumerate(mapping_results):
             mongo_query = __build_mongo_query(joint_type, index_conditions(where_condition, index))
+
+            print("mongo query",mongo_query)
             target_data = query_topic_data(mongo_query, target_topic.name)
             if target_data is None:
                 trigger_pipeline_data_list.append(insert_topic_data(target_topic.name, mapping_result, pipeline_uid))

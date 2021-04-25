@@ -21,7 +21,7 @@ def insert_topic_data(topic_name, mapping_result, pipeline_uid):
     add_trace_columns(mapping_result, "insert_row", pipeline_uid)
     # collection.insert(mapping_result)
     if "date_factor" in mapping_result:
-        print("type: ",type(mapping_result["date_factor"]))
+        print("type: ", type(mapping_result["date_factor"]))
     topic_data_insert_one(mapping_result, topic_name)
     # trigger_pipeline(topic_name, {pipeline_constants.NEW: mapping_result, pipeline_constants.OLD: None},
     #                  TriggerType.insert)
@@ -32,9 +32,9 @@ def insert_topic_data(topic_name, mapping_result, pipeline_uid):
 
 
 def __get_key():
-    if settings.STORAGE_ENGINE =="mongo":
+    if settings.STORAGE_ENGINE == "mongo":
         return "_id"
-    elif settings.STORAGE_ENGINE=="oracle":
+    elif settings.STORAGE_ENGINE == "oracle":
         return "id_"
 
 
