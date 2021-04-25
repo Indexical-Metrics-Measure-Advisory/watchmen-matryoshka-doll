@@ -552,9 +552,11 @@ def topic_data_insert_one(one, topic_name):
             if key == "id_":
                 value[key] = get_surrogate_key()
             else:
-                # if key=="date_factor":
-                #     pass #
-                # else:
+                if key=="date_factor":
+                    print("-----------------")
+                    print(one_dict.get(key))
+                    print(type(one_dict.get(key)))
+                else:
                     value[key] = one_dict.get(key)
         stmt = insert(table)
         with engine.connect() as conn:
