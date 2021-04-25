@@ -678,6 +678,7 @@ def topic_data_update_(topic_name, query_dict, instance):
     stmt = stmt.values(values)
     with engine.begin() as conn:
         conn.execute(stmt)
+        conn.commit()
 
 
 def topic_data_find_by_id(id_: str, topic_name: str) -> any:
