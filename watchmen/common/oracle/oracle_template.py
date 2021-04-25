@@ -610,7 +610,7 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
                   extend_existing=True, autoload=True, autoload_with=engine)
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
-    value = {}
+    value = {'id_': id_}
     for key in table.c.keys():
         value[key] = one_dict.get(key)
     stmt = stmt.values(value)
