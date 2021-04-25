@@ -553,7 +553,9 @@ def topic_data_insert_one(one, topic_name):
                 value[key] = get_surrogate_key()
             else:
                 # if key=="date_factor":
-                #     pass #
+                #     print("-----------------")
+                #     print(one_dict.get(key))
+                #     print(type(one_dict.get(key)))
                 # else:
                     value[key] = one_dict.get(key)
         stmt = insert(table)
@@ -642,12 +644,14 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
         cursor.rowfactory = lambda *args: dict(zip(columns, args))
         result = cursor.fetchone()
     if result is None:
-        return
+        return None
     else:
         return capital_to_lower(result)
 
 
 def topic_data_find_one(where, topic_name) -> any:
+
+
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
     stmt = select(table).where(build_oracle_where_expression(table, where))
@@ -657,7 +661,7 @@ def topic_data_find_one(where, topic_name) -> any:
         cursor.rowfactory = lambda *args: dict(zip(columns, args))
         result = cursor.fetchone()
     if result is None:
-        return
+        return None
     else:
         return capital_to_lower(result)
 

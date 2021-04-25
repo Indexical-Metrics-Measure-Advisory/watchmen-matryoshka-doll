@@ -632,6 +632,8 @@ def index_conditions(where_condition, index):
                 result[index][VALUE] = condition[pipeline_constants.VALUE]
             return result
     else:
+
+        print("where_condition",where_condition)
         condition_values = where_condition[pipeline_constants.VALUE]
         if type(condition_values) == list:
             result[VALUE] = where_condition[index]

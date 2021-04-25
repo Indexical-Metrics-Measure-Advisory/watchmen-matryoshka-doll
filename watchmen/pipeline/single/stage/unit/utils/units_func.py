@@ -141,8 +141,6 @@ def convert_factor_type(value, factor_type):
     elif factor_type == TEXT:
         return str(value)
     elif factor_type == NUMBER:
-        # print("value",value)
-        # print("type",type(value))
         return Decimal(value)
     elif factor_type == DATETIME:
         if isinstance(value, datetime):
@@ -159,6 +157,12 @@ def convert_factor_type(value, factor_type):
         return int(value)
     elif factor_type == TIME:
         return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
+    elif factor_type == DATE:
+        print("factor type",type(value))
+        if isinstance(value, datetime):
+            return value
+        else:
+            return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
     else:
         return value
 
