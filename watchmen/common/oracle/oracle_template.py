@@ -605,6 +605,19 @@ def raw_topic_data_insert_(data, topic_name):
         conn.execute(stmt, values)
 
 
+def topic_data_update_one(id_: str, one: any, topic_name: str):
+    table = Table('topic_' + topic_name, metadata,
+                  extend_existing=True, autoload=True, autoload_with=engine)
+    stmt = update(table).where(eq(table.c['id_'], id_))
+    one_dict = convert_to_dict(one)
+    value = {}
+    for key in table.c.keys():
+        value[key] = one_dict.get(key)
+    stmt = stmt.values(value)
+    with engine.begin() as conn:
+        conn.execute(stmt)
+
+
 def topic_data_update_(topic_name, query_dict, instance):
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
