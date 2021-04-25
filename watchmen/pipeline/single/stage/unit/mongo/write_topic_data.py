@@ -35,7 +35,7 @@ def __get_key():
     if settings.STORAGE_ENGINE =="mongo":
         return "_id"
     elif settings.STORAGE_ENGINE=="oracle":
-        return "ID_"
+        return "id_"
 
 
 def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
