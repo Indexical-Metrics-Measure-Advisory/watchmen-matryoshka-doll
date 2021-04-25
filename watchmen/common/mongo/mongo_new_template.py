@@ -284,6 +284,11 @@ def drop_topic_data_table(name):
     client.get_collection(topic_name).drop()
 
 
+def topic_data_delete_(where, name):
+    collection = client.get_collection(build_collection_name(name))
+    collection.delete_many(build_mongo_where_expression(where))
+
+
 # save_topic_instance, insert one
 def topic_data_insert_one(one, topic_name):
     codec_options = build_code_options()

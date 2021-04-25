@@ -575,6 +575,19 @@ def drop_topic_data_table(topic_name):
     table.drop(engine)
 
 
+def topic_data_delete_(where, topic_name):
+    table_name = 'topic_' + topic_name
+    table = Table(table_name, metadata, extend_existing=True,
+                  autoload=True, autoload_with=engine)
+    if where is None:
+        stmt = delete(table)
+    else:
+        stmt = delete(table).where(build_oracle_where_expression(table, where))
+    with engine.connect() as conn:
+        conn.execute(stmt)
+        conn.commit()
+
+
 def topic_data_insert_one(one, topic_name):
     if check_topic_type_is_raw(topic_name):
         raw_topic_data_insert_one(one, topic_name)

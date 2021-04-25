@@ -144,6 +144,10 @@ def alter_topic_data_table(topic):
     template.alter_topic_data_table(topic)
 
 
+def topic_data_delete_(where, name):
+    template.topic_data_delete_(where, name)
+
+
 def drop_topic_data_table(name):
     template.drop_topic_data_table(name)
 
