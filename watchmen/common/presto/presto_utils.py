@@ -1,5 +1,6 @@
 import logging
 
+from pydantic import Field
 from pydantic.main import BaseModel
 
 from watchmen.common.constants import presto_constants
@@ -12,16 +13,12 @@ from watchmen.pipeline.single.stage.unit.utils.units_func import BOOLEAN, NUMBER
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
-# db = get_client()
-
-# collection = db.get_collection('_schema')
-
 log = logging.getLogger("app." + __name__)
 
 
 class Schema(BaseModel):
     table: str = ""
-    fields: list = []
+    field_list: list = Field([],alias="fields")
 
 
 def remove_presto_schema_by_name(topic_name):
@@ -63,6 +60,7 @@ def __build_presto_fields(factors):
 def create_or_update_presto_schema_fields(topic: Topic):
     if settings.STORAGE_ENGINE == "mongo":
         create_or_update_presto_schema_fields_for_mongo(topic)
+
 
 
 def create_or_update_presto_schema_fields_for_mongo(topic: Topic):

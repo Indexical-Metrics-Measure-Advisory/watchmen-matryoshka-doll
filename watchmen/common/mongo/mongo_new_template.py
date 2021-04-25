@@ -255,7 +255,7 @@ def __convert_list_to_dict(items: list):
 
 def __convert_to_dict(instance) -> dict:
     if type(instance) is not dict:
-        return instance.dict()
+        return instance.dict(by_alias=True)
     else:
         return instance
 
