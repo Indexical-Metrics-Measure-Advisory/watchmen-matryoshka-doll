@@ -648,7 +648,7 @@ def topic_data_find_one(where, topic_name) -> any:
     if result is None:
         return
     else:
-        return result
+        return capital_to_lower(result)
 
 
 def topic_find_one_and_update(where, updates, name):
