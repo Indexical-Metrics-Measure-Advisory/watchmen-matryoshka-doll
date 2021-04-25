@@ -45,7 +45,7 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     collection = db.get_collection(collection_name, codec_options=codec_options)
     old_data = find_topic_data_by_id(collection, target_data["_id"])
     '''
-    # print("target_data",target_data)
+    print("target_data",target_data)
     old_data = topic_data_find_by_id(target_data[__get_key()], topic_name)
     add_audit_columns(mapping_result, UPDATE)
     add_trace_columns(mapping_result, "update_row", pipeline_uid)
