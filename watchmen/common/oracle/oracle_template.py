@@ -570,6 +570,7 @@ def raw_topic_data_insert_one(one, topic_name):
     stmt = insert(table)
     with engine.connect() as conn:
         conn.execute(stmt, value)
+        conn.commit()
 
 
 def topic_data_insert_(data, topic_name):
@@ -601,6 +602,7 @@ def raw_topic_data_insert_(data, topic_name):
     stmt = insert(table)
     with engine.connect() as conn:
         conn.execute(stmt, values)
+        conn.commit()
 
 
 def topic_data_update_one(id_: str, one: any, topic_name: str):
@@ -608,13 +610,14 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
                   extend_existing=True, autoload=True, autoload_with=engine)
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
-    value={}
+    value = {}
     for key in table.c.keys():
         value[key] = one_dict.get(key)
-    value["id_"]=id_
+    value["id_"] = id_
     stmt = stmt.values(value)
     with engine.begin() as conn:
         conn.execute(stmt)
+        conn.commit()
 
 
 def topic_data_update_(topic_name, query_dict, instance):
@@ -630,6 +633,7 @@ def topic_data_update_(topic_name, query_dict, instance):
     stmt = stmt.values(values)
     with engine.begin() as conn:
         conn.execute(stmt)
+        conn.commit()
 
 
 def topic_data_find_by_id(id_: str, topic_name: str) -> any:
@@ -677,6 +681,7 @@ def topic_find_one_and_update(where, updates, name):
             row = conn.execute(select_stmt).fetchone()
             if row is not None:
                 conn.execute(update_stmt)
+            conn.commit()
     return row, data_dict
 
 
