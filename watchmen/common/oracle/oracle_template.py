@@ -546,10 +546,11 @@ def topic_data_insert_one(one, topic_name):
                       extend_existing=True, autoload=True, autoload_with=engine)
         one_dict: dict = convert_to_dict(one)
         value = {}
-
-        # print("table",table.c.keys())
         for key in table.c.keys():
-            value[key] = one_dict.get(key)
+            if key == "id_":
+                value[key] = get_surrogate_key()
+            else:
+                value[key] = one_dict.get(key)
         stmt = insert(table)
         with engine.connect() as conn:
             conn.execute(stmt, value)
