@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime
+from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer
 
 metadata = MetaData()
 
@@ -134,6 +134,21 @@ pipeline_graph_table = Table("pipeline_graph", metadata,
                              Column('createtime', String(50), nullable=True)
                              )
 
+console_space_subjects_table = Table("console_space_subjects", metadata,
+                                     Column("subjectid", String(60), primary_key=True),
+                                     Column("name", String(50), nullable=False),
+                                     Column("topiccount", Integer, nullable=True),
+                                     Column("graphicscount", Integer, nullable=True),
+                                     Column("reports", CLOB, nullable=True),
+                                     Column("reportids", CLOB, nullable=True),
+                                     Column("dataset", CLOB, nullable=True),
+                                     Column("lastvisittime", DateTime, nullable=True),
+                                     Column("createdat", String(50), nullable=True),
+                                     Column('last_modified', DateTime, nullable=True),
+                                     Column('lastmodifytime', DateTime, nullable=True),
+                                     Column('createtime', String(50), nullable=True)
+                                     )
+
 
 def get_table_by_name(table_name):
     if table_name == "users":
@@ -160,3 +175,5 @@ def get_table_by_name(table_name):
         return pipelines_table
     elif table_name == "pipeline_graph":
         return pipeline_graph_table
+    elif table_name == "console_space_subjects":
+        return console_space_subjects_table
