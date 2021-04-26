@@ -286,7 +286,10 @@ def drop_topic_data_table(name):
 
 def topic_data_delete_(where, name):
     collection = client.get_collection(build_collection_name(name))
-    collection.delete_many(build_mongo_where_expression(where))
+    if where is None:
+        collection.drop()
+    else:
+        collection.delete_many(build_mongo_where_expression(where))
 
 
 # save_topic_instance, insert one
