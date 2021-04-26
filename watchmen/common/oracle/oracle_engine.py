@@ -24,7 +24,7 @@ connection_url = "oracle+cx_oracle://%s:%s@%s:%s/?" \
 dsn = cx_Oracle.makedsn(settings.ORACLE_HOST, settings.ORACLE_PORT, sid=settings.ORACLE_SERVICE)
 
 pool = cx_Oracle.SessionPool(
-    user=settings.ORACLE_USER, password=settings.ORACLE_PASSWORD, dsn=dsn,
+    settings.ORACLE_USER, settings.ORACLE_PASSWORD, connection_url,
     min=2, max=5, increment=1, threaded=True
 )
 
