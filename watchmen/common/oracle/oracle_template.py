@@ -191,7 +191,7 @@ def insert_one(one, model, name):
     stmt = insert(table).values(values)
     with engine.connect() as conn:
         conn.execute(stmt)
-        conn.commit()
+        # conn.commit()
     return model.parse_obj(one)
 
 
@@ -207,7 +207,7 @@ def insert_all(data, model, name):
         value_list.append(values)
     with engine.connect() as conn:
         conn.execute(stmt, value_list)
-        conn.commit()
+        # conn.commit()
 
 
 def update_one(one, model, name) -> any:
@@ -318,7 +318,7 @@ def delete_by_id(id_, name):
     stmt = delete(table).where(eq(table.c[key.lower()], id_))
     with engine.connect() as conn:
         conn.execute(stmt)
-        conn.commit()
+        # conn.commit()
 
 
 def delete_one(where: dict, name: str):
@@ -326,7 +326,7 @@ def delete_one(where: dict, name: str):
     stmt = delete(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         conn.execute(stmt)
-        conn.commit()
+        # conn.commit()
 
 
 def delete_(where, model, name):
@@ -337,7 +337,7 @@ def delete_(where, model, name):
         stmt = delete(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         conn.execute(stmt)
-        conn.commit()
+        # conn.commit()
 
 
 def find_by_id(id_, model, name):
@@ -565,7 +565,7 @@ def alter_topic_data_table(topic):
                 table_name, column_name, column_type)
             with engine.connect() as conn:
                 conn.execute(text(stmt))
-                conn.commit()
+                # conn.commit()
 
 
 def drop_topic_data_table(topic_name):
@@ -585,7 +585,7 @@ def topic_data_delete_(where, topic_name):
         stmt = delete(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         conn.execute(stmt)
-        conn.commit()
+        # conn.commit()
 
 
 def topic_data_insert_one(one, topic_name):
@@ -604,7 +604,7 @@ def topic_data_insert_one(one, topic_name):
         stmt = insert(table)
         with engine.connect() as conn:
             conn.execute(stmt, value)
-            conn.commit()
+            # conn.commit()
 
 
 def raw_topic_data_insert_one(one, topic_name):
@@ -615,7 +615,7 @@ def raw_topic_data_insert_one(one, topic_name):
     stmt = insert(table)
     with engine.connect() as conn:
         conn.execute(stmt, value)
-        conn.commit()
+        # conn.commit()
 
 
 def topic_data_insert_(data, topic_name):
@@ -634,7 +634,7 @@ def topic_data_insert_(data, topic_name):
         stmt = insert(table)
         with engine.connect() as conn:
             conn.execute(stmt, values)
-            conn.commit()
+            # conn.commit()
 
 
 def raw_topic_data_insert_(data, topic_name):
@@ -647,7 +647,7 @@ def raw_topic_data_insert_(data, topic_name):
     stmt = insert(table)
     with engine.connect() as conn:
         conn.execute(stmt, values)
-        conn.commit()
+        # conn.commit()
 
 
 def topic_data_update_one(id_: str, one: any, topic_name: str):
@@ -662,7 +662,7 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
     stmt = stmt.values(value)
     with engine.begin() as conn:
         conn.execute(stmt)
-        conn.commit()
+        # conn.commit()
 
 
 def topic_data_update_(topic_name, query_dict, instance):
@@ -678,7 +678,7 @@ def topic_data_update_(topic_name, query_dict, instance):
     stmt = stmt.values(values)
     with engine.begin() as conn:
         conn.execute(stmt)
-        conn.commit()
+        # conn.commit()
 
 
 def topic_data_find_by_id(id_: str, topic_name: str) -> any:
@@ -738,7 +738,7 @@ def topic_find_one_and_update(where, updates, name):
                 conn.execute(update_stmt)
             else:
                 conn.execute(insert_stmt)
-            conn.commit()
+            # conn.commit()
     return row, data_dict
 
 
