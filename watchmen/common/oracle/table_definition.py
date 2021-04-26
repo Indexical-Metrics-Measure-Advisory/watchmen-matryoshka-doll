@@ -1,5 +1,7 @@
 from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer
 
+from watchmen.common.oracle.oracle_engine import engine
+
 metadata = MetaData()
 
 users_table = Table("users", metadata,
@@ -177,3 +179,10 @@ def get_table_by_name(table_name):
         return pipeline_graph_table
     elif table_name == "console_space_subjects":
         return console_space_subjects_table
+
+
+def get_topic_table_by_name(table_name):
+    if metadata.tables.get(table_name, None) is not None:
+        return metadata.tables[table_name]
+    else:
+        return Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)

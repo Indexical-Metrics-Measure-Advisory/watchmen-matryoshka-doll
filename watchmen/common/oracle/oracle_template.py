@@ -13,7 +13,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.mysql.model.table_definition import get_primary_key
 from watchmen.common.oracle.oracle_engine import engine, dumps
 from watchmen.common.oracle.oracle_utils import parse_obj, count_table
-from watchmen.common.oracle.table_definition import get_table_by_name, metadata
+from watchmen.common.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
@@ -107,7 +107,7 @@ def build_oracle_where_expression(table, where):
             if isinstance(value, list):
                 filters = []
                 for express in value:
-                    result = build_oracle_where_expression(table,express)
+                    result = build_oracle_where_expression(table, express)
                     filters.append(result)
             if key == "and":
                 return and_(*filters)
@@ -164,6 +164,7 @@ def build_oracle_updates_expression_for_update(table, updates):
         else:
             new_updates[key] = value
     return new_updates
+
 
 def build_oracle_order(table, order_: list):
     result = []
@@ -521,7 +522,7 @@ def create_topic_data_table(topic):
         topic_name = topic_dict.get('name')
         factors = topic_dict.get('factors')
         table = Table('topic_' + topic_name, metadata)
-        key = Column(name="id_", type_=DECIMAL(30), primary_key=True)
+        key = Column(name="id_", type_=String(60), primary_key=True)
         table.append_column(key)
         for factor in factors:
             name_ = factor.get('name').lower()
@@ -535,7 +536,7 @@ def create_raw_topic_data_table(topic):
     topic_dict: dict = convert_to_dict(topic)
     topic_name = topic_dict.get('name')
     table = Table('topic_' + topic_name, metadata)
-    key = Column(name="id_", type_=DECIMAL(30), primary_key=True)
+    key = Column(name="id_", type_=String(60), primary_key=True)
     table.append_column(key)
     col = Column(name="data_", type_=CLOB, nullable=True)
     table.append_column(col)
@@ -550,8 +551,11 @@ def alter_topic_data_table(topic):
     topic_dict: dict = convert_to_dict(topic)
     topic_name = topic_dict.get('name')
     table_name = 'topic_' + topic_name
+    '''
     table = Table(table_name, metadata, extend_existing=True,
                   autoload=True, autoload_with=engine)
+    '''
+    table = get_topic_table_by_name(table_name)
     factors = topic_dict.get('factors')
     existed_cols = []
     for col in table.columns:
@@ -572,15 +576,21 @@ def alter_topic_data_table(topic):
 
 def drop_topic_data_table(topic_name):
     table_name = 'topic_' + topic_name
+    '''
     table = Table(table_name, metadata, extend_existing=True,
                   autoload=True, autoload_with=engine)
+    '''
+    table = get_topic_table_by_name(table_name)
     table.drop(engine)
 
 
 def topic_data_delete_(where, topic_name):
     table_name = 'topic_' + topic_name
+    '''
     table = Table(table_name, metadata, extend_existing=True,
                   autoload=True, autoload_with=engine)
+    '''
+    table = get_topic_table_by_name(table_name)
     if where is None:
         stmt = delete(table)
     else:
@@ -594,13 +604,12 @@ def topic_data_insert_one(one, topic_name):
     if check_topic_type_is_raw(topic_name):
         raw_topic_data_insert_one(one, topic_name)
     else:
-        start_time = time.time()
+        '''
         table = Table('topic_' + topic_name, metadata,
                       extend_existing=True, autoload=True, autoload_with=engine)
-
-        elapsed_time = time.time() - start_time
-
-        print("elapsed_time_build_table", elapsed_time)
+        '''
+        table_name = 'topic_' + topic_name
+        table = get_topic_table_by_name(table_name)
         one_dict: dict = convert_to_dict(one)
         value = {}
         for key in table.c.keys():
@@ -615,8 +624,12 @@ def topic_data_insert_one(one, topic_name):
 
 
 def raw_topic_data_insert_one(one, topic_name):
+    '''
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
+    '''
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
     one_dict: dict = convert_to_dict(one)
     value = {'id_': get_surrogate_key(), 'data_': dumps(one_dict)}
     stmt = insert(table)
@@ -629,8 +642,12 @@ def topic_data_insert_(data, topic_name):
     if check_topic_type_is_raw(topic_name):
         raw_topic_data_insert_(data, topic_name)
     else:
+        '''
         table = Table('topic_' + topic_name, metadata,
                       extend_existing=True, autoload=True, autoload_with=engine)
+        '''
+        table_name = 'topic_' + topic_name
+        table = get_topic_table_by_name(table_name)
         values = []
         for instance in data:
             instance_dict: dict = convert_to_dict(instance)
@@ -645,7 +662,11 @@ def topic_data_insert_(data, topic_name):
 
 
 def raw_topic_data_insert_(data, topic_name):
+    '''
     table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    '''
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
     values = []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
@@ -658,14 +679,12 @@ def raw_topic_data_insert_(data, topic_name):
 
 
 def topic_data_update_one(id_: str, one: any, topic_name: str):
-    start_time = time.time()
-
+    '''
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
-
-    elapsed_time = time.time() - start_time
-
-    print("elapsed_time_build_table_updated", elapsed_time)
+    '''
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
     value = {}
@@ -679,8 +698,12 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
 
 
 def topic_data_update_(topic_name, query_dict, instance):
+    '''
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
+    '''
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
     stmt = (update(table).
             where(build_oracle_where_expression(table, query_dict)))
     instance_dict: dict = convert_to_dict(instance)
@@ -695,8 +718,12 @@ def topic_data_update_(topic_name, query_dict, instance):
 
 
 def topic_data_find_by_id(id_: str, topic_name: str) -> any:
+    '''
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
+    '''
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
 
     stmt = select(table).where(eq(table.c['id_'], id_))
     with engine.connect() as conn:
@@ -711,8 +738,12 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
 
 
 def topic_data_find_one(where, topic_name) -> any:
+    '''
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
+    '''
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
     stmt = select(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
@@ -726,8 +757,12 @@ def topic_data_find_one(where, topic_name) -> any:
 
 
 def topic_find_one_and_update(where, updates, name):
+    '''
     table = Table('topic_' + name, metadata, extend_existing=True,
                   autoload=True, autoload_with=engine)
+    '''
+    table_name = 'topic_' + name
+    table = get_topic_table_by_name(table_name)
     data_dict: dict = convert_to_dict(updates)
 
     select_stmt = select(table). \
@@ -739,7 +774,8 @@ def topic_find_one_and_update(where, updates, name):
     else:
         updates["id_"] = get_surrogate_key()
 
-    insert_stmt = insert(table).values(build_oracle_updates_expression_for_insert(table, data_dict))
+    insert_stmt = insert(table).values(
+        build_oracle_updates_expression_for_insert(table, data_dict))
 
     update_stmt = update(table).where(
         build_oracle_where_expression(table, where)).values(build_oracle_updates_expression_for_update(table, data_dict))
