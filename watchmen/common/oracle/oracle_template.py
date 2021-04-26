@@ -1,5 +1,6 @@
 import logging
 import operator
+import time
 from operator import eq
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
@@ -106,7 +107,7 @@ def build_oracle_where_expression(table, where):
             if isinstance(value, list):
                 filters = []
                 for express in value:
-                    result = build_oracle_where_expression(express)
+                    result = build_oracle_where_expression(table,express)
                     filters.append(result)
             if key == "and":
                 return and_(*filters)
@@ -138,11 +139,11 @@ def build_oracle_updates_expression_for_insert(table, updates):
         if key == "$inc":
             if isinstance(value, dict):
                 for k, v in value.items():
-                    new_updates[k] = v
+                    new_updates[k.lower()] = v
         elif key == "$set":
             if isinstance(value, dict):
                 for k, v in value.items():
-                    new_updates[k] = v
+                    new_updates[k.lower()] = v
         else:
             new_updates[key] = value
     return new_updates
@@ -154,11 +155,12 @@ def build_oracle_updates_expression_for_update(table, updates):
         if key == "$inc":
             if isinstance(value, dict):
                 for k, v in value.items():
-                    new_updates[k] = operator.add(table.c[k], v)
+                    key = k.lower()
+                    new_updates[key] = operator.add(table.c[k], v)
         elif key == "$set":
             if isinstance(value, dict):
                 for k, v in value.items():
-                    new_updates[k] = v
+                    new_updates[k.lower()] = v
         else:
             new_updates[key] = value
     return new_updates
@@ -469,7 +471,7 @@ topic data interface
 
 def get_datatype_by_factor_type(type: str):
     if type == "text":
-        return String(20)
+        return String(30)
     elif type == "sequence":
         return BigInteger
     elif type == "number":
@@ -592,8 +594,13 @@ def topic_data_insert_one(one, topic_name):
     if check_topic_type_is_raw(topic_name):
         raw_topic_data_insert_one(one, topic_name)
     else:
+        start_time = time.time()
         table = Table('topic_' + topic_name, metadata,
                       extend_existing=True, autoload=True, autoload_with=engine)
+
+        elapsed_time = time.time() - start_time
+
+        print("elapsed_time_build_table", elapsed_time)
         one_dict: dict = convert_to_dict(one)
         value = {}
         for key in table.c.keys():
@@ -651,8 +658,14 @@ def raw_topic_data_insert_(data, topic_name):
 
 
 def topic_data_update_one(id_: str, one: any, topic_name: str):
+    start_time = time.time()
+
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)
+
+    elapsed_time = time.time() - start_time
+
+    print("elapsed_time_build_table_updated", elapsed_time)
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
     value = {}

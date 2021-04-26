@@ -21,12 +21,12 @@ connection_url = "oracle+cx_oracle://%s:%s@%s:%s/?" \
                                                                      settings.ORACLE_PORT,
                                                                      settings.ORACLE_SERVICE)
 
-dsn = cx_Oracle.makedsn(settings.ORACLE_HOST, settings.ORACLE_PORT, service_name=settings.ORACLE_SERVICE)
+dsn = cx_Oracle.makedsn(settings.ORACLE_HOST, settings.ORACLE_PORT, sid=settings.ORACLE_SERVICE)
 
 pool = cx_Oracle.SessionPool(
-    settings.ORACLE_USER, settings.ORACLE_PASSWORD, connection_url,
+    user=settings.ORACLE_USER, password=settings.ORACLE_PASSWORD, dsn=dsn,
     min=2, max=5, increment=1, threaded=True
 )
 
 # engine = create_engine(connection_url, future=True)
-engine = create_engine("oracle+cx_oracle://", creator=pool.acquire, poolclass=NullPool)
+engine = create_engine("oracle://", creator=pool.acquire, poolclass=NullPool)
