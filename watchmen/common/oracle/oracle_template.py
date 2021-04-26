@@ -519,7 +519,7 @@ def create_topic_data_table(topic):
         topic_name = topic_dict.get('name')
         factors = topic_dict.get('factors')
         table = Table('topic_' + topic_name, metadata)
-        key = Column(name="id_", type_=DECIMAL(30), primary_key=True)
+        key = Column(name="id_", type_=String(60), primary_key=True)
         table.append_column(key)
         for factor in factors:
             name_ = factor.get('name').lower()
@@ -533,7 +533,7 @@ def create_raw_topic_data_table(topic):
     topic_dict: dict = convert_to_dict(topic)
     topic_name = topic_dict.get('name')
     table = Table('topic_' + topic_name, metadata)
-    key = Column(name="id_", type_=DECIMAL(30), primary_key=True)
+    key = Column(name="id_", type_=String(60), primary_key=True)
     table.append_column(key)
     col = Column(name="data_", type_=CLOB, nullable=True)
     table.append_column(col)
