@@ -1,5 +1,6 @@
 import logging
 import operator
+import time
 from operator import eq
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
@@ -107,7 +108,7 @@ def build_oracle_where_expression(table, where):
             if isinstance(value, list):
                 filters = []
                 for express in value:
-                    result = build_oracle_where_expression(express)
+                    result = build_oracle_where_expression(table, express)
                     filters.append(result)
             if key == "and":
                 return and_(*filters)
@@ -152,11 +153,11 @@ def build_oracle_updates_expression_for_insert(table, updates):
         if key == "$inc":
             if isinstance(value, dict):
                 for k, v in value.items():
-                    new_updates[k] = v
+                    new_updates[k.lower()] = v
         elif key == "$set":
             if isinstance(value, dict):
                 for k, v in value.items():
-                    new_updates[k] = v
+                    new_updates[k.lower()] = v
         else:
             new_updates[key] = value
     return new_updates
@@ -168,14 +169,16 @@ def build_oracle_updates_expression_for_update(table, updates):
         if key == "$inc":
             if isinstance(value, dict):
                 for k, v in value.items():
-                    new_updates[k] = operator.add(table.c[k], v)
+                    key = k.lower()
+                    new_updates[key] = operator.add(table.c[k], v)
         elif key == "$set":
             if isinstance(value, dict):
                 for k, v in value.items():
-                    new_updates[k] = v
+                    new_updates[k.lower()] = v
         else:
             new_updates[key] = value
     return new_updates
+
 
 def build_oracle_order(table, order_: list):
     result = []
@@ -483,7 +486,7 @@ topic data interface
 
 def get_datatype_by_factor_type(type: str):
     if type == "text":
-        return String(20)
+        return String(30)
     elif type == "sequence":
         return BigInteger
     elif type == "number":
@@ -785,7 +788,8 @@ def topic_find_one_and_update(where, updates, name):
     else:
         updates["id_"] = get_surrogate_key()
 
-    insert_stmt = insert(table).values(build_oracle_updates_expression_for_insert(table, data_dict))
+    insert_stmt = insert(table).values(
+        build_oracle_updates_expression_for_insert(table, data_dict))
 
     update_stmt = update(table).where(
         build_oracle_where_expression(table, where)).values(build_oracle_updates_expression_for_update(table, data_dict))

@@ -122,11 +122,15 @@ def run_pipeline(pipeline: Pipeline, data):
                                 if match_result:
                                     unit_run_status = UnitRunStatus()
                                     for action in unit.do:
+                                        start = time.time()
                                         func = find_action_type_func(convert_action_type(action.type), action,
                                                                      pipeline_topic)
                                         # call dynamic action in action folder
                                         # TODO [future] custom folder
                                         out_result, unit_action_status, trigger_pipeline_data_list = func(data, context)
+                                        elapsed_time = time.time() - start
+
+                                        print("elapsed_time",elapsed_time)
 
                                         if trigger_pipeline_data_list:
                                             pipeline_trigger_merge_list = [*pipeline_trigger_merge_list,

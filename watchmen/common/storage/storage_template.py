@@ -169,8 +169,6 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
 
 
 def topic_data_find_one(where: dict, topic_name: str) -> any:
-    print("where oracle template",where)
-    print("topic_name oracle template", topic_name)
     return template.topic_data_find_one(where, topic_name)
 
 

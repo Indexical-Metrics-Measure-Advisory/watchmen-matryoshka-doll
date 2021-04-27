@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from watchmen.auth.service.user import sync_user_to_user_groups
 from watchmen.auth.service.user_group import sync_user_group_to_space, sync_user_group_to_user
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
-    get_user, load_user_list_by_name, update_user_storage
+    get_user, load_user_list_by_name, update_user_storage, load_user_by_name
 from watchmen.auth.storage.user_group import create_user_group_storage, query_user_groups_by_name_with_paginate, \
     get_user_group_list_by_ids, get_user_group, load_group_list_by_name, update_user_group_storage, \
     get_user_group_by_name
@@ -289,6 +289,14 @@ async def load_user_group_list_by_name_list(name_list: List[str],
     results = []
     for name in name_list:
         results.append(get_user_group_by_name(name))
+    return results
+
+
+@router.post("/user/list/name", tags=["admin"], response_model=List[User])
+async def load_user_list_by_name_list(name_list:List[str],current_user: User = Depends(deps.get_current_user))->List[User]:
+    results=[]
+    for name in name_list:
+        results.append(load_user_by_name(name))
     return results
 
 
