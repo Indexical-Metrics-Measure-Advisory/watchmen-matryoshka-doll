@@ -2,9 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
-/presto
-/mongo
-/distributions
+presto
+mongo
+distributions
 
 # C extensions
 *.so
