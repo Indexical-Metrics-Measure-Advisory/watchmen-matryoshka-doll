@@ -685,12 +685,10 @@ def raw_topic_data_insert_(data, topic_name):
     '''
     table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
     '''
-    start_time = time.time()
+
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
 
-    elapsed_time = time.time() - start_time
-    # print("elapsed_time", elapsed_time)
     values = []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
@@ -761,19 +759,12 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
 
     stmt = select(table).where(eq(table.c['id_'], id_))
     with engine.connect() as conn:
-        start_time = time.time()
+
         cursor = conn.execute(stmt).cursor
-        elapsed_time = time.time() - start_time
-        # print("elapsed_time topic_data_update_one execute", elapsed_time)
-        start_time = time.time()
         columns = [col[0] for col in cursor.description]
         cursor.rowfactory = lambda *args: dict(zip(columns, args))
-        elapsed_time = time.time() - start_time
-        # print("elapsed_time topic_data_update_one execute", elapsed_time)
-        start_time = time.time()
         result = cursor.fetchone()
-        elapsed_time = time.time() - start_time
-        # print("elapsed_time topic_data_update_one execute", elapsed_time)
+
     if result is None:
         return None
     else:
