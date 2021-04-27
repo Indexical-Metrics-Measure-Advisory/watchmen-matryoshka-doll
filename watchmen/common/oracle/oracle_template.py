@@ -7,6 +7,7 @@ from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.operators import ColumnOperators
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.mysql.model.table_definition import get_primary_key
@@ -117,6 +118,8 @@ def build_oracle_where_expression(table, where):
                 for k, v in value.items():
                     if k == "=":
                         return table.c[key.lower()] == v
+                    if k == "!=":
+                        return operator.ne(table.c[key.lower()], v)
                     if k == "like":
                         if v != "" or v is not None:
                             return table.c[key.lower()].like("%" + v + "%")
@@ -128,6 +131,17 @@ def build_oracle_where_expression(table, where):
                             if isinstance(v, list):
                                 if len(v) != 0:
                                     return table.c[key.lower()].in_(v)
+                    if k == ">":
+                        return table.c[key.lower()] > v
+                    if k == ">=":
+                        return table.c[key.lower()] >= v
+                    if k == "<":
+                        return table.c[key.lower()] < v
+                    if k == "<=":
+                        return table.c[key.lower()] <= v
+                    if k == "between":
+                        if (isinstance(v, tuple)) and len(v) == 2:
+                            return table.c[key.lower()].between(v[0], v[1])
             else:
                 return table.c[key.lower()] == value
 
