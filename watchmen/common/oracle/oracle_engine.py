@@ -31,4 +31,4 @@ pool = cx_Oracle.SessionPool(
 
 # engine = create_engine(connection_url, future=True)
 engine = create_engine("oracle+cx_oracle://", creator=pool.acquire,
-                       poolclass=NullPool, coerce_to_decimal=False, echo=True)
+                       poolclass=NullPool, coerce_to_decimal=False, echo=False)

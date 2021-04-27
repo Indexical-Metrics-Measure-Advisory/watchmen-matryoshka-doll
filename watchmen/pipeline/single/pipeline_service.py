@@ -130,7 +130,7 @@ def run_pipeline(pipeline: Pipeline, data):
                                         out_result, unit_action_status, trigger_pipeline_data_list = func(data, context)
                                         elapsed_time = time.time() - start
 
-                                        print("elapsed_time",elapsed_time)
+                                        print("elapsed_time ："+action.type,elapsed_time)
 
                                         if trigger_pipeline_data_list:
                                             pipeline_trigger_merge_list = [*pipeline_trigger_merge_list,
