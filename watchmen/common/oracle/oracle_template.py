@@ -8,7 +8,6 @@ from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.operators import ColumnOperators
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.mysql.model.table_definition import get_primary_key
@@ -664,7 +663,7 @@ def topic_data_insert_(data, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         elapsed_time = time.time() - start_time
-        print("elapsed_time topic_data_insert_", elapsed_time)
+        # print("elapsed_time topic_data_insert_", elapsed_time)
 
         values = []
         for instance in data:
@@ -688,7 +687,7 @@ def raw_topic_data_insert_(data, topic_name):
     table = get_topic_table_by_name(table_name)
 
     elapsed_time = time.time() - start_time
-    print("elapsed_time", elapsed_time)
+    # print("elapsed_time", elapsed_time)
     values = []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
@@ -711,7 +710,7 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
     table = get_topic_table_by_name(table_name)
 
     elapsed_time = time.time() - start_time
-    print("elapsed_time topic_data_update_one", elapsed_time)
+    # print("elapsed_time topic_data_update_one", elapsed_time)
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
     value = {}
@@ -755,23 +754,23 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
     table = get_topic_table_by_name(table_name)
 
     elapsed_time = time.time() - start_time
-    print("elapsed_time topic_data_update_one", elapsed_time)
+    # print("elapsed_time topic_data_update_one", elapsed_time)
 
     stmt = select(table).where(eq(table.c['id_'], id_))
     with engine.connect() as conn:
         start_time = time.time()
         cursor = conn.execute(stmt).cursor
         elapsed_time = time.time() - start_time
-        print("elapsed_time topic_data_update_one execute", elapsed_time)
+        # print("elapsed_time topic_data_update_one execute", elapsed_time)
         start_time = time.time()
         columns = [col[0] for col in cursor.description]
         cursor.rowfactory = lambda *args: dict(zip(columns, args))
         elapsed_time = time.time() - start_time
-        print("elapsed_time topic_data_update_one execute", elapsed_time)
+        # print("elapsed_time topic_data_update_one execute", elapsed_time)
         start_time = time.time()
         result = cursor.fetchone()
         elapsed_time = time.time() - start_time
-        print("elapsed_time topic_data_update_one execute", elapsed_time)
+        # print("elapsed_time topic_data_update_one execute", elapsed_time)
     if result is None:
         return None
     else:
@@ -819,7 +818,8 @@ def topic_find_one_and_update(where, updates, name):
         build_oracle_updates_expression_for_insert(table, data_dict))
 
     update_stmt = update(table).where(
-        build_oracle_where_expression(table, where)).values(build_oracle_updates_expression_for_update(table, data_dict))
+        build_oracle_where_expression(table, where)).values(
+        build_oracle_updates_expression_for_update(table, data_dict))
 
     with engine.connect() as conn:
         with conn.begin():

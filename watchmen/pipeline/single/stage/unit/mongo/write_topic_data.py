@@ -69,7 +69,7 @@ def find_and_modify_topic_data(topic_name, query, update_data, target_data):
         old_data = topic_data_find_by_id(target_data[__get_key()], topic_name)
     else:
         old_data = None
-    print("update_data",update_data)
+    print("update_data", update_data)
     new_data = topic_find_one_and_update(query, update_data, topic_name)
     return __build_trigger_pipeline_data(topic_name,
                                          {pipeline_constants.NEW: new_data, pipeline_constants.OLD: old_data},

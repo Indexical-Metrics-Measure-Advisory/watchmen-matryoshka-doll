@@ -293,8 +293,9 @@ async def load_user_group_list_by_name_list(name_list: List[str],
 
 
 @router.post("/user/list/name", tags=["admin"], response_model=List[User])
-async def load_user_list_by_name_list(name_list:List[str],current_user: User = Depends(deps.get_current_user))->List[User]:
-    results=[]
+async def load_user_list_by_name_list(name_list: List[str], current_user: User = Depends(deps.get_current_user)) -> \
+List[User]:
+    results = []
     for name in name_list:
         results.append(load_user_by_name(name))
     return results
