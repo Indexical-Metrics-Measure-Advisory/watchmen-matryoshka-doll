@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     ORACLE_SERVICE: str = "XE"
 
     CONNECTOR_KAFKA = False
+    KAFKA_BOOTSTRAP_SERVER ="localhost:9092"
 
     NOTIFIER_PROVIDER = "email"
     EMAILS_ENABLED: bool = False
