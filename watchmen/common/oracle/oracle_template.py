@@ -562,29 +562,32 @@ def create_topic_data_table_index(name: str, index_name: list, index_type: str):
 
 def alter_topic_data_table(topic):
     topic_dict: dict = convert_to_dict(topic)
-    topic_name = topic_dict.get('name')
-    table_name = 'topic_' + topic_name
-    '''
-    table = Table(table_name, metadata, extend_existing=True,
-                  autoload=True, autoload_with=engine)
-    '''
-    table = get_topic_table_by_name(table_name)
-    factors = topic_dict.get('factors')
-    existed_cols = []
-    for col in table.columns:
-        existed_cols.append(col.name)
-    for factor in factors:
-        if factor.get('name') in existed_cols:
-            continue
-        else:
-            column = Column(factor.get('name'), String(20))
-            column_name = column.compile(dialect=engine.dialect)
-            column_type = column.type.compile(engine.dialect)
-            stmt = 'ALTER TABLE %s ADD %s %s' % (
-                table_name, column_name, column_type)
-            with engine.connect() as conn:
-                conn.execute(text(stmt))
-                # conn.commit()
+    if topic_dict.get("type") == "raw":
+        pass
+    else:
+        topic_name = topic_dict.get('name')
+        table_name = 'topic_' + topic_name
+        '''
+        table = Table(table_name, metadata, extend_existing=True,
+                      autoload=True, autoload_with=engine)
+        '''
+        table = get_topic_table_by_name(table_name)
+        factors = topic_dict.get('factors')
+        existed_cols = []
+        for col in table.columns:
+            existed_cols.append(col.name)
+        for factor in factors:
+            if factor.get('name') in existed_cols:
+                continue
+            else:
+                column = Column(factor.get('name'), String(20))
+                column_name = column.compile(dialect=engine.dialect)
+                column_type = column.type.compile(engine.dialect)
+                stmt = 'ALTER TABLE %s ADD %s %s' % (
+                    table_name, column_name, column_type)
+                with engine.connect() as conn:
+                    conn.execute(text(stmt))
+                    # conn.commit()
 
 
 def drop_topic_data_table(topic_name):
