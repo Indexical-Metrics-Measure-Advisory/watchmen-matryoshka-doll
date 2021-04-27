@@ -577,10 +577,11 @@ def alter_topic_data_table(topic):
         for col in table.columns:
             existed_cols.append(col.name)
         for factor in factors:
-            if factor.get('name') in existed_cols:
+            factor_name = factor.get('name').lower()
+            if factor_name in existed_cols:
                 continue
             else:
-                column = Column(factor.get('name'), String(20))
+                column = Column(factor_name, String(20))
                 column_name = column.compile(dialect=engine.dialect)
                 column_type = column.type.compile(engine.dialect)
                 stmt = 'ALTER TABLE %s ADD %s %s' % (
