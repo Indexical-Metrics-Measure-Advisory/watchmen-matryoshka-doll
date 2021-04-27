@@ -11,10 +11,15 @@ from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
 log = logging.getLogger("app." + __name__)
 loop = asyncio.get_event_loop()
 
+kafka_topics = settings.KAFKA_TOPICS
+kafka_topics_list = kafka_topics.split(",")
+
+
 async def consume():
     consumer = AIOKafkaConsumer(
-        settings.KAFKA_TOPICS,
-        loop=loop, bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVER,value_deserializer=lambda m: json.loads(m.decode('utf-8')))
+        kafka_topics_list,
+        loop=loop, bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVER,
+        value_deserializer=lambda m: json.loads(m.decode('utf-8')))
     # Get cluster layout and join group `my-group`
     await consumer.start()
     try:
@@ -27,4 +32,3 @@ async def consume():
     finally:
         # Will leave consumer group; perform autocommit if enabled.
         await consumer.stop()
-
