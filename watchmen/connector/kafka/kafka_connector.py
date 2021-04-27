@@ -13,7 +13,7 @@ loop = asyncio.get_event_loop()
 
 async def consume():
     consumer = AIOKafkaConsumer(
-        'monitor_data',
+        settings.KAFKA_TOPICS,
         loop=loop, bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVER,value_deserializer=lambda m: json.loads(m.decode('utf-8')))
     # Get cluster layout and join group `my-group`
     await consumer.start()

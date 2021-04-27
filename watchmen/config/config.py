@@ -42,6 +42,7 @@ class Settings(BaseSettings):
 
     CONNECTOR_KAFKA = False
     KAFKA_BOOTSTRAP_SERVER ="localhost:9092"
+    KAFKA_TOPICS =None
 
     NOTIFIER_PROVIDER = "email"
     EMAILS_ENABLED: bool = False
