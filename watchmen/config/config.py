@@ -40,6 +40,8 @@ class Settings(BaseSettings):
     ORACLE_PASSWORD: str = ""
     ORACLE_SERVICE: str = "XE"
 
+    CONNECTOR_KAFKA = False
+
     NOTIFIER_PROVIDER = "email"
     EMAILS_ENABLED: bool = False
     SMTP_TLS: bool = True

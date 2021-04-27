@@ -450,12 +450,7 @@ async def query_log_by_critical(query: MonitorLogQuery):
         query_list.append({"pipelineId": query.criteria.pipelineId})
 
     if query.criteria.startDate is not None and query.criteria.endDate is not None:
-        '''
-        query_dict["insertTime"] = {
-            "$gte": datetime.strptime(query.criteria.startDate, DATE_FORMAT),
-            "$lt": datetime.strptime(query.criteria.endDate, DATE_FORMAT)
-        }
-        '''
+
         query_list.append({"sys_insertTime": {
             "between": (
                 datetime.strptime(query.criteria.startDate, DATE_FORMAT),
@@ -472,5 +467,5 @@ async def query_log_by_critical(query: MonitorLogQuery):
     else:
         query_dict = query_list[0]
 
-    # print(query_dict)
+    print(query_dict)
     return query_pipeline_monitor(build_collection_name("raw_pipeline_monitor"), query_dict, query.pagination)

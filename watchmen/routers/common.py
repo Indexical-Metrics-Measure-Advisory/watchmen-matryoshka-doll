@@ -32,6 +32,8 @@ class TopicInstance(MongoModel):
     data: Any = None
 
 
+
+
 @router.get("/health", tags=["common"])
 async def health():
     return {"health": True}

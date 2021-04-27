@@ -1,9 +1,11 @@
+import asyncio
 import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from watchmen.config.config import settings
+from watchmen.connector.kafka.kafka_connector import consume
 from watchmen.routers import admin, console, common, auth, metadata
 
 log = logging.getLogger("app." + __name__)
@@ -17,6 +19,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+def startup():
+    if settings.CONNECTOR_KAFKA:
+        # loop = asyncio.get_event_loop()
+        asyncio.create_task(consume())
 
 log.info("system init rest api")
 

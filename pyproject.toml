@@ -31,6 +31,8 @@ pandas = "^1.2.3"
 SQLAlchemy = "^1.4.2"
 mysqlclient = "^2.0.3"
 notifiers = "^1.2.1"
+kafka-python = "^2.0.2"
+aiokafka = "^0.7.0"
 
 
 [tool.poetry.dev-dependencies]
