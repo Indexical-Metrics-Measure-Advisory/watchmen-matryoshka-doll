@@ -63,17 +63,15 @@ def __merge_pipeline_data(pipeline_trigger_merge_list):
 
 
 def __trigger_all_pipeline(pipeline_trigger_merge_list):
-    # print(pipeline_trigger_merge_list)
+
     after_merge_list = __merge_pipeline_data(pipeline_trigger_merge_list)
-    # print(after_merge_list)
+
     for topic_name, item in after_merge_list.items():
         log.info("merge_topic:{0}".format(topic_name))
         merge_data = {}
         if TriggerType.update.value in item:
             for update_data in item[TriggerType.update.value]:
-                # print("------------------------")
-                # print("update_data", update_data)
-                # print("------------------------")
+
                 old_value = update_data[pipeline_constants.OLD]
                 pk = old_value[__get_unique_key_name()]
                 if pk in merge_data:
@@ -95,66 +93,30 @@ def run_pipeline(pipeline: Pipeline, data):
     pipeline_status.oldValue = data[pipeline_constants.OLD]
     pipeline_status.newValue = data[pipeline_constants.NEW]
 
-    # trigger_context =
-
-    # pipeline = Pipeline.parse_obj(pipeline)
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
         log.info("start run pipeline {0}".format(pipeline.name))
         context = {PIPELINE_UID: pipeline_status.uid}
+        start = time.time()
         if __check_condition(pipeline, pipeline_topic, data, context):
             try:
-                start = time.time()
-
                 pipeline_trigger_merge_list = []
                 for stage in pipeline.stages:
-
                     if __check_condition(stage, pipeline_topic, data, context):
                         stage_run_status = StageRunStatus()
                         stage_run_status.name = stage.name
                         log.info("stage name {0}".format(stage.name))
+                        context, pipeline_trigger_merge_list, start = run_unit(context, data, pipeline_status,
+                                                                               pipeline_topic,
+                                                                               pipeline_trigger_merge_list, stage,
+                                                                               stage_run_status, start)
 
-                        for unit in stage.units:
-
-                            if unit.do is not None:
-                                match_result = __check_condition(unit, pipeline_topic, data, context)
-                                # print("match_result",match_result)
-                                if match_result:
-                                    unit_run_status = UnitRunStatus()
-                                    for action in unit.do:
-                                        start = time.time()
-                                        func = find_action_type_func(convert_action_type(action.type), action,
-                                                                     pipeline_topic)
-                                        # call dynamic action in action folder
-                                        # TODO [future] custom folder
-                                        out_result, unit_action_status, trigger_pipeline_data_list = func(data, context)
-                                        elapsed_time = time.time() - start
-
-                                        print("elapsed_time ：" + action.type, elapsed_time)
-
-                                        if trigger_pipeline_data_list:
-                                            pipeline_trigger_merge_list = [*pipeline_trigger_merge_list,
-                                                                           *trigger_pipeline_data_list]
-
-                                        log.info("out_result :{0}".format(out_result))
-                                        context = {**context, **out_result}
-                                        # print("context : ",context)
-                                        unit_run_status.actions.append(unit_action_status)
-                                    stage_run_status.units.append(unit_run_status)
-                            else:
-                                log.debug("action stage unit  {0} do is None".format(stage.name))
-                        pipeline_status.stages.append(stage_run_status)
                 elapsed_time = time.time() - start
                 pipeline_status.completeTime = elapsed_time
                 pipeline_status.status = FINISHED
                 log.debug("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))
-                # # print(pipeline_topic.kind)
-                # print("------------------------")
-                # print(len(pipeline_trigger_merge_list))
-                # print("-----------------------")
                 if pipeline_topic.kind is None or pipeline_topic.kind != pipeline_constants.SYSTEM:
                     __trigger_all_pipeline(pipeline_trigger_merge_list)
-                ## trigger_pipeline()
 
             except Exception as e:
                 log.exception(e)
@@ -169,3 +131,38 @@ def run_pipeline(pipeline: Pipeline, data):
                     # pass
                     # print("sync pipeline monitor")
                     watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
+
+
+def run_unit(context, data, pipeline_status, pipeline_topic, pipeline_trigger_merge_list, stage, stage_run_status,
+             start):
+    for unit in stage.units:
+
+        if unit.do is not None:
+            match_result = __check_condition(unit, pipeline_topic, data, context)
+            # print("match_result",match_result)
+            if match_result:
+                unit_run_status = UnitRunStatus()
+                for action in unit.do:
+                    start = time.time()
+                    func = find_action_type_func(convert_action_type(action.type), action,
+                                                 pipeline_topic)
+                    # call dynamic action in action folder
+                    # TODO [future] custom folder
+                    out_result, unit_action_status, trigger_pipeline_data_list = func(data, context)
+                    elapsed_time = time.time() - start
+
+                    print("elapsed_time ：" + action.type, elapsed_time)
+
+                    if trigger_pipeline_data_list:
+                        pipeline_trigger_merge_list = [*pipeline_trigger_merge_list,
+                                                       *trigger_pipeline_data_list]
+
+                    log.info("out_result :{0}".format(out_result))
+                    context = {**context, **out_result}
+                    # print("context : ",context)
+                    unit_run_status.actions.append(unit_action_status)
+                stage_run_status.units.append(unit_run_status)
+        else:
+            log.debug("action stage unit  {0} do is None".format(stage.name))
+    pipeline_status.stages.append(stage_run_status)
+    return context, pipeline_trigger_merge_list, start
