@@ -63,7 +63,6 @@ def __merge_pipeline_data(pipeline_trigger_merge_list):
 
 
 def __trigger_all_pipeline(pipeline_trigger_merge_list):
-
     after_merge_list = __merge_pipeline_data(pipeline_trigger_merge_list)
 
     for topic_name, item in after_merge_list.items():
@@ -103,13 +102,12 @@ def run_pipeline(pipeline: Pipeline, data):
                 pipeline_trigger_merge_list = []
                 for stage in pipeline.stages:
                     if __check_condition(stage, pipeline_topic, data, context):
-                        stage_run_status = StageRunStatus()
-                        stage_run_status.name = stage.name
+                        stage_run_status = StageRunStatus(name=stage.name)
                         log.info("stage name {0}".format(stage.name))
-                        context, pipeline_trigger_merge_list, start = run_unit(context, data, pipeline_status,
-                                                                               pipeline_topic,
-                                                                               pipeline_trigger_merge_list, stage,
-                                                                               stage_run_status, start)
+                        context, pipeline_trigger_merge_list = run_unit(context, data, pipeline_status,
+                                                                        pipeline_topic,
+                                                                        pipeline_trigger_merge_list, stage,
+                                                                        stage_run_status)
 
                 elapsed_time = time.time() - start
                 pipeline_status.completeTime = elapsed_time
@@ -126,32 +124,23 @@ def run_pipeline(pipeline: Pipeline, data):
             finally:
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                     log.debug("pipeline_status is {0}".format(pipeline_status))
-                    # pass
                 else:
-                    # pass
-                    # print("sync pipeline monitor")
                     watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
 
 
-def run_unit(context, data, pipeline_status, pipeline_topic, pipeline_trigger_merge_list, stage, stage_run_status,
-             start):
+def run_unit(context, data, pipeline_status, pipeline_topic, pipeline_trigger_merge_list, stage, stage_run_status):
     for unit in stage.units:
-
         if unit.do is not None:
             match_result = __check_condition(unit, pipeline_topic, data, context)
-            # print("match_result",match_result)
             if match_result:
                 unit_run_status = UnitRunStatus()
                 for action in unit.do:
-                    start = time.time()
+
                     func = find_action_type_func(convert_action_type(action.type), action,
                                                  pipeline_topic)
                     # call dynamic action in action folder
                     # TODO [future] custom folder
                     out_result, unit_action_status, trigger_pipeline_data_list = func(data, context)
-                    elapsed_time = time.time() - start
-
-                    print("elapsed_time ：" + action.type, elapsed_time)
 
                     if trigger_pipeline_data_list:
                         pipeline_trigger_merge_list = [*pipeline_trigger_merge_list,
@@ -165,4 +154,4 @@ def run_unit(context, data, pipeline_status, pipeline_topic, pipeline_trigger_me
         else:
             log.debug("action stage unit  {0} do is None".format(stage.name))
     pipeline_status.stages.append(stage_run_status)
-    return context, pipeline_trigger_merge_list, start
+    return context, pipeline_trigger_merge_list
