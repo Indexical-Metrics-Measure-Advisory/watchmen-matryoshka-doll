@@ -426,7 +426,7 @@ async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
     return load_enum_list()
 
 
-@router.post("/topic/raw/generation", tags=["admin"])
+@router.post("/topic/raw/generation", tags=["common"])
 async def create_raw_topic_schema(topic_name: str, data_list: List = Body(...)):
     json_list = []
     for data in data_list:
