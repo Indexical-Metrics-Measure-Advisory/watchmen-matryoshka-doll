@@ -116,7 +116,7 @@ def list_select(select: dict, where: dict, model: BaseModel, name: str) -> list:
 
 
 def page_all(sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
-    return template.page(sort, pageable, model, name)
+    return template.page_all(sort, pageable, model, name)
 
 
 def page_(where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:

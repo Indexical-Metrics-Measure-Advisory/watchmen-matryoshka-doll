@@ -90,9 +90,13 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination) ->
     '''
     # query_dict = {"name": regex.Regex(query_name)}
     # sort_dict = [{"last_modified": pymongo.DESCENDING}]
-    query_dict = {"name": {"like": query_name}}
-    sort_dict = [("last_modified", "desc")]
-    return page_(query_dict, sort_dict, pagination, Topic, TOPICS)
+    if query_name != '':
+        query_dict = {"name": {"like": query_name}}
+        sort_dict = [("last_modified", "desc")]
+        return page_(query_dict, sort_dict, pagination, Topic, TOPICS)
+    else:
+        sort_dict = [("last_modified", "desc")]
+        return page_all(sort_dict, pagination, Topic, TOPICS)
 
 
 def update_topic(topic_id: str, topic: Topic) -> Topic:
