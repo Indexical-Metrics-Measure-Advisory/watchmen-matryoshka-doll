@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from watchmen.common.data_page import DataPage
 from watchmen.common.mysql.model.table_definition import get_primary_key
 from watchmen.common.oracle.oracle_engine import engine, dumps
-from watchmen.common.oracle.oracle_utils import parse_obj, count_table
+from watchmen.common.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
 from watchmen.common.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
@@ -183,15 +183,18 @@ def build_oracle_updates_expression_for_update(table, updates):
 
 def build_oracle_order(table, order_: list):
     result = []
-    for item in order_:
-        if isinstance(item, tuple):
-            if item[1] == "desc":
-                new_ = desc(table.c[item[0].lower()])
-                result.append(new_)
-            if item[1] == "asc":
-                new_ = asc(table.c[item[0].lower()])
-                result.append(new_)
-    return result
+    if order_ is None:
+        return result
+    else:
+        for item in order_:
+            if isinstance(item, tuple):
+                if item[1] == "desc":
+                    new_ = desc(table.c[item[0].lower()])
+                    result.append(new_)
+                if item[1] == "asc":
+                    new_ = asc(table.c[item[0].lower()])
+                    result.append(new_)
+        return result
 
 
 def insert_one(one, model, name):
@@ -471,7 +474,8 @@ def page_all(sort, pageable, model, name) -> DataPage:
         stmt = stmt.order_by(order)
     offset = pageable.pageSize * (pageable.pageNumber - 1)
     # stmt = stmt.offset(offset).limit(pageable.pageSize)
-    stmt = text(str(stmt.compile(compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
+    stmt = text(str(
+        stmt.compile(compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
     result = []
     with engine.connect() as conn:
         cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
@@ -492,7 +496,8 @@ def page_(where, sort, pageable, model, name) -> DataPage:
         stmt = stmt.order_by(order)
     offset = pageable.pageSize * (pageable.pageNumber - 1)
     # stmt = stmt.offset(offset).limit(pageable.pageSize)
-    stmt = text(str(stmt.compile(compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
+    stmt = text(str(
+        stmt.compile(compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
     result = []
     with engine.connect() as conn:
         cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
@@ -815,6 +820,51 @@ def topic_data_find_one(where, topic_name) -> any:
         return None
     else:
         return capital_to_lower(result)
+
+
+def topic_data_find_(where, topic_name):
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
+    stmt = select(table).where(build_oracle_where_expression(table, where))
+    with engine.connect() as conn:
+        cursor = conn.execute(stmt).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        result = cursor.fetchall()
+    if result is None:
+        return None
+    else:
+        return capital_to_lower(result)
+
+
+def topic_data_list_all(topic_name) -> list:
+    pass
+
+
+def topic_data_page_(where, sort, pageable, model, name) -> DataPage:
+    count = count_topic_data_table(name)
+    table = get_topic_table_by_name(name)
+    stmt = select(table).where(build_oracle_where_expression(table, where))
+    orders = build_oracle_order(table, sort)
+    for order in orders:
+        stmt = stmt.order_by(order)
+    offset = pageable.pageSize * (pageable.pageNumber - 1)
+    # stmt = stmt.offset(offset).limit(pageable.pageSize)
+    stmt = text(str(
+        stmt.compile(
+            compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
+    result = []
+    with engine.connect() as conn:
+        cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        res = cursor.fetchall()
+    for row in res:
+        if model is not None:
+            result.append(parse_obj(model, row, table))
+        else:
+            result.append(row)
+    return build_data_pages(pageable, result, count)
 
 
 def topic_find_one_and_update(where, updates, name):

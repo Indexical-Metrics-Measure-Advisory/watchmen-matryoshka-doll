@@ -67,3 +67,13 @@ def count_table(table_name):
         cursor.rowfactory = lambda *args: dict(zip(columns, args))
         result = cursor.fetchone()
     return result['COUNT']
+
+
+def count_topic_data_table(table_name):
+    stmt = 'SELECT count(%s) AS count FROM %s' % ('id_', table_name)
+    with engine.connect() as conn:
+        cursor = conn.execute(text(stmt)).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        result = cursor.fetchone()
+    return result['COUNT']
