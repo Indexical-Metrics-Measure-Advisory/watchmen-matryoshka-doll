@@ -33,6 +33,7 @@ mysqlclient = "^2.0.3"
 notifiers = "^1.2.1"
 kafka-python = "^2.0.2"
 aiokafka = "^0.7.0"
+arrow = "^1.1.0"
 
 
 [tool.poetry.dev-dependencies]

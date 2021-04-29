@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import traceback
 
 from aiokafka import AIOKafkaConsumer
 
@@ -20,14 +21,14 @@ async def consume():
         kafka_topics_list,
         loop=loop, bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVER,
         value_deserializer=lambda m: json.loads(m.decode('utf-8')))
-    # Get cluster layout and join group `my-group`
+
     await consumer.start()
     try:
         async for msg in consumer:
             topic_event = TopicEvent.parse_obj(msg.value)
             await import_raw_topic_data(topic_event)
     except:
-        log.error("consumer error")
+        log.error(traceback.format_exc())
         await consume()
     finally:
         # Will leave consumer group; perform autocommit if enabled.

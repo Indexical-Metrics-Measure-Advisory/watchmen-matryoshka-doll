@@ -13,6 +13,17 @@ kafka-python = ">=2.0.0"
 snappy = ["python-snappy (>=0.5)"]
 
 [[package]]
+name = "arrow"
+version = "1.1.0"
+description = "Better dates & times for Python"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+python-dateutil = ">=2.7.0"
+
+[[package]]
 name = "attrs"
 version = "20.3.0"
 description = "Classes Without Boilerplate"
@@ -762,7 +773,7 @@ heapdict = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9.2"
-content-hash = "509fa81cdd0669078e789410e31371b3c4561dc8d1faba5285170b98e4791d18"
+content-hash = "3320aebf7247fb1e91148599a61714c0664b81cbf3aa5a36468f5474fe34a40b"
 
 [metadata.files]
 aiokafka = [
@@ -795,6 +806,10 @@ aiokafka = [
     {file = "aiokafka-0.7.0-cp39-cp39-win32.whl", hash = "sha256:9a77c3315640ae94010b38c46a4df9c54e8f29d3f8d706ff398b35754cdb23c5"},
     {file = "aiokafka-0.7.0-cp39-cp39-win_amd64.whl", hash = "sha256:48dac32e19f596514f0e3fc0a75079cbeaddb4c196696fd7da8c5a27f163dfac"},
     {file = "aiokafka-0.7.0.tar.gz", hash = "sha256:2a4bf3a7afc6406cb37c153256c35629c1d69caf63e4a3b5b1c3863d97a17b74"},
+]
+arrow = [
+    {file = "arrow-1.1.0-py3-none-any.whl", hash = "sha256:8cbe6a629b1c54ae11b52d6d9e70890089241958f63bc59467e277e34b7a5378"},
+    {file = "arrow-1.1.0.tar.gz", hash = "sha256:b8fe13abf3517abab315e09350c903902d1447bd311afbc17547ba1cb3ff5bd8"},
 ]
 attrs = [
     {file = "attrs-20.3.0-py2.py3-none-any.whl", hash = "sha256:31b2eced602aa8423c2aea9c76a724617ed67cf9513173fd3a4f03e3a929c7e6"},
