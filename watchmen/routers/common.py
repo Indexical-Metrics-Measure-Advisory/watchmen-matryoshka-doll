@@ -10,6 +10,7 @@ from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
 from watchmen.common.mongo.index import delete_topic_collection
 from watchmen.common.mongo_model import MongoModel
+from watchmen.common.oracle.oracle_template import create_raw_pipeline_monitor
 from watchmen.common.parameter import Parameter
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
@@ -30,8 +31,6 @@ log = logging.getLogger("app." + __name__)
 
 class TopicInstance(MongoModel):
     data: Any = None
-
-
 
 
 @router.get("/health", tags=["common"])
@@ -133,3 +132,9 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
     factor_name = __get_factor_name_by_alias(query_subject.columnName, console_subject)
     return get_factor_value_by_subject_and_condition(console_subject, factor_name,
                                                      subject_filter)
+
+
+@router.get("/monitor/pipeline", tags=["common"])
+def create_raw_pipeline_monitor_table():
+    create_raw_pipeline_monitor()
+    return {"created": True}

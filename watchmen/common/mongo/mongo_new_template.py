@@ -343,3 +343,7 @@ def topic_find_one_and_update(where: dict, updates: dict, name: str):
     collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
     return collection.find_one_and_update(filter=build_mongo_where_expression(where), update=updates, upsert=True,
                                           return_document=ReturnDocument.AFTER)
+
+
+def topic_data_page_(where, sort, pageable, model, name) -> DataPage:
+    return page_(where, sort, pageable, model, name)
