@@ -20,11 +20,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.on_event("startup")
 def startup():
     if settings.CONNECTOR_KAFKA:
-        # loop = asyncio.get_event_loop()
         asyncio.create_task(consume())
+
 
 log.info("system init rest api")
 

@@ -86,7 +86,7 @@ async def connect_to_space(space_id, name, current_user: User = Depends(deps.get
     console_space.spaceId = space_id
     console_space.name = name
     console_space.userId = current_user.userId
-    console_space.lastVisitTime = datetime.utcnow()
+    console_space.lastVisitTime = datetime.now().replace(tzinfo=None)
     return save_console_space(console_space)
 
 

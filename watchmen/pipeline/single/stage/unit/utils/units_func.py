@@ -1,6 +1,8 @@
 from datetime import datetime
 from decimal import Decimal
 
+import arrow
+
 from watchmen.common.constants import parameter_constants, pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.config.config import settings
@@ -143,10 +145,7 @@ def convert_factor_type(value, factor_type):
     elif factor_type == NUMBER:
         return Decimal(value)
     elif factor_type == DATETIME:
-        if isinstance(value, datetime):
-            return value
-        else:
-            return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
+        return convert_datetime(value)
     elif factor_type == BOOLEAN:
         return bool(value)
     elif factor_type == SEQUENCE:
@@ -156,15 +155,19 @@ def convert_factor_type(value, factor_type):
     elif factor_type == MONTH:
         return int(value)
     elif factor_type == TIME:
-        return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
+        return arrow.get(value).datetime.replace(tzinfo=None)
     elif factor_type == DATE:
         ## TODO date format
-        if isinstance(value, datetime):
-            return value
-        else:
-            return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
+        return convert_datetime(value)
     else:
         return value
+
+
+def convert_datetime(value):
+    if isinstance(value, datetime):
+        return value.replace(tzinfo=None)
+    else:
+        return arrow.get(value).datetime.replace(tzinfo=None)
 
 
 def build_factor_dict(topic: Topic):
@@ -175,7 +178,6 @@ def build_factor_dict(topic: Topic):
 
 
 def get_factor(factor_id, target_topic):
-    # print(target_topic.json())
     for factor in target_topic.factors:
         if factor.factorId == factor_id:
             return factor
@@ -210,9 +212,9 @@ def get_value(factor: Factor, data):
 
 def add_audit_columns(dictionary, audit_type):
     if audit_type == INSERT:
-        dictionary[pipeline_constants.INSERT_TIME] = datetime.utcnow()
+        dictionary[pipeline_constants.INSERT_TIME] = datetime.now().replace(tzinfo=None)
     elif audit_type == UPDATE:
-        dictionary[pipeline_constants.UPDATE_TIME] = datetime.utcnow()
+        dictionary[pipeline_constants.UPDATE_TIME] = datetime.now().replace(tzinfo=None)
     else:
         raise Exception("unknown audit_type")
 

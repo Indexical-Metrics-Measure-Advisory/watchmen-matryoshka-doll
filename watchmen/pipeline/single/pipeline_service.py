@@ -10,7 +10,6 @@ from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.config.config import settings
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
-# from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition
@@ -88,7 +87,7 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list):
 
 def run_pipeline(pipeline: Pipeline, data):
     pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),
-                                        startTime=datetime.now(), topicId=pipeline.pipelineId)
+                                        startTime=datetime.now().replace(tzinfo=None), topicId=pipeline.pipelineId)
     pipeline_status.oldValue = data[pipeline_constants.OLD]
     pipeline_status.newValue = data[pipeline_constants.NEW]
 

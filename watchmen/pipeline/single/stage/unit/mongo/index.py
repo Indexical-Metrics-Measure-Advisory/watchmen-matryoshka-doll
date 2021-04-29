@@ -12,7 +12,7 @@ from watchmen.common.utils.condition_result import ConditionResult
 from watchmen.config.config import settings
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
-    check_condition, convert_factor_type, __split_value, SPLIT_FLAG, MEMORY, SNOWFLAKE
+    check_condition, convert_factor_type, __split_value, SPLIT_FLAG, MEMORY, SNOWFLAKE, convert_datetime
 from watchmen.plugin.service.plugin_service import run_plugin
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
@@ -60,13 +60,6 @@ def build_factor_list(factor):
     return factor_list
 
 
-def __convert_value_to_datetime(value):
-    if type(value) == datetime:
-        return value
-    else:
-        return datetime.strptime(value, settings.TOPIC_DATE_FORMAT)
-
-
 def __run_arithmetic(arithmetic, value):
     # print("arithmetic {0} value {1}".format(arithmetic,value))
     if arithmetic is None or arithmetic == NONE or type(value) != list:
@@ -84,7 +77,6 @@ def __run_arithmetic(arithmetic, value):
 
 
 def run_arithmetic_value_list(arithmetic, value_list):
-    # print("value_list", value_list)
     if type(value_list) == list:
         results = []
         for source_value in value_list:
@@ -123,29 +115,18 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic, cont
 
     for mapping in mapping_list:
         source = mapping.source
-        # if target_topic.name == "baoviet_policy_cash_change":
-        #     print("source", source)
-        #     print("raw_data",raw_data["cash"])
+
         target_factor = get_factor(mapping.factorId, target_topic)
         source_value_list = run_arithmetic_value_list(mapping.arithmetic,
                                                       get_source_value_list(pipeline_topic, raw_data, source,
                                                                             target_factor, context))
 
-        # if target_topic.name =="baoviet_policy_cash_change":
-        #     print("source_value_list",source_value_list)
-        # print("source_value_list 2",source_value_list)
-        # target_factor = get_factor(mapping.factorId, target_topic)
         target_value_list = __convert_to_target_value_list(target_factor, source_value_list)
-
-        # if target_factor.name =="rule_category":
-        #     print("source_value_list 2", source_value_list)
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
         mapping_results.append({target_factor.name: target_value_list})
 
-    # print("mapping_results 2", mapping_results)
     mapping_data_list = merge_mapping_data(mapping_results)
-    # print("mapping_data_list 2", mapping_data_list)
     return mapping_data_list
 
 
@@ -169,26 +150,26 @@ def __process_date_func(source, value):
     if arithmetic == NONE:
         return value
     elif arithmetic == YEAR_OF:
-        return __convert_value_to_datetime(value).year
+        return convert_datetime(value).year
     elif arithmetic == MONTH_OF:
-        return __convert_value_to_datetime(value).month
+        return convert_datetime(value).month
     elif arithmetic == WEEK_OF_YEAR:
-        return __convert_value_to_datetime(value).isocalendar()[1]
+        return convert_datetime(value).isocalendar()[1]
     elif arithmetic == DAY_OF_WEEK:
-        return __convert_value_to_datetime(value).weekday()
+        return convert_datetime(value).weekday()
     elif arithmetic == WEEK_OF_MONTH:
-        return __week_number_of_month(__convert_value_to_datetime(value).date())
+        return __week_number_of_month(convert_datetime(value).date())
     elif arithmetic == QUARTER_OF:
-        quarter = pd.Timestamp(__convert_value_to_datetime(value)).quarter
+        quarter = pd.Timestamp(convert_datetime(value)).quarter
         return quarter
     elif arithmetic == HALF_YEAR_OF:
-        month = __convert_value_to_datetime(value).month
+        month = convert_datetime(value).month
         if month <= 6:
             return 1
         else:
             return 2
     elif arithmetic == DAY_OF_MONTH:
-        days_in_month = pd.Timestamp(__convert_value_to_datetime(value)).days_in_month
+        days_in_month = pd.Timestamp(convert_datetime(value)).days_in_month
         return days_in_month
     else:
         raise ValueError("unknown arithmetic type {0}".format(arithmetic))
