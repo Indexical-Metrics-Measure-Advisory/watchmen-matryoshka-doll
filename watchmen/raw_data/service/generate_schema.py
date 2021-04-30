@@ -1,7 +1,9 @@
 import datetime
 from enum import Enum
+from typing import Any
 
 from bson import ObjectId
+from pydantic import BaseModel
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.raw_data.model_field import ModelField
@@ -10,6 +12,11 @@ from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.raw_data.storage.row_data_schema_storage import load_raw_schema_by_code, insert_data_schema, \
     update_data_schema
+
+
+class RawTopicGenerateEvent(BaseModel):
+    code: str = None
+    data: Any = None
 
 
 def convert_value(value):

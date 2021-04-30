@@ -33,7 +33,7 @@ from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
     load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status, \
     update_pipeline_name, load_pipeline_by_id
-from watchmen.raw_data.service.generate_schema import create_raw_data_model_set
+from watchmen.raw_data.service.generate_schema import create_raw_data_model_set, RawTopicGenerateEvent
 from watchmen.report.model.report import Report
 from watchmen.report.storage.report_storage import query_report_list_with_pagination, load_reports_by_ids
 from watchmen.space.service.admin import create_space, update_space_by_id, sync_space_to_user_group
@@ -426,6 +426,7 @@ async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
     return load_enum_list()
 
 
+'''
 @router.post("/topic/raw/generation", tags=["common"])
 async def create_raw_topic_schema(topic_name: str, data_list: List = Body(...)):
     json_list = []
@@ -433,6 +434,17 @@ async def create_raw_topic_schema(topic_name: str, data_list: List = Body(...)):
         json_list.append(json.loads(data))
     # print(len(json_list))
     result = create_raw_data_model_set(topic_name, json_list)
+    return build_topic(result)
+'''
+
+
+@router.post("/topic/raw/generation", tags=["common"])
+async def create_raw_topic_schema(event: RawTopicGenerateEvent):
+    json_list = []
+    for data in event.data:
+        json_list.append(data)
+    # print(len(json_list))
+    result = create_raw_data_model_set(event.code, json_list)
     return build_topic(result)
 
 
