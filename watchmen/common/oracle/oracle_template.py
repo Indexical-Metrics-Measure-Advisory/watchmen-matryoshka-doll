@@ -18,8 +18,6 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
 
-from sqlalchemy.dialects import oracle
-
 log = logging.getLogger("app." + __name__)
 
 log.info("oracle template initialized")
@@ -471,7 +469,8 @@ def page_all(sort, pageable, model, name) -> DataPage:
         stmt = stmt.order_by(order)
     offset = pageable.pageSize * (pageable.pageNumber - 1)
     # stmt = stmt.offset(offset).limit(pageable.pageSize)
-    stmt = text(str(stmt.compile(compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
+    stmt = text(str(
+        stmt.compile(compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
     result = []
     with engine.connect() as conn:
         cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
@@ -492,7 +491,8 @@ def page_(where, sort, pageable, model, name) -> DataPage:
         stmt = stmt.order_by(order)
     offset = pageable.pageSize * (pageable.pageNumber - 1)
     # stmt = stmt.offset(offset).limit(pageable.pageSize)
-    stmt = text(str(stmt.compile(compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
+    stmt = text(str(
+        stmt.compile(compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
     result = []
     with engine.connect() as conn:
         cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
