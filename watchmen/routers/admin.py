@@ -294,7 +294,7 @@ async def load_user_group_list_by_name_list(name_list: List[str],
 
 @router.post("/user/list/name", tags=["admin"], response_model=List[User])
 async def load_user_list_by_name_list(name_list: List[str], current_user: User = Depends(deps.get_current_user)) -> \
-List[User]:
+        List[User]:
     results = []
     for name in name_list:
         results.append(load_user_by_name(name))
@@ -450,7 +450,6 @@ async def query_log_by_critical(query: MonitorLogQuery):
         query_list.append({"pipelineId": query.criteria.pipelineId})
 
     if query.criteria.startDate is not None and query.criteria.endDate is not None:
-
         query_list.append({"sys_insertTime": {
             "between": (
                 datetime.strptime(query.criteria.startDate, DATE_FORMAT),

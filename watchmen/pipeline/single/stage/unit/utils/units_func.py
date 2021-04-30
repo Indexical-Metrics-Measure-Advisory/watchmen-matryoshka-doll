@@ -5,7 +5,6 @@ import arrow
 
 from watchmen.common.constants import parameter_constants, pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.config.config import settings
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 

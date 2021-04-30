@@ -1,6 +1,5 @@
 import logging
 import statistics
-from datetime import datetime
 from functools import reduce
 
 import numpy as np
@@ -9,7 +8,6 @@ import pandas as pd
 from watchmen.common.constants import pipeline_constants, parameter_constants
 from watchmen.common.constants.pipeline_constants import VALUE
 from watchmen.common.utils.condition_result import ConditionResult
-from watchmen.config.config import settings
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
     check_condition, convert_factor_type, __split_value, SPLIT_FLAG, MEMORY, SNOWFLAKE, convert_datetime
