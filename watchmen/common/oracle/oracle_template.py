@@ -1,10 +1,13 @@
+import json
 import logging
 import operator
 import time
+import datetime
 from operator import eq
+from typing import Optional
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
-    text, func, DateTime, BigInteger, Date
+    text, func, DateTime, BigInteger, Date, Integer
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
@@ -12,11 +15,15 @@ from sqlalchemy.orm import Session
 from watchmen.common.data_page import DataPage
 from watchmen.common.mysql.model.table_definition import get_primary_key
 from watchmen.common.oracle.oracle_engine import engine, dumps
-from watchmen.common.oracle.oracle_utils import parse_obj, count_table
+from watchmen.common.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
 from watchmen.common.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
+
+from sqlalchemy.dialects import oracle
+
+from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
 log = logging.getLogger("app." + __name__)
 
@@ -141,7 +148,7 @@ def build_oracle_where_expression(table, where):
                         return table.c[key.lower()] <= v
                     if k == "between":
                         if (isinstance(v, tuple)) and len(v) == 2:
-                            return table.c[key.lower()].between(v[0], v[1])
+                            return table.c[key.lower()].between(check_value_type(v[0]), check_value_type(v[1]))
             else:
                 return table.c[key.lower()] == value
 
@@ -181,15 +188,18 @@ def build_oracle_updates_expression_for_update(table, updates):
 
 def build_oracle_order(table, order_: list):
     result = []
-    for item in order_:
-        if isinstance(item, tuple):
-            if item[1] == "desc":
-                new_ = desc(table.c[item[0].lower()])
-                result.append(new_)
-            if item[1] == "asc":
-                new_ = asc(table.c[item[0].lower()])
-                result.append(new_)
-    return result
+    if order_ is None:
+        return result
+    else:
+        for item in order_:
+            if isinstance(item, tuple):
+                if item[1] == "desc":
+                    new_ = desc(table.c[item[0].lower()])
+                    result.append(new_)
+                if item[1] == "asc":
+                    new_ = asc(table.c[item[0].lower()])
+                    result.append(new_)
+        return result
 
 
 def insert_one(one, model, name):
@@ -525,9 +535,9 @@ def get_datatype_by_factor_type(type: str):
     elif type == "enum":
         return String(20)
     elif type == "object":
-        return String(20)
+        return CLOB
     elif type == "array":
-        return String(20)
+        return CLOB
     elif type == "date":
         return DateTime
     else:
@@ -560,7 +570,7 @@ def create_topic_data_table(topic):
     else:
         topic_name = topic_dict.get('name')
         factors = topic_dict.get('factors')
-        table = Table('topic_' + topic_name, metadata)
+        table = Table('topic_' + topic_name.lower(), metadata)
         key = Column(name="id_", type_=String(60), primary_key=True)
         table.append_column(key)
         for factor in factors:
@@ -574,7 +584,7 @@ def create_topic_data_table(topic):
 def create_raw_topic_data_table(topic):
     topic_dict: dict = convert_to_dict(topic)
     topic_name = topic_dict.get('name')
-    table = Table('topic_' + topic_name, metadata)
+    table = Table('topic_' + topic_name.lower(), metadata)
     key = Column(name="id_", type_=String(60), primary_key=True)
     table.append_column(key)
     col = Column(name="data_", type_=CLOB, nullable=True)
@@ -604,10 +614,11 @@ def alter_topic_data_table(topic):
             existed_cols.append(col.name)
         for factor in factors:
             factor_name = factor.get('name').lower()
+            factor_type = get_datatype_by_factor_type(factor.get('type'))
             if factor_name in existed_cols:
                 continue
             else:
-                column = Column(factor_name, String(20))
+                column = Column(factor_name, factor_type)
                 column_name = column.compile(dialect=engine.dialect)
                 column_type = column.type.compile(engine.dialect)
                 stmt = 'ALTER TABLE %s ADD %s %s' % (
@@ -653,7 +664,8 @@ def topic_data_insert_one(one, topic_name):
         '''
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        one_dict: dict = convert_to_dict(one)
+        # one_dict: dict = convert_to_dict(one)
+        one_dict: dict = capital_to_lower(convert_to_dict(one))
         value = {}
         for key in table.c.keys():
             if key == "id_":
@@ -667,18 +679,21 @@ def topic_data_insert_one(one, topic_name):
 
 
 def raw_topic_data_insert_one(one, topic_name):
-    '''
-    table = Table('topic_' + topic_name, metadata,
-                  extend_existing=True, autoload=True, autoload_with=engine)
-    '''
-    table_name = 'topic_' + topic_name
-    table = get_topic_table_by_name(table_name)
-    one_dict: dict = convert_to_dict(one)
-    value = {'id_': get_surrogate_key(), 'data_': dumps(one_dict)}
-    stmt = insert(table)
-    with engine.connect() as conn:
-        conn.execute(stmt, value)
-        # conn.commit()
+    if topic_name == "raw_pipeline_monitor":
+        raw_pipeline_monitor_insert_one(one, topic_name)
+    else:
+        '''
+        table = Table('topic_' + topic_name, metadata,
+                      extend_existing=True, autoload=True, autoload_with=engine)
+        '''
+        table_name = 'topic_' + topic_name
+        table = get_topic_table_by_name(table_name)
+        one_dict: dict = convert_to_dict(one)
+        value = {'id_': get_surrogate_key(), 'data_': dumps(one_dict)}
+        stmt = insert(table)
+        with engine.connect() as conn:
+            conn.execute(stmt, value)
+            # conn.commit()
 
 
 def topic_data_insert_(data, topic_name):
@@ -817,6 +832,54 @@ def topic_data_find_one(where, topic_name) -> any:
         return capital_to_lower(result)
 
 
+def topic_data_find_(where, topic_name):
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
+    stmt = select(table).where(build_oracle_where_expression(table, where))
+    with engine.connect() as conn:
+        cursor = conn.execute(stmt).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        result = cursor.fetchall()
+    if result is None:
+        return None
+    else:
+        return capital_to_lower(result)
+
+
+def topic_data_list_all(topic_name) -> list:
+    pass
+
+
+def topic_data_page_(where, sort, pageable, model, name) -> DataPage:
+    if name == "topic_raw_pipeline_monitor":
+        return raw_pipeline_monitor_page_(where, sort, pageable, model, name)
+    else:
+        count = count_topic_data_table(name)
+        table = get_topic_table_by_name(name)
+        stmt = select(table).where(build_oracle_where_expression(table, where))
+        orders = build_oracle_order(table, sort)
+        for order in orders:
+            stmt = stmt.order_by(order)
+        offset = pageable.pageSize * (pageable.pageNumber - 1)
+        # stmt = stmt.offset(offset).limit(pageable.pageSize)
+        stmt = text(str(
+            stmt.compile(
+                compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
+        result = []
+        with engine.connect() as conn:
+            cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
+            columns = [col[0] for col in cursor.description]
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            res = cursor.fetchall()
+        for row in res:
+            if model is not None:
+                result.append(parse_obj(model, row, table))
+            else:
+                result.append(row)
+        return build_data_pages(pageable, result, count)
+
+
 def topic_find_one_and_update(where, updates, name):
     '''
     table = Table('topic_' + name, metadata, extend_existing=True,
@@ -858,3 +921,98 @@ def capital_to_lower(dict_info):
     for i, j in dict_info.items():
         new_dict[i.lower()] = j
     return new_dict
+
+
+def check_value_type(value):
+    if isinstance(value, datetime.datetime):
+        return func.to_date(value, "yyyy-mm-dd hh24:mi:ss")
+    else:
+        return value
+
+
+'''
+special for raw_pipeline_monitor, need refactor for raw topic schema structure, ToDo
+'''
+
+
+def create_raw_pipeline_monitor():
+    table = Table('topic_raw_pipeline_monitor', metadata)
+    table.append_column(Column(name='id_', type_=String(60), primary_key=True))
+    table.append_column(Column(name='data_', type_=CLOB, nullable=True))
+    table.append_column(Column(name='sys_inserttime', type_=Date, nullable=True))
+    table.append_column(Column(name='sys_updatetime', type_=Date, nullable=True))
+    schema = json.loads(PipelineRunStatus.schema_json(indent=1))
+    for key, value in schema.get("properties").items():
+        column_name = key.lower()
+        column_type = value.get("type", None)
+        if column_type is None:
+            column_format = value.get("format", None)
+            if column_format is None:
+                table.append_column(Column(name=column_name, type_=CLOB, nullable=True))
+            else:
+                if column_format == "date-time":
+                    table.append_column(Column(name=column_name, type_=Date, nullable=True))
+        elif column_type == "boolean":
+            table.append_column(Column(name=column_name, type_=String(5), nullable=True))
+        elif column_type == "string":
+            if column_name == "error":
+                table.append_column(Column(name=column_name, type_=CLOB, nullable=True))
+            else:
+                table.append_column(Column(name=column_name, type_=String(50), nullable=True))
+        elif column_type == "integer":
+            table.append_column(Column(name=column_name, type_=Integer, nullable=True))
+        elif column_type == "array":
+            table.append_column(Column(name=column_name, type_=CLOB, nullable=True))
+        else:
+            raise Exception(column_name + "not support type")
+    table.create(engine)
+
+
+def raw_pipeline_monitor_insert_one(one, topic_name):
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
+    one_dict: dict = convert_to_dict(one)
+    one_lower_dict = capital_to_lower(one_dict)
+    value = {}
+    for key in table.c.keys():
+        if key == "id_":
+            value[key] = get_surrogate_key()
+        elif key == "data_":
+            value[key] = dumps(one_dict)
+        else:
+            if isinstance(table.c[key].type, CLOB):
+                if one_lower_dict.get(key) is not None:
+                    value[key] = dumps(one_lower_dict.get(key))
+                else:
+                    value[key] = None
+            else:
+                value[key] = one_lower_dict.get(key)
+    stmt = insert(table)
+    with engine.connect() as conn:
+        conn.execute(stmt, value)
+
+
+def raw_pipeline_monitor_page_(where, sort, pageable, model, name) -> DataPage:
+    count = count_topic_data_table(name)
+    table = get_topic_table_by_name(name)
+    stmt = select(table).where(build_oracle_where_expression(table, where))
+    orders = build_oracle_order(table, sort)
+    for order in orders:
+        stmt = stmt.order_by(order)
+    offset = pageable.pageSize * (pageable.pageNumber - 1)
+    # stmt = stmt.offset(offset).limit(pageable.pageSize)
+    stmt = text(str(
+        stmt.compile(
+            compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
+    result = []
+    with engine.connect() as conn:
+        cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        res = cursor.fetchall()
+    for row in res:
+        if model is not None:
+            result.append(parse_obj(model, row, table))
+        else:
+            result.append(json.loads(row['DATA_']))
+    return build_data_pages(pageable, result, count)

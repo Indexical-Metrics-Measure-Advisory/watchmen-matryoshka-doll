@@ -180,5 +180,10 @@ def topic_data_list_all(topic_name) -> list:
     return template.topic_data_list_all(topic_name)
 
 
+def topic_data_page_(where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
+    return template.topic_data_page_(where, sort, pageable, model, name)
+
+
 def topic_find_one_and_update(where: dict, updates: dict, name: str) -> any:
     return template.topic_find_one_and_update(where, updates, name)
+
