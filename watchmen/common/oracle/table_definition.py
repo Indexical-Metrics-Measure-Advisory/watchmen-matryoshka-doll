@@ -186,7 +186,7 @@ def get_topic_table_by_name(table_name):
         return metadata.tables[table_name]
     elif table_name == "topic_raw_pipeline_monitor":
         return Table(table_name, metadata,
-                     Column('uid', String(50), nullable=False, quote=True),
+                     Column('UID', String(50), nullable=False, quote=True),
                      extend_existing=True, autoload=True, autoload_with=engine)
     else:
         return Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)

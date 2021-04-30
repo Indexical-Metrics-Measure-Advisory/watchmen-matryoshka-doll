@@ -810,7 +810,8 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
     if result is None:
         return None
     else:
-        return capital_to_lower(result)
+        # return capital_to_lower(result)
+        return convert_dict_key(result, topic_name)
 
 
 def topic_data_find_one(where, topic_name) -> any:
@@ -829,7 +830,8 @@ def topic_data_find_one(where, topic_name) -> any:
     if result is None:
         return None
     else:
-        return capital_to_lower(result)
+        # return capital_to_lower(result)
+        return convert_dict_key(result, topic_name)
 
 
 def topic_data_find_(where, topic_name):
@@ -844,7 +846,8 @@ def topic_data_find_(where, topic_name):
     if result is None:
         return None
     else:
-        return capital_to_lower(result)
+        # return capital_to_lower(result)
+        return convert_dict_key(result, topic_name)
 
 
 def topic_data_list_all(topic_name) -> list:
@@ -923,6 +926,20 @@ def capital_to_lower(dict_info):
     return new_dict
 
 
+def convert_dict_key(dict_info, topic_name):
+    new_dict = {}
+    stmt = "select t.factors from topics t where t.name=:topic_name"
+    with engine.connect() as conn:
+        cursor = conn.execute(stmt, {"topic_name": topic_name}).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        row = cursor.fetchone()
+        factors = json.loads(row['FACTORS'])
+    for factor in factors:
+        new_dict[factor.name] = dict_info[factor.name.upper()]
+    return new_dict
+
+
 def check_value_type(value):
     if isinstance(value, datetime.datetime):
         return func.to_date(value, "yyyy-mm-dd hh24:mi:ss")
@@ -957,6 +974,8 @@ def create_raw_pipeline_monitor():
         elif column_type == "string":
             if column_name == "error":
                 table.append_column(Column(name=column_name, type_=CLOB, nullable=True))
+            elif column_name == "uid":
+                table.append_column(Column(name=column_name.upper(), type_=String(50), quote=True, nullable=True))
             else:
                 table.append_column(Column(name=column_name, type_=String(50), nullable=True))
         elif column_type == "integer":

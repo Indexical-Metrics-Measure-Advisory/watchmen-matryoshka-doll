@@ -347,3 +347,13 @@ def topic_find_one_and_update(where: dict, updates: dict, name: str):
 
 def topic_data_page_(where, sort, pageable, model, name) -> DataPage:
     return page_(where, sort, pageable, model, name)
+
+
+'''
+special for raw_pipeline_monitor, need refactor for raw topic schema structure, ToDo
+'''
+
+
+def create_raw_pipeline_monitor():
+    pass
+

@@ -187,3 +187,12 @@ def topic_data_page_(where: dict, sort: list, pageable: Pageable, model: BaseMod
 def topic_find_one_and_update(where: dict, updates: dict, name: str) -> any:
     return template.topic_find_one_and_update(where, updates, name)
 
+
+'''
+special for raw_pipeline_monitor, need refactor for raw topic schema structure, ToDo
+'''
+
+
+def create_raw_pipeline_monitor():
+    template.create_raw_pipeline_monitor()
+
