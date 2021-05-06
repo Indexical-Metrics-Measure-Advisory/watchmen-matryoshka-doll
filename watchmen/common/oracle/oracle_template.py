@@ -899,7 +899,8 @@ def topic_find_one_and_update(where, updates, name):
     if "id_" in updates:
         pass
     else:
-        updates["id_"] = get_surrogate_key()
+        # updates["id_"] = get_surrogate_key()
+        pass
 
     insert_stmt = insert(table).values(
         build_oracle_updates_expression_for_insert(table, data_dict))
@@ -936,7 +937,8 @@ def convert_dict_key(dict_info, topic_name):
         row = cursor.fetchone()
         factors = json.loads(row['FACTORS'])
     for factor in factors:
-        new_dict[factor.name] = dict_info[factor.name.upper()]
+        new_dict[factor['name']] = dict_info[factor['name'].upper()]
+    new_dict['id_'] = dict_info['ID_']
     return new_dict
 
 
