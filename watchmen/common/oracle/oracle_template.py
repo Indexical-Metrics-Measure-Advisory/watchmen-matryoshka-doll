@@ -895,7 +895,7 @@ def topic_find_one_and_update(where, updates, name):
     data_dict: dict = convert_to_dict(updates)
 
     select_stmt = select(table). \
-        with_for_update(nowait=True). \
+        with_for_update(nowait=False). \
         where(build_oracle_where_expression(table, where))
 
     # if "id_" not in updates:
@@ -907,6 +907,10 @@ def topic_find_one_and_update(where, updates, name):
         build_oracle_where_expression(table, where)).values(
         build_oracle_updates_expression_for_update(table, data_dict))
 
+    select_new_stmt = select(table). \
+        where(build_oracle_where_expression(table, where))
+
+    '''
     with engine.connect() as conn:
         with conn.begin():
             row = conn.execute(select_stmt).fetchone()
@@ -915,7 +919,26 @@ def topic_find_one_and_update(where, updates, name):
             else:
                 conn.execute(insert_stmt)
             # conn.commit()
-    return row, data_dict
+    '''
+    with engine.connect() as conn:
+        with conn.begin():
+            cursor = conn.execute(select_stmt).cursor
+            columns = [col[0] for col in cursor.description]
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            result = cursor.fetchone()
+            if result is not None:
+                conn.execute(update_stmt)
+            else:
+                conn.execute(insert_stmt)
+
+    with engine.connect() as conn:
+        with conn.begin():
+            cursor = conn.execute(select_new_stmt).cursor
+            columns = [col[0] for col in cursor.description]
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            result = cursor.fetchone()
+
+    return convert_dict_key(result, name)
 
 
 def capital_to_lower(dict_info):
