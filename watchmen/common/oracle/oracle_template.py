@@ -780,7 +780,7 @@ def topic_data_update_(topic_name, query_dict, instance):
     values = {}
     for key, value in instance_dict.items():
         if key != 'id_':
-            values[key] = value
+            values[key.lower()] = value
     stmt = stmt.values(values)
     with engine.begin() as conn:
         conn.execute(stmt)

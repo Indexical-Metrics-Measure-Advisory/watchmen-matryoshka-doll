@@ -1,4 +1,5 @@
 from watchmen.common.constants import pipeline_constants
+from watchmen.common.oracle.oracle_template import topic_data_update_
 from watchmen.common.storage.storage_template import topic_data_find_by_id, topic_data_update_one, \
     topic_data_insert_one, topic_find_one_and_update
 from watchmen.config.config import settings
@@ -36,7 +37,7 @@ def __get_key():
         return "id_"
 
 
-def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
+def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid,mongo_query):
     '''
     collection_name = build_collection_name(topic_name)
     codec_options = build_code_options()
@@ -49,7 +50,9 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid):
     '''
     collection.update_one({"_id": target_data["_id"]}, {"$set": mapping_result})
     '''
-    topic_data_update_one(target_data[__get_key()], mapping_result, topic_name)
+
+    # update_data = {**old_data,**mapping_result}
+    topic_data_update_(topic_name, mongo_query, mapping_result)
     data = {**target_data, **mapping_result}
 
     return __build_trigger_pipeline_data(topic_name,
