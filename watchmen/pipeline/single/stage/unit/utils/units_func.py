@@ -163,10 +163,13 @@ def convert_factor_type(value, factor_type):
 
 
 def convert_datetime(value):
-    if isinstance(value, datetime):
-        return value.replace(tzinfo=None)
+    if value is not None:
+        if isinstance(value, datetime):
+            return value.replace(tzinfo=None)
+        else:
+            return arrow.get(value).datetime.replace(tzinfo=None)
     else:
-        return arrow.get(value).datetime.replace(tzinfo=None)
+        return value
 
 
 def build_factor_dict(topic: Topic):
@@ -200,6 +203,7 @@ def get_value(factor: Factor, data):
         if value is None:
             return value
         else:
+            print(factor.name)
             return convert_factor_type(value, factor.type)
     elif factor.type == "number":
         return

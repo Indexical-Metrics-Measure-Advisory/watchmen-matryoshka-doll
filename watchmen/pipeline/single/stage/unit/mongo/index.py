@@ -255,6 +255,7 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
             # else:
             #
     elif parameter.kind == parameter_constants.COMPUTED:
+        print(target_factor.name)
         return __process_compute_kind(parameter, raw_data, pipeline_topic, target_factor)
     else:
         raise Exception("Unknown source kind {0}".format(parameter.kind))
