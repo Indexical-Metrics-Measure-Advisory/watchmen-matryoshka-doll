@@ -53,7 +53,7 @@ class ValueType(Enum):
     REF = "ref"
     ANY = "any"
 
-
+'''
 def create_raw_data_model_set(code, data):
     model_schema_set = get_model_schema_set_by_code(code)
     if model_schema_set is not None:
@@ -68,6 +68,18 @@ def create_raw_data_model_set(code, data):
         create_schema(model_schema_set, code, data, True)
         insert_data_schema(model_schema_set.dict())
 
+    return model_schema_set
+'''
+
+
+def create_raw_data_model_set(code, data):
+    model_schema_set = ModelSchemaSet()
+    model_schema_set.id = get_surrogate_key()
+    model_schema_set.code = code
+    model_schema_set.schemas = {}
+    model_schema_set.relationships = {}
+    create_schema(model_schema_set, code, data, True)
+    insert_data_schema(model_schema_set.dict())
     return model_schema_set
 
 
