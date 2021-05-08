@@ -230,6 +230,8 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
         else:
             variable_type, context_target_name = process_variable(parameter.value)
             if variable_type == MEMORY:
+                # print("context_target_name",context_target_name)
+                # print(context)
                 if context_target_name in context:
                     result = context[context_target_name]
                     if result is None:
@@ -385,6 +387,8 @@ def __get_factor_for_condition(parameter, pipeline_topic, target_topic):
 
 def build_parameter_condition(parameter: Parameter, pipeline_topic: Topic, target_topic: Topic, raw_data, context,
                               type_factor=None):
+
+    print("parameter",parameter)
     if parameter.kind == parameter_constants.TOPIC:
         if __is_current_topic(parameter, pipeline_topic):
             return {pipeline_constants.VALUE: get_source_value_list(pipeline_topic, raw_data, parameter)}
@@ -440,11 +444,11 @@ def __process_condition(condition, pipeline_topic, target_topic, raw_data, conte
     return where
 
 
-def process_parameter_result(right_result, where):
-    if pipeline_constants.NAME in right_result:
-        where[pipeline_constants.NAME] = right_result[pipeline_constants.NAME]
+def process_parameter_result(result, where):
+    if pipeline_constants.NAME in result:
+        where[pipeline_constants.NAME] = result[pipeline_constants.NAME]
     else:
-        where[pipeline_constants.VALUE] = right_result[pipeline_constants.VALUE]
+        where[pipeline_constants.VALUE] = result[pipeline_constants.VALUE]
 
 
 def build_query_conditions(conditions: ParameterJoint, pipeline_topic: Topic, raw_data, target_topic, context):
@@ -631,6 +635,8 @@ def index_conditions(where_condition, index):
 
 
 def __build_mongo_query(joint_type, where_condition):
+
+    print("where_condition",where_condition)
     if joint_type is None:
         return __process_where_condition(where_condition)
     else:
@@ -639,7 +645,6 @@ def __build_mongo_query(joint_type, where_condition):
             # where_condition_result[mongo_constants.MONGO_AND] = []
             where_condition_result["and"] = []
             for condition in where_condition:
-                # where_condition_result[mongo_constants.MONGO_AND].append(__process_where_condition(condition))
                 where_condition_result["and"].append(__process_where_condition(condition))
         elif joint_type == parameter_constants.OR:
             # where_condition_result[mongo_constants.MONGO_OR] = []
