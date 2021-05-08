@@ -35,10 +35,10 @@ def init(action: UnitAction, pipeline_topic: Topic):
         for index, mapping_result in enumerate(mapping_results):
             mongo_query = __build_mongo_query(joint_type, index_conditions(where_condition, index))
             target_data = query_topic_data(mongo_query, target_topic.name)
-            if target_topic.name == "baoviet_propose_status":
-                print("----------------------------------")
-                print("mapping_result", mapping_result)
-                print("----------------------------------")
+            # if target_topic.name == "baoviet_propose_status":
+            #     print("----------------------------------")
+            #     print("mapping_result", mapping_result)
+            #     print("----------------------------------")
 
             if target_data is None:
                 trigger_pipeline_data_list.append(insert_topic_data(target_topic.name, mapping_result, pipeline_uid))
@@ -50,6 +50,8 @@ def init(action: UnitAction, pipeline_topic: Topic):
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
+
+        print("trigger_pipeline_data_list",trigger_pipeline_data_list)
         return context, unit_action_status, trigger_pipeline_data_list
 
     return merge_or_insert_topic

@@ -54,7 +54,7 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid,mong
     # update_data = {**old_data,**mapping_result}
     topic_data_update_(topic_name, mongo_query, mapping_result)
     data = {**target_data, **mapping_result}
-
+    print("insert_update_data",data)
     return __build_trigger_pipeline_data(topic_name,
                                          {pipeline_constants.NEW: data, pipeline_constants.OLD: old_data},
                                          TriggerType.update)
