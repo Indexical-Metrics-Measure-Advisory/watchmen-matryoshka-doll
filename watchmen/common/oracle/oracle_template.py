@@ -154,7 +154,7 @@ def build_oracle_where_expression(table, where):
 
 
 def build_oracle_updates_expression_for_insert(table, updates):
-    new_updates = {}
+    new_updates = {"id_": get_surrogate_key()}
     for key, value in updates.items():
         if key == "$inc":
             if isinstance(value, dict):
@@ -756,10 +756,11 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
     # print("elapsed_time topic_data_update_one", elapsed_time)
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
+    one_dict_lower = capital_to_lower(one_dict)
     value = {}
     for key in table.c.keys():
-        value[key] = one_dict.get(key)
-    value["id_"] = id_
+        if key != 'id_':
+            value[key] = one_dict_lower.get(key)
     stmt = stmt.values(value)
     with engine.begin() as conn:
         conn.execute(stmt)
