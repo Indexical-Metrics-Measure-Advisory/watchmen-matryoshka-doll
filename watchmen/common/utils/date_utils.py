@@ -10,3 +10,6 @@ class DateTimeEncoder(json.JSONEncoder):
         if isinstance(o, decimal.Decimal):
             return float(o)
         return super().default(o)
+
+
+
