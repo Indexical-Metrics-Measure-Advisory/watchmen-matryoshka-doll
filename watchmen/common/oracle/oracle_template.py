@@ -896,12 +896,8 @@ def topic_find_one_and_update(where, updates, name):
         with_for_update(nowait=True). \
         where(build_oracle_where_expression(table, where))
 
-    if "id_" in updates:
-        pass
-    else:
-        # updates["id_"] = get_surrogate_key()
-        pass
-
+    # if "id_" not in updates:
+    #     updates["id_"] = get_surrogate_key()
     insert_stmt = insert(table).values(
         build_oracle_updates_expression_for_insert(table, data_dict))
 
