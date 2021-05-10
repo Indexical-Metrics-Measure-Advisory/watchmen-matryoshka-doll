@@ -1,10 +1,9 @@
+import datetime
 import json
 import logging
 import operator
 import time
-import datetime
 from operator import eq
-from typing import Optional
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
     text, func, DateTime, BigInteger, Date, Integer
@@ -20,9 +19,6 @@ from watchmen.common.oracle.table_definition import get_table_by_name, metadata,
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
-
-from sqlalchemy.dialects import oracle
-
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
 log = logging.getLogger("app." + __name__)

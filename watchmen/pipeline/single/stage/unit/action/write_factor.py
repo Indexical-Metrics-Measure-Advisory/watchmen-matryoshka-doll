@@ -61,7 +61,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
             trigger_pipeline_data_list = []
             target_data = query_topic_data(mongo_query, target_topic.name)
             if old_value is not None:
-                old_value_list = get_source_value_list(pipeline_topic, old_value, action.source, target_factor,context)
+                old_value_list = get_source_value_list(pipeline_topic, old_value, action.source, target_factor, context)
                 trigger_pipeline_data_list.append(find_and_modify_topic_data(target_topic.name,
                                                                              mongo_query,
                                                                              __merge_condition_factor(

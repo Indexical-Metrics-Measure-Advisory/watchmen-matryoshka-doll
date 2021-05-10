@@ -387,8 +387,7 @@ def __get_factor_for_condition(parameter, pipeline_topic, target_topic):
 
 def build_parameter_condition(parameter: Parameter, pipeline_topic: Topic, target_topic: Topic, raw_data, context,
                               type_factor=None):
-
-    print("parameter",parameter)
+    print("parameter", parameter)
     if parameter.kind == parameter_constants.TOPIC:
         if __is_current_topic(parameter, pipeline_topic):
             return {pipeline_constants.VALUE: get_source_value_list(pipeline_topic, raw_data, parameter)}
@@ -635,8 +634,7 @@ def index_conditions(where_condition, index):
 
 
 def __build_mongo_query(joint_type, where_condition):
-
-    print("where_condition",where_condition)
+    print("where_condition", where_condition)
     if joint_type is None:
         return __process_where_condition(where_condition)
     else:
