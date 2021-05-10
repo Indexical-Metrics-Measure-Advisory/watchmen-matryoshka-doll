@@ -12,12 +12,11 @@ TEMPLATE_YAML = "/insurance_template.yml"
 def load_template():
     current_path = os.path.abspath(os.path.dirname(__file__))
 
-    # print(current_path)
     with open(current_path + TEMPLATE_YAML, 'r') as stream:
         try:
             templates = yaml.safe_load(stream)["topic_list"]
             topic_list = []
-            # print(templates)
+
             for template in templates:
                 # topic.topic_name = template.keys()
                 for key, value in template.items():
@@ -31,7 +30,7 @@ def load_template():
                         factor.topicName = key
                         topic.factors.append(factor)
                     topic_list.append(topic)
-            # print(topic_list)
+
             return topic_list
         except yaml.YAMLError as exc:
             print(exc)

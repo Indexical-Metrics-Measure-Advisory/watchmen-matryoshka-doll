@@ -704,7 +704,6 @@ def topic_data_insert_(data, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         elapsed_time = time.time() - start_time
-        # print("elapsed_time topic_data_insert_", elapsed_time)
 
         values = []
         for instance in data:

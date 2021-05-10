@@ -62,22 +62,17 @@ def __merge_pipeline_data(pipeline_trigger_merge_list):
 
 
 def __trigger_all_pipeline(pipeline_trigger_merge_list):
-    print("pipeline_trigger_merge_list", pipeline_trigger_merge_list)
-    after_merge_list = __merge_pipeline_data(pipeline_trigger_merge_list)
 
-    # print("after_merge_list",after_merge_list)
+    after_merge_list = __merge_pipeline_data(pipeline_trigger_merge_list)
 
     for topic_name, item in after_merge_list.items():
         log.info("merge_topic:{0}".format(topic_name))
         merge_data = {}
         if TriggerType.update.value in item:
             for update_data in item[TriggerType.update.value]:
-
                 old_value = update_data[pipeline_constants.OLD]
                 pk = old_value[__get_unique_key_name()]
                 if pk in merge_data:
-                    print("merge_data[pk][pipeline_constants.NEW]", merge_data[pk][pipeline_constants.NEW])
-                    print("update_data", update_data[pipeline_constants.NEW])
                     merge_data[pk][pipeline_constants.NEW].update(update_data[pipeline_constants.NEW])
                 else:
                     merge_data[pk] = {pipeline_constants.NEW: update_data[pipeline_constants.NEW],
