@@ -56,6 +56,11 @@ class InsertAndMergeRowAction(UnitActionStatus, MappingHolder):
     whereConditions: List[WhereCondition] = []
 
 
+class MergeRowAction(UnitActionStatus, MappingHolder):
+    type: str = "MergeRow"
+    whereConditions: List[WhereCondition] = []
+
+
 class UnitRunStatus(ConditionHolder):
     actions: List[UnitActionStatus] = []
 

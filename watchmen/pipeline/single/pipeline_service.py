@@ -77,7 +77,7 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list):
                 old_value = update_data[pipeline_constants.OLD]
                 pk = old_value[__get_unique_key_name()]
                 if pk in merge_data:
-                    print("merge_data[pk][pipeline_constants.NEW]",merge_data[pk][pipeline_constants.NEW])
+                    print("merge_data[pk][pipeline_constants.NEW]", merge_data[pk][pipeline_constants.NEW])
                     print("update_data",update_data[pipeline_constants.NEW])
                     merge_data[pk][pipeline_constants.NEW].update(update_data[pipeline_constants.NEW])
                 else:
