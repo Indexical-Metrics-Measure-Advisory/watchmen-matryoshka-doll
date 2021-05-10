@@ -1,6 +1,6 @@
+import decimal
 import json
 from datetime import datetime, date
-import decimal
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -10,6 +10,3 @@ class DateTimeEncoder(json.JSONEncoder):
         if isinstance(o, decimal.Decimal):
             return float(o)
         return super().default(o)
-
-
-

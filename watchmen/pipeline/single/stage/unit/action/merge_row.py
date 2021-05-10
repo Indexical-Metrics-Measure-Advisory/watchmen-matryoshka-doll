@@ -40,7 +40,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
                 raise Exception("can't insert data in merge row action ")
             else:
                 trigger_pipeline_data_list.append(
-                    update_topic_data(target_topic.name, mapping_result, target_data, pipeline_uid,mongo_query))
+                    update_topic_data(target_topic.name, mapping_result, target_data, pipeline_uid, mongo_query))
                 unit_action_status.updateCount = unit_action_status.updateCount + 1
 
         elapsed_time = time.time() - start

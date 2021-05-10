@@ -203,7 +203,7 @@ def get_value(factor: Factor, data):
         if value is None:
             return value
         else:
-            print(factor.name)
+
             return convert_factor_type(value, factor.type)
     elif factor.type == "number":
         return

@@ -195,4 +195,3 @@ special for raw_pipeline_monitor, need refactor for raw topic schema structure, 
 
 def create_raw_pipeline_monitor():
     template.create_raw_pipeline_monitor()
-
