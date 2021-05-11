@@ -15,8 +15,8 @@ TOPICS = "topics"
 
 
 def save_topic(topic: Topic) -> Topic:
-    get_topic_by_id.cache_clear()
-    get_topic.cache_clear()
+    # get_topic_by_id.cache_clear()
+    # get_topic.cache_clear()
     # return template.create(TOPICS, topic, Topic)
     return insert_one(topic, Topic, TOPICS)
 
@@ -100,13 +100,13 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination) ->
 
 
 def update_topic(topic_id: str, topic: Topic) -> Topic:
-    get_topic_by_id.cache_clear()
-    get_topic.cache_clear()
+    # get_topic_by_id.cache_clear()
+    # get_topic.cache_clear()
     return update_one(topic, Topic, TOPICS)
 
 
 def import_topic_to_db(topic: Topic) -> Topic:
-    get_topic_by_id.cache_clear()
-    get_topic.cache_clear()
+    # get_topic_by_id.cache_clear()
+    # get_topic.cache_clear()
     # return template.create(TOPICS, topic, Topic)
     return insert_one(topic, Topic, TOPICS)

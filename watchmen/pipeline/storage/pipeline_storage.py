@@ -22,7 +22,7 @@ def create_pipeline(pipeline: Pipeline) -> Pipeline:
 
 
 def update_pipeline(pipeline: Pipeline) -> Pipeline:
-    load_pipeline_by_topic_id.cache_clear()
+    # load_pipeline_by_topic_id.cache_clear()
     # return template.update_one(PIPELINES, {"pipelineId": pipeline.pipelineId}, pipeline, Pipeline)
     return update_one(pipeline, Pipeline, PIPELINES)
 
@@ -43,13 +43,13 @@ def load_pipeline_by_id(pipeline_id):
 
 
 def update_pipeline_status(pipeline_id, enabled):
-    load_pipeline_by_topic_id.cache_clear()
+    # load_pipeline_by_topic_id.cache_clear()
     # template.update_one(PIPELINES, {"pipelineId": pipeline_id}, {"enabled": enabled}, Pipeline)
     update_({"pipelineId": pipeline_id}, {"enabled": enabled}, Pipeline, PIPELINES)
 
 
 def update_pipeline_name(pipeline_id, name):
-    load_pipeline_by_topic_id.cache_clear()
+    # load_pipeline_by_topic_id.cache_clear()
     # template.update_one(PIPELINES, {"pipelineId": pipeline_id}, {"name": name}, Pipeline)
     update_({"pipelineId": pipeline_id}, {"name": name}, Pipeline, PIPELINES)
 
