@@ -172,7 +172,7 @@ def build_oracle_updates_expression_for_update(table, updates):
             if isinstance(value, dict):
                 for k, v in value.items():
                     key = k.lower()
-                    new_updates[key] = operator.add(table.c[k], v)
+                    new_updates[key] = operator.add(table.c[key], v)
         elif key == "$set":
             if isinstance(value, dict):
                 for k, v in value.items():
@@ -889,7 +889,7 @@ def topic_find_one_and_update(where, updates, name):
     table = get_topic_table_by_name(table_name)
     data_dict: dict = convert_to_dict(updates)
 
-    select_stmt = select(table). \
+    select_for_update_stmt = select(table). \
         with_for_update(nowait=False). \
         where(build_oracle_where_expression(table, where))
 
@@ -905,15 +905,13 @@ def topic_find_one_and_update(where, updates, name):
     select_new_stmt = select(table). \
         where(build_oracle_where_expression(table, where))
 
-    '''
     with engine.connect() as conn:
         with conn.begin():
-            row = conn.execute(select_stmt).fetchone()
+            row = conn.execute(select_for_update_stmt).fetchone()
             if row is not None:
                 conn.execute(update_stmt)
             else:
                 conn.execute(insert_stmt)
-            # conn.commit()
     '''
     with engine.connect() as conn:
         with conn.begin():
@@ -925,7 +923,7 @@ def topic_find_one_and_update(where, updates, name):
                 conn.execute(update_stmt)
             else:
                 conn.execute(insert_stmt)
-
+    '''
     with engine.connect() as conn:
         with conn.begin():
             cursor = conn.execute(select_new_stmt).cursor
