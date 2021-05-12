@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from decimal import Decimal
 
 import arrow
@@ -156,8 +156,7 @@ def convert_factor_type(value, factor_type):
     elif factor_type == TIME:
         return arrow.get(value).datetime.replace(tzinfo=None)
     elif factor_type == DATE:
-        ## TODO date format
-        return convert_datetime(value)
+        return convert_date(value)
     else:
         return value
 
@@ -168,6 +167,16 @@ def convert_datetime(value):
             return value.replace(tzinfo=None)
         else:
             return arrow.get(value).datetime.replace(tzinfo=None)
+    else:
+        return value
+
+
+def convert_date(value):
+    if value is not None:
+        if isinstance(value, date):
+            return value
+        else:
+            return arrow.get(value).date()
     else:
         return value
 
