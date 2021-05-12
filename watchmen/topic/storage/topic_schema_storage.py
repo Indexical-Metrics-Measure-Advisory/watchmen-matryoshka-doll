@@ -15,8 +15,8 @@ TOPICS = "topics"
 
 
 def save_topic(topic: Topic) -> Topic:
-    get_topic_by_id.cache_clear()
-    get_topic.cache_clear()
+    # get_topic_by_id.cache_clear()
+    # get_topic.cache_clear()
     # return template.create(TOPICS, topic, Topic)
     return insert_one(topic, Topic, TOPICS)
 
@@ -37,7 +37,7 @@ def get_topic_by_name(topic_name: str) -> Topic:
     return find_one({"name": topic_name}, Topic, TOPICS)
 
 
-@lru_cache(maxsize=50)
+# @lru_cache(maxsize=50)
 def get_topic(topic_name: str) -> Topic:
     # return template.find_one(TOPICS, {"name": topic_name}, Topic)
     return find_one({"name": topic_name}, Topic, TOPICS)
@@ -67,7 +67,7 @@ def check_topic_exist(topic_name: str, topic_type: str) -> bool:
     return exists(where, Topic, topic_name)
 
 
-@lru_cache(maxsize=50)
+# @lru_cache(maxsize=50)
 def get_topic_by_id(topic_id: str) -> Topic:
     # return template.find_one(TOPICS, {"topicId": topic_id}, Topic)
     return find_by_id(topic_id, Topic, TOPICS)
@@ -100,13 +100,13 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination) ->
 
 
 def update_topic(topic_id: str, topic: Topic) -> Topic:
-    get_topic_by_id.cache_clear()
-    get_topic.cache_clear()
+    # get_topic_by_id.cache_clear()
+    # get_topic.cache_clear()
     return update_one(topic, Topic, TOPICS)
 
 
 def import_topic_to_db(topic: Topic) -> Topic:
-    get_topic_by_id.cache_clear()
-    get_topic.cache_clear()
+    # get_topic_by_id.cache_clear()
+    # get_topic.cache_clear()
     # return template.create(TOPICS, topic, Topic)
     return insert_one(topic, Topic, TOPICS)

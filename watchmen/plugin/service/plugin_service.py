@@ -6,7 +6,7 @@ from watchmen.plugin.util.index import find_plugin_func
 log = logging.getLogger("app." + __name__)
 
 
-@lru_cache(maxsize=16)
+# @lru_cache(maxsize=16)
 def run_plugin(factor_type, value):
     try:
         # TODO custom plugin from ext folder
