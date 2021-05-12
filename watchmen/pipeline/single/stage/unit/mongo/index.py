@@ -225,7 +225,11 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
         source_factor: Factor = get_factor(parameter.factorId, pipeline_topic)
         return get_source_factor_value(raw_data, source_factor)
     elif parameter.kind == parameter_constants.CONSTANT:
-        if parameter.value is None or not parameter.value:
+        if parameter.value is None:
+            return None
+        elif parameter.value == '':
+            return ''
+        elif not parameter.value:
             return None
         else:
             variable_type, context_target_name = process_variable(parameter.value)
