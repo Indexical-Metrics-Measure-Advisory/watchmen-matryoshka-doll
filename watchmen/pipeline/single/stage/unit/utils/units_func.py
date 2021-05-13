@@ -173,8 +173,8 @@ def convert_datetime(value):
 
 def convert_date(value):
     if value is not None:
-        if isinstance(value, date):
-            return value
+        if isinstance(value, datetime):
+            return arrow.get(value).date()
         else:
             return arrow.get(value).date()
     else:
