@@ -197,7 +197,7 @@ def __process_operator(operator, value_list):
     return result
 
 
-def __process_compute_kind(source: Parameter, raw_data, pipeline_topic, target_factor=None):
+def __process_compute_kind(source: Parameter, raw_data, pipeline_topic, target_factor=None, context=None):
     if __is_date_func(source.type):
         value_list = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(source.parameters[0]),
                                            target_factor)
@@ -212,7 +212,8 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic, target_f
         operator = __get_operator(source.type)
         value_list = []
         for parameter in source.parameters:
-            value = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(parameter), target_factor)
+            value = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(parameter), target_factor,
+                                          context)
             if type(value) is list:
                 value_list.append(np.array(value))
             else:
@@ -262,7 +263,7 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
             #
     elif parameter.kind == parameter_constants.COMPUTED:
         # print(target_factor.name)
-        return __process_compute_kind(parameter, raw_data, pipeline_topic, target_factor)
+        return __process_compute_kind(parameter, raw_data, pipeline_topic, target_factor, context)
     else:
         raise Exception("Unknown source kind {0}".format(parameter.kind))
 
