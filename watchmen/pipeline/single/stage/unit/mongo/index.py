@@ -511,12 +511,12 @@ def __check_on_condition(match_result: ConditionResult) -> bool:
         return True
     elif match_result.logicOperator == "and":
         result = True
-        for result in match_result.resultList:
-            if type(result) == ConditionResult:
-                if not __check_on_condition(result):
+        for item in match_result.resultList:
+            if type(item) == ConditionResult:
+                if not __check_on_condition(item):
                     result = False
             else:
-                if not result:
+                if not item:
                     result = False
         return result
     elif match_result.logicOperator == "or":
