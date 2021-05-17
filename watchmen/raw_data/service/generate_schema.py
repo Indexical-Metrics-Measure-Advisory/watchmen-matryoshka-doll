@@ -79,7 +79,7 @@ def create_raw_data_model_set(code, data):
     model_schema_set.schemas = {}
     model_schema_set.relationships = {}
     create_schema(model_schema_set, code, data, True)
-    insert_data_schema(model_schema_set.dict())
+    # insert_data_schema(model_schema_set.dict())
     return model_schema_set
 
 

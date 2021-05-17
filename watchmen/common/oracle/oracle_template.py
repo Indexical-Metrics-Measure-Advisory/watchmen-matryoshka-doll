@@ -959,6 +959,8 @@ def convert_dict_key(dict_info, topic_name):
 def check_value_type(value):
     if isinstance(value, datetime.datetime):
         return func.to_date(value, "yyyy-mm-dd hh24:mi:ss")
+    elif isinstance(value, datetime.date):
+        return func.to_date(value, "yyyy-mm-dd")
     else:
         return value
 
