@@ -337,8 +337,8 @@ def get_factor_value(index, factor_list, raw_data, result):
     return result
 
 
-def __is_current_topic(parameter: Parameter, pipeline_topic: Topic):
-    if parameter.kind == parameter_constants.TOPIC and parameter.topicId == pipeline_topic.topicId:
+def __is_current_topic(parameter: Parameter, topic: Topic):
+    if parameter.kind == parameter_constants.TOPIC and parameter.topicId == topic.topicId:
         return True
     else:
         return False
