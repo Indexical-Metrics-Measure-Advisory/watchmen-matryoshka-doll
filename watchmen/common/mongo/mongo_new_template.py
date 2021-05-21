@@ -322,7 +322,8 @@ def encode_dict(one):
 def topic_data_insert_(data, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-
+    for d in data:
+        encode_dict(d)
     topic_data_col.insert_many(data)
 
 
