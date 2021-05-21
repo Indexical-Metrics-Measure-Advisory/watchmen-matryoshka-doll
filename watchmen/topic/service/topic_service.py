@@ -49,10 +49,18 @@ def build_topic(model_schema_set: ModelSchemaSet):
 def build_factors(factors: list, parent: str, model_schema: ModelSchema, model_schema_set: ModelSchemaSet):
     for key, value in model_schema.businessFields.items():
         if value.type == "array" or value.type == "dict":
+            factor = Factor()
             if parent == "":
+                factor.name = key
+                factor.label = key
                 build_factors(factors, key, model_schema_set.schemas[key], model_schema_set)
             else:
+                factor.name = parent + "." + key
+                factor.label = parent + "." + key
                 build_factors(factors, parent + "." + key, model_schema_set.schemas[key], model_schema_set)
+            factor.type = value.type
+            factor.factorId = get_surrogate_key()
+            factors.append(factor)
         else:
             factor = Factor()
             if parent != "":

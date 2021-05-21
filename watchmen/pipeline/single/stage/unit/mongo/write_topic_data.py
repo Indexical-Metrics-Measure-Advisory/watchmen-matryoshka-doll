@@ -1,7 +1,7 @@
 from watchmen.common.constants import pipeline_constants
-from watchmen.common.oracle.oracle_template import topic_data_update_
+
 from watchmen.common.storage.storage_template import topic_data_find_by_id, \
-    topic_data_insert_one, topic_find_one_and_update
+    topic_data_insert_one, topic_find_one_and_update, topic_data_update_
 from watchmen.config.config import settings
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.model.trigger_data import TriggerData
@@ -51,7 +51,7 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid, mon
     collection.update_one({"_id": target_data["_id"]}, {"$set": mapping_result})
     '''
 
-    topic_data_update_(topic_name, mongo_query, mapping_result)
+    topic_data_update_(mongo_query, mapping_result, topic_name)
     data = {**target_data, **mapping_result}
     return __build_trigger_pipeline_data(topic_name,
                                          {pipeline_constants.NEW: data, pipeline_constants.OLD: old_data},

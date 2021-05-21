@@ -1,8 +1,9 @@
 import logging
 
-from watchmen.pipeline.core.index import trigger_pipeline_2
+from watchmen.pipeline.core.context.pipeline_context import PipelineContext
+from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
-from watchmen.pipeline.single.pipeline_service import run_pipeline
+
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.topic.storage.topic_schema_storage import get_topic
 
@@ -20,8 +21,7 @@ def __match_trigger_type(trigger_type, pipeline):
         return False
 
 
-'''
-def trigger_pipeline(topic_name, instance, trigger_type: TriggerType):
+def trigger_pipeline_2(topic_name, instance, trigger_type: TriggerType):
     log.info("trigger_pipeline topic_name :{0}".format(topic_name))
     topic = get_topic(topic_name)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
@@ -29,9 +29,5 @@ def trigger_pipeline(topic_name, instance, trigger_type: TriggerType):
     for pipeline in pipeline_list:
         if __match_trigger_type(trigger_type, pipeline):
             # log.info("pipeline run: {0}".format(pipeline.json()))
-            run_pipeline(pipeline, instance)
-'''
-
-
-def trigger_pipeline(topic_name, instance, trigger_type: TriggerType):
-    trigger_pipeline_2(topic_name, instance, trigger_type)
+            pipelineContext = PipelineContext(pipeline, instance)
+            run_pipeline(pipelineContext)

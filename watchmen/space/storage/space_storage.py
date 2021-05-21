@@ -33,7 +33,10 @@ def query_space_with_pagination(query_name: str, pagination: Pagination) -> Data
 
 def get_space_list_by_ids(space_ids) -> List[Space]:
     # return template.find(SPACES, {"spaceId": {"$in": space_ids}}, Space)
-    return find_({"spaceId": {"in": space_ids}}, Space, SPACES)
+    if space_ids:
+        return find_({"spaceId": {"in": space_ids}}, Space, SPACES)
+    else:
+        return []
 
 
 def load_space_by_user(group_ids) -> List[Space]:

@@ -10,12 +10,14 @@ from watchmen.common.constants.pipeline_constants import VALUE
 from watchmen.common.utils.condition_result import ConditionResult
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
-    check_condition, convert_factor_type, __split_value, SPLIT_FLAG, MEMORY, SNOWFLAKE, convert_datetime
+    check_condition, convert_factor_type, __split_value, SPLIT_FLAG, MEMORY, SNOWFLAKE, convert_datetime, flatten
 from watchmen.plugin.service.plugin_service import run_plugin
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
 DOT = "."
+
+FUNC = ".&"
 
 log = logging.getLogger("app." + __name__)
 
@@ -237,14 +239,27 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
             if variable_type == MEMORY:
                 # print("context_target_name",context_target_name)
                 # print(context)
-                if context_target_name in context:
-                    result = context[context_target_name]
-                    if result is None:
-                        return __check_default_value(target_factor)
+                if FUNC in context_target_name:
+                    return get_variable_with_func_pattern(context_target_name, context)
+                elif DOT in context_target_name:
+                    '''
+                    variable_name_list = context_target_name.split(DOT)
+                    if variable_name_list[0] in context:
+                        variable = flatten({variable_name_list[0]: context[variable_name_list[0]]})
+                        return variable[context_target_name]
                     else:
-                        return result
+                        return __check_default_value(target_factor)
+                    '''
+                    return get_variable_with_dot_pattern(context_target_name, context)
                 else:
-                    return __check_default_value(target_factor)
+                    if context_target_name in context:
+                        result = context[context_target_name]
+                        if result is None:
+                            return __check_default_value(target_factor)
+                        else:
+                            return result
+                    else:
+                        return __check_default_value(target_factor)
             elif variable_type == SNOWFLAKE:
                 return context_target_name
             else:
@@ -374,10 +389,15 @@ def __process_parameter_constants(parameter: Parameter, context, target_factor=N
             return parameter.value
 
     elif variable_type == parameter_constants.MEMORY:
-        if context_target_name in context:
-            return context[context_target_name]
+        if FUNC in context_target_name:
+            return get_variable_with_func_pattern(context_target_name, context)
+        elif DOT in context_target_name:
+            return get_variable_with_dot_pattern(context_target_name, context)
         else:
-            raise ValueError("no variable {0} in context".format(context_target_name))
+            if context_target_name in context:
+                return context[context_target_name]
+            else:
+                raise ValueError("no variable {0} in context".format(context_target_name))
     else:
         raise ValueError("variable_type is invalid")
 
@@ -655,3 +675,24 @@ def __build_mongo_query(joint_type, where_condition):
             for condition in where_condition:
                 where_condition_result["or"].append(__process_where_condition(condition))
         return where_condition_result
+
+
+def get_variable_with_dot_pattern(name, context):
+    variable_name_list = name.split(DOT)
+    if variable_name_list[0] in context:
+        variable = flatten({variable_name_list[0]: context[variable_name_list[0]]})
+        return variable[name]
+
+
+def get_variable_with_func_pattern(name, context):
+    variable_name_list = name.split(FUNC)
+    if variable_name_list[0] in context:
+        if isinstance(context[variable_name_list[0]], list):
+            if variable_name_list[1] == "sum":
+                return sum(context[variable_name_list[0]])
+            elif variable_name_list[1] == "count":
+                return len(context[variable_name_list[0]])
+            else:
+                raise ValueError("the function is not support")
+        else:
+            raise ValueError("the variable is not list")

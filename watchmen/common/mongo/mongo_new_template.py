@@ -312,6 +312,12 @@ def topic_data_update_one(id_, one, topic_name):
     topic_data_col.update_one({"_id": ObjectId(id_)}, {"$set": one})
 
 
+def topic_data_update_(where, updates, name):
+    codec_options = build_code_options()
+    collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
+    collection.update_many(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)})
+
+
 def topic_data_find_by_id(id_, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)

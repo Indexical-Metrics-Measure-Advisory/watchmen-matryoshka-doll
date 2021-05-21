@@ -47,7 +47,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
 
-        #print("trigger_pipeline_data_list", trigger_pipeline_data_list)
+        # print("trigger_pipeline_data_list", trigger_pipeline_data_list)
         return context, unit_action_status, trigger_pipeline_data_list
 
     return merge_or_insert_topic

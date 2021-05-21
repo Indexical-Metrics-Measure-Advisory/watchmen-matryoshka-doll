@@ -622,6 +622,7 @@ def alter_topic_data_table(topic):
                 with engine.connect() as conn:
                     conn.execute(text(stmt))
                     # conn.commit()
+        metadata.remove(table)
 
 
 def drop_topic_data_table(topic_name):
@@ -762,7 +763,7 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
         # conn.commit()
 
 
-def topic_data_update_(topic_name, query_dict, instance):
+def topic_data_update_(query_dict, instance, topic_name):
     '''
     table = Table('topic_' + topic_name, metadata,
                   extend_existing=True, autoload=True, autoload_with=engine)

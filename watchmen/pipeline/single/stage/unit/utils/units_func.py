@@ -212,7 +212,6 @@ def get_value(factor: Factor, data):
         if value is None:
             return value
         else:
-
             return convert_factor_type(value, factor.type)
     elif factor.type == "number":
         return
@@ -242,3 +241,18 @@ def process_variable(variable_name):
         return MEMORY, variable_name.replace("{", "").replace("}", "")
     else:
         return parameter_constants.CONSTANT, variable_name
+
+
+def flatten(d_):
+    out = {}
+    for key, val in d_.items():
+        if isinstance(val, dict):
+            val = [val]
+        if isinstance(val, list):
+            for sub_dict in val:
+                deeper = flatten(sub_dict).items()
+                out.update({key + '.' + key2: val2 for key2, val2 in deeper})
+        else:
+            out[key] = val
+    return out
+

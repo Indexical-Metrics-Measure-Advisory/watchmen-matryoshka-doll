@@ -1,4 +1,4 @@
-from watchmen.common.storage.storage_template import topic_data_find_one
+from watchmen.common.storage.storage_template import topic_data_find_one, topic_data_find_
 
 
 # db = get_client()
@@ -13,3 +13,7 @@ def query_topic_data(mongo_query, topic_name):
     return result
     """
     return topic_data_find_one(mongo_query, topic_name)
+
+
+def query_multiple_topic_data(mongo_query, topic_name):
+    return topic_data_find_(mongo_query, topic_name)
