@@ -1,5 +1,4 @@
 from watchmen.common.constants import pipeline_constants
-
 from watchmen.common.storage.storage_template import topic_data_find_by_id, \
     topic_data_insert_one, topic_find_one_and_update, topic_data_update_
 from watchmen.config.config import settings

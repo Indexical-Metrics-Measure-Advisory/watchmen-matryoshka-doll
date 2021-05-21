@@ -165,7 +165,9 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
 
 
 def topic_data_update_(where: dict, updates:dict, name: str):
+    # encode_dict(updates)
     template.topic_data_update_(where, updates, name)
+
 
 def topic_data_find_by_id(id_: str, topic_name: str) -> any:
     return template.topic_data_find_by_id(id_, topic_name)
