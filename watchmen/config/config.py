@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     PRESTO_USER = "the_user"
     PRESTO_CATALOG = "mongo"
     PRESTO_SCHEMA = "watchmen"
+    PRESTO_ON = True
 
     MYSQL_HOST: str = ""
     MYSQL_PORT: int = 3306
