@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, date
 from decimal import Decimal
 
@@ -7,6 +8,8 @@ from watchmen.common.constants import parameter_constants, pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
+
+log = logging.getLogger("app." + __name__)
 
 MEMORY = "memory"
 
@@ -137,28 +140,32 @@ def __split_value(value):
 
 
 def convert_factor_type(value, factor_type):
-    if value is None:
-        return None
-    elif factor_type == TEXT:
-        return str(value)
-    elif factor_type == NUMBER:
-        return Decimal(value)
-    elif factor_type == DATETIME:
-        return convert_datetime(value)
-    elif factor_type == BOOLEAN:
-        return bool(value)
-    elif factor_type == SEQUENCE:
-        return int(value)
-    elif factor_type == YEAR:
-        return int(value)
-    elif factor_type == MONTH:
-        return int(value)
-    elif factor_type == TIME:
-        return arrow.get(value).datetime.replace(tzinfo=None)
-    elif factor_type == DATE:
-        return convert_date(value)
-    else:
-        return value
+    try:
+        if value is None:
+            return None
+        elif factor_type == TEXT:
+            return str(value)
+        elif factor_type == NUMBER:
+            return Decimal(value)
+        elif factor_type == DATETIME:
+            return convert_datetime(value)
+        elif factor_type == BOOLEAN:
+            return bool(value)
+        elif factor_type == SEQUENCE:
+            return int(value)
+        elif factor_type == YEAR:
+            return int(value)
+        elif factor_type == MONTH:
+            return int(value)
+        elif factor_type == TIME:
+            return arrow.get(value).datetime.replace(tzinfo=None)
+        elif factor_type == DATE:
+            return convert_date(value)
+        else:
+            return value
+    except Exception as e:
+        log.exception(e)
+        raise TypeError("value are allowed {} for factor_type {}".format(value,factor_type))
 
 
 def convert_datetime(value):
