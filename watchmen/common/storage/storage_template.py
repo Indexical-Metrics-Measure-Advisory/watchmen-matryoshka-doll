@@ -164,8 +164,9 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
     template.topic_data_update_one(id_, one, topic_name)
 
 
-def topic_data_update_(where: dict, updates:dict, name: str):
+def topic_data_update_(where: dict, updates: dict, name: str):
     template.topic_data_update_(where, updates, name)
+
 
 def topic_data_find_by_id(id_: str, topic_name: str) -> any:
     return template.topic_data_find_by_id(id_, topic_name)
