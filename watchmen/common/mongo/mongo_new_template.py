@@ -1,4 +1,6 @@
 import logging
+import types
+from datetime import datetime, date
 
 import pymongo
 from bson import regex, ObjectId
@@ -6,6 +8,7 @@ from pymongo import ReturnDocument
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.mongo.index import build_code_options
+from watchmen.common.mongo_model import MongoModel
 from watchmen.common.mysql.model.table_definition import get_primary_key
 from watchmen.common.storage.engine.storage_engine import get_client
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
@@ -295,25 +298,45 @@ def topic_data_delete_(where, name):
 def topic_data_insert_one(one, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
+    # merge_
+    # one.__class__ = MongoModel
+    # one.__bases__ = one.__bases__ + (MongoModel,)
+    # one.__class__.__dict__.update
+
+    # one.__class__ = type('topic_data', (MongoModel,), {})
+    encode_dict(one)
+
     topic_data_col.insert(one)
     return topic_name, one
+
+
+def encode_dict(one):
+    for k, v in one.items():
+        if isinstance(v, datetime):
+            one[k] = v.isoformat()
+        elif isinstance(v, date):
+            one[k] = v.isoformat()
 
 
 # save_topic_instances, insert many
 def topic_data_insert_(data, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
+    for d in data:
+        encode_dict(d)
     topic_data_col.insert_many(data)
 
 
 def topic_data_update_one(id_, one, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
+    encode_dict(one)
     topic_data_col.update_one({"_id": ObjectId(id_)}, {"$set": one})
 
 
 def topic_data_update_(where, updates, name):
     codec_options = build_code_options()
+    encode_dict(updates)
     collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
     collection.update_many(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)})
 
