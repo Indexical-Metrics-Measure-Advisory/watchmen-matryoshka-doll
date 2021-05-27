@@ -845,7 +845,13 @@ def topic_data_find_(where, topic_name):
         return None
     else:
         # return capital_to_lower(result)
-        return convert_dict_key(result, topic_name)
+        if isinstance(result, list):
+            results = []
+            for item in result:
+                results.append(convert_dict_key(item, topic_name))
+            return results
+        else:
+            return result
 
 
 def topic_data_list_all(topic_name) -> list:
