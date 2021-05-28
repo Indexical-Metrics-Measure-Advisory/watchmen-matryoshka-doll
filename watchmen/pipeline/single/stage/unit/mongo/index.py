@@ -8,6 +8,8 @@ import pandas as pd
 from watchmen.common.constants import pipeline_constants, parameter_constants
 from watchmen.common.constants.pipeline_constants import VALUE
 from watchmen.common.utils.condition_result import ConditionResult
+from watchmen.pipeline.core.case.function.case_then_for_storage import parse_storage_case_then
+from watchmen.pipeline.core.case.mapper.case_then_for_mapper import parse_mapper_case_then
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
     check_condition, convert_factor_type, __split_value, SPLIT_FLAG, MEMORY, SNOWFLAKE, convert_datetime, flatten
@@ -221,6 +223,8 @@ def __process_compute_kind(source: Parameter, raw_data, pipeline_topic, target_f
             else:
                 value_list.append(value)
         return __process_operator(operator, value_list)
+    elif source.type == "case-then":
+        return parse_mapper_case_then(source.parameters, raw_data, context)
 
 
 def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target_factor: Factor = None, context=None):
@@ -426,6 +430,11 @@ def build_parameter_condition(parameter: Parameter, pipeline_topic: Topic, targe
             return {pipeline_constants.VALUE: __process_compute_date(parameter, pipeline_topic, raw_data)}
         elif __is_calculation_operation(parameter.type):
             return __process_compute_calculation_condition(parameter, pipeline_topic, target_topic, raw_data, context)
+        # TODO
+        '''
+        elif parameter.type == "case-then":
+            return parse_storage_case_then(parameter.parameters)
+        '''
     else:
         raise Exception("Unknown parameter kind {0}".format(parameter.kind))
 
@@ -443,7 +452,6 @@ def __process_compute_calculation_condition(parameter, pipeline_topic, target_to
                 value_list.append(value)
         if pipeline_constants.NAME in parameter_result:
             raise Exception("target_topic in compute parameter is not supported")
-
     return __process_operator(operator, value_list)
 
 
