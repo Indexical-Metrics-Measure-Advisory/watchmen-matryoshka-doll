@@ -5,5 +5,5 @@ class UserGroup(MongoModel):
     userGroupId: str = None
     name: str = None
     description: str = None
-    userIds: list
-    spaceIds: list
+    userIds: list = None
+    spaceIds: list = None
