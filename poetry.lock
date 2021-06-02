@@ -117,14 +117,6 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
-name = "cx-oracle"
-version = "8.2.1"
-description = "Python interface to Oracle"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "dask"
 version = "2021.1.0"
 description = "Parallel PyData with Task Scheduling"
@@ -778,19 +770,6 @@ python-versions = "*"
 six = ">=1.4.1"
 
 [[package]]
-name = "watchmen-storage-engine"
-version = "0.1.3"
-description = ""
-category = "main"
-optional = false
-python-versions = ">=3.9,<4.0"
-
-[package.dependencies]
-cx-Oracle = ">=8.2.1,<9.0.0"
-pydantic = ">=1.8.2,<2.0.0"
-pymongo = ">=3.11.4,<4.0.0"
-
-[[package]]
 name = "zict"
 version = "2.0.0"
 description = "Mutable mapping tools"
@@ -804,7 +783,7 @@ heapdict = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9.2"
-content-hash = "e475af025938c0bc816272074ce4d7811fabb72ab2d6ea38d745d6098ecc7670"
+content-hash = "3320aebf7247fb1e91148599a61714c0664b81cbf3aa5a36468f5474fe34a40b"
 
 [metadata.files]
 aiokafka = [
@@ -916,21 +895,6 @@ cloudpickle = [
 cssselect = [
     {file = "cssselect-1.1.0-py2.py3-none-any.whl", hash = "sha256:f612ee47b749c877ebae5bb77035d8f4202c6ad0f0fc1271b3c18ad6c4468ecf"},
     {file = "cssselect-1.1.0.tar.gz", hash = "sha256:f95f8dedd925fd8f54edb3d2dfb44c190d9d18512377d3c1e2388d16126879bc"},
-]
-cx-oracle = [
-    {file = "cx_Oracle-8.2.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:7b260db58c9e330832480dded5109815f4df3968f9bc0510a63922a600c97f81"},
-    {file = "cx_Oracle-8.2.1-cp36-cp36m-win32.whl", hash = "sha256:c70d6dbab3ce19fd4b2bd58af9cf3c61120d0f1770dcdffe79c93a2cae9b2938"},
-    {file = "cx_Oracle-8.2.1-cp36-cp36m-win_amd64.whl", hash = "sha256:3b95cdde0806ef16ee1e50d1a8aee5fb6eb28aa65a72ada3ec1598d57a3e3ed0"},
-    {file = "cx_Oracle-8.2.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:78a195f176854ce5b74ff31bb485d293ce53df525811f71785779e5be4c98e8e"},
-    {file = "cx_Oracle-8.2.1-cp37-cp37m-win32.whl", hash = "sha256:54d7717b8b5b004ed051921f88b2414424dc25352bdb05f07698086e1e26a574"},
-    {file = "cx_Oracle-8.2.1-cp37-cp37m-win_amd64.whl", hash = "sha256:bc32f11b67ed649af13217f3d5df047990672b2a04737a82ffc1f6672672f66a"},
-    {file = "cx_Oracle-8.2.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:7a7fe16fb6ebd09cbfb7fffe4e202bf82071c63a81ef514c47e3d5267d076e1a"},
-    {file = "cx_Oracle-8.2.1-cp38-cp38-win32.whl", hash = "sha256:53d2d807ea7dc2f5621ef23566f930721dc34a79e10e24afa8793c2c72910077"},
-    {file = "cx_Oracle-8.2.1-cp38-cp38-win_amd64.whl", hash = "sha256:32b2991cb76fa6461fda24e263ce598eadc17a2b8af12ec03ecee9dafc402cb8"},
-    {file = "cx_Oracle-8.2.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:efdfbd5a08bcaccf1cdf789455cb166814a55a2a2a15aa5ca22f592366a54ddd"},
-    {file = "cx_Oracle-8.2.1-cp39-cp39-win32.whl", hash = "sha256:ad23cd6a527e43bb3d992e68d0c41ab6a08e7055fb2285389619dcc193f15c6e"},
-    {file = "cx_Oracle-8.2.1-cp39-cp39-win_amd64.whl", hash = "sha256:2c940fec140ecd7498328b8351442e00e2d2c88b503ee5d0545cadb24e0e4d60"},
-    {file = "cx_Oracle-8.2.1.tar.gz", hash = "sha256:12e7e913a7a10fd8caafb9855e6703a601b7dd5cc596fcd489d0ac9529608b6c"},
 ]
 dask = [
     {file = "dask-2021.1.0-py3-none-any.whl", hash = "sha256:40a68275e9e407a07fd0a8f49b8825572be1f2a5dd2a004696650b36986c9c26"},
@@ -1563,10 +1527,6 @@ uvicorn = [
 w3lib = [
     {file = "w3lib-1.22.0-py2.py3-none-any.whl", hash = "sha256:0161d55537063e00d95a241663ede3395c4c6d7b777972ba2fd58bbab2001e53"},
     {file = "w3lib-1.22.0.tar.gz", hash = "sha256:0ad6d0203157d61149fd45aaed2e24f53902989c32fc1dccc2e2bfba371560df"},
-]
-watchmen-storage-engine = [
-    {file = "watchmen-storage-engine-0.1.3.tar.gz", hash = "sha256:38d6f82cb505b3e6f55b9209106af216e4a1ef7779120228c22a2f52ae3a095e"},
-    {file = "watchmen_storage_engine-0.1.3-py3-none-any.whl", hash = "sha256:88b320afb45c1368533690a528770f4ca480fb7c1aa4f16cf2d65882e6afcff7"},
 ]
 zict = [
     {file = "zict-2.0.0-py3-none-any.whl", hash = "sha256:26aa1adda8250a78dfc6a78d200bfb2ea43a34752cf58980bca75dde0ba0c6e9"},
