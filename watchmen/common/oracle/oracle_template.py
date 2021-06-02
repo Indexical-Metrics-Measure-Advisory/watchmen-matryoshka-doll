@@ -403,7 +403,10 @@ def find_(where: dict, model, name: str) -> list:
         stmt = text(build_raw_sql_with_json_table(check_result, where, name))
     else:
         stmt = select(table)
-        stmt = stmt.where(build_oracle_where_expression(table, where))
+        # stmt = stmt.where(build_oracle_where_expression(table, where))
+        where_expression = build_oracle_where_expression(table, where)
+        if where_expression is not None:
+            stmt = stmt.where(where_expression)
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
