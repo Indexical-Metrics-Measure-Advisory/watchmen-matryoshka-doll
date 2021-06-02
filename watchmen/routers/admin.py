@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from typing import List
 
+import arrow
 from fastapi import APIRouter, Body, Depends
 from pydantic import BaseModel
 
@@ -463,8 +464,8 @@ async def query_log_by_critical(query: MonitorLogQuery):
     if query.criteria.startDate is not None and query.criteria.endDate is not None:
         query_list.append({"sys_insertTime": {
             "between": (
-                datetime.strptime(query.criteria.startDate, DATE_FORMAT),
-                datetime.strptime(query.criteria.endDate, DATE_FORMAT)
+                arrow.get(query.criteria.startDate).datetime.replace(tzinfo=None),
+                arrow.get(query.criteria.endDate).datetime.replace(tzinfo=None)
             )
         }})
 
@@ -476,5 +477,8 @@ async def query_log_by_critical(query: MonitorLogQuery):
         query_dict['and'] = query_list
     else:
         query_dict = query_list[0]
+
+
+    print(query_dict)
 
     return query_pipeline_monitor(build_collection_name("raw_pipeline_monitor"), query_dict, query.pagination)
