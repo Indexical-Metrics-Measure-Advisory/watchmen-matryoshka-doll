@@ -2,6 +2,7 @@ import logging
 import types
 from datetime import datetime, date
 
+import arrow
 import pymongo
 from bson import regex, ObjectId
 from pymongo import ReturnDocument
@@ -312,10 +313,8 @@ def topic_data_insert_one(one, topic_name):
 
 def encode_dict(one):
     for k, v in one.items():
-        if isinstance(v, datetime):
-            one[k] = v.isoformat()
-        elif isinstance(v, date):
-            one[k] = v.isoformat()
+        if isinstance(v, date):
+            one[k] = arrow.get(v).datetime
 
 
 # save_topic_instances, insert many
