@@ -1,4 +1,4 @@
-from watchmen.common.storage.engine.storage_engine import get_client
+from storage.storage.engine.storage_engine import get_client
 
 db = get_client()
 collection = db.get_collection('raw_schema')

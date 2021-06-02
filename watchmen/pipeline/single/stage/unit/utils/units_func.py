@@ -1,11 +1,11 @@
 import logging
-from datetime import datetime, date
+from datetime import datetime
 from decimal import Decimal
 
 import arrow
 
 from watchmen.common.constants import parameter_constants, pipeline_constants
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from storage.snowflake.snowflake import get_surrogate_key
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 

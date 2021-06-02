@@ -7,7 +7,7 @@ from functools import lru_cache
 
 import watchmen.monitor.services.pipeline_monitor_service
 from watchmen.common.constants import pipeline_constants
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from storage.snowflake.snowflake import get_surrogate_key
 from watchmen.config.config import settings
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, UnitRunStatus, StageRunStatus
 from watchmen.pipeline.model.pipeline import Pipeline

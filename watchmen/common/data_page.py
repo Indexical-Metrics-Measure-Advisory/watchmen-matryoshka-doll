@@ -1,7 +1,8 @@
-from watchmen.common.mongo_model import MongoModel
+from pydantic import BaseModel
 
 
-class DataPage(MongoModel):
+
+class DataPage(BaseModel):
     data: list = []
     itemCount: int = None
     pageNumber: int = None

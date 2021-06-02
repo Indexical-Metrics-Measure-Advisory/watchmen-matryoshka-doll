@@ -1,7 +1,7 @@
 from functools import lru_cache
 
-from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.storage_template import insert_one, update_one, find_, find_by_id, update_, list_all
+from storage.snowflake.snowflake import get_surrogate_key
+from storage.storage.storage_template import insert_one, update_one, find_, find_by_id, update_, list_all
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 

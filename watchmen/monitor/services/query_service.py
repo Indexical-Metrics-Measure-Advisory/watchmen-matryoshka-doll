@@ -1,4 +1,4 @@
-from watchmen.common.storage.storage_template import topic_data_page_
+from storage.storage.storage_template import topic_data_page_
 
 
 # template = find_template()

@@ -1,9 +1,9 @@
 from typing import List
 
-from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.storage_template import insert_one, update_one_first, find_one, delete_one, \
+from storage.snowflake.snowflake import get_surrogate_key
+from storage.storage.storage_template import insert_one, update_one_first, find_one, delete_one, \
     list_, find_
-from watchmen.common.utils.data_utils import check_fake_id
+from storage.utils.storage_utils import check_fake_id
 from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics
 from watchmen.console_space.model.console_space import ConsoleSpace
 

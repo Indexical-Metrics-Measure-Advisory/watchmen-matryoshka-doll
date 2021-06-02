@@ -4,7 +4,7 @@ from typing import List
 
 import operator
 
-from watchmen.common.utils.data_utils import build_collection_name
+from storage.utils.storage_utils import build_collection_name
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, AMP, FUNC, \
     get_variable_with_func_pattern, DOT, get_variable_with_dot_pattern
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint

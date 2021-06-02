@@ -1,12 +1,10 @@
 from typing import List
 
 from watchmen.auth.storage.user_group import get_user_group_list_by_ids, update_user_group_storage, USER_GROUPS
-## TODO
-# from watchmen.common.mongo.mongo_template import update_many
 from watchmen.auth.user_group import UserGroup
-from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.storage_template import pull_update
-from watchmen.common.utils.data_utils import check_fake_id
+from storage.snowflake.snowflake import get_surrogate_key
+from storage.storage.storage_template import pull_update
+from storage.utils.storage_utils import check_fake_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import insert_space_to_storage, load_space_by_name, update_space_to_storage
 

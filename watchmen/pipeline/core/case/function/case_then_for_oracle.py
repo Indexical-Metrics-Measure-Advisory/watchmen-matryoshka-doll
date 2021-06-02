@@ -1,6 +1,6 @@
 from typing import List
 
-from watchmen.common.utils.data_utils import build_collection_name
+from storage.utils.storage_utils import build_collection_name
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 

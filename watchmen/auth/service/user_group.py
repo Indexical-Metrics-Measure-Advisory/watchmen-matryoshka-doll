@@ -2,7 +2,7 @@ from watchmen.auth.storage.user import USERS, get_user_list_by_ids, update_user_
 from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
 # from watchmen.common.mongo.mongo_template import update_many
-from watchmen.common.storage.storage_template import pull_update
+from storage.storage.storage_template import pull_update
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import get_space_list_by_ids, update_space_to_storage, SPACES
 

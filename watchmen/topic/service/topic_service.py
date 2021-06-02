@@ -1,9 +1,9 @@
 import logging
 
-from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.engine_adaptor import find_template
-from watchmen.common.storage.storage_template import create_topic_data_table, alter_topic_data_table
-from watchmen.common.utils.data_utils import check_fake_id
+from storage.snowflake.snowflake import get_surrogate_key
+from storage.storage.engine_adaptor import find_template
+from storage.storage.storage_template import create_topic_data_table, alter_topic_data_table
+from storage.utils.storage_utils import check_fake_id
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.topic.factor.factor import Factor

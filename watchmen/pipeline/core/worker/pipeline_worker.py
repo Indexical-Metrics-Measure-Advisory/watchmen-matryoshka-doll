@@ -3,9 +3,11 @@ import traceback
 import time
 from datetime import datetime
 
+from storage.snowflake.snowflake import get_surrogate_key
+
 import watchmen
 from watchmen.common.constants import pipeline_constants
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, StageRunStatus
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.context.stage_context import StageContext

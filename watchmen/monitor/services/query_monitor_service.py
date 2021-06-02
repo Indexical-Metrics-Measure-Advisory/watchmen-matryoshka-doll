@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 
 from watchmen.collection.model.topic_event import TopicEvent
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from storage.snowflake.snowflake import get_surrogate_key
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.monitor.model.query_monitor import QuerySource, QueryMonitor, QuerySummary, ResultSummary
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data

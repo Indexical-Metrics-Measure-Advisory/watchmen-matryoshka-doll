@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from watchmen.storage.engine.storage_engine import get_client
+from storage.storage.engine.storage_engine import get_client
 
 db = get_client()
 

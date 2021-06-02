@@ -1,10 +1,13 @@
 from typing import List
 
-from watchmen.common.storage.storage_template import topic_data_insert_one, topic_data_insert_, topic_data_update_one, \
-    topic_data_find_, topic_data_list_all, topic_data_find_by_id
+# from storage.storage import
+from storage.storage.storage_template import topic_data_insert_one, topic_data_insert_, topic_data_update_one, \
+     topic_data_find_, topic_data_list_all, topic_data_find_by_id
+
 from watchmen.topic.topic import Topic
 
 
+# topic_data_insert_one
 # client = get_client()
 
 

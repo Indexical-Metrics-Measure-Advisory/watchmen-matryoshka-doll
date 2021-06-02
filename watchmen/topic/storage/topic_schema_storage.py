@@ -3,7 +3,7 @@ from typing import List
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
-from watchmen.common.storage.storage_template import insert_one, list_all, update_one, page_all, OrderType, find_one, \
+from storage.storage.storage_template import insert_one, list_all, update_one, page_all, OrderType, find_one, \
     exists, page_, find_, find_by_id
 from watchmen.topic.topic import Topic
 

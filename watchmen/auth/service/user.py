@@ -7,7 +7,7 @@ from watchmen.auth.storage.user_group import USER_GROUPS, get_user_group_list_by
 from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
-from watchmen.common.storage.storage_template import pull_update
+from storage.storage.storage_template import pull_update
 
 
 def authenticate(username, password):
