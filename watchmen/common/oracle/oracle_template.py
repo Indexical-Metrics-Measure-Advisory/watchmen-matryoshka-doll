@@ -259,21 +259,21 @@ def update_one_first(where, updates, model, name):
     table = get_table_by_name(name)
     stmt = update(table)
     stmt = stmt.where(build_oracle_where_expression(table, where))
+    stmt = stmt.where("ROWNUM=1")
     instance_dict: dict = convert_to_dict(updates)
     values = {}
     for key, value in instance_dict.items():
-        if key != get_primary_key(name):
-            values[key] = value
+        if isinstance(table.c[key.lower()].type, CLOB):
+            if value is not None:
+                values[key.lower()] = dumps(value)
+            else:
+                values[key.lower()] = None
+        else:
+            values[key.lower()] = value
     stmt = stmt.values(values)
-    session = Session(engine, future=True)
-    try:
-        session.execute(stmt)
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+    with engine.connect() as conn:
+        with conn.begin():
+            conn.execute(stmt)
     return model.parse_obj(updates)
 
 
