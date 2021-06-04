@@ -14,9 +14,11 @@ from watchmen.common.parameter import Parameter
 from watchmen.common.storage.storage_template import create_raw_pipeline_monitor
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
+from watchmen.pipeline.core.dependency.caculate_dependency_new import buildPipelineGraph, buildPipelinesGraph, \
+    pipelineExecutionPath
 from watchmen.pipeline.single.pipeline_service import run_pipeline
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
-from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
+from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id, load_pipeline_by_id
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
 from watchmen.report.engine.dataset_engine import get_factor_value_by_subject_and_condition
 from watchmen.report.model.filter import Filter
@@ -138,3 +140,14 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
 def create_raw_pipeline_monitor_table():
     create_raw_pipeline_monitor()
     return {"created": True}
+
+
+@router.get("/pipeline/graph/show", tags=["common"])
+def show_pipeline_graph(topic_id):
+    # pipelines = load_pipeline_by_topic_id(topic_id)
+    # buildPipelineGraph(pipelines)
+    # buildPipelinesGraph()
+    topic = get_topic_by_id(topic_id)
+    # pipelineExecutionPath(topic)
+    result = pipelineExecutionPath(topic)
+    return {"show": result}

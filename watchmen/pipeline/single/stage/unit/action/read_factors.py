@@ -33,7 +33,7 @@ def init(action: UnitAction, pipeline_topic: Topic):
                     read_value = item[factor.name]
                     result_list.append(read_value)
             context[context_target_name] = result_list
-            unit_action_status.value = read_value
+            unit_action_status.value = result_list
         else:
             context[context_target_name] = convert_factor_type(factor.defaultValue, factor.type)
             log.warn("target_data is empty ,conditions {0}".format(mongo_query))
