@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from typing import List
 
+import arrow
 from fastapi import APIRouter, Body, Depends
 from pydantic import BaseModel
 
@@ -43,8 +44,6 @@ from watchmen.topic.service.topic_service import create_topic_schema, update_top
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name
 from watchmen.topic.topic import Topic
-
-DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
 
 router = APIRouter()
 
@@ -463,8 +462,8 @@ async def query_log_by_critical(query: MonitorLogQuery):
     if query.criteria.startDate is not None and query.criteria.endDate is not None:
         query_list.append({"sys_insertTime": {
             "between": (
-                datetime.strptime(query.criteria.startDate, DATE_FORMAT),
-                datetime.strptime(query.criteria.endDate, DATE_FORMAT)
+                arrow.get(query.criteria.startDate).datetime.replace(tzinfo=None),
+                arrow.get(query.criteria.endDate).datetime.replace(tzinfo=None)
             )
         }})
 
