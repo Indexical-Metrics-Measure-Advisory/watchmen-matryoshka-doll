@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from typing import List, Any
+
+from pydantic import BaseModel
 
 from watchmen.pipeline.core.dependency.graph.label import Label
 from watchmen.pipeline.core.dependency.graph.property import Property

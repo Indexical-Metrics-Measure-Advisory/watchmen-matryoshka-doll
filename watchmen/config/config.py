@@ -1,4 +1,3 @@
-import secrets
 from typing import List, Dict, Any, Optional
 
 from pydantic import AnyHttpUrl, BaseSettings, validator
@@ -7,7 +6,7 @@ from pydantic import AnyHttpUrl, BaseSettings, validator
 class Settings(BaseSettings):
     API_V1_STR: str = ""
     # SECRET_KEY: str = secrets.token_urlsafe(32)
-    SECRET_KEY:str = '801GtEAdlE8o-iZRLBMgz30PGE_zxry82EaUYMAhNq8'
+    SECRET_KEY: str = '801GtEAdlE8o-iZRLBMgz30PGE_zxry82EaUYMAhNq8'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
     HOST_URL = "http://localhost:8000"

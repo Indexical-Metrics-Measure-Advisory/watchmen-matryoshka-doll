@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import List
-
 import operator
+from typing import List
 
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, AMP, FUNC, \

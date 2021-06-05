@@ -8,7 +8,6 @@ import pandas as pd
 from watchmen.common.constants import pipeline_constants, parameter_constants
 from watchmen.common.constants.pipeline_constants import VALUE
 from watchmen.common.utils.condition_result import ConditionResult
-from watchmen.pipeline.core.case.function.case_then_for_storage import parse_storage_case_then
 from watchmen.pipeline.core.case.mapper.case_then_for_mapper import parse_mapper_case_then
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \

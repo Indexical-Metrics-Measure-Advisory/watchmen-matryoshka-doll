@@ -1,11 +1,10 @@
 from typing import List
 
 from watchmen.common.utils.data_utils import build_collection_name
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
-from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
-
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.report.model.column import Operator
+from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
 def parse_parameter(parameter_: Parameter):

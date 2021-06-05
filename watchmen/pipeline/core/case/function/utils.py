@@ -1,8 +1,5 @@
 import re
 
-from watchmen.pipeline.single.stage.unit.utils.units_func import convert_factor_type
-from watchmen.topic.factor.factor import Factor
-
 '''
 for constant usage
 
@@ -62,4 +59,3 @@ def flatten(d_):
         else:
             out[key] = val
     return out
-

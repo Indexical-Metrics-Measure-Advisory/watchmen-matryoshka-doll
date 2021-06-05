@@ -1,7 +1,7 @@
-from pydantic import BaseModel
-from typing import List
 from typing import Dict
-from queue import SimpleQueue
+from typing import List
+
+from pydantic import BaseModel
 
 from watchmen.pipeline.core.dependency.graph.node import Node
 from watchmen.pipeline.core.dependency.graph.relationship import Relationship
@@ -33,6 +33,7 @@ def show_graph(graph: Graph):
                 print(item.name + '(' + item.object_id + ')')
             print('\n')
     print(graph.edges)
+
 
 '''
 def bfs(node: Node, graph: Graph):

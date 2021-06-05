@@ -1,10 +1,9 @@
 import logging
 
-from watchmen.monitor.model.pipeline_monitor import StageRunStatus, UnitRunStatus
+from watchmen.monitor.model.pipeline_monitor import UnitRunStatus
 from watchmen.pipeline.core.context.stage_context import StageContext
 from watchmen.pipeline.core.context.unit_context import UnitContext
 from watchmen.pipeline.core.worker.unit_worker import run_unit
-from watchmen.pipeline.single import stage
 from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition
 
 log = logging.getLogger("app." + __name__)

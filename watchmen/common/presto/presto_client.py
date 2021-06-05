@@ -3,7 +3,6 @@ import trino
 
 from watchmen.config.config import settings
 
-
 if settings.PRESTO_ON:
     conn = trino.dbapi.connect(
         host=settings.PRESTO_HOST,

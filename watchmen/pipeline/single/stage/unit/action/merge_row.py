@@ -2,7 +2,7 @@ import logging
 import time
 
 from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import UnitActionStatus, MergeRowAction
+from watchmen.monitor.model.pipeline_monitor import MergeRowAction
 from watchmen.pipeline.model.pipeline import UnitAction
 from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules, build_query_conditions, \
     __build_mongo_query, index_conditions
