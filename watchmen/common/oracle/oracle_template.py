@@ -1063,3 +1063,7 @@ def raw_pipeline_monitor_page_(where, sort, pageable, model, name) -> DataPage:
         else:
             result.append(json.loads(row['DATA_']))
     return build_data_pages(pageable, result, count)
+
+
+def clear_metadata():
+    metadata.clear()

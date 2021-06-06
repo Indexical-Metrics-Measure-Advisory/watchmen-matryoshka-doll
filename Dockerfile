@@ -18,10 +18,6 @@ RUN poetry config virtualenvs.create false
 RUN poetry install
 # RUN pip install watchmen-storage-engine
 
-
-
-
-
 EXPOSE 8000
 CMD ["uvicorn","watchmen.main:app","--host", "0.0.0.0", "--port", "80"]
 
