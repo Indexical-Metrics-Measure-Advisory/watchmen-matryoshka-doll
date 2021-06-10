@@ -688,7 +688,8 @@ def get_variable_with_dot_pattern(name, context):
     variable_name_list = name.split(DOT)
     if variable_name_list[0] in context:
         variable = flatten({variable_name_list[0]: context[variable_name_list[0]]})
-        return variable[name]
+        # return variable[name]
+        return variable.get(name, None)
 
 
 def get_variable_with_func_pattern(name, context):
