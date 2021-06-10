@@ -133,9 +133,9 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
         elif operator_ == "not-equals":
             return operator.ne(left, right)
         elif operator_ == 'empty':
-            return left.isnull()
+            return operator.is_(left, None)
         elif operator_ == 'not-empty':
-            return left.notnull()
+            return operator.is_not(left, None)
         elif operator_ == "more":
             return operator.gt(left, right)
         elif operator_ == "more-equals":
