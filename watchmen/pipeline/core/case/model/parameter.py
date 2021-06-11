@@ -17,6 +17,7 @@ class Parameter(BaseModel):
     kind: str = None
     type: str = None
     parameters: List[Parameter] = []
+    conditional: bool = False
     on: ParameterJoint = None
     value: str = None
     topicId: str = None

@@ -47,7 +47,8 @@ MAX = 'max',
 MIN = 'min',
 MEDIAN = 'med'
 
-DATE_FUNC = [YEAR_OF, HALF_YEAR_OF, QUARTER_OF, MONTH_OF, WEEK_OF_YEAR, WEEK_OF_MONTH, DAY_OF_WEEK, DAY_OF_MONTH]
+DATE_FUNC = [YEAR_OF, HALF_YEAR_OF, QUARTER_OF, MONTH_OF,
+             WEEK_OF_YEAR, WEEK_OF_MONTH, DAY_OF_WEEK, DAY_OF_MONTH]
 
 CALC_FUNC = [ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULUS]
 
@@ -106,7 +107,8 @@ def __convert_to_target_value_list(target_factor, source_value_list):
     if isinstance(source_value_list, list):
         target_value_list = []
         for source_value in source_value_list:
-            target_value_list.append(convert_factor_type(source_value, target_factor.type))
+            target_value_list.append(convert_factor_type(
+                source_value, target_factor.type))
         return target_value_list
     else:
         return convert_factor_type(source_value_list, target_factor.type)
@@ -123,7 +125,8 @@ def run_mapping_rules(mapping_list, target_topic, raw_data, pipeline_topic, cont
                                                       get_source_value_list(pipeline_topic, raw_data, source,
                                                                             target_factor, context))
 
-        target_value_list = __convert_to_target_value_list(target_factor, source_value_list)
+        target_value_list = __convert_to_target_value_list(
+            target_factor, source_value_list)
         result = __process_factor_type(target_factor, source_value_list)
         merge_plugin_results(mapping_results, result)
         mapping_results.append({target_factor.name: target_value_list})
@@ -171,8 +174,7 @@ def __process_date_func(source, value):
         else:
             return 2
     elif arithmetic == DAY_OF_MONTH:
-        days_in_month = pd.Timestamp(convert_datetime(value)).days_in_month
-        return days_in_month
+        return convert_datetime(value).day
     else:
         raise ValueError("unknown arithmetic type {0}".format(arithmetic))
 
@@ -239,7 +241,8 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
         elif not parameter.value:
             return None
         else:
-            variable_type, context_target_name = process_variable(parameter.value)
+            variable_type, context_target_name = process_variable(
+                parameter.value)
             if variable_type == MEMORY:
                 # print("context_target_name",context_target_name)
                 # print(context)
@@ -272,7 +275,8 @@ def get_source_value_list(pipeline_topic, raw_data, parameter: Parameter, target
                         value_list = __split_value(parameter.value)
                         result = []
                         for value in value_list:
-                            result.append(convert_factor_type(value, target_factor.type))
+                            result.append(convert_factor_type(
+                                value, target_factor.type))
                         return result
                     else:
                         return convert_factor_type(parameter.value, target_factor.type)
@@ -354,7 +358,8 @@ def get_factor_value(index, factor_list, raw_data, result):
         get_factor_value(index + 1, factor_list, data, result)
     else:
         if data is None and factor.defaultValue is not None:
-            result.append(convert_factor_type(factor.defaultValue, factor.type))
+            result.append(convert_factor_type(
+                factor.defaultValue, factor.type))
         else:
             result.append(data)
 
@@ -385,7 +390,8 @@ def __process_parameter_constants(parameter: Parameter, context, target_factor=N
                 value_list = __split_value(parameter.value)
                 result = []
                 for value in value_list:
-                    result.append(convert_factor_type(value, target_factor.type))
+                    result.append(convert_factor_type(
+                        value, target_factor.type))
                 return result
             else:
                 return convert_factor_type(parameter.value, target_factor.type)
@@ -401,7 +407,8 @@ def __process_parameter_constants(parameter: Parameter, context, target_factor=N
             if context_target_name in context:
                 return context[context_target_name]
             else:
-                raise ValueError("no variable {0} in context".format(context_target_name))
+                raise ValueError(
+                    "no variable {0} in context".format(context_target_name))
     else:
         raise ValueError("variable_type is invalid")
 
@@ -443,7 +450,8 @@ def __process_compute_calculation_condition(parameter, pipeline_topic, target_to
     operator = __get_operator(parameter.type)
     value_list = []
     for parameter in parameter.parameters:
-        parameter_result = build_parameter_condition(parameter, pipeline_topic, target_topic, raw_data, context)
+        parameter_result = build_parameter_condition(
+            parameter, pipeline_topic, target_topic, raw_data, context)
         if pipeline_constants.VALUE in parameter_result:
             value = parameter_result[pipeline_constants.VALUE]
             if type(value) is list:
@@ -451,12 +459,14 @@ def __process_compute_calculation_condition(parameter, pipeline_topic, target_to
             else:
                 value_list.append(value)
         if pipeline_constants.NAME in parameter_result:
-            raise Exception("target_topic in compute parameter is not supported")
+            raise Exception(
+                "target_topic in compute parameter is not supported")
     return __process_operator(operator, value_list)
 
 
 def __process_compute_date(parameter, pipeline_topic, raw_data):
-    value_list = get_source_value_list(pipeline_topic, raw_data, Parameter.parse_obj(parameter.parameters[0]))
+    value_list = get_source_value_list(
+        pipeline_topic, raw_data, Parameter.parse_obj(parameter.parameters[0]))
     if type(value_list) == list:
         result = []
         for value in value_list:
@@ -468,7 +478,8 @@ def __process_compute_date(parameter, pipeline_topic, raw_data):
 
 def __process_condition(condition, pipeline_topic, target_topic, raw_data, context):
     where = {pipeline_constants.OPERATOR: condition.operator}
-    factor = __get_factor_for_condition(condition.left, pipeline_topic, target_topic)
+    factor = __get_factor_for_condition(
+        condition.left, pipeline_topic, target_topic)
     process_parameter_result(build_parameter_condition(condition.left, pipeline_topic, target_topic, raw_data, context),
                              where)
     process_parameter_result(
@@ -492,7 +503,8 @@ def build_query_conditions(conditions: ParameterJoint, pipeline_topic: Topic, ra
         where_conditions = []
         for condition in conditions.filters:
             if condition.jointType is None:
-                where_conditions.append(__process_condition(condition, pipeline_topic, target_topic, raw_data, context))
+                where_conditions.append(__process_condition(
+                    condition, pipeline_topic, target_topic, raw_data, context))
             else:
                 where_conditions.append(
                     build_query_conditions(condition, pipeline_topic, target_topic, raw_data, context))
@@ -519,7 +531,8 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data, context):
         condition_result = ConditionResult(logicOperator=joint_type)
         for filter_condition in parameter_joint.filters:
             if filter_condition.jointType is not None:
-                condition_result.resultList.append(__build_on_condition(filter_condition, topic, data, context))
+                condition_result.resultList.append(
+                    __build_on_condition(filter_condition, topic, data, context))
             else:
                 left_value_list = get_source_value_list(topic, data, filter_condition.left, target_factor=None,
                                                         context=context)
@@ -528,7 +541,8 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data, context):
                 right_value_list = get_source_value_list(topic, data, filter_condition.right,
                                                          factor, context)
                 log.info("right_value_list:{0}".format(right_value_list))
-                result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
+                result: bool = check_condition(
+                    filter_condition.operator, left_value_list, right_value_list)
                 condition_result.resultList.append(result)
         log.info("condition_result:{0}".format(condition_result))
         return condition_result
@@ -556,7 +570,8 @@ def __check_on_condition(match_result: ConditionResult) -> bool:
                 if result:
                     return True
     else:
-        raise NotImplemented("not support {0}".format(match_result.logicOperator))
+        raise NotImplemented("not support {0}".format(
+            match_result.logicOperator))
 
 
 def __check_condition(condition_holder: Conditional, pipeline_topic, data, context):
@@ -573,7 +588,8 @@ def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list=
     # print(update_data)
     if arithmetic == "sum":
         if old_value_list is not None:
-            dif_update_value = {target_factor.name: update_data[target_factor.name] - old_value_list}
+            dif_update_value = {
+                target_factor.name: update_data[target_factor.name] - old_value_list}
             return {"$inc": dif_update_value}
         else:
             return {"$inc": update_data}
@@ -582,7 +598,7 @@ def __build_mongo_update(update_data, arithmetic, target_factor, old_value_list=
             return {"$inc": {target_factor.name: 0}}
         else:
             return {"$inc": {target_factor.name: 1}}
-    ## TODO re-factor max and min
+    # TODO re-factor max and min
 
     elif arithmetic == "max":
         return {"$max": update_data}
@@ -676,20 +692,24 @@ def __build_mongo_query(joint_type, where_condition):
             # where_condition_result[mongo_constants.MONGO_AND] = []
             where_condition_result["and"] = []
             for condition in where_condition:
-                where_condition_result["and"].append(__process_where_condition(condition))
+                where_condition_result["and"].append(
+                    __process_where_condition(condition))
         elif joint_type == parameter_constants.OR:
             # where_condition_result[mongo_constants.MONGO_OR] = []
             where_condition_result["or"] = []
             for condition in where_condition:
-                where_condition_result["or"].append(__process_where_condition(condition))
+                where_condition_result["or"].append(
+                    __process_where_condition(condition))
         return where_condition_result
 
 
 def get_variable_with_dot_pattern(name, context):
     variable_name_list = name.split(DOT)
     if variable_name_list[0] in context:
-        variable = flatten({variable_name_list[0]: context[variable_name_list[0]]})
-        return variable[name]
+        variable = flatten(
+            {variable_name_list[0]: context[variable_name_list[0]]})
+        # return variable[name]
+        return variable.get(name, None)
 
 
 def get_variable_with_func_pattern(name, context):

@@ -1,4 +1,3 @@
-
 from watchmen.monitor.model.pipeline_monitor import StageRunStatus
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.model.pipeline import Stage
@@ -13,4 +12,3 @@ class StageContext:
         self.pipelineContext = pipelineContext
         self.stage = stage
         self.stageStatus = stageStatus
-

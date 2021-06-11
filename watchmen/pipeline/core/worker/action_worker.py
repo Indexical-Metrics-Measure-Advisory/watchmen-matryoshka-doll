@@ -27,4 +27,3 @@ def run_action(actionContext):
         **actionContext.unitContext.stageContext.pipelineContext.variables,
         **out_result}
     actionContext.actionStatus = unit_action_status
-

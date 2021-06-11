@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import List
-
 import operator
+from typing import List
 
 from storage.utils.storage_utils import build_collection_name
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, AMP, FUNC, \
@@ -134,9 +133,9 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
         elif operator_ == "not-equals":
             return operator.ne(left, right)
         elif operator_ == 'empty':
-            return left.isnull()
+            return operator.is_(left, None)
         elif operator_ == 'not-empty':
-            return left.notnull()
+            return operator.is_not(left, None)
         elif operator_ == "more":
             return operator.gt(left, right)
         elif operator_ == "more-equals":

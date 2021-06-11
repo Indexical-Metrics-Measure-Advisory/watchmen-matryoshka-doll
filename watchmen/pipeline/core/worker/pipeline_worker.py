@@ -1,6 +1,6 @@
 import logging
-import traceback
 import time
+import traceback
 from datetime import datetime
 
 from storage.snowflake.snowflake import get_surrogate_key
@@ -12,8 +12,6 @@ from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, StageRunS
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.context.stage_context import StageContext
 from watchmen.pipeline.core.worker.stage_worker import run_stage
-
-from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.single.pipeline_service import __trigger_all_pipeline
 from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition
 from watchmen.pipeline.single.stage.unit.utils import PIPELINE_UID, FINISHED, ERROR

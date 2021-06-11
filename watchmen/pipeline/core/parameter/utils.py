@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List
 
-from arrow import arrow
+import arrow
 
 from watchmen.topic.factor.factor import Factor
 

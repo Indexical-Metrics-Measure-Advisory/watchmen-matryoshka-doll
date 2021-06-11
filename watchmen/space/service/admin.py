@@ -33,7 +33,7 @@ def sync_space_to_user_group(space: Space):
     update_many(collection_name=USER_GROUPS, query_dict={"spaceIds": {"$in": [space.spaceId]}},
                 update_dict={"$pull": {"spaceIds": {"$in": [space.spaceId]}}})
     '''
-    pull_update({"spaceIds": {"$in": [space.spaceId]}}, {"spaceIds": {"$in": [space.spaceId]}}, UserGroup, USER_GROUPS)
+    pull_update({"spaceIds": {"in": [space.spaceId]}}, {"spaceIds": {"in": [space.spaceId]}}, UserGroup, USER_GROUPS)
     user_group_list = get_user_group_list_by_ids(space.groupIds)
     for user_group in user_group_list:
         if space.spaceId not in user_group.spaceIds:

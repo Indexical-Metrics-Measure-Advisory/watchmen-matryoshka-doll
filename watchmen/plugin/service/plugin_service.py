@@ -1,5 +1,4 @@
 import logging
-from functools import lru_cache
 
 from watchmen.plugin.util.index import find_plugin_func
 

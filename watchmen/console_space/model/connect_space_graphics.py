@@ -19,6 +19,6 @@ class SubjectGraphics(ConnectedSpaceBlockGraphics):
 
 class ConnectedSpaceGraphics(MongoModel):
     connectId: str = None
-    topics: List[TopicGraphics]
-    subjects: List[SubjectGraphics]
+    topics: List[TopicGraphics] = None
+    subjects: List[SubjectGraphics] = None
     userId: str = None

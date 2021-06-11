@@ -165,7 +165,7 @@ def convert_factor_type(value, factor_type):
             return value
     except Exception as e:
         log.exception(e)
-        raise TypeError("value are allowed {} for factor_type {}".format(value,factor_type))
+        raise TypeError("value are allowed {} for factor_type {}".format(value, factor_type))
 
 
 def convert_datetime(value):
@@ -262,4 +262,3 @@ def flatten(d_):
         else:
             out[key] = val
     return out
-

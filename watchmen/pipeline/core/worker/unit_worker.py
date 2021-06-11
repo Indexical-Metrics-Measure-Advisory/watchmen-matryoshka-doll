@@ -20,16 +20,18 @@ def should_run(unitContext: UnitContext) -> bool:
 def run_unit(unitContext: UnitContext):
     loopVariableName = unitContext.unit.loopVariableName
     if loopVariableName is not None and loopVariableName != "":
-        for value in unitContext.stageContext.pipelineContext.variables[loopVariableName]:
-            if unitContext.unit.do is not None:
-                if should_run(unitContext):
-                    unitContext.unitStatus = UnitRunStatus()
-                    for action in unitContext.unit.do:
-                        actionContext = ActionContext(unitContext, action)
-                        actionContext.delegateVariableName = loopVariableName
-                        actionContext.delegateValue = value
-                        run_action(actionContext)
-                        unitContext.unitStatus.actions.append(actionContext.actionStatus)
+        loopVariable = unitContext.stageContext.pipelineContext.variables[loopVariableName]
+        if isinstance(loopVariable, list):
+            for value in unitContext.stageContext.pipelineContext.variables[loopVariableName]:
+                if unitContext.unit.do is not None:
+                    if should_run(unitContext):
+                        unitContext.unitStatus = UnitRunStatus()
+                        for action in unitContext.unit.do:
+                            actionContext = ActionContext(unitContext, action)
+                            actionContext.delegateVariableName = loopVariableName
+                            actionContext.delegateValue = value
+                            run_action(actionContext)
+                            unitContext.unitStatus.actions.append(actionContext.actionStatus)
     else:
         if unitContext.unit.do is not None:
             if should_run(unitContext):
