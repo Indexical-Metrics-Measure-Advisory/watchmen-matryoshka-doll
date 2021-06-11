@@ -48,7 +48,7 @@ def get_topic_instances(topic_name, conditions):
     return topic_data_find_(conditions, topic_name)
 
 
-def get_topic_instances_all(topic_name) -> List[Topic]:
+def get_topic_instances_all(topic_name):
     """
     topic_instance_col = client.get_collection(build_collection_name(topic_name))
     result = topic_instance_col.find()

@@ -170,8 +170,7 @@ def __process_date_func(source, value):
         else:
             return 2
     elif arithmetic == DAY_OF_MONTH:
-        days_in_month = pd.Timestamp(convert_datetime(value)).days_in_month
-        return days_in_month
+        return convert_datetime(value).day
     else:
         raise ValueError("unknown arithmetic type {0}".format(arithmetic))
 
