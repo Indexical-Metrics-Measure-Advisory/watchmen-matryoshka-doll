@@ -1,6 +1,6 @@
 import datetime
 
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from storage.snowflake.snowflake import get_surrogate_key
 from watchmen.pipeline.core.dependency.denpendence_new import Graph, add_edge, show_graph
 from watchmen.pipeline.core.dependency.graph.property import Property
 from watchmen.pipeline.core.dependency.graph.relationship import Relationship
