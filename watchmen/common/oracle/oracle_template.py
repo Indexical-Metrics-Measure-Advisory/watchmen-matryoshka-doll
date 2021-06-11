@@ -259,7 +259,7 @@ def update_one_first(where, updates, model, name):
     table = get_table_by_name(name)
     stmt = update(table)
     stmt = stmt.where(build_oracle_where_expression(table, where))
-    stmt = stmt.where("ROWNUM=1")
+    stmt = stmt.where(text("ROWNUM=1"))
     instance_dict: dict = convert_to_dict(updates)
     values = {}
     for key, value in instance_dict.items():

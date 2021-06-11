@@ -39,7 +39,8 @@ class Settings(BaseSettings):
     ORACLE_PORT: int = 1521
     ORACLE_USER: str = ""
     ORACLE_PASSWORD: str = ""
-    ORACLE_SERVICE: str = "XE"
+    ORACLE_SERVICE: str = ""
+    ORACLE_SID: str = ""
 
     CONNECTOR_KAFKA = False
     KAFKA_BOOTSTRAP_SERVER = "localhost:9092"
