@@ -19,5 +19,6 @@ class TopicGraphics(BaseModel):
 
 
 class PipelinesGraphics(MongoModel):
+    pipelineGraphicsId:str = None
     userId: str = None
     topics: List[TopicGraphics] = []
