@@ -65,7 +65,7 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list):
     after_merge_list = __merge_pipeline_data(pipeline_trigger_merge_list)
 
     for topic_name, item in after_merge_list.items():
-        log.info("merge_topic:{0}".format(topic_name))
+        # log.info("merge_topic:{0}".format(topic_name))
         merge_data = {}
         if TriggerType.update.value in item:
             for update_data in item[TriggerType.update.value]:

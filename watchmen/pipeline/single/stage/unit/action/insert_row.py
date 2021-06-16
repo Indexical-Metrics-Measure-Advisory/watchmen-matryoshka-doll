@@ -26,9 +26,9 @@ def init(action: UnitAction, pipeline_topic: Topic):
             raise ValueError("action.topicId is empty {0}".format(action.name))
 
         target_topic = get_topic_by_id(action.topicId)
-        log.info("run target_topic {0}".format(target_topic.name))
+        # log.info("run target_topic {0}".format(target_topic.name))
         mapping_results = run_mapping_rules(action.mapping, target_topic, raw_data, pipeline_topic, context)
-        log.info("mapping_results:{0}".format(mapping_results))
+        # log.info("mapping_results:{0}".format(mapping_results))
         unit_action_status.mapping = mapping_results
         trigger_pipeline_data_list = []
         for index, item in enumerate(mapping_results):

@@ -129,8 +129,12 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
         operator_ = joint.operator
         right = parse_parameter(joint.right, instance, variables)
         if operator_ == "equals":
-            return operator.eq(left, right)
+            if isinstance(right, str):
+                return operator.eq(str(left), right)
+            return operator.eq(str(left), right)
         elif operator_ == "not-equals":
+            if isinstance(right, str):
+                return operator.eq(str(left), right)
             return operator.ne(left, right)
         elif operator_ == 'empty':
             return operator.is_(left, None)

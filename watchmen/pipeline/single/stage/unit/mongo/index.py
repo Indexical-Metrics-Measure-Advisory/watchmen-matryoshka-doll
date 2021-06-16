@@ -145,7 +145,7 @@ def __week_number_of_month(date_value):
 
 
 def __process_date_func(source, value):
-    log.info("source type {0}  value : {1}".format(source.type, value))
+    # log.info("source type {0}  value : {1}".format(source.type, value))
 
     arithmetic = source.type
     if arithmetic == NONE:
@@ -521,14 +521,14 @@ def __build_on_condition(parameter_joint: ParameterJoint, topic, data, context):
             else:
                 left_value_list = get_source_value_list(topic, data, filter_condition.left, target_factor=None,
                                                         context=context)
-                log.info("left_value_list:{0}".format(left_value_list))
+                # log.info("left_value_list:{0}".format(left_value_list))
                 factor = __get_condition_factor(filter_condition.left, topic)
                 right_value_list = get_source_value_list(topic, data, filter_condition.right,
                                                          factor, context)
-                log.info("right_value_list:{0}".format(right_value_list))
+                # log.info("right_value_list:{0}".format(right_value_list))
                 result: bool = check_condition(filter_condition.operator, left_value_list, right_value_list)
                 condition_result.resultList.append(result)
-        log.info("condition_result:{0}".format(condition_result))
+        # log.info("condition_result:{0}".format(condition_result))
         return condition_result
 
 

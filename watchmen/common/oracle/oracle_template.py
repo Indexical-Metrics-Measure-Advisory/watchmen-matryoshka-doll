@@ -712,6 +712,7 @@ def topic_data_insert_(data, topic_name):
         values = []
         for instance in data:
             instance_dict: dict = convert_to_dict(instance)
+            instance_dict['id_'] = get_surrogate_key()
             value = {}
             for key in table.c.keys():
                 value[key] = instance_dict.get(key)

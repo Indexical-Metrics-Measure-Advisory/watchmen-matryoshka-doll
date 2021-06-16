@@ -29,14 +29,15 @@ def init(action: UnitAction, pipeline_topic: Topic):
         if target_data is not None:
             if factor.name in target_data:
                 read_value = target_data[factor.name]
+                '''
                 if factor.name in context:
-                    log.warn("factor name {0} is already in context".format(factor.name))
-
+                    # log.warn("factor name {0} is already in context".format(factor.name))
+                '''
                 context[context_target_name] = target_data[factor.name]
                 unit_action_status.value = read_value
         else:
             context[context_target_name] = convert_factor_type(factor.defaultValue, factor.type)
-            log.warn("target_data is empty ,conditions {0}".format(mongo_query))
+            # log.warn("target_data is empty ,conditions {0}".format(mongo_query))
 
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time

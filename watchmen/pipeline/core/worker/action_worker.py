@@ -22,7 +22,7 @@ def run_action(actionContext):
             *actionContext.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
             *trigger_pipeline_data_list]
 
-    log.info("out_result :{0}".format(out_result))
+    # log.info("out_result :{0}".format(out_result))
     actionContext.unitContext.stageContext.pipelineContext.variables = {
         **actionContext.unitContext.stageContext.pipelineContext.variables,
         **out_result}
