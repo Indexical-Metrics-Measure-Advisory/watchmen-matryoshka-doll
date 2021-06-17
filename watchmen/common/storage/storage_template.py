@@ -47,6 +47,10 @@ def update_one(one: any, model: BaseModel, name: str) -> any:
     return template.update_one(one, model, name)
 
 
+def update_one_with_field(one: any, model: BaseModel, name: str, where:dict):
+    return template.update_one_with_field(where,one,model,name)
+
+
 def update_one_first(where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
     return template.update_one_first(where, updates, model, name)
 

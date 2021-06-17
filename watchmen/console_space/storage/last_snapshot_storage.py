@@ -28,4 +28,4 @@ def load_last_snapshot(user_id) -> LastSnapshot:
 
 def update_last_snapshot(user_id, last_snapshot):
     # return template.update_one(LAST_SNAPSHOT, {"userId": user_id}, last_snapshot, LastSnapshot)
-    return update_one({"userId": user_id}, last_snapshot, LastSnapshot, LAST_SNAPSHOT)
+    return update_one(last_snapshot, LastSnapshot, LAST_SNAPSHOT)
