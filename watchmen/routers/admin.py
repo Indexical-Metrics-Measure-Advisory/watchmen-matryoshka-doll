@@ -18,6 +18,7 @@ from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id, build_collection_name
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
@@ -346,28 +347,20 @@ async def rename_pipeline(pipeline_id, name, current_user: User = Depends(deps.g
 @router.post("/pipeline/graphics", tags=["admin"], response_model=PipelinesGraphics)
 async def save_pipeline_graph(pipeline_graph: PipelinesGraphics, current_user: User = Depends(deps.get_current_user)):
     user_id = current_user.userId
-    result = load_pipeline_graph(user_id)
     pipeline_graph.userId = user_id
-    if result is not None:
-        return update_pipeline_graph(pipeline_graph, user_id)
-    else:
+    if check_fake_id(pipeline_graph.pipelineGraphId):
+        pipeline_graph.pipelineGraphId = get_surrogate_key()
         return create_pipeline_graph(pipeline_graph)
+    else:
+        return update_pipeline_graph(pipeline_graph)
 
 
-@router.get("/pipeline/graphics/me", tags=["admin"], response_model=PipelinesGraphics)
+@router.get("/pipeline/graphics/me", tags=["admin"], response_model=List[PipelinesGraphics])
 async def load_pipeline_graph_by_user(current_user: User = Depends(deps.get_current_user)):
     user_id = current_user.userId
-    result = load_pipeline_graph(user_id)
-    if result is None:
-        return PipelinesGraphics()
-    else:
-        return result
+    results = load_pipeline_graph(user_id)
+    return results
 
-
-# Report
-
-
-# ENUM
 
 @router.post("/enum", tags=["admin"], response_model=Enum)
 async def save_enum(enum: Enum):

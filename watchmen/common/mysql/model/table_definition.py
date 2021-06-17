@@ -104,7 +104,7 @@ def get_primary_key(table_name):
     elif table_name == 'pipelines':
         return 'pipelineId'
     elif table_name == 'pipeline_graph':
-        return 'pipelineGraphicsId'
+        return 'pipelineGraphId'
     elif table_name == 'console_spaces':
         return 'connectId'
     elif table_name == 'console_space_favorites':

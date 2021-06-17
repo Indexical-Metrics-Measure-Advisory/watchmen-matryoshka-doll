@@ -62,14 +62,13 @@ def create_pipeline_graph(pipeline_graph: PipelinesGraphics):
     return insert_one(pipeline_graph, PipelinesGraphics, PIPELINE_GRAPH)
 
 
-def update_pipeline_graph(pipeline_graph, user_id):
+def update_pipeline_graph(pipeline_graph):
     # return template.update_one(PIPELINE_GRAPH, {USER_ID: user_id}, pipeline_graph, PipelinesGraphics)
     return update_one(pipeline_graph, PipelinesGraphics, PIPELINE_GRAPH)
 
 
 def load_pipeline_graph(user_id):
-    # return template.find_one(PIPELINE_GRAPH, {USER_ID: user_id}, PipelinesGraphics)
-    return find_by_id(user_id, PipelinesGraphics, PIPELINE_GRAPH)
+    return find_({"userId":user_id},PipelinesGraphics,PIPELINE_GRAPH)
 
 
 # def load_all_pipelines

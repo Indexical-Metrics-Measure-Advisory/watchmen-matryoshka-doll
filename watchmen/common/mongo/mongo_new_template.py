@@ -140,15 +140,20 @@ def upsert_(where, updates, model, name):
     return model.parse_obj(updates)
 
 
+def update_one_with_condition(where, one, model, name):
+    collections = client.get_collection(name)
+    collections.update_one(build_mongo_where_expression(where), {"$set": __convert_to_dict(one)})
+
+
 def update_(where, updates, model, name):
-    collection = client.get_collection(name)
-    collection.update_many(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)})
+    collections = client.get_collection(name)
+    collections.update_many(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)})
 
 
 def pull_update(where, updates, model, name):
-    collection = client.get_collection(name)
-    collection.update_many(build_mongo_where_expression(where),
-                           {"$pull": build_mongo_update_expression(__convert_to_dict(updates))})
+    collections = client.get_collection(name)
+    collections.update_many(build_mongo_where_expression(where),
+                            {"$pull": build_mongo_update_expression(__convert_to_dict(updates))})
 
 
 def delete_by_id(id_, name):
