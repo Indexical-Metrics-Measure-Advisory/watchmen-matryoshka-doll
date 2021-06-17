@@ -24,7 +24,7 @@ def __match_trigger_type(trigger_type, pipeline):
 
 
 def trigger_pipeline_2(topic_name, instance, trigger_type: TriggerType):
-    log.info("trigger_pipeline topic_name :{0}".format(topic_name))
+    # log.info("trigger_pipeline topic_name :{0}".format(topic_name))
     topic = get_topic(topic_name)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
     # client = get_dask_client()

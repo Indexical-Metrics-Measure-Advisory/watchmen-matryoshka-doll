@@ -36,7 +36,7 @@ def run_pipeline(pipelineContext: PipelineContext):
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
-        log.info("start run pipeline {0}".format(pipeline.name))
+        # log.info("start run pipeline {0}".format(pipeline.name))
         pipelineContext = PipelineContext(pipeline, data)
         pipelineContext.variables[PIPELINE_UID] = pipeline_status.uid
         pipelineContext.pipelineTopic = pipeline_topic
@@ -46,7 +46,7 @@ def run_pipeline(pipelineContext: PipelineContext):
             try:
                 for stage in pipeline.stages:
                     stage_run_status = StageRunStatus(name=stage.name)
-                    log.info("stage name {0}".format(stage.name))
+                    # log.info("stage name {0}".format(stage.name))
                     stageContext = StageContext(pipelineContext, stage, stage_run_status)
                     run_stage(stageContext)
                     pipeline_status.stages.append(stageContext.stageStatus)
@@ -54,7 +54,9 @@ def run_pipeline(pipelineContext: PipelineContext):
                 elapsed_time = time.time() - start
                 pipeline_status.completeTime = elapsed_time
                 pipeline_status.status = FINISHED
-                log.debug("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))
+                # log.debug("pipeline_status {0} time :{1}".format(pipeline.name, elapsed_time))
+
+                log.info("run pipeline \"{0}\" spend time \"{1}\" ".format(pipeline.name, elapsed_time))
                 if pipeline_topic.kind is None or pipeline_topic.kind != pipeline_constants.SYSTEM:
                     __trigger_all_pipeline(pipelineContext.pipeline_trigger_merge_list)
 
@@ -65,6 +67,7 @@ def run_pipeline(pipelineContext: PipelineContext):
                 log.error(pipeline_status)
             finally:
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
-                    log.debug("pipeline_status is {0}".format(pipeline_status))
+                    # log.debug("pipeline_status is {0}".format(pipeline_status))
+                    pass
                 else:
                     watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
