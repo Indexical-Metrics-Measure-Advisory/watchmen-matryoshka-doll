@@ -104,7 +104,7 @@ def get_primary_key(table_name):
     elif table_name == 'pipelines':
         return 'pipelineId'
     elif table_name == 'pipeline_graph':
-        return 'userId'
+        return 'pipelineGraphicsId'
     elif table_name == 'console_spaces':
         return 'connectId'
     elif table_name == 'console_space_favorites':
@@ -117,3 +117,5 @@ def get_primary_key(table_name):
         return 'reportId'
     elif table_name == 'user_groups':
         return 'userGroupId'
+    elif table_name == "console_space_last_snapshot":
+        return 'userId'

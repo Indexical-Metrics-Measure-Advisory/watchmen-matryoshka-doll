@@ -146,7 +146,9 @@ def __week_number_of_month(date_value):
 
 def __process_date_func(source, value):
     log.info("source type {0}  value : {1}".format(source.type, value))
-
+    if value is None:
+        log.error("value is None")
+        return None
     arithmetic = source.type
     if arithmetic == NONE:
         return value
@@ -646,7 +648,7 @@ def index_conditions(where_condition, index):
                 result[index][VALUE] = condition[pipeline_constants.VALUE]
             return result
     else:
-        # print("where_condition",where_condition)
+        print("where_condition",where_condition)
         condition_values = where_condition[pipeline_constants.VALUE]
         if type(condition_values) == list:
             result[VALUE] = condition_values[index]

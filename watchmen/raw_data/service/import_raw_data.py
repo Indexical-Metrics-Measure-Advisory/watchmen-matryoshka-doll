@@ -1,4 +1,7 @@
+from distributed import fire_and_forget
+
 from watchmen.common.constants import pipeline_constants
+from watchmen.common.dask.client import get_dask_client
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import INSERT, add_audit_columns
@@ -13,9 +16,14 @@ async def import_raw_topic_data(topic_event):
 
     add_audit_columns(topic_event.data, INSERT)
     save_topic_instance(topic_event.code, topic_event.data)
-    await __trigger_pipeline(topic_event)
+
+    # client = get_dask_client()
+    # task = client.submit(__trigger_pipeline, topic_event)
+    # # import_raw_topic_data(topic_event)
+    # fire_and_forget(task)
+    __trigger_pipeline(topic_event)
 
 
-async def __trigger_pipeline(topic_event):
+def __trigger_pipeline(topic_event):
     trigger_pipeline(topic_event.code, {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
                      TriggerType.insert)

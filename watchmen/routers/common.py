@@ -1,3 +1,4 @@
+from dask.distributed import Client,fire_and_forget
 import logging
 from typing import List, Any
 
@@ -8,6 +9,7 @@ from watchmen.auth.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
+from watchmen.common.dask.client import get_dask_client
 from watchmen.common.mongo.index import delete_topic_collection
 from watchmen.common.mongo_model import MongoModel
 from watchmen.common.parameter import Parameter
@@ -42,8 +44,10 @@ async def health():
 @router.post("/topic/data", tags=["common"])
 async def save_topic_data(topic_event: TopicEvent):
     # TODO user check URP
-
+    # client = get_dask_client()
+    # task  = client.submit(import_raw_topic_data,topic_event)
     await import_raw_topic_data(topic_event)
+    # fire_and_forget(task)
     return {"received": True}
 
 
@@ -155,8 +159,6 @@ def show_pipeline_graph(topic_id):
 # @router.get("/topic/data", tags=["common"])
 # def load_topic_instance_data(topic_name,current_user: User = Depends(deps.get_current_user)):
 #     return topic_data_list_all(topic_name)
-
-
 
 
 @router.get("/table/metadata/clear", tags=["common"])

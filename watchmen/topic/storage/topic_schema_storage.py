@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import List
 
 from watchmen.common.data_page import DataPage
@@ -36,7 +37,7 @@ def get_topic_by_name(topic_name: str) -> Topic:
     return find_one({"name": topic_name}, Topic, TOPICS)
 
 
-# @lru_cache(maxsize=50)
+@lru_cache(maxsize=50)
 def get_topic(topic_name: str) -> Topic:
     # return template.find_one(TOPICS, {"name": topic_name}, Topic)
     return find_one({"name": topic_name}, Topic, TOPICS)

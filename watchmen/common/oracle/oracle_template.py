@@ -952,6 +952,9 @@ def capital_to_lower(dict_info):
 
 
 def convert_dict_key(dict_info, topic_name):
+    if dict_info is None:
+        return None
+
     new_dict = {}
     stmt = "select t.factors from topics t where t.name=:topic_name"
     with engine.connect() as conn:

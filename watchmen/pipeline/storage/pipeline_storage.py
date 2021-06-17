@@ -72,6 +72,8 @@ def load_pipeline_graph(user_id):
     return find_by_id(user_id, PipelinesGraphics, PIPELINE_GRAPH)
 
 
+# def load_all_pipelines
+
 def import_pipeline_to_db(pipeline):
     # template.create(PIPELINE_GRAPH, pipeline, Pipeline)
     insert_one(pipeline, Pipeline, PIPELINES)
