@@ -1,5 +1,6 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.storage_template import insert_one, update_one, find_, find_by_id, update_, list_all
+from watchmen.common.storage.storage_template import insert_one, update_one, find_, find_by_id, update_, list_all, \
+    delete_one
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 
@@ -65,6 +66,10 @@ def create_pipeline_graph(pipeline_graph: PipelinesGraphics):
 def update_pipeline_graph(pipeline_graph):
     # return template.update_one(PIPELINE_GRAPH, {USER_ID: user_id}, pipeline_graph, PipelinesGraphics)
     return update_one(pipeline_graph, PipelinesGraphics, PIPELINE_GRAPH)
+
+
+def remove_pipeline_graph(pipeline_graph_id):
+    return delete_one({"pipelineGraphId":pipeline_graph_id},PIPELINE_GRAPH)
 
 
 def load_pipeline_graph(user_id):

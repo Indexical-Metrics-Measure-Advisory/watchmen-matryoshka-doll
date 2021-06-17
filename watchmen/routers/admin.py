@@ -32,7 +32,7 @@ from watchmen.pipeline.model.pipeline_flow import PipelineFlow
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
     load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status, \
-    update_pipeline_name, load_pipeline_by_id
+    update_pipeline_name, load_pipeline_by_id, remove_pipeline_graph
 from watchmen.raw_data.service.generate_schema import create_raw_data_model_set, RawTopicGenerateEvent
 from watchmen.report.model.report import Report
 from watchmen.report.storage.report_storage import query_report_list_with_pagination, load_reports_by_ids
@@ -353,6 +353,11 @@ async def save_pipeline_graph(pipeline_graph: PipelinesGraphics, current_user: U
         return create_pipeline_graph(pipeline_graph)
     else:
         return update_pipeline_graph(pipeline_graph)
+
+
+@router.get("/pipeline/graphics/delete", tags=["admin"])
+async def delete_pipeline_graph(pipeline_graph_id: str):
+    remove_pipeline_graph(pipeline_graph_id)
 
 
 @router.get("/pipeline/graphics/me", tags=["admin"], response_model=List[PipelinesGraphics])
