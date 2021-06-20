@@ -148,7 +148,7 @@ def __week_number_of_month(date_value):
 
 
 def __process_date_func(source, value):
-    log.info("source type {0}  value : {1}".format(source.type, value))
+    # log.info("source type {0}  value : {1}".format(source.type, value))
     if value is None:
         log.error("value is None")
         return None
@@ -301,6 +301,7 @@ def __check_default_value(target_factor):
         return None
 
 
+'''
 def get_source_factor_value(raw_data, source_factor):
     if is_sub_field(source_factor):
         results = []
@@ -313,6 +314,7 @@ def get_source_factor_value(raw_data, source_factor):
     else:
         source_value_list = get_value(source_factor, raw_data)
     return source_value_list
+'''
 
 
 def merge_mapping_data(mapping_results):
@@ -350,6 +352,7 @@ def is_sub_field(factor):
     return DOT in factor.name
 
 
+'''
 def get_factor_value(index, factor_list, raw_data, result):
     # results=[]
     factor = factor_list[index]
@@ -367,6 +370,7 @@ def get_factor_value(index, factor_list, raw_data, result):
             result.append(data)
 
     return result
+'''
 
 
 def __is_current_topic(parameter: Parameter, topic: Topic):
@@ -667,7 +671,7 @@ def index_conditions(where_condition, index):
                 result[index][VALUE] = condition[pipeline_constants.VALUE]
             return result
     else:
-        print("where_condition", where_condition)
+        # print("where_condition", where_condition)
         condition_values = where_condition[pipeline_constants.VALUE]
         if type(condition_values) == list:
             result[VALUE] = condition_values[index]
@@ -727,3 +731,70 @@ def get_variable_with_func_pattern(name, context):
                 raise ValueError("the function is not support")
         else:
             raise ValueError("the variable is not list")
+
+
+def get_source_factor_value(raw_data, source_factor):
+    """Get factor value from raw_data by the factor name
+    raw data have tree and record tow structures
+
+    E.g.::
+        tree structure
+            {"a":[{"b":[{"c":[{"d":1},{"d":2}]}]},{"b":[{"c":[{"d":3},{"d":4}]}]}]}
+            {"a":1,"b":2,"c":{"c1":[{"c11":1,"c12":2,"c13":3},{"c11":4,"c12":5,"c13":6}]}}
+        record structure
+            {"a":1,"b":2,"c":3}
+
+    According to factor name，get the node structure information, like: a, a.b, a.b.c, a.b.c.d
+    the value which get from data should be array, object or basic type
+
+    In the tree structure, the set of data needs to be gradually reduced, so need use
+    get_factor_value return for the next loop input parameter
+
+    if not get value, return None
+    """
+    prefix = None
+    result = {}
+    data = raw_data
+    for name in source_factor.name.split("."):
+        data, prefix = get_factor_value(data, name, prefix, result)
+    if type(result[source_factor.name]) is list:
+        if len(result[source_factor.name]) == 1:
+            return result[source_factor.name][0]
+        elif len(result[source_factor.name]) == 0:
+            return None
+        else:
+            return result[source_factor.name]
+    else:
+        return result[source_factor.name]
+
+
+def get_factor_value(data, name, prefix, result):
+    """Get value from data by name
+    then by "prefix+name" as key, put the value in result
+    return result[key] and new prefix
+
+    When the data is list, need loop the data.
+    In this case, the default value of result[key] is empty array,
+    if value is list, extend value in the result[key] or append value
+
+    if not get value, set result[key] as None or []
+    """
+    if prefix is None:
+        key = name
+    else:
+        key = prefix + name
+    if data is None:
+        result[key] = None
+    elif type(data) is list:
+        result[key] = []
+        for item in data:
+            value = item.get(name, None)
+            if value is not None:
+                if type(value) is list:
+                    result[key].extend(value)
+                else:
+                    result[key].append(value)
+    else:
+        result[key] = data.get(name, None)
+    prefix = key + "."
+    return result[key], prefix

@@ -64,10 +64,11 @@ def run_pipeline(pipelineContext: PipelineContext):
                 log.exception(e)
                 pipeline_status.error = traceback.format_exc()
                 pipeline_status.status = ERROR
-                log.error(pipeline_status)
+                # log.error(pipeline_status)
             finally:
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                     # log.debug("pipeline_status is {0}".format(pipeline_status))
                     pass
                 else:
                     watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
+                    pass

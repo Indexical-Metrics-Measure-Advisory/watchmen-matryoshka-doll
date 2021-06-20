@@ -160,6 +160,12 @@ def build_oracle_updates_expression_for_insert(table, updates):
             if isinstance(value, dict):
                 for k, v in value.items():
                     new_updates[k.lower()] = v
+        if isinstance(value, dict):
+            for k, v in value.items():
+                if k == "$sum":
+                    new_updates[key.lower()] = v
+                elif k == "$count":
+                    new_updates[key.lower()] = 1
         else:
             new_updates[key] = value
     return new_updates
@@ -177,6 +183,12 @@ def build_oracle_updates_expression_for_update(table, updates):
             if isinstance(value, dict):
                 for k, v in value.items():
                     new_updates[k.lower()] = v
+        if isinstance(value, dict):
+            for k, v in value.items():
+                if k == "$sum":
+                    new_updates[key.lower()] = text(f'{key.lower()} + {v}')
+                elif k == "$count":
+                    new_updates[key.lower()] = text(f'{key.lower()} + 1')
         else:
             new_updates[key] = value
     return new_updates
@@ -666,6 +678,7 @@ def topic_data_insert_one(one, topic_name):
         table = get_topic_table_by_name(table_name)
         # one_dict: dict = convert_to_dict(one)
         one_dict: dict = capital_to_lower(convert_to_dict(one))
+        one_dict = build_oracle_updates_expression_for_insert(table, one_dict)
         value = {}
         for key in table.c.keys():
             if key == "id_":
@@ -756,7 +769,7 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
     # print("elapsed_time topic_data_update_one", elapsed_time)
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
-    one_dict_lower = capital_to_lower(one_dict)
+    one_dict_lower = build_oracle_updates_expression_for_update(table, capital_to_lower(one_dict))
     value = {}
     for key in table.c.keys():
         if key != 'id_':
