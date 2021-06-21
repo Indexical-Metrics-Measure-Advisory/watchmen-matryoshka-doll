@@ -69,11 +69,11 @@ def update_pipeline_graph(pipeline_graph):
 
 
 def remove_pipeline_graph(pipeline_graph_id):
-    return delete_one({"pipelineGraphId":pipeline_graph_id},PIPELINE_GRAPH)
+    return delete_one({"pipelineGraphId": pipeline_graph_id}, PIPELINE_GRAPH)
 
 
 def load_pipeline_graph(user_id):
-    return find_({"userId":user_id},PipelinesGraphics,PIPELINE_GRAPH)
+    return find_({"userId": user_id}, PipelinesGraphics, PIPELINE_GRAPH)
 
 
 # def load_all_pipelines

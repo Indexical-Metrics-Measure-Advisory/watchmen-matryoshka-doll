@@ -19,4 +19,3 @@ def count_table(table_name):
     result = session.execute(stmt)
     for row in result:
         return row[0]
-

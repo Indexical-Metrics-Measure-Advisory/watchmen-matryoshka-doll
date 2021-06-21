@@ -1,7 +1,4 @@
-from distributed import fire_and_forget
-
 from watchmen.common.constants import pipeline_constants
-from watchmen.common.dask.client import get_dask_client
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import INSERT, add_audit_columns

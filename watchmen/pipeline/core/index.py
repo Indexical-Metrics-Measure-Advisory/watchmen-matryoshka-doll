@@ -1,8 +1,5 @@
 import logging
 
-from distributed import fire_and_forget, as_completed
-
-from watchmen.common.dask.client import get_dask_client
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
@@ -30,7 +27,7 @@ def trigger_pipeline_2(topic_name, instance, trigger_type: TriggerType):
     # client = get_dask_client()
 
     # import_raw_topic_data(topic_event)
-    run_pipeline_list =[]
+    run_pipeline_list = []
     pipeline_contexts = []
     for pipeline in pipeline_list:
         if __match_trigger_type(trigger_type, pipeline):
@@ -48,8 +45,3 @@ def trigger_pipeline_2(topic_name, instance, trigger_type: TriggerType):
     #
     # for future in seq:
     #       future.result()
-
-
-
-
-

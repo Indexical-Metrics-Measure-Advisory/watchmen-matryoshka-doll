@@ -5,11 +5,10 @@ import operator
 import time
 from operator import eq
 
-from sqlalchemy import update, MetaData, Table, and_, or_, delete, JSON, func, text, Column, String, Integer, DECIMAL, \
-    DateTime, Date, Numeric, Index, desc, asc
+from sqlalchemy import update, Table, and_, or_, delete, JSON, func, text, Column, String, Integer, DateTime, Date, \
+    Numeric, Index, desc, asc
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
-
 
 from watchmen.common.mysql.mysql_engine import engine, dumps
 from watchmen.common.mysql.mysql_table_definition import get_table_by_name, metadata, get_topic_table_by_name
@@ -421,7 +420,7 @@ def create_topic_data_table(topic):
             col = Column(name=name_, type_=type_, nullable=True)
             table.append_column(col)
             if factor.get('index') == "Y":
-                column_index = Index("ix_"+topic_name+"_"+name_, name_)
+                column_index = Index("ix_" + topic_name + "_" + name_, name_)
                 table.indexes.add(column_index)
         table.create(engine)
 

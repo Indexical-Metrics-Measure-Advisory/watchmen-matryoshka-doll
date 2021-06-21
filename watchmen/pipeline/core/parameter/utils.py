@@ -1,10 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import List
 
 import arrow
-
-from watchmen.topic.factor.factor import Factor
 
 '''
 def cal_factor_value(data_: dict, factor: Factor) -> any:

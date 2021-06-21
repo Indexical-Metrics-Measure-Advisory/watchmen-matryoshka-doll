@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer, JSON
+from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON
 
 from watchmen.common.oracle.oracle_engine import engine
 

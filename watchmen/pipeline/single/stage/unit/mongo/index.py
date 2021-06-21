@@ -10,7 +10,7 @@ from watchmen.common.constants.pipeline_constants import VALUE
 from watchmen.common.utils.condition_result import ConditionResult
 from watchmen.pipeline.core.case.mapper.case_then_for_mapper import parse_mapper_case_then
 from watchmen.pipeline.model.pipeline import ParameterJoint, Parameter, Conditional
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_value, get_factor, process_variable, \
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, process_variable, \
     check_condition, convert_factor_type, __split_value, SPLIT_FLAG, MEMORY, SNOWFLAKE, convert_datetime, flatten
 from watchmen.plugin.service.plugin_service import run_plugin
 from watchmen.topic.factor.factor import Factor
