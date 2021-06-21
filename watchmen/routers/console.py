@@ -20,8 +20,8 @@ from watchmen.console_space.model.favorite import Favorite
 from watchmen.console_space.model.last_snapshot import LastSnapshot
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
     delete_console_space_and_sub_data
-from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
-    rename_console_group_by_id
+# from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
+#     rename_console_group_by_id
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
     load_console_space_by_id, rename_console_space_by_id, create_console_space_graph, update_console_space_graph, \
     load_console_space_graph_by_user_id, load_console_space_graph
