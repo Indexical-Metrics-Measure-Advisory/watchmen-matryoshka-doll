@@ -1,4 +1,3 @@
-
 import pandas as pd
 import operator
 from typing import List
@@ -8,7 +7,7 @@ from watchmen.pipeline.core.by.parse_on_parameter import __week_number_of_month
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, AMP, FUNC, \
     get_variable_with_func_pattern, DOT, get_variable_with_dot_pattern
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
-from watchmen.pipeline.core.parameter.utils import cal_factor_value, convert_datetime
+from watchmen.pipeline.core.parameter.utils import cal_factor_value, convert_datetime, check_and_convert_value_by_factor
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.report.model.column import Operator
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
@@ -19,7 +18,8 @@ def parse_parameter(parameter_: Parameter, instance, variables):
         topic = get_topic_by_id(parameter_.topicId)
         topic_name = build_collection_name(topic.name)
         factor = get_factor(parameter_.factorId, topic)
-        return cal_factor_value(instance, factor)
+        value_ = cal_factor_value(instance, factor)
+        return check_and_convert_value_by_factor(factor, value_)
     elif parameter_.kind == 'constant':
         if parameter_.value is None:
             return None
@@ -32,16 +32,23 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             it = parse_constant_expression(parameter_.value)
             for item in it:
                 if item.startswith('{') and item.endswith('}'):
-                    var_name = item.lstrip('{').right('}')
+                    var_name = item.lstrip('{').rstrip('}')
+                    res = None
                     if var_name.startswith(AMP):
                         real_name = var_name.lstrip('&')
                         res = instance.get(real_name)
-                        result.append(res)
+                        # result.append(res)
                     elif FUNC in var_name:
                         res = get_variable_with_func_pattern(var_name, variables)
-                        result.append(res)
+                        # result.append(res)
                     elif DOT in var_name:
                         res = get_variable_with_dot_pattern(var_name, variables)
+                        # result.append(res)
+                    else:
+                        if var_name in variables:
+                            res = variables[var_name]
+                            # result.append(res)
+                    if res is not None:
                         result.append(res)
                 else:
                     result.append(item)
@@ -124,6 +131,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
 
 
 def parse_mapper_case_then(parameters: List[Parameter], instance, variables) -> any:
+    default_ = None
     for param in parameters:
         if param.on:
             condition = parse_parameter_joint(param.on, instance, variables)
@@ -179,22 +187,26 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
         elif operator_ == "less-equals":
             return operator.le(left, right)
         elif operator_ == 'in':
-            value_list = right.split(',')
-            values: List = []
-            for value in value_list:
-                if value.isdigit():
-                    values.append(int(value))
-                else:
-                    values.append(value)
-            return left.isin(values)
+            if left is None:
+                return False
+            else:
+                value_list = right.split(',')
+                for value in value_list:
+                    if isinstance(value, str) and str(left) == value:
+                        return True
+                    elif isinstance(value, int) and int(left) == value:
+                        return True
+                return False
         elif operator_ == 'not-in':
-            value_list = right.split(',')
-            values: List = []
-            for value in value_list:
-                if value.isdigit():
-                    values.append(int(value))
-                else:
-                    values.append(value)
-            return left.notin(values)
+            if left is None:
+                return True
+            else:
+                value_list = right.split(',')
+                for value in value_list:
+                    if isinstance(value, str) and str(left) == value:
+                        return True
+                    elif isinstance(value, int) and int(left) == value:
+                        return True
+                return False
         else:
             raise Exception("operator is not supported")

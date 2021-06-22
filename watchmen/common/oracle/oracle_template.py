@@ -165,7 +165,7 @@ def build_oracle_updates_expression_for_insert(table, updates):
                 if k == "$sum":
                     new_updates[key.lower()] = v
                 elif k == "$count":
-                    new_updates[key.lower()] = 1
+                    new_updates[key.lower()] = v
         else:
             new_updates[key] = value
     return new_updates
@@ -188,7 +188,7 @@ def build_oracle_updates_expression_for_update(table, updates):
                 if k == "$sum":
                     new_updates[key.lower()] = text(f'{key.lower()} + {v}')
                 elif k == "$count":
-                    new_updates[key.lower()] = text(f'{key.lower()} + 1')
+                    new_updates[key.lower()] = text(f'{key.lower()} + {v}')
         else:
             new_updates[key] = value
     return new_updates
@@ -770,11 +770,12 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
     one_dict_lower = build_oracle_updates_expression_for_update(table, capital_to_lower(one_dict))
-    value = {}
-    for key in table.c.keys():
+    values = {}
+    for key, value in one_dict_lower.items():
         if key != 'id_':
-            value[key] = one_dict_lower.get(key)
-    stmt = stmt.values(value)
+            if key.lower() in table.c.keys():
+                values[key.lower()] = value
+    stmt = stmt.values(values)
     with engine.begin() as conn:
         conn.execute(stmt)
         # conn.commit()

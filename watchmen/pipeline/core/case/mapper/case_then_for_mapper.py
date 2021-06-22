@@ -94,6 +94,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
 
 
 def parse_mapper_case_then(parameters: List[Parameter], instance, variables) -> any:
+    default_ = None
     for param in parameters:
         if param.on:
             condition = parse_parameter_joint(param.on, instance, variables)

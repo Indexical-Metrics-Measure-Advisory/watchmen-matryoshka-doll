@@ -36,9 +36,18 @@ def run_action(actionContext):
     if action.type == "insert-or-merge-row":
         stage_method = importlib.import_module("watchmen.pipeline.core.action." + convert_action_type(action.type))
         func = stage_method.init(actionContext)
-
         out_result, unit_action_status, trigger_pipeline_data_list = func()
-
+        '''
+        try:
+            out_result, unit_action_status, trigger_pipeline_data_list = func()
+        except Exception as e:
+            # todo
+            # concurrent control, for the insert conflict, need UNIQUE INDEX for topic, redo action once
+            # out_result, unit_action_status, trigger_pipeline_data_list = func()
+            log.error(e)
+        finally:
+            pass
+        '''
         if trigger_pipeline_data_list:
             actionContext.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list = [
                 *actionContext.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,

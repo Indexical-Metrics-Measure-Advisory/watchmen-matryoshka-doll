@@ -190,6 +190,8 @@ def parse_parameter_joint(joint: ParameterJoint, current_data, variables, pipeli
             value = right_expr_item["value"]
 
         if operator_ == "equals":
+            if value =='':
+                value = None
             return {name: {"=": value}}
         elif operator_ == "not-equals":
             return {name: {"!=": value}}

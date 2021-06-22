@@ -174,34 +174,31 @@ def get_factor_value(data, name, prefix, result):
     return result[key], prefix
 
 
-'''
 def check_and_convert_value_by_factor(factor: Factor, value):
     try:
-        if factor.type == TEXT:
-            return check_and_convert_value(value, str, factor.defaultValue)
-        elif factor.type == NUMBER:
+        if value is None:
+            return None
+        elif factor.type == "text":
+            return str(value)
+        elif factor.type == "number" or factor.type == "unsigned":
             return Decimal(value)
-        elif factor_type == DATETIME:
+        elif factor.type == "datetime":
             return convert_datetime(value)
-        elif factor_type == BOOLEAN:
-            return bool(value)
-        elif factor_type == SEQUENCE:
+        elif factor.type == "year":
             return int(value)
-        elif factor_type == YEAR:
+        elif factor.type == "month":
             return int(value)
-        elif factor_type == MONTH:
-            return int(value)
-        elif factor_type == TIME:
+        elif factor.type == "time":
             return arrow.get(value).datetime.replace(tzinfo=None)
-        elif factor_type == DATE:
+        elif factor.type == "date":
             return convert_date(value)
         else:
             return value
     except Exception as e:
-        log.exception(e)
-        raise TypeError("value are allowed {} for factor_type {}".format(value, factor_type))
+        raise TypeError("value are allowed {} for factor_type {}".format(value, factor.type))
 
 
+'''
 def check_and_convert_value(value, type_class, type_text, default_):
     if value is None:
         if default_ is None:

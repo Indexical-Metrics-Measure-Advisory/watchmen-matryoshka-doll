@@ -150,7 +150,7 @@ def __week_number_of_month(date_value):
 def __process_date_func(source, value):
     # log.info("source type {0}  value : {1}".format(source.type, value))
     if value is None:
-        log.error("value is None")
+        # log.error("value is None")
         return None
     # log.info("source type {0}  value : {1}".format(source.type, value))
 

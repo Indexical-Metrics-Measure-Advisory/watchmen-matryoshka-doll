@@ -71,5 +71,4 @@ def init(action: UnitAction, pipeline_topic: Topic):
         elapsed_time = time.time() - start
         unit_action_status.complete_time = elapsed_time
         return context, unit_action_status, []
-
     return alarm
