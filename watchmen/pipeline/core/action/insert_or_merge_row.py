@@ -43,12 +43,11 @@ def init(actionContext):
 
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
         status.whereConditions = where_
-        print(where_)
 
         # todo
         target_data = query_topic_data(where_,
                                        target_topic.name)  # should not use find_one,use find_ and check the number of record
-        print(target_data)
+
         trigger_pipeline_data_list = []
 
         if target_data is None:

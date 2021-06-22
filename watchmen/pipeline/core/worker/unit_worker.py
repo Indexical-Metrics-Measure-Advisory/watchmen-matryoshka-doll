@@ -21,18 +21,13 @@ def run_unit(unitContext: UnitContext):
     loopVariableName = unitContext.unit.loopVariableName
     if loopVariableName is not None and loopVariableName != "":
         loopVariable = unitContext.stageContext.pipelineContext.variables[loopVariableName]
-        #rint("loopVariable",loopVariable)
         if isinstance(loopVariable, list):
             for value in unitContext.stageContext.pipelineContext.variables[loopVariableName]:
-                print("value", value)
                 if unitContext.unit.do is not None:
-                    print("should_run(unitContext)", should_run(unitContext))
                     if should_run(unitContext):
                         unitContext.unitStatus = UnitRunStatus()
-                        # print("value", value)
                         for action in unitContext.unit.do:
                             actionContext = ActionContext(unitContext, action)
-                            #print("actionContext", actionContext.action.type)
                             actionContext.delegateVariableName = loopVariableName
                             actionContext.delegateValue = value
                             run_action(actionContext)

@@ -144,8 +144,8 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
             for param in parameters_:
                 if param.on is not None:
                     condition = parse_parameter_joint(param.on, current_data, variables, pipeline_topic, target_topic)
-                    value = parse_parameter(param, current_data, variables, pipeline_topic, target_topic)
-                    when_.append({"$when": condition, "$then": value})
+                    value_ = parse_parameter(param, current_data, variables, pipeline_topic, target_topic)
+                    when_.append({"$when": condition, "$then": value_})
                 else:
                     else_ = parse_parameter(param, current_data, variables, pipeline_topic, target_topic)
 
