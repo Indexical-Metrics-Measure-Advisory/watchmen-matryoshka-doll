@@ -1,4 +1,5 @@
 import logging
+import operator
 from datetime import date
 
 import arrow
@@ -17,34 +18,33 @@ log = logging.getLogger("app." + __name__)
 
 log.info("mongo template initialized")
 
-'''
-Build where, the common sql pattern is "column_name operator value", but we use dict,
-so the pattern is {column_name: {operator: value}}. 
-
-if operator is =, then can use {column_name: value}
-
-About and|or , use 
-    {"and": List(
-                            {column_name1: {operator: value}}
-                            {column_name2: {operator: value}}
-                )
-    }
-    
-support Nested:
-    {"or": List(
-                            {column_name1: {operator: value}}
-                            {column_name2: {operator: value}}
-                            {"and": List(
-                                                    {column_name3:{operator: value}}
-                                                    {column_name4:{operator: value}}
-                                        )
-                            }
-                )
-    }
-'''
-
 
 def build_mongo_where_expression(where: dict):
+    """
+    Build where, the common sql pattern is "column_name operator value", but we use dict,
+    so the pattern is {column_name: {operator: value}}.
+
+    if operator is =, then can use {column_name: value}
+
+    About and|or , use
+        {"and": List(
+                                {column_name1: {operator: value}}
+                                {column_name2: {operator: value}}
+                    )
+        }
+
+    support Nested:
+        {"or": List(
+                                {column_name1: {operator: value}}
+                                {column_name2: {operator: value}}
+                                {"and": List(
+                                                        {column_name3:{operator: value}}
+                                                        {column_name4:{operator: value}}
+                                            )
+                                }
+                    )
+        }
+    """
     for key, value in where.items():
         if key == "and" or key == "or":
             if isinstance(value, list):
@@ -89,6 +89,43 @@ def build_mongo_update_expression(updates):
             for k, v in value.items():
                 if k == "in":
                     return {key: {"$in": v}}
+
+
+def build_mongo_updates_expression_for_insert(updates):
+    new_updates = {}
+    for key, value in updates.items():
+        if key == "$inc":
+            pass
+        elif key == "$set":
+            pass
+        if isinstance(value, dict):
+            for k, v in value.items():
+                if k == "$sum":
+                    new_updates[key] = v
+                elif k == "$count":
+                    new_updates[key] = v
+        else:
+            new_updates[key] = value
+    return new_updates
+
+
+def build_mongo_updates_expression_for_update(updates):
+    new_updates = {}
+    for key, value in updates.items():
+        if key == "$inc":
+            pass
+        elif key == "$set":
+            pass
+        if isinstance(value, dict):
+            for k, v in value.items():
+                if k == "$sum":
+                    # {'$inc': {key: v}}
+                    new_updates['$inc'] = {key: v}
+                elif k == "$count":
+                    new_updates['$inc'] = {key: v}
+        else:
+            new_updates[key] = value
+    return new_updates
 
 
 def build_mongo_order(order_: list):
@@ -301,15 +338,8 @@ def topic_data_delete_(where, name):
 def topic_data_insert_one(one, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-    # merge_
-    # one.__class__ = MongoModel
-    # one.__bases__ = one.__bases__ + (MongoModel,)
-    # one.__class__.__dict__.update
-
-    # one.__class__ = type('topic_data', (MongoModel,), {})
     encode_dict(one)
-
-    topic_data_col.insert(one)
+    topic_data_col.insert(build_mongo_updates_expression_for_insert(one))
     return topic_name, one
 
 
@@ -332,7 +362,7 @@ def topic_data_update_one(id_, one, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
     encode_dict(one)
-    topic_data_col.update_one({"_id": ObjectId(id_)}, {"$set": one})
+    topic_data_col.update_one({"_id": ObjectId(id_)}, {"$set": build_mongo_updates_expression_for_update(one)})
 
 
 def topic_data_update_(where, updates, name):
