@@ -15,7 +15,7 @@ log = logging.getLogger("app." + __name__)
 
 
 def __check_factors_result(target_data_list):
-    if isinstance(target_data_list) is not list:
+    if isinstance(target_data_list, list):
         log.warning("result is not a list {0}".format(target_data_list))
 
 

@@ -32,6 +32,16 @@ def run_unit(unitContext: UnitContext):
                             actionContext.delegateValue = value
                             run_action(actionContext)
                             unitContext.unitStatus.actions.append(actionContext.actionStatus)
+        elif loopVariable is not None:  # the loop variable just have one element.
+            if unitContext.unit.do is not None:
+                if should_run(unitContext):
+                    unitContext.unitStatus = UnitRunStatus()
+                    for action in unitContext.unit.do:
+                        actionContext = ActionContext(unitContext, action)
+                        actionContext.delegateVariableName = loopVariableName
+                        actionContext.delegateValue = loopVariable
+                        run_action(actionContext)
+                        unitContext.unitStatus.actions.append(actionContext.actionStatus)
     else:
         if unitContext.unit.do is not None:
             if should_run(unitContext):

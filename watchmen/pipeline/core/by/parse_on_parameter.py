@@ -3,7 +3,7 @@ import pandas as pd
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, get_variable_with_func_pattern, \
-    get_variable_with_dot_pattern, convert_datetime
+    get_variable_with_dot_pattern, convert_datetime, check_and_convert_value_by_factor
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.report.model.column import Operator
 from watchmen.topic.topic import Topic
@@ -16,11 +16,12 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
     if parameter_.kind == "topic":
         if parameter_.topicId == pipeline_topic.topicId:
             factor = get_factor(parameter_.factorId, pipeline_topic)
-            return {"value": cal_factor_value(current_data, factor), "position": "right"}
+            return {"value": check_and_convert_value_by_factor(factor, cal_factor_value(current_data, factor)),
+                    "position": "right"}
         elif parameter_.topicId == target_topic.topicId:
             factor = get_factor(parameter_.factorId, target_topic)
             factor_name = factor.name
-            return {"value": factor_name, "position": "left"}
+            return {"value": factor_name, "factor": factor, "position": "left"}
     elif parameter_.kind == 'constant':
         if parameter_.value is None:
             return {"value": None, "position": "right"}
@@ -155,6 +156,7 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
 
 
 def parse_parameter_joint(joint: ParameterJoint, current_data, variables, pipeline_topic: Topic, target_topic: Topic):
+    global value
     where_ = {}
     results = []
     if joint.jointType is not None:
@@ -178,16 +180,21 @@ def parse_parameter_joint(joint: ParameterJoint, current_data, variables, pipeli
 
         if left_expr_item["position"] == "left":
             name = left_expr_item["value"]
+            factor = left_expr_item.get("factor", None)
         else:
             value = left_expr_item["value"]
 
         if right_expr_item["position"] == "left":
             name = right_expr_item["value"]
+            factor = left_expr_item.get("factor", None)
         else:
             value = right_expr_item["value"]
 
+        if factor is not None:
+            value = check_and_convert_value_by_factor(factor, value)
+
         if operator_ == "equals":
-            if value =='':
+            if value == '':
                 value = None
             return {name: {"=": value}}
         elif operator_ == "not-equals":

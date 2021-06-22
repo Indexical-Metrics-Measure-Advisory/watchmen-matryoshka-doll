@@ -1,9 +1,11 @@
-import pandas as pd
+from decimal import Decimal
+
 import operator
 from typing import List
 
 import pandas as pd
 
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.core.by.parse_on_parameter import __week_number_of_month
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, AMP, FUNC, \
@@ -30,7 +32,6 @@ def parse_parameter(parameter_: Parameter, instance, variables):
         elif not parameter_.value:
             return None
         else:
-            result = []
             it = parse_constant_expression(parameter_.value)
             for item in it:
                 if item.startswith('{') and item.endswith('}'):
@@ -39,23 +40,17 @@ def parse_parameter(parameter_: Parameter, instance, variables):
                     if var_name.startswith(AMP):
                         real_name = var_name.lstrip('&')
                         res = instance.get(real_name)
-                        # result.append(res)
+                    elif var_name == "snowflake":
+                        res = get_surrogate_key()
                     elif FUNC in var_name:
                         res = get_variable_with_func_pattern(var_name, variables)
-                        # result.append(res)
                     elif DOT in var_name:
                         res = get_variable_with_dot_pattern(var_name, variables)
-                        # result.append(res)
                     else:
                         if var_name in variables:
                             res = variables[var_name]
-                            # result.append(res)
-                    if res is not None:
-                        result.append(res)
-                else:
-                    result.append(item)
-
-            return ''.join(result)
+                    return res
+            return parameter_.value
     elif parameter_.kind == 'computed':
         if parameter_.type == Operator.add:
             result = None
@@ -169,13 +164,19 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
         operator_ = joint.operator
         right = parse_parameter(joint.right, instance, variables)
         if operator_ == "equals":
+            '''
             if isinstance(right, str):
                 return operator.eq(str(left), right)
             return operator.eq(str(left), right)
+            '''
+            return operator.eq(left, right)
         elif operator_ == "not-equals":
+            '''
             if isinstance(right, str):
                 return operator.eq(str(left), right)
             return operator.ne(left, right)
+            '''
+            return operator.eq(left, right)
         elif operator_ == 'empty':
             return operator.is_(left, None)
         elif operator_ == 'not-empty':
