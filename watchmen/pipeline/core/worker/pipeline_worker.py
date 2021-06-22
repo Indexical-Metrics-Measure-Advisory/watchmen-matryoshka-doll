@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 import traceback
@@ -28,6 +29,8 @@ def should_run(pipelineContext: PipelineContext):
 
 def run_pipeline(pipelineContext: PipelineContext):
     pipeline = pipelineContext.pipeline
+
+    # print(pipeline.json())
     data = pipelineContext.data
     pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),
                                         startTime=datetime.now().replace(tzinfo=None), topicId=pipeline.pipelineId)
@@ -67,8 +70,8 @@ def run_pipeline(pipelineContext: PipelineContext):
                 # log.error(pipeline_status)
             finally:
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
-                    # log.debug("pipeline_status is {0}".format(pipeline_status))
-                    pass
-                else:
-                    watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
-                    pass
+                    log.debug("pipeline_status is {0}".format(pipeline_status))
+                    # pass
+                # else:
+                #     watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
+

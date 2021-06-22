@@ -22,6 +22,7 @@ class ActionContext:
 def get_variables(actionContext: ActionContext) -> dict:
     variables = copy.deepcopy(actionContext.unitContext.stageContext.pipelineContext.variables)
     delegateVariableName = actionContext.delegateVariableName
+
     delegateValue = actionContext.delegateValue
     if delegateVariableName is not None and delegateVariableName != "":
         variables[delegateVariableName] = delegateValue
