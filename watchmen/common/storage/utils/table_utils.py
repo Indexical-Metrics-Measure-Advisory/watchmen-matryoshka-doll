@@ -12,7 +12,7 @@ def get_primary_key(table_name):
     elif table_name == 'console_dashboards':
         return 'dashboardId'
     elif table_name == 'pipeline_graph':
-        return 'userId'
+        return 'pipelineGraphId'
     elif table_name == 'console_spaces':
         return 'connectId'
     elif table_name == 'console_space_favorites':

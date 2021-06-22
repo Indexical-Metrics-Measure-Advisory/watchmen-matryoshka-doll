@@ -172,7 +172,7 @@ def update_one_first(where, updates, model, name):
 # equal create_or_update, To avoid multiple upserts, ensure that the filter fields are uniquely indexed.
 def upsert_(where, updates, model, name):
     collections = client.get_collection(name)
-    collections.update_one(where, {"$set": __convert_to_dict(updates)}, upsert=True)
+    collections.update_one(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)}, upsert=True)
     return model.parse_obj(updates)
 
 
@@ -240,7 +240,7 @@ def find_(where: dict, model, name: str) -> list:
 
 def exists(where, model, name):
     collection = client.get_collection(name)
-    result = collection.find_one(where)
+    result = collection.find_one(build_mongo_where_expression(where))
     if result is None:
         return False
     else:
@@ -256,7 +256,7 @@ def list_all(model, name: str):
 
 def list_(where, model, name: str) -> list:
     collection = client.get_collection(name)
-    cursor = collection.find(where)
+    cursor = collection.find(build_mongo_where_expression(where))
     result_list = list(cursor)
     return [model.parse_obj(result) for result in result_list]
 
@@ -382,13 +382,13 @@ def topic_data_find_by_id(id_, topic_name):
 def topic_data_find_one(where, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-    return topic_data_col.find_one(where)
+    return topic_data_col.find_one(build_mongo_where_expression(where))
 
 
 def topic_data_find_(where, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-    return topic_data_col.find(where)
+    return topic_data_col.find(build_mongo_where_expression(where))
 
 
 def topic_data_list_all(topic_name) -> list:
@@ -406,7 +406,7 @@ def topic_find_one_and_update(where: dict, updates: dict, name: str):
 
 
 def topic_data_page_(where, sort, pageable, model, name) -> DataPage:
-    return page_(where, sort, pageable, model, name)
+    return page_(build_mongo_where_expression(where), sort, pageable, model, name)
 
 
 '''

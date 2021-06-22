@@ -3,6 +3,8 @@ from decimal import Decimal
 
 import arrow
 
+from watchmen.topic.factor.factor import Factor
+
 '''
 def cal_factor_value(data_: dict, factor: Factor) -> any:
     if "." in factor.name:

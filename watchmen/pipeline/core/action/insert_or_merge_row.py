@@ -27,6 +27,9 @@ def init(actionContext):
 
         pipeline_topic = actionContext.unitContext.stageContext.pipelineContext.pipelineTopic
         target_topic = get_topic_by_id(action.topicId)
+
+        # print(actionContext.unitContext)
+
         variables = get_variables(actionContext)
 
         # if there are aggregate functions, need lock the record to update
@@ -35,15 +38,17 @@ def init(actionContext):
                                                                       previous_data,
                                                                       current_data,
                                                                       variables)
+
         status.mapping = mappings_results
 
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
         status.whereConditions = where_
+        print(where_)
 
         # todo
         target_data = query_topic_data(where_,
                                        target_topic.name)  # should not use find_one,use find_ and check the number of record
-
+        print(target_data)
         trigger_pipeline_data_list = []
 
         if target_data is None:

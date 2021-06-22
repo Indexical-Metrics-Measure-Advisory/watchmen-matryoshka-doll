@@ -62,7 +62,7 @@ def pipelineExecutionPath(topic):
 
 
 def printPipelineExecutionPath(node, graph, format_):
-    print(format_ + node.name + '(' + node.object_id + ')' + '->')
+    #print(format_ + node.name + '(' + node.object_id + ')' + '->')
     format_ = format_ + "    "
     for item in graph.adj.get(node.id, []):
         if len(graph.adj.get(item.id, [])) != 0:
@@ -82,7 +82,7 @@ def buildPipelinesGraph():
         if pipeline.enabled:
             buildPipelineGraph(pipeline, already_see, pipeline_graph)
     end_tm = datetime.datetime.now()
-    print((end_tm - start_tm).seconds)
+    #print((end_tm - start_tm).seconds)
     show_graph(pipeline_graph)
     return pipeline_graph
 

@@ -33,6 +33,8 @@ def run_action(actionContext):
 
 def run_action(actionContext):
     action = actionContext.action
+
+    print(action.type)
     if action.type == "insert-or-merge-row":
         stage_method = importlib.import_module("watchmen.pipeline.core.action." + convert_action_type(action.type))
         func = stage_method.init(actionContext)

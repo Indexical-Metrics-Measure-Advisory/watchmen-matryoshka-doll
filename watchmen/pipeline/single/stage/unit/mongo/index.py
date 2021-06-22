@@ -759,7 +759,7 @@ def get_source_factor_value(raw_data, source_factor):
         data, prefix = get_factor_value(data, name, prefix, result)
     if type(result[source_factor.name]) is list:
         if len(result[source_factor.name]) == 1:
-            return result[source_factor.name][0]
+            return result[source_factor.name]
         elif len(result[source_factor.name]) == 0:
             return None
         else:
