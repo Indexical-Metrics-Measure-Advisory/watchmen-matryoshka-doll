@@ -7,9 +7,8 @@ from bson import regex, ObjectId
 from pymongo import ReturnDocument
 
 from watchmen.common.data_page import DataPage
-from watchmen.common.mongo.index import build_code_options
-from watchmen.common.mysql.model.table_definition import get_primary_key
-from watchmen.common.storage.engine.storage_engine import get_client
+from watchmen.common.mongo.index import build_code_options,get_client
+from watchmen.common.storage.utils.table_utils import get_primary_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
 
 client = get_client()

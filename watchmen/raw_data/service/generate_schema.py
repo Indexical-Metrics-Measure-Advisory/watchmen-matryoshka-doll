@@ -10,7 +10,7 @@ from watchmen.raw_data.model_field import ModelField
 from watchmen.raw_data.model_relationship import ModelRelationship
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
-from watchmen.raw_data.storage.row_data_schema_storage import load_raw_schema_by_code
+# from watchmen.raw_data.storage.row_data_schema_storage import load_raw_schema_by_code
 
 
 class RawTopicGenerateEvent(BaseModel):
@@ -146,13 +146,13 @@ def check_model_field_in_schema(name, model_schema: ModelSchema):
         return False
 
 
-def get_model_schema_set_by_code(code):
-    model_schema_set_dict = load_raw_schema_by_code(code)
-    if model_schema_set_dict is not None:
-        model_schema_set = ModelSchemaSet(**model_schema_set_dict)
-        return model_schema_set
-    else:
-        return None
+# def get_model_schema_set_by_code(code):
+#     model_schema_set_dict = load_raw_schema_by_code(code)
+#     if model_schema_set_dict is not None:
+#         model_schema_set = ModelSchemaSet(**model_schema_set_dict)
+#         return model_schema_set
+#     else:
+#         return None
 
 
 def check_value_duplicate(values, value):

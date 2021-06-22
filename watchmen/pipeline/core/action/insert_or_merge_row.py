@@ -4,11 +4,8 @@ from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
-from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules, \
-    build_query_conditions, __build_mongo_query, index_conditions
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
-from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import insert_topic_data, update_topic_data, \
-    update_topic_data_one
+from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import insert_topic_data, update_topic_data_one
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
@@ -44,7 +41,8 @@ def init(actionContext):
         status.whereConditions = where_
 
         # todo
-        target_data = query_topic_data(where_, target_topic.name) # should not use find_one,use find_ and check the number of record
+        target_data = query_topic_data(where_,
+                                       target_topic.name)  # should not use find_one,use find_ and check the number of record
 
         trigger_pipeline_data_list = []
 

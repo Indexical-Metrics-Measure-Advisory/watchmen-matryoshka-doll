@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str
     MONGO_HOST: str = None
     MONGO_PORT: int = None
+    MONGO_DATABASE:str= "watchmen"
     MONGO_USERNAME: str = None
     MONGO_PASSWORD: str = None
     PRESTO_HTTP_URL = "http://localhost:8080"

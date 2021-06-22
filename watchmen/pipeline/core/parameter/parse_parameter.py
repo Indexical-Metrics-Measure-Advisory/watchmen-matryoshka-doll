@@ -2,6 +2,8 @@ import pandas as pd
 import operator
 from typing import List
 
+import pandas as pd
+
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.core.by.parse_on_parameter import __week_number_of_month
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, AMP, FUNC, \

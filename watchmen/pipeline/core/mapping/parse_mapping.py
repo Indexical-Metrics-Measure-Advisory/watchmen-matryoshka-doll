@@ -1,4 +1,3 @@
-from watchmen.pipeline.core.context.action_context import get_variables
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
 
 

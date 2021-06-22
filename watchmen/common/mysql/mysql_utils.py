@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from watchmen.common.mysql.mysql_engine import engine
-from watchmen.common.mysql.mysql_table_definition import get_primary_key
+from watchmen.common.storage.utils.table_utils import get_primary_key
 
 
 def parse_obj(base_model, result):
@@ -19,4 +19,3 @@ def count_table(table_name):
     result = session.execute(stmt)
     for row in result:
         return row[0]
-

@@ -4,19 +4,23 @@ from bson import Decimal128
 from bson.codec_options import TypeCodec, TypeRegistry, CodecOptions
 
 import watchmen
-from watchmen.common.storage.engine.storage_engine import get_client
+
+from pymongo import MongoClient
+from watchmen.config.config import settings
+
+client = MongoClient(settings.MONGO_HOST, settings.MONGO_PORT, username=settings.MONGO_USERNAME,
+                     password=settings.MONGO_PASSWORD)
 
 
-# from watchmen.common.storage.storage_template import drop_topic_data_table
-# from watchmen.common.utils.data_utils import build_collection_name
+db = client[settings.MONGO_DATABASE]
 
-# client = get_client()
-#
-# collection_list_name = client.list_collection_names()
-#
-#
-# def check_collection_if_exist(dbname, collection_name):
-#     return collection_name in collection_list_name
+
+def get_client():
+    return db
+
+
+def get_client_db():
+    return client
 
 
 def delete_topic_collection(collection_name):

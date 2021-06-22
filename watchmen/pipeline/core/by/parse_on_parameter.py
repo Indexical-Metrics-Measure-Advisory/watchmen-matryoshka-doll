@@ -1,15 +1,12 @@
-from typing import List
+import pandas as pd
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, get_variable_with_func_pattern, \
     get_variable_with_dot_pattern, convert_datetime
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor, process_variable
+from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.report.model.column import Operator
-from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 from watchmen.topic.topic import Topic
-import pandas as pd
 
 
 def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_topic: Topic, target_topic: Topic):
@@ -54,7 +51,7 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
                     raise Exception("only pipeline topic factor can be used in add operator")
                 if result:
                     next_ = parse_parameter(item, current_data, variables, pipeline_topic, target_topic)
-                    result = {"value": result["value"]+next_["value"], "position": "right"}
+                    result = {"value": result["value"] + next_["value"], "position": "right"}
                 else:
                     result = parse_parameter(item, current_data, variables, pipeline_topic, target_topic)
             return result
@@ -105,11 +102,11 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
         elif parameter_.type == "year-of":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            return {"value": convert_datetime(value_).year, "position":"right"}
+            return {"value": convert_datetime(value_).year, "position": "right"}
         elif parameter_.type == "month-of":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            return {"value": convert_datetime(value_).month, "position":"right"}
+            return {"value": convert_datetime(value_).month, "position": "right"}
         elif parameter_.type == "week-of-year":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
@@ -215,7 +212,7 @@ def __week_number_of_month(date_value):
     return date_value.isocalendar()[1] - date_value.replace(day=1).isocalendar()[1] + 1
 
 
-def check_calculate_scope(parameter_:  Parameter, pipeline_topic: Topic, target_topic: Topic, condition: str) -> bool:
+def check_calculate_scope(parameter_: Parameter, pipeline_topic: Topic, target_topic: Topic, condition: str) -> bool:
     if parameter_.kind == "topic":
         if condition == "source":
             if parameter_.topicId != pipeline_topic.topicId:
@@ -233,4 +230,3 @@ def check_calculate_scope(parameter_:  Parameter, pipeline_topic: Topic, target_
 class Configurationerror(RuntimeError):
     def __init__(self, arg):
         self.args = arg
-

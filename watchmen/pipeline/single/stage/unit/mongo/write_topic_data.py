@@ -68,7 +68,6 @@ def update_topic_data_one(topic_name, mapping_result, target_data, pipeline_uid,
                                          TriggerType.update)
 
 
-
 def find_and_modify_topic_data(topic_name, query, update_data, target_data):
     '''
     collection_name = build_collection_name(topic_name)
