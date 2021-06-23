@@ -27,3 +27,8 @@ def get_variables(actionContext: ActionContext) -> dict:
     if delegateVariableName is not None and delegateVariableName != "":
         variables[delegateVariableName] = delegateValue
     return variables
+
+
+def set_variable(actionContext: ActionContext, variable_name, variable_value):
+    variables = actionContext.unitContext.stageContext.pipelineContext.variables
+    variables[variable_name] = variable_value

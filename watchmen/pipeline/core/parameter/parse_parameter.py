@@ -94,7 +94,10 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             return result
         elif parameter_.type == "year-of":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
-            return convert_datetime(result).year
+            if result is not None:
+                return convert_datetime(result).year
+            else:
+                result
         elif parameter_.type == "month-of":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
             return convert_datetime(result).month
@@ -164,19 +167,9 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
         operator_ = joint.operator
         right = parse_parameter(joint.right, instance, variables)
         if operator_ == "equals":
-            '''
-            if isinstance(right, str):
-                return operator.eq(str(left), right)
-            return operator.eq(str(left), right)
-            '''
             return operator.eq(left, right)
         elif operator_ == "not-equals":
-            '''
-            if isinstance(right, str):
-                return operator.eq(str(left), right)
             return operator.ne(left, right)
-            '''
-            return operator.eq(left, right)
         elif operator_ == 'empty':
             return operator.is_(left, None)
         elif operator_ == 'not-empty':

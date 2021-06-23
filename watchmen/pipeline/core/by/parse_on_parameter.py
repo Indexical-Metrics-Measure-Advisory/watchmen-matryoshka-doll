@@ -26,7 +26,7 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
         if parameter_.value is None:
             return {"value": None, "position": "right"}
         elif parameter_.value == '':
-            return {"value": '', "position": "right"}
+            return {"value": None, "position": "right"}
         elif not parameter_.value:
             return {"value": None, "position": "right"}
         elif "{snowflake}" in parameter_.value:
@@ -43,7 +43,18 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
                 if constant_variable in variables and variables[constant_variable] is not None:
                     return {"value": variables[constant_variable], "position": "right"}
                 else:
-                    return None
+                    return {"value": None, "position": "right"}
+        elif "," in parameter_.value:
+            value_ = parameter_.value.split(",")
+            new_value_ = []
+            for v in value_:
+                if v.isdigit():
+                    new_value_.append(int(v))
+                else:
+                    new_value_.append(v)
+            return {"value": new_value_, "position": "right"}
+        else:
+            return {"value": parameter_.value, "position": "right"}
     elif parameter_.kind == 'computed':
         if parameter_.type == Operator.add:
             result = None
@@ -156,7 +167,6 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
 
 
 def parse_parameter_joint(joint: ParameterJoint, current_data, variables, pipeline_topic: Topic, target_topic: Topic):
-    global value
     where_ = {}
     results = []
     if joint.jointType is not None:
@@ -191,11 +201,15 @@ def parse_parameter_joint(joint: ParameterJoint, current_data, variables, pipeli
             value = right_expr_item["value"]
 
         if factor is not None:
-            value = check_and_convert_value_by_factor(factor, value)
+            if isinstance(value, list) and factor.type != "array":
+                new_value_ = []
+                for el in value:
+                    new_value_.append(check_and_convert_value_by_factor(factor, el))
+                value = new_value_
+            else:
+                value = check_and_convert_value_by_factor(factor, value)
 
         if operator_ == "equals":
-            if value == '':
-                value = None
             return {name: {"=": value}}
         elif operator_ == "not-equals":
             return {name: {"!=": value}}
@@ -211,6 +225,8 @@ def parse_parameter_joint(joint: ParameterJoint, current_data, variables, pipeli
             return {name: {"in": value}}
         elif operator_ == 'not-in':
             return {name: {"not-in": value}}
+        elif operator_ == "empty":
+            return {name: {"=": None}}
         else:
             raise Exception("operator is not supported")
 

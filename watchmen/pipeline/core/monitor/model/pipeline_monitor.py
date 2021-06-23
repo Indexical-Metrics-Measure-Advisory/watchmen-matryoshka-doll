@@ -19,3 +19,4 @@ class ActionStatus(BaseModel):
     updateCount: int = 0
     whereConditions: List[WhereCondition] = []
     mapping: Any = None
+    value: Any = None

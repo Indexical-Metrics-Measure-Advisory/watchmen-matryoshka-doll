@@ -97,6 +97,10 @@ def check_and_convert_value_by_factor(factor: Factor, value):
     try:
         if value is None:
             return None
+        if value == "" or value == '':
+            return None
+        if factor is None:
+            raise ValueError("factor can not be none, in check_and_convert_value_by_factor function")
         elif factor.type == "text":
             return str(value)
         elif factor.type == "number" or factor.type == "unsigned":
@@ -114,7 +118,7 @@ def check_and_convert_value_by_factor(factor: Factor, value):
         else:
             return value
     except Exception as e:
-        raise TypeError("value are allowed {} for factor_type {}".format(value, factor.type))
+        raise TypeError("value \"{0}\" is not allowed for factor \"{1}\" because of factor_type is \"{2}\"".format(value, factor.name, factor.type))
 
 
 def get_variable_with_func_pattern(name, variable_):
