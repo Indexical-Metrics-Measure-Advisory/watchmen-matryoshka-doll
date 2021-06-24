@@ -1,5 +1,4 @@
 import logging
-import operator
 from datetime import date
 
 import arrow
@@ -8,7 +7,7 @@ from bson import regex, ObjectId
 from pymongo import ReturnDocument
 
 from watchmen.common.data_page import DataPage
-from watchmen.common.mongo.index import build_code_options,get_client
+from watchmen.common.mongo.index import build_code_options, get_client
 from watchmen.common.storage.utils.table_utils import get_primary_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
 
@@ -111,20 +110,17 @@ def build_mongo_updates_expression_for_insert(updates):
 
 def build_mongo_updates_expression_for_update(updates):
     new_updates = {}
+    new_updates["$set"] = {}
+    print("updates", updates)
     for key, value in updates.items():
-        if key == "$inc":
-            pass
-        elif key == "$set":
-            pass
         if isinstance(value, dict):
             for k, v in value.items():
                 if k == "$sum":
-                    # {'$inc': {key: v}}
                     new_updates['$inc'] = {key: v}
                 elif k == "$count":
-                    new_updates['$inc'] = {key: v}
+                    new_updates['$inc'][key] = v
         else:
-            new_updates[key] = value
+            new_updates["$set"][key]=value
     return new_updates
 
 
@@ -362,7 +358,7 @@ def topic_data_update_one(id_, one, topic_name):
     codec_options = build_code_options()
     topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
     encode_dict(one)
-    topic_data_col.update_one({"_id": ObjectId(id_)}, {"$set": build_mongo_updates_expression_for_update(one)})
+    topic_data_col.update_one({"_id": ObjectId(id_)},  build_mongo_updates_expression_for_update(one))
 
 
 def topic_data_update_(where, updates, name):
