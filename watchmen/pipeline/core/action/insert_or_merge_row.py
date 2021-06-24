@@ -1,5 +1,6 @@
 import time
 
+from watchmen.common.utils.data_utils import get_id_name
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, ActionContext
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
@@ -64,7 +65,7 @@ def init(actionContext: ActionContext):
             trigger_pipeline_data_list.append(
                 update_topic_data_one(target_topic.name, mappings_results, target_data,
                                       actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
-                                      target_data['id_']))
+                                      target_data[get_id_name()]))
             status.updateCount = status.updateCount + 1
 
         elapsed_time = time.time() - start

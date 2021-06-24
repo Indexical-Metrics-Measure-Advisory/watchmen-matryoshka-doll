@@ -5,6 +5,7 @@ from enum import Enum
 from pydantic.tools import lru_cache
 
 from watchmen.common.data_page import DataPage
+from watchmen.config.config import settings
 from watchmen.pipeline.single.stage.unit.utils.units_func import ADDRESS, CONTINENT, REGION, COUNTRY, PROVINCE, CITY, \
     DISTRICT, ROAD, COMMUNITY, FLOOR, RESIDENCE_TYPE, RESIDENTIAL_AREA, TEXT, EMAIL, PHONE, MOBILE, FAX, GENDER, \
     HALF_YEAR, QUARTER, SEASON, MONTH, HALF_MONTH, TEN_DAYS, WEEK_OF_YEAR, WEEK_OF_MONTH, HALF_WEEK, DAY_OF_MONTH, \
@@ -28,6 +29,12 @@ def get_dict_schema_set(model_schema_set):
     for schema in model_schema_set.schemas.values():
         result[schema.modelId] = schema
     return result
+
+def get_id_name():
+    if settings.STORAGE_ENGINE == "mongo":
+        return "_id"
+    elif settings.STORAGE_ENGINE == "oracle":
+        return "id_"
 
 
 def get_dict_relationship(model_schema_set):

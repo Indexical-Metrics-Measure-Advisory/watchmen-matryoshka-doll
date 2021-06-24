@@ -1,6 +1,7 @@
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.storage.storage_template import topic_data_find_by_id, \
     topic_data_insert_one, topic_find_one_and_update, topic_data_update_, topic_data_update_one
+from watchmen.common.utils.data_utils import get_id_name
 from watchmen.config.config import settings
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.model.trigger_data import TriggerData
@@ -29,13 +30,6 @@ def insert_topic_data(topic_name, mapping_result, pipeline_uid):
                                          TriggerType.insert)
 
 
-def __get_key():
-    if settings.STORAGE_ENGINE == "mongo":
-        return "_id"
-    elif settings.STORAGE_ENGINE == "oracle":
-        return "id_"
-
-
 def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid, mongo_query):
     '''
     collection_name = build_collection_name(topic_name)
@@ -43,7 +37,7 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid, mon
     collection = db.get_collection(collection_name, codec_options=codec_options)
     old_data = find_topic_data_by_id(collection, target_data["_id"])
     '''
-    old_data = topic_data_find_by_id(target_data[__get_key()], topic_name)
+    old_data = topic_data_find_by_id(target_data[get_id_name()], topic_name)
     add_audit_columns(mapping_result, UPDATE)
     add_trace_columns(mapping_result, "update_row", pipeline_uid)
     '''
@@ -58,7 +52,7 @@ def update_topic_data(topic_name, mapping_result, target_data, pipeline_uid, mon
 
 
 def update_topic_data_one(topic_name, mapping_result, target_data, pipeline_uid, id_):
-    old_data = topic_data_find_by_id(target_data[__get_key()], topic_name)
+    old_data = topic_data_find_by_id(target_data[get_id_name()], topic_name)
     add_audit_columns(mapping_result, UPDATE)
     add_trace_columns(mapping_result, "update_row", pipeline_uid)
     topic_data_update_one(id_, mapping_result, topic_name)
@@ -77,7 +71,7 @@ def find_and_modify_topic_data(topic_name, query, update_data, target_data):
     '''
 
     if target_data is not None:
-        old_data = topic_data_find_by_id(target_data[__get_key()], topic_name)
+        old_data = topic_data_find_by_id(target_data[get_id_name()], topic_name)
     else:
         old_data = None
 
