@@ -130,6 +130,8 @@ pipelines_table = Table("pipelines", metadata,
                         )
 
 pipeline_graph_table = Table("pipeline_graph", metadata,
+                             Column("pipelinegraphid", String(60), nullable=False),
+                             Column("name", String(50), nullable=True),
                              Column("userid", String(60), nullable=False),
                              Column("topics", CLOB, nullable=True),
                              Column('lastmodified', DateTime, nullable=True),
