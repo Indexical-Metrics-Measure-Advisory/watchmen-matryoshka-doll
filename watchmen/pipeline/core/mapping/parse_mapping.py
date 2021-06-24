@@ -22,7 +22,7 @@ def parse_mappings(mappings, target_topic, previous_data, current_data, variable
             previous_value_ = check_and_convert_value_by_factor(target_factor, parse_parameter(source, previous_data, variables))
             if previous_value_ is None:
                 previous_value_ = 0
-            value_ = int(current_value_) - int(previous_value_)
+            value_ = current_value_ - previous_value_
             result = {target_factor.name: {"_sum": value_}}
             having_aggregate_functions = True
         elif arithmetic == "count":

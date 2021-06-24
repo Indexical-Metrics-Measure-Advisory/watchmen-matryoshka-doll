@@ -31,7 +31,9 @@ def init(actionContext: ActionContext):
 
         variables = get_variables(actionContext)
 
+        # todo
         # if there are aggregate functions, need lock the record to update
+        # consider use the flag of "having_aggregate_functions" for the distributed lock in the future
         mappings_results, having_aggregate_functions = parse_mappings(action.mapping,
                                                                       target_topic,
                                                                       previous_data,
