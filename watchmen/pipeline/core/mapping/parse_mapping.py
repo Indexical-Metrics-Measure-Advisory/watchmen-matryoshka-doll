@@ -23,16 +23,16 @@ def parse_mappings(mappings, target_topic, previous_data, current_data, variable
             if previous_value_ is None:
                 previous_value_ = 0
             value_ = int(current_value_) - int(previous_value_)
-            result = {target_factor.name: {"$sum": value_}}
+            result = {target_factor.name: {"_sum": value_}}
             having_aggregate_functions = True
         elif arithmetic == "count":
             if previous_data is None:
-                result = {target_factor.name: {"$count": 1}}
+                result = {target_factor.name: {"_count": 1}}
             else:
-                result = {target_factor.name: {"$count": 0}}
+                result = {target_factor.name: {"_count": 0}}
             having_aggregate_functions = True
         elif arithmetic == "avg":
-            result = {target_factor.name: {"$avg": current_value_}}
+            result = {target_factor.name: {"_avg": current_value_}}
             having_aggregate_functions = True
 
         mappings_results.update(result)

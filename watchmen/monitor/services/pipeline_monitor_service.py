@@ -2,11 +2,17 @@
 import watchmen.pipeline.index
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.constants import pipeline_constants
+from watchmen.common.storage.engine_adaptor import MONGO, ORACLE
+from watchmen.common.storage.storage_template import raw_topic_data_insert_one
+from watchmen.config.config import settings
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
 from watchmen.topic.storage.topic_data_storage import save_topic_instance
 from watchmen.topic.storage.topic_schema_storage import get_topic
+
+
+
 
 
 def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):
@@ -18,7 +24,7 @@ def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):
         raise Exception("topic name does not exist")
 
     add_audit_columns(topic_event.data, INSERT)
-    save_topic_instance(topic_event.code, topic_event.data)
+    raw_topic_data_insert_one(topic_event.data,topic_event.code)
     watchmen.pipeline.index.trigger_pipeline(topic_event.code,
                                              {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
                                              TriggerType.insert)

@@ -162,9 +162,9 @@ def build_oracle_updates_expression_for_insert(table, updates):
                     new_updates[k.lower()] = v
         if isinstance(value, dict):
             for k, v in value.items():
-                if k == "$sum":
+                if k == "_sum":
                     new_updates[key.lower()] = v
-                elif k == "$count":
+                elif k == "_count":
                     new_updates[key.lower()] = v
         else:
             new_updates[key] = value
@@ -185,9 +185,9 @@ def build_oracle_updates_expression_for_update(table, updates):
                     new_updates[k.lower()] = v
         if isinstance(value, dict):
             for k, v in value.items():
-                if k == "$sum":
+                if k == "_sum":
                     new_updates[key.lower()] = text(f'{key.lower()} + {v}')
-                elif k == "$count":
+                elif k == "_count":
                     new_updates[key.lower()] = text(f'{key.lower()} + {v}')
         else:
             new_updates[key] = value
