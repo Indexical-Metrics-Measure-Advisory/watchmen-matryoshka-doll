@@ -1,5 +1,4 @@
 
-
 def get_primary_key(table_name):
     if table_name == 'topics':
         return 'topicId'
@@ -27,3 +26,5 @@ def get_primary_key(table_name):
         return 'userGroupId'
     elif table_name == 'enums':
         return 'enumId'
+    elif table_name == 'console_reports':
+        return 'reportid'

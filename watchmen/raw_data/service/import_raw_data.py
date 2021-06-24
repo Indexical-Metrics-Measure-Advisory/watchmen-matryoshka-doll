@@ -10,7 +10,11 @@ async def import_raw_topic_data(topic_event):
     topic = get_topic(topic_event.code)
     if topic is None:
         raise Exception(topic_event.code + " topic name does not exist")
-
+    # todo
+    '''
+    if not isinstance(topic_event.data, dict):
+        raise ValueError("topic_event data should be dict, now it is {0}".format(topic_event.data))
+    '''
     add_audit_columns(topic_event.data, INSERT)
     save_topic_instance(topic_event.code, topic_event.data)
 

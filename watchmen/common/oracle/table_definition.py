@@ -154,6 +154,20 @@ console_space_subjects_table = Table("console_space_subjects", metadata,
                                      Column('createtime', String(50), nullable=True)
                                      )
 
+console_reports_table = Table("reports", metadata,
+                              Column("reportid", String(60), primary_key=True),
+                              Column("name", String(50), nullable=False),
+                              Column("indicators", CLOB, nullable=True),
+                              Column("dimensions", CLOB, nullable=True),
+                              Column("description", String(50), nullable=True),
+                              Column("rect", CLOB, nullable=True),
+                              Column("chart", CLOB, nullable=True),
+                              Column("createdAt", String(50), nullable=True),
+                              Column("lastVisitTime", String(50), nullable=True),
+                              Column('lastmodified', DateTime, nullable=True),
+                              Column('createtime', String(50), nullable=True)
+                              )
+
 
 def get_table_by_name(table_name):
     if table_name == "users":
@@ -182,6 +196,8 @@ def get_table_by_name(table_name):
         return pipeline_graph_table
     elif table_name == "console_space_subjects":
         return console_space_subjects_table
+    elif table_name == "console_reports":
+        return console_reports_table
 #
 #
 # def get_primary_key(table_name):
