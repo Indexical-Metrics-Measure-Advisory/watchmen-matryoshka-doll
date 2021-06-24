@@ -57,14 +57,14 @@ def init(actionContext: ActionContext):
                 if previous_value_ is None:
                     previous_value_ = 0
                 value_ = int(current_value_) - int(previous_value_)
-                result = {target_factor.name: {"$sum": value_}}
+                result = {target_factor.name: {"_sum": value_}}
             elif arithmetic == "count":
                 if previous_data is None:
-                    result = {target_factor.name: {"$count": 1}}
+                    result = {target_factor.name: {"_count": 1}}
                 else:
-                    result = {target_factor.name: {"$count": 0}}
+                    result = {target_factor.name: {"_count": 0}}
             elif arithmetic == "avg":
-                result = {target_factor.name: {"$avg": current_value_}}
+                result = {target_factor.name: {"_avg": current_value_}}
 
             updates_ = result
             trigger_pipeline_data_list = []

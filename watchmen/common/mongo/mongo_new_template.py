@@ -99,9 +99,9 @@ def build_mongo_updates_expression_for_insert(updates):
             pass
         if isinstance(value, dict):
             for k, v in value.items():
-                if k == "$sum":
+                if k == "_sum":
                     new_updates[key] = v
-                elif k == "$count":
+                elif k == "_count":
                     new_updates[key] = v
         else:
             new_updates[key] = value
@@ -115,9 +115,9 @@ def build_mongo_updates_expression_for_update(updates):
     for key, value in updates.items():
         if isinstance(value, dict):
             for k, v in value.items():
-                if k == "$sum":
+                if k == "_sum":
                     new_updates['$inc'] = {key: v}
-                elif k == "$count":
+                elif k == "_count":
                     new_updates['$inc'][key] = v
         else:
             new_updates["$set"][key]=value
@@ -352,6 +352,12 @@ def topic_data_insert_(data, topic_name):
     for d in data:
         encode_dict(d)
     topic_data_col.insert_many(data)
+
+
+def raw_topic_data_insert_one(one, topic_name):
+    codec_options = build_code_options()
+    topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
+    topic_data_col.insert(one)
 
 
 def topic_data_update_one(id_, one, topic_name):
