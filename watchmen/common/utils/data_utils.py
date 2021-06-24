@@ -30,6 +30,7 @@ def get_dict_schema_set(model_schema_set):
         result[schema.modelId] = schema
     return result
 
+
 def get_id_name():
     if settings.STORAGE_ENGINE == "mongo":
         return "_id"
