@@ -9,16 +9,16 @@ class Settings(BaseSettings):
     SECRET_KEY: str = '801GtEAdlE8o-iZRLBMgz30PGE_zxry82EaUYMAhNq8'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
-    HOST_URL = "http://localhost:8000"
+    # HOST_URL = "http://localhost:8000"
     ALGORITHM = "HS256"
     STORAGE_ENGINE = "mongo"
     PROJECT_NAME: str
     MONGO_HOST: str = None
     MONGO_PORT: int = None
-    MONGO_DATABASE:str= "watchmen"
+    MONGO_DATABASE: str = "watchmen"
     MONGO_USERNAME: str = None
     MONGO_PASSWORD: str = None
-    PRESTO_HTTP_URL = "http://localhost:8080"
+    # PRESTO_HTTP_URL = "http://localhost:8080"
     PRESTO_HOST: str = None
     PRESTO_PORT: int = None
     PRESTO_USER = "the_user"
@@ -46,10 +46,10 @@ class Settings(BaseSettings):
     CONNECTOR_KAFKA = False
     CONNECTOR_RABBITMQ = False
 
-    RABBITMQ_HOST:str = "amqp://guest:guest@localhost"
-    RABBITMQ_QUEUE :str = "test"
-    RABBITMQ_DURABLE :bool = True
-    RABBITMQ_AUTO_DELETE :bool = False
+    RABBITMQ_HOST: str = "amqp://guest:guest@localhost"
+    RABBITMQ_QUEUE: str = "test"
+    RABBITMQ_DURABLE: bool = True
+    RABBITMQ_AUTO_DELETE: bool = False
 
     KAFKA_BOOTSTRAP_SERVER = "localhost:9092"
     KAFKA_TOPICS = ""
