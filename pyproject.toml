@@ -35,7 +35,7 @@ notifiers = "^1.2.1"
 kafka-python = "^2.0.2"
 aiokafka = "^0.7.0"
 arrow = "^1.1.0"
-aio-pika ="6.8.0"
+#aio-pika ="6.8.0"
 
 #[tool.poetry.extras]
 #mysql = ["mysqlclient"]
