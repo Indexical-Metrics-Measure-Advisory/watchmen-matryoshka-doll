@@ -5,7 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from watchmen.config.config import settings
-from watchmen.connector.kafka.kafka_connector import consume
+from watchmen.connector.kafka import kafka_connector
+from watchmen.connector.rabbitmq import rabbit_connector
 from watchmen.routers import admin, console, common, auth, metadata
 
 log = logging.getLogger("app." + __name__)
@@ -25,7 +26,10 @@ app.add_middleware(
 @app.on_event("startup")
 def startup():
     if settings.CONNECTOR_KAFKA:
-        asyncio.create_task(consume())
+        asyncio.create_task(kafka_connector.consume())
+    elif settings.CONNECTOR_RABBITMQ:
+        loop = asyncio.get_event_loop()
+        asyncio.ensure_future(rabbit_connector.consume(loop))
 
 
 log.info("system init rest api")
