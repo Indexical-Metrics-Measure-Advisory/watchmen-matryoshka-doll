@@ -44,6 +44,13 @@ class Settings(BaseSettings):
     ORACLE_SID: str = ""
 
     CONNECTOR_KAFKA = False
+    CONNECTOR_RABBITMQ = False
+
+    RABBITMQ_HOST:str = "amqp://guest:guest@localhost"
+    RABBITMQ_QUEUE :str = "test"
+    RABBITMQ_DURABLE :bool = True
+    RABBITMQ_AUTO_DELETE :bool = False
+
     KAFKA_BOOTSTRAP_SERVER = "localhost:9092"
     KAFKA_TOPICS = ""
 

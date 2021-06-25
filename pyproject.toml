@@ -9,11 +9,10 @@ python = "^3.9.2"
 fastapi = "^0.63.0"
 pypika = "^0.47.3"
 pendulum = "^2.1.2"
-presto-python-client = "^0.7.0"
 dask = "^2021.1.0"
 bson = "^0.5.10"
 regex = "^2020.11.13"
-pymongo = "^3.11.2"
+pymongo = { version = "^3.11.2", optional = true }
 jose = "^1.0.0"
 python-jose = "^3.2.0"
 passlib = "^1.7.4"
@@ -29,11 +28,18 @@ uvicorn = "^0.13.4"
 japanese_address = "^0.1.2"
 pandas = "^1.2.3"
 SQLAlchemy = "^1.4.2"
-mysqlclient = "^2.0.3"
+mysqlclient = { version = "^2.0.3", optional = true }
 notifiers = "^1.2.1"
-kafka-python = "^2.0.2"
-aiokafka = "^0.7.0"
+kafka-python = { version = "^2.0.2", optional = true }
+aiokafka = { version = "^0.7.0", optional = true }
 arrow = "^1.1.0"
+aio-pika ={version ="6.8.0" ,optional = true}
+
+[tool.poetry.extras]
+mysql = ["mysqlclient"]
+mongo = ["pymongo"]
+kafka = ["kafka-python","aiokafka"]
+rabbit= ["aio-pika"]
 
 
 [tool.poetry.dev-dependencies]
