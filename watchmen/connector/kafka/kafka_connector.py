@@ -3,7 +3,6 @@ import json
 import logging
 import traceback
 
-from aiokafka import AIOKafkaConsumer
 
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.config.config import settings
@@ -17,6 +16,7 @@ kafka_topics_list = kafka_topics.split(",")
 
 
 async def consume():
+    from aiokafka import AIOKafkaConsumer
     consumer = AIOKafkaConsumer(
         kafka_topics_list,
         loop=loop, bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVER,

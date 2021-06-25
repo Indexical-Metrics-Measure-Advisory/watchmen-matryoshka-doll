@@ -3,23 +3,17 @@ import json
 import logging
 import traceback
 
-import aio_pika
 
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.config.config import settings
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
 
 log = logging.getLogger("app." + __name__)
-# loop = asyncio.get_event_loop()
 
-
-# async def process_message(message: aio_pika.IncomingMessage):
-#     async with message.process():
-#         print(message.body)
-#         await asyncio.sleep(1)
 
 
 async def consume(loop):
+    import aio_pika
     connection = await aio_pika.connect(
         settings.RABBITMQ_HOST, loop=loop
     )
