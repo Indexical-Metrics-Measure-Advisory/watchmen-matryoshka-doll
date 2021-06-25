@@ -16,6 +16,7 @@ RUN pip install cx_Oracle
 RUN pip install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install
+# poetry install
 # RUN pip install watchmen-storage-engine
 
 EXPOSE 8000
