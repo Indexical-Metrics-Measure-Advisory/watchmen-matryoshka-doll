@@ -18,9 +18,6 @@ log = logging.getLogger("app." + __name__)
 log.info("mongo template initialized")
 
 
-
-
-
 def build_mongo_where_expression(where: dict):
     """
     Build where, the common sql pattern is "column_name operator value", but we use dict,
