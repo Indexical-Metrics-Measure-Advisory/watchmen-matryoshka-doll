@@ -21,7 +21,7 @@ def create_topic_schema(topic):
     if type(topic) is not dict:
         topic = topic.dict()
     save_topic(topic)
-    create_topic_data_table(topic)
+    # create_topic_data_table(topic)
     return Topic.parse_obj(topic)
 
 
@@ -31,7 +31,7 @@ def update_topic_schema(
     if type(topic) is not dict:
         topic = topic.dict()
     update_topic(topic_id, topic)
-    alter_topic_data_table(topic)
+    # alter_topic_data_table(topic)
     return Topic.parse_obj(topic)
 
 

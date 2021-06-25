@@ -19,6 +19,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
 from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.storage.storage_template import drop_topic_data_table, create_topic_data_table
 from watchmen.common.utils.data_utils import check_fake_id, build_collection_name
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
@@ -474,3 +475,11 @@ async def query_log_by_critical(query: MonitorLogQuery):
         query_dict = query_list[0]
 
     return query_pipeline_monitor(build_collection_name("raw_pipeline_monitor"), query_dict, query.pagination)
+
+
+@router.get("/topic/table/recreate", tags=["admin"])
+async def drop_topic_table(topic_name):
+    drop_topic_data_table(topic_name)
+    topic = load_topic_by_name(topic_name)
+    create_topic_data_table(topic)
+

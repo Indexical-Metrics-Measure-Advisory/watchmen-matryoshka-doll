@@ -1,21 +1,47 @@
-from sqlalchemy.orm import Session
+import json
 
-from watchmen.common.mysql.mysql_engine import engine
+from sqlalchemy import CLOB, text, JSON
+
+from watchmen.common.oracle.oracle_engine import engine
 from watchmen.common.storage.utils.table_utils import get_primary_key
 
 
-def parse_obj(base_model, result):
+def parse_obj(base_model, result, table):
     model = base_model()
     for attr, value in model.__dict__.items():
         if attr[:1] != '_':
-            setattr(model, attr, getattr(result, attr))
-    return model
+            if isinstance(table.c[attr.lower()].type, JSON):
+                if attr == "on":
+                    if result[attr] is not None:
+                        setattr(model, attr, json.loads(result[attr.lower()]))
+                    else:
+                        setattr(model, attr, None)
+                else:
+                    if result[attr.lower()] is not None:
+                        setattr(model, attr, json.loads(result[attr.lower()]))
+                    else:
+                        setattr(model, attr, None)
+            else:
+                setattr(model, attr, result[attr.lower()])
+    return base_model.parse_obj(model)
 
 
 def count_table(table_name):
     primary_key = get_primary_key(table_name)
-    session = Session(engine, future=True)
     stmt = 'SELECT count(%s) AS count FROM %s' % (primary_key, table_name)
-    result = session.execute(stmt)
-    for row in result:
-        return row[0]
+    with engine.connect() as conn:
+        cursor = conn.execute(text(stmt)).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        result = cursor.fetchone()
+    return result['COUNT']
+
+
+def count_topic_data_table(table_name):
+    stmt = 'SELECT count(%s) AS count FROM %s' % ('id_', table_name)
+    with engine.connect() as conn:
+        cursor = conn.execute(text(stmt)).cursor
+        columns = [col[0] for col in cursor.description]
+        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        result = cursor.fetchone()
+    return result['COUNT']
