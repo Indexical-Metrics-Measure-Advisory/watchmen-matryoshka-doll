@@ -130,6 +130,8 @@ pipelines_table = Table("pipelines", metadata,
                         )
 
 pipeline_graph_table = Table("pipeline_graph", metadata,
+                             Column("pipelinegraphid", String(60), nullable=False),
+                             Column("name", String(50), nullable=True),
                              Column("userid", String(60), nullable=False),
                              Column("topics", JSON, nullable=True),
                              Column('lastmodified', DateTime, nullable=True),
@@ -151,6 +153,21 @@ console_space_subjects_table = Table("console_space_subjects", metadata,
                                      Column('lastmodified', DateTime, nullable=True),
                                      Column('createtime', String(50), nullable=True)
                                      )
+
+
+console_reports_table = Table("reports", metadata,
+                              Column("reportid", String(60), primary_key=True),
+                              Column("name", String(50), nullable=False),
+                              Column("indicators", JSON, nullable=True),
+                              Column("dimensions", JSON, nullable=True),
+                              Column("description", String(50), nullable=True),
+                              Column("rect", JSON, nullable=True),
+                              Column("chart", JSON, nullable=True),
+                              Column("createdAt", String(50), nullable=True),
+                              Column("lastVisitTime", String(50), nullable=True),
+                              Column('lastmodified', DateTime, nullable=True),
+                              Column('createtime', String(50), nullable=True)
+                              )
 
 
 def get_table_by_name(table_name):
@@ -180,6 +197,8 @@ def get_table_by_name(table_name):
         return pipeline_graph_table
     elif table_name == "console_space_subjects":
         return console_space_subjects_table
+    elif table_name == "console_reports":
+        return console_reports_table
 
 
 def get_topic_table_by_name(table_name):

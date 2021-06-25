@@ -105,13 +105,13 @@ def check_where_column_type(name, where):
         return None
 
 
-def build_oracle_where_expression(table, where):
+def build_mysql_where_expression(table, where):
     for key, value in where.items():
         if key == "and" or key == "or":
             if isinstance(value, list):
                 filters = []
                 for express in value:
-                    result = build_oracle_where_expression(table, express)
+                    result = build_mysql_where_expression(table, express)
                     filters.append(result)
             if key == "and":
                 return and_(*filters)
@@ -128,9 +128,10 @@ def build_oracle_where_expression(table, where):
                         if v != "" or v != '' or v is not None:
                             return table.c[key.lower()].like("%" + v + "%")
                     if k == "in":
-                        if isinstance(table.c[key.lower()].type, CLOB):
+                        if isinstance(table.c[key.lower()].type, JSON):
                             # not support clob to operate in here
-                            raise
+                            raise ValueError("the json type field \"{0}\" of table \"{1}\" , should not support "
+                                             "\"in\" of where expression".format(key.lower(), table.name))
                         else:
                             if isinstance(v, list):
                                 if len(v) != 0:
@@ -150,7 +151,7 @@ def build_oracle_where_expression(table, where):
                 return table.c[key.lower()] == value
 
 
-def build_oracle_updates_expression_for_insert(table, updates):
+def build_mysql_updates_expression_for_insert(table, updates):
     new_updates = {"id_": get_surrogate_key()}
     for key, value in updates.items():
         if key == "$inc":
@@ -172,7 +173,7 @@ def build_oracle_updates_expression_for_insert(table, updates):
     return new_updates
 
 
-def build_oracle_updates_expression_for_update(table, updates):
+def build_mysql_updates_expression_for_update(table, updates):
     new_updates = {}
     for key, value in updates.items():
         if key == "$inc":
@@ -195,7 +196,7 @@ def build_oracle_updates_expression_for_update(table, updates):
     return new_updates
 
 
-def build_oracle_order(table, order_: list):
+def build_mysql_order(table, order_: list):
     result = []
     if order_ is None:
         return result
@@ -242,8 +243,8 @@ def insert_all(data, model, name):
             values[key] = instance_dict.get(key)
         value_list.append(values)
     with engine.connect() as conn:
-        conn.execute(stmt, value_list)
-        # conn.commit()
+        with conn.begin():
+            conn.execute(stmt, value_list)
 
 
 def update_one(one, model, name) -> any:
@@ -255,9 +256,9 @@ def update_one(one, model, name) -> any:
         eq(table.c[primary_key.lower()], one_dict.get(primary_key)))
     values = {}
     for key, value in one_dict.items():
-        if isinstance(table.c[key.lower()].type, CLOB):
+        if isinstance(table.c[key.lower()].type, JSON):
             if value is not None:
-                values[key.lower()] = dumps(value)
+                values[key.lower()] = value
             else:
                 values[key.lower()] = None
         else:
@@ -265,21 +266,21 @@ def update_one(one, model, name) -> any:
     stmt = stmt.values(values)
     with engine.connect() as conn:
         with conn.begin():
-            conn.execute(stmt)
+            result = conn.execute(stmt)
     return model.parse_obj(one)
 
 
 def update_one_first(where, updates, model, name):
     table = get_table_by_name(name)
     stmt = update(table)
-    stmt = stmt.where(build_oracle_where_expression(table, where))
-    stmt = stmt.where(text("ROWNUM=1"))
+    stmt = stmt.where(build_mysql_where_expression(table, where))
+    stmt = stmt.where(text("limit 1"))
     instance_dict: dict = convert_to_dict(updates)
     values = {}
     for key, value in instance_dict.items():
-        if isinstance(table.c[key.lower()].type, CLOB):
+        if isinstance(table.c[key.lower()].type, JSON):
             if value is not None:
-                values[key.lower()] = dumps(value)
+                values[key.lower()] = value
             else:
                 values[key.lower()] = None
         else:
@@ -302,7 +303,7 @@ def upsert_(where, updates, model, name):
     select_stmt = select(func.count(1).label("count")). \
         select_from(table). \
         with_for_update(nowait=True). \
-        where(build_oracle_where_expression(where))
+        where(build_mysql_where_expression(where))
     insert_stmt = insert(table).values(instance_dict)
     update_stmt = update(table).values(instance_dict)
     with engine.connect() as conn:
@@ -318,7 +319,7 @@ def upsert_(where, updates, model, name):
 def update_(where, updates, model, name):
     table = get_table_by_name(name)
     stmt = update(table)
-    stmt = stmt.where(build_oracle_where_expression(table, where))
+    stmt = stmt.where(build_mysql_where_expression(table, where))
     instance_dict: dict = convert_to_dict(updates)
     values = {}
     for key, value in instance_dict.items():
@@ -353,16 +354,16 @@ def delete_by_id(id_, name):
     key = get_primary_key(name)
     stmt = delete(table).where(eq(table.c[key.lower()], id_))
     with engine.connect() as conn:
-        conn.execute(stmt)
-        # conn.commit()
+        with conn.begin():
+            conn.execute(stmt)
 
 
 def delete_one(where: dict, name: str):
     table = get_table_by_name(name)
-    stmt = delete(table).where(build_oracle_where_expression(table, where))
+    stmt = delete(table).where(build_mysql_where_expression(table, where))
     with engine.connect() as conn:
-        conn.execute(stmt)
-        # conn.commit()
+        with conn.begin():
+            conn.execute(stmt)
 
 
 def delete_(where, model, name):
@@ -370,10 +371,10 @@ def delete_(where, model, name):
     if where is None:
         stmt = delete(table)
     else:
-        stmt = delete(table).where(build_oracle_where_expression(table, where))
+        stmt = delete(table).where(build_mysql_where_expression(table, where))
     with engine.connect() as conn:
-        conn.execute(stmt)
-        # conn.commit()
+        with conn.begin():
+            conn.execute(stmt)
 
 
 def find_by_id(id_, model, name):
@@ -400,7 +401,7 @@ def find_one(where, model, name):
         stmt = text(build_raw_sql_with_json_table(check_result, where, name))
     else:
         stmt = select(table)
-        stmt = stmt.where(build_oracle_where_expression(table, where))
+        stmt = stmt.where(build_mysql_where_expression(table, where))
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
@@ -421,20 +422,23 @@ def find_(where: dict, model, name: str) -> list:
         stmt = text(build_raw_sql_with_json_table(check_result, where, name))
     else:
         stmt = select(table)
-        # stmt = stmt.where(build_oracle_where_expression(table, where))
-        where_expression = build_oracle_where_expression(table, where)
+        where_expression = build_mysql_where_expression(table, where)
         if where_expression is not None:
             stmt = stmt.where(where_expression)
+    results = []
+    result = {}
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
-        result = cursor.fetchall()
-        # print("result", result)
-    if result is not None:
-        return [parse_obj(model, row, table) for row in result]
-    else:
-        return None
+        records = cursor.fetchall()
+        if records is None:
+            return None
+        else:
+            for record in records:
+                for index, name in enumerate(columns):
+                    result[name] = record[index]
+                results.append(result)
+            return [parse_obj(model, row, table) for row in result]
 
 
 def list_all(model, name):
@@ -443,70 +447,74 @@ def list_all(model, name):
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
         res = cursor.fetchall()
-    result = []
+    result = {}
+    results = []
     for row in res:
-        result.append(parse_obj(model, row, table))
-    return result
+        for index, name in enumerate(columns):
+            result[name] = row[index]
+        results.append(parse_obj(model,  result, table))
+    return results
 
 
 def list_(where, model, name) -> list:
     table = get_table_by_name(name)
-    stmt = select(table).where(build_oracle_where_expression(table, where))
+    stmt = select(table).where(build_mysql_where_expression(table, where))
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
         res = cursor.fetchall()
-    result = []
+    results = []
+    result = {}
     for row in res:
-        result.append(parse_obj(model, row, table))
-    return result
+        for index, name in enumerate(columns):
+            result[name] = row[index]
+        results.append(parse_obj(model, result, table))
+    return results
 
 
 def page_all(sort, pageable, model, name) -> DataPage:
     count = count_table(name)
     table = get_table_by_name(name)
     stmt = select(table)
-    orders = build_oracle_order(table, sort)
+    orders = build_mysql_order(table, sort)
     for order in orders:
         stmt = stmt.order_by(order)
     offset = pageable.pageSize * (pageable.pageNumber - 1)
     stmt = stmt.offset(offset).limit(pageable.pageSize)
-    result = []
+    results = []
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
         res = cursor.fetchall()
-    results_record = {}
+    result = {}
     for row in res:
         for index, name in enumerate(columns):
-            results_record[name] = row[index]
-        result.append(parse_obj(model, row, table))
-    return build_data_pages(pageable, result, count)
+            result[name] = row[index]
+        results.append(parse_obj(model, result, table))
+    return build_data_pages(pageable, results, count)
 
 
 def page_(where, sort, pageable, model, name) -> DataPage:
     count = count_table(name)
     table = get_table_by_name(name)
-    stmt = select(table).where(build_oracle_where_expression(table, where))
-    orders = build_oracle_order(table, sort)
+    stmt = select(table).where(build_mysql_where_expression(table, where))
+    orders = build_mysql_order(table, sort)
     for order in orders:
         stmt = stmt.order_by(order)
     offset = pageable.pageSize * (pageable.pageNumber - 1)
-    # stmt = stmt.offset(offset).limit(pageable.pageSize)
-    stmt = text(str(
-        stmt.compile(compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
-    result = []
+    stmt = stmt.offset(offset).limit(pageable.pageSize)
+    results = []
+    result = {}
     with engine.connect() as conn:
-        cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
+        cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
         res = cursor.fetchall()
     for row in res:
-        result.append(parse_obj(model, row, table))
-    return build_data_pages(pageable, result, count)
+        for index, name in enumerate(columns):
+            result[name] = row[index]
+            results.append(parse_obj(model, result, table))
+    return build_data_pages(pageable, results, count)
 
 
 '''
@@ -540,15 +548,17 @@ def get_datatype_by_factor_type(type: str):
 def check_topic_type_is_raw(topic_name):
     table = get_table_by_name("topics")
     select_stmt = select(table).where(
-        build_oracle_where_expression(table, {"name": topic_name}))
+        build_mysql_where_expression(table, {"name": topic_name}))
+    result = {}
     with engine.connect() as conn:
         cursor = conn.execute(select_stmt).cursor
         columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
-        result = cursor.fetchone()
-        if result is None:
+        row = cursor.fetchone()
+        if row is None:
             raise
         else:
+            for index, name in enumerate(columns):
+                result[name] = row[index]
             if result['TYPE'] == "raw":
                 return True
             else:
@@ -580,7 +590,7 @@ def create_raw_topic_data_table(topic):
     table = Table('topic_' + topic_name.lower(), metadata)
     key = Column(name="id_", type_=String(60), primary_key=True)
     table.append_column(key)
-    col = Column(name="data_", type_=CLOB, nullable=True)
+    col = Column(name="data_", type_=JSON, nullable=True)
     table.append_column(col)
     table.create(engine)
 
@@ -617,17 +627,13 @@ def alter_topic_data_table(topic):
                 stmt = 'ALTER TABLE %s ADD %s %s' % (
                     table_name, column_name, column_type)
                 with engine.connect() as conn:
-                    conn.execute(text(stmt))
-                    # conn.commit()
+                    with conn.begin():
+                        conn.execute(text(stmt))
         metadata.remove(table)
 
 
 def drop_topic_data_table(topic_name):
     table_name = 'topic_' + topic_name
-    '''
-    table = Table(table_name, metadata, extend_existing=True,
-                  autoload=True, autoload_with=engine)
-    '''
     try:
         table = get_topic_table_by_name(table_name)
         table.drop(engine)
@@ -637,33 +643,25 @@ def drop_topic_data_table(topic_name):
 
 def topic_data_delete_(where, topic_name):
     table_name = 'topic_' + topic_name
-    '''
-    table = Table(table_name, metadata, extend_existing=True,
-                  autoload=True, autoload_with=engine)
-    '''
     table = get_topic_table_by_name(table_name)
     if where is None:
         stmt = delete(table)
     else:
-        stmt = delete(table).where(build_oracle_where_expression(table, where))
+        stmt = delete(table).where(build_mysql_where_expression(table, where))
     with engine.connect() as conn:
-        conn.execute(stmt)
-        # conn.commit()
+        with conn.begin():
+            conn.execute(stmt)
 
 
 def topic_data_insert_one(one, topic_name):
     if check_topic_type_is_raw(topic_name):
         raw_topic_data_insert_one(one, topic_name)
     else:
-        '''
-        table = Table('topic_' + topic_name, metadata,
-                      extend_existing=True, autoload=True, autoload_with=engine)
-        '''
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         # one_dict: dict = convert_to_dict(one)
         one_dict: dict = capital_to_lower(convert_to_dict(one))
-        one_dict = build_oracle_updates_expression_for_insert(table, one_dict)
+        one_dict = build_mysql_updates_expression_for_insert(table, one_dict)
         value = {}
         for key in table.c.keys():
             if key == "id_":
@@ -672,36 +670,28 @@ def topic_data_insert_one(one, topic_name):
                 value[key] = one_dict.get(key)
         stmt = insert(table)
         with engine.connect() as conn:
-            conn.execute(stmt, value)
-            # conn.commit()
+            with conn.begin():
+                conn.execute(stmt, value)
 
 
 def raw_topic_data_insert_one(one, topic_name):
     if topic_name == "raw_pipeline_monitor":
         raw_pipeline_monitor_insert_one(one, topic_name)
     else:
-        '''
-        table = Table('topic_' + topic_name, metadata,
-                      extend_existing=True, autoload=True, autoload_with=engine)
-        '''
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         one_dict: dict = convert_to_dict(one)
-        value = {'id_': get_surrogate_key(), 'data_': dumps(one_dict)}
+        value = {'id_': get_surrogate_key(), 'data_': one_dict}
         stmt = insert(table)
         with engine.connect() as conn:
-            conn.execute(stmt, value)
-            # conn.commit()
+            with conn.begin():
+                conn.execute(stmt, value)
 
 
 def topic_data_insert_(data, topic_name):
     if check_topic_type_is_raw(topic_name):
         raw_topic_data_insert_(data, topic_name)
     else:
-        '''
-        table = Table('topic_' + topic_name, metadata,
-                      extend_existing=True, autoload=True, autoload_with=engine)
-        '''
         start_time = time.time()
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
@@ -717,44 +707,31 @@ def topic_data_insert_(data, topic_name):
             values.append(value)
         stmt = insert(table)
         with engine.connect() as conn:
-            conn.execute(stmt, values)
-            # conn.commit()
+            with conn.begin():
+                conn.execute(stmt, values)
 
 
 def raw_topic_data_insert_(data, topic_name):
-    '''
-    table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
-    '''
-
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
 
     values = []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
-        value = {'id_': get_surrogate_key(), 'data_': dumps(instance_dict)}
+        value = {'id_': get_surrogate_key(), 'data_': instance_dict}
         values.append(value)
     stmt = insert(table)
     with engine.connect() as conn:
-        conn.execute(stmt, values)
-        # conn.commit()
+        with conn.begin():
+            conn.execute(stmt, values)
 
 
 def topic_data_update_one(id_: str, one: any, topic_name: str):
-    '''
-    table = Table('topic_' + topic_name, metadata,
-                  extend_existing=True, autoload=True, autoload_with=engine)
-    '''
-
-    start_time = time.time()
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
-
-    elapsed_time = time.time() - start_time
-    # print("elapsed_time topic_data_update_one", elapsed_time)
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
-    one_dict_lower = build_oracle_updates_expression_for_update(table, capital_to_lower(one_dict))
+    one_dict_lower = build_mysql_updates_expression_for_update(table, capital_to_lower(one_dict))
     values = {}
     for key, value in one_dict_lower.items():
         if key != 'id_':
@@ -762,19 +739,15 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
                 values[key.lower()] = value
     stmt = stmt.values(values)
     with engine.begin() as conn:
-        conn.execute(stmt)
-        # conn.commit()
+        with conn.begin():
+            conn.execute(stmt)
 
 
 def topic_data_update_(query_dict, instance, topic_name):
-    '''
-    table = Table('topic_' + topic_name, metadata,
-                  extend_existing=True, autoload=True, autoload_with=engine)
-    '''
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
     stmt = (update(table).
-            where(build_oracle_where_expression(table, query_dict)))
+            where(build_mysql_where_expression(table, query_dict)))
     instance_dict: dict = convert_to_dict(instance)
     values = {}
     for key, value in instance_dict.items():
@@ -783,78 +756,64 @@ def topic_data_update_(query_dict, instance, topic_name):
                 values[key.lower()] = value
     stmt = stmt.values(values)
     with engine.begin() as conn:
-        conn.execute(stmt)
-        # conn.commit()
+        with conn.begin():
+            conn.execute(stmt)
 
 
 def topic_data_find_by_id(id_: str, topic_name: str) -> any:
-    '''
-    table = Table('topic_' + topic_name, metadata,
-                  extend_existing=True, autoload=True, autoload_with=engine)
-    '''
-
-    start_time = time.time()
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
-
-    elapsed_time = time.time() - start_time
-    # print("elapsed_time topic_data_update_one", elapsed_time)
 
     stmt = select(table).where(eq(table.c['id_'], id_))
     with engine.connect() as conn:
 
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
-        result = cursor.fetchone()
-
-    if result is None:
+        row = cursor.fetchone()
+    if row is None:
         return None
     else:
-        # return capital_to_lower(result)
+        result = {}
+        for index, name in enumerate(columns):
+            result[name] = row[index]
         return convert_dict_key(result, topic_name)
 
 
 def topic_data_find_one(where, topic_name) -> any:
-    '''
-    table = Table('topic_' + topic_name, metadata,
-                  extend_existing=True, autoload=True, autoload_with=engine)
-    '''
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
-    stmt = select(table).where(build_oracle_where_expression(table, where))
+    stmt = select(table).where(build_mysql_where_expression(table, where))
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
-        result = cursor.fetchone()
-    if result is None:
+        row = cursor.fetchone()
+    if row is None:
         return None
     else:
-        # return capital_to_lower(result)
+        result = {}
+        for index, name in enumerate(columns):
+            result[name] = row[index]
         return convert_dict_key(result, topic_name)
 
 
 def topic_data_find_(where, topic_name):
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
-    stmt = select(table).where(build_oracle_where_expression(table, where))
+    stmt = select(table).where(build_mysql_where_expression(table, where))
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
-        result = cursor.fetchall()
-    if result is None:
+        res = cursor.fetchall()
+    if res is None:
         return None
     else:
-        # return capital_to_lower(result)
-        if isinstance(result, list):
-            results = []
-            for item in result:
-                results.append(convert_dict_key(item, topic_name))
-            return results
-        else:
-            return result
+        result = {}
+        results = []
+        for row in res:
+            for index, name in enumerate(columns):
+                result[name] = row[index]
+            results.append(result)
+        return convert_list_elements_key(results, topic_name)
 
 
 def topic_data_list_all(topic_name) -> list:
@@ -867,53 +826,48 @@ def topic_data_page_(where, sort, pageable, model, name) -> DataPage:
     else:
         count = count_topic_data_table(name)
         table = get_topic_table_by_name(name)
-        stmt = select(table).where(build_oracle_where_expression(table, where))
-        orders = build_oracle_order(table, sort)
+        stmt = select(table).where(build_mysql_where_expression(table, where))
+        orders = build_mysql_order(table, sort)
         for order in orders:
             stmt = stmt.order_by(order)
         offset = pageable.pageSize * (pageable.pageNumber - 1)
-        # stmt = stmt.offset(offset).limit(pageable.pageSize)
-        stmt = text(str(
-            stmt.compile(
-                compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
-        result = []
+        stmt = stmt.offset(offset).limit(pageable.pageSize)
+        result = {}
+        results = []
         with engine.connect() as conn:
-            cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
+            cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
             res = cursor.fetchall()
         for row in res:
+            for index, name in enumerate(columns):
+                result[name] = row[index]
             if model is not None:
-                result.append(parse_obj(model, row, table))
+                results.append(parse_obj(model, result, table))
             else:
-                result.append(row)
-        return build_data_pages(pageable, result, count)
+                results.append(result)
+        return build_data_pages(pageable, results, count)
 
 
 def topic_find_one_and_update(where, updates, name):
-    '''
-    table = Table('topic_' + name, metadata, extend_existing=True,
-                  autoload=True, autoload_with=engine)
-    '''
     table_name = 'topic_' + name
     table = get_topic_table_by_name(table_name)
     data_dict: dict = convert_to_dict(updates)
 
     select_for_update_stmt = select(table). \
         with_for_update(nowait=False). \
-        where(build_oracle_where_expression(table, where))
+        where(build_mysql_where_expression(table, where))
 
     # if "id_" not in updates:
     #     updates["id_"] = get_surrogate_key()
     insert_stmt = insert(table).values(
-        build_oracle_updates_expression_for_insert(table, data_dict))
+        build_mysql_updates_expression_for_insert(table, data_dict))
 
     update_stmt = update(table).where(
-        build_oracle_where_expression(table, where)).values(
-        build_oracle_updates_expression_for_update(table, data_dict))
+        build_mysql_where_expression(table, where)).values(
+        build_mysql_updates_expression_for_update(table, data_dict))
 
     select_new_stmt = select(table). \
-        where(build_oracle_where_expression(table, where))
+        where(build_mysql_where_expression(table, where))
 
     with engine.connect() as conn:
         with conn.begin():
@@ -922,25 +876,15 @@ def topic_find_one_and_update(where, updates, name):
                 conn.execute(update_stmt)
             else:
                 conn.execute(insert_stmt)
-    '''
-    with engine.connect() as conn:
-        with conn.begin():
-            cursor = conn.execute(select_stmt).cursor
-            columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
-            result = cursor.fetchone()
-            if result is not None:
-                conn.execute(update_stmt)
-            else:
-                conn.execute(insert_stmt)
-    '''
+
     with engine.connect() as conn:
         with conn.begin():
             cursor = conn.execute(select_new_stmt).cursor
             columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
-            result = cursor.fetchone()
-
+            row = cursor.fetchone()
+            result = {}
+            for index, name in enumerate(columns):
+                result[name] = row[index]
     return convert_dict_key(result, name)
 
 
@@ -967,6 +911,29 @@ def convert_dict_key(dict_info, topic_name):
         new_dict[factor['name']] = dict_info[factor['name'].upper()]
     new_dict['id_'] = dict_info['ID_']
     return new_dict
+
+
+def convert_list_elements_key(list_info, topic_name):
+    if list_info is None:
+        return None
+    new_dict = {}
+    new_list = []
+    stmt = "select t.factors from topics t where t.name=:topic_name"
+    result = {}
+    with engine.connect() as conn:
+        cursor = conn.execute(stmt, {"topic_name": topic_name}).cursor
+        columns = [col[0] for col in cursor.description]
+        row = cursor.fetchone()
+        for index, name in row:
+            result[name] = row[index]
+        factors = result['FACTORS']
+    for item in list_info:
+        for factor in factors:
+            new_dict[factor['name']] = item[factor['name'].lower()]
+            new_dict['id_'] = item['id_']
+        new_list.append(new_dict)
+    return new_list
+
 
 
 def check_value_type(value):
@@ -1030,9 +997,9 @@ def raw_pipeline_monitor_insert_one(one, topic_name):
         elif key == "data_":
             value[key] = dumps(one_dict)
         else:
-            if isinstance(table.c[key].type, CLOB):
+            if isinstance(table.c[key].type, JSON):
                 if one_lower_dict.get(key) is not None:
-                    value[key] = dumps(one_lower_dict.get(key))
+                    value[key] = one_lower_dict.get(key)
                 else:
                     value[key] = None
             else:
@@ -1045,27 +1012,26 @@ def raw_pipeline_monitor_insert_one(one, topic_name):
 def raw_pipeline_monitor_page_(where, sort, pageable, model, name) -> DataPage:
     count = count_topic_data_table(name)
     table = get_topic_table_by_name(name)
-    stmt = select(table).where(build_oracle_where_expression(table, where))
-    orders = build_oracle_order(table, sort)
+    stmt = select(table).where(build_mysql_where_expression(table, where))
+    orders = build_mysql_order(table, sort)
     for order in orders:
         stmt = stmt.order_by(order)
     offset = pageable.pageSize * (pageable.pageNumber - 1)
-    # stmt = stmt.offset(offset).limit(pageable.pageSize)
-    stmt = text(str(
-        stmt.compile(
-            compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
-    result = []
+    stmt = stmt.offset(offset).limit(pageable.pageSize)
+    results = []
     with engine.connect() as conn:
-        cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
+        cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
         res = cursor.fetchall()
+    result = {}
     for row in res:
+        for index,name in enumerate(columns):
+            result[name] = row[index]
         if model is not None:
-            result.append(parse_obj(model, row, table))
+            results.append(parse_obj(model, result, table))
         else:
-            result.append(json.loads(row['DATA_']))
-    return build_data_pages(pageable, result, count)
+            results.append(result['DATA_'])
+    return build_data_pages(pageable, results, count)
 
 
 def clear_metadata():

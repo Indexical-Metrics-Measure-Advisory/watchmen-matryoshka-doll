@@ -424,7 +424,6 @@ def find_(where: dict, model, name: str) -> list:
         columns = [col[0] for col in cursor.description]
         cursor.rowfactory = lambda *args: dict(zip(columns, args))
         result = cursor.fetchall()
-        # print("result", result)
     if result is not None:
         return [parse_obj(model, row, table) for row in result]
     else:
@@ -670,10 +669,6 @@ def topic_data_insert_one(one, topic_name):
     if check_topic_type_is_raw(topic_name):
         raw_topic_data_insert_one(one, topic_name)
     else:
-        '''
-        table = Table('topic_' + topic_name, metadata,
-                      extend_existing=True, autoload=True, autoload_with=engine)
-        '''
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         # one_dict: dict = convert_to_dict(one)
@@ -687,8 +682,9 @@ def topic_data_insert_one(one, topic_name):
                 value[key] = one_dict.get(key)
         stmt = insert(table)
         with engine.connect() as conn:
-            conn.execute(stmt, value)
-            # conn.commit()
+            with conn.begin():
+                result = conn.execute(stmt, value)
+        return result.rowcount
 
 
 def raw_topic_data_insert_one(one, topic_name):
@@ -732,8 +728,8 @@ def topic_data_insert_(data, topic_name):
             values.append(value)
         stmt = insert(table)
         with engine.connect() as conn:
-            conn.execute(stmt, values)
-            # conn.commit()
+            result = conn.execute(stmt, values)
+
 
 
 def raw_topic_data_insert_(data, topic_name):
@@ -756,17 +752,8 @@ def raw_topic_data_insert_(data, topic_name):
 
 
 def topic_data_update_one(id_: str, one: any, topic_name: str):
-    '''
-    table = Table('topic_' + topic_name, metadata,
-                  extend_existing=True, autoload=True, autoload_with=engine)
-    '''
-
-    start_time = time.time()
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
-
-    elapsed_time = time.time() - start_time
-    # print("elapsed_time topic_data_update_one", elapsed_time)
     stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
     one_dict_lower = build_oracle_updates_expression_for_update(table, capital_to_lower(one_dict))
@@ -777,8 +764,9 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
                 values[key.lower()] = value
     stmt = stmt.values(values)
     with engine.begin() as conn:
-        conn.execute(stmt)
-        # conn.commit()
+        with conn.begin():
+            result = conn.execute(stmt)
+    return result.rowcount
 
 
 def topic_data_update_(query_dict, instance, topic_name):
@@ -798,23 +786,13 @@ def topic_data_update_(query_dict, instance, topic_name):
                 values[key.lower()] = value
     stmt = stmt.values(values)
     with engine.begin() as conn:
-        conn.execute(stmt)
-        # conn.commit()
+        result = conn.execute(stmt)
+
 
 
 def topic_data_find_by_id(id_: str, topic_name: str) -> any:
-    '''
-    table = Table('topic_' + topic_name, metadata,
-                  extend_existing=True, autoload=True, autoload_with=engine)
-    '''
-
-    start_time = time.time()
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
-
-    elapsed_time = time.time() - start_time
-    # print("elapsed_time topic_data_update_one", elapsed_time)
-
     stmt = select(table).where(eq(table.c['id_'], id_))
     with engine.connect() as conn:
 
