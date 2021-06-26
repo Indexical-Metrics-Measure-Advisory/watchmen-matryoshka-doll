@@ -1,28 +1,28 @@
 import json
 
-from sqlalchemy import CLOB, text, JSON
+from sqlalchemy import CLOB, text
 
-from watchmen.common.oracle.oracle_engine import engine
-from watchmen.common.storage.utils.table_utils import get_primary_key
+from watchmen.database.oracle.oracle_engine import engine
+from watchmen.database.storage.utils.table_utils import get_primary_key
 
 
 def parse_obj(base_model, result, table):
     model = base_model()
     for attr, value in model.__dict__.items():
         if attr[:1] != '_':
-            if isinstance(table.c[attr.lower()].type, JSON):
+            if isinstance(table.c[attr.lower()].type, CLOB):
                 if attr == "on":
                     if result[attr] is not None:
-                        setattr(model, attr, json.loads(result[attr.lower()]))
+                        setattr(model, attr, json.loads(result[attr]))
                     else:
                         setattr(model, attr, None)
                 else:
-                    if result[attr.lower()] is not None:
-                        setattr(model, attr, json.loads(result[attr.lower()]))
+                    if result[attr.upper()] is not None:
+                        setattr(model, attr, json.loads(result[attr.upper()]))
                     else:
                         setattr(model, attr, None)
             else:
-                setattr(model, attr, result[attr.lower()])
+                setattr(model, attr, result[attr.upper()])
     return base_model.parse_obj(model)
 
 

@@ -5,7 +5,7 @@ from pydantic.main import BaseModel
 
 from watchmen.common.constants import presto_constants
 from watchmen.common.constants.parameter_constants import RAW
-from watchmen.common.storage.storage_template import find_one, insert_one, delete_one
+from watchmen.database.storage.storage_template import find_one, insert_one, delete_one
 from watchmen.common.utils.data_utils import build_collection_name, is_presto_varchar_type, is_presto_int_type, \
     is_presto_datetime
 from watchmen.config.config import settings

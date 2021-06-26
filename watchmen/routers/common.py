@@ -8,10 +8,10 @@ from watchmen.auth.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
-from watchmen.common.mongo.index import delete_topic_collection
+from watchmen.database.mongo.index import delete_topic_collection
 from watchmen.common.mongo_model import MongoModel
 from watchmen.common.parameter import Parameter
-from watchmen.common.storage.storage_template import create_raw_pipeline_monitor, clear_metadata
+from watchmen.database.storage.storage_template import create_raw_pipeline_monitor, clear_metadata
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.pipeline.core.dependency.caculate_dependency_new import pipelineExecutionPath

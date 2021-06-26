@@ -1,4 +1,4 @@
-from watchmen.common.storage.storage_template import topic_data_find_one, topic_data_find_
+from watchmen.database.storage.storage_template import topic_data_find_one, topic_data_find_
 
 
 # db = get_client()

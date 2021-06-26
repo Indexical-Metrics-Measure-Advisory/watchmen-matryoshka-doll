@@ -2,12 +2,12 @@ from watchmen.auth.service.security import get_password_hash
 from watchmen.auth.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.storage.engine_adaptor import find_template
+from watchmen.database.storage.storage_template import find_template
 
 # db = get_client()
 #
 # users = db.get_collection('users')
-from watchmen.common.storage.storage_template import find_one, find_by_id, find_, insert_one, update_one, page_
+from watchmen.database.storage.storage_template import find_one, find_by_id, find_, insert_one, update_one, page_
 
 USERS = "users"
 
