@@ -2,7 +2,7 @@ import json
 
 from sqlalchemy import text, JSON
 
-from watchmen.database.oracle.oracle_engine import engine
+from watchmen.database.mysql.mysql_engine import engine
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
 
