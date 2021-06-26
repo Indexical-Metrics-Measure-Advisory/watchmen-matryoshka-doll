@@ -81,8 +81,10 @@ def build_mongo_where_expression(where: dict):
                 return {key: {"$eq": value}}
 
 
-# used in pull_update, just allowed to update one field
 def build_mongo_update_expression(updates):
+    """
+    # used in pull_update, just allowed to update one field
+    """
     for key, value in updates.items():
         if isinstance(value, dict):
             for k, v in value.items():

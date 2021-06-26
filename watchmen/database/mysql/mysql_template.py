@@ -29,63 +29,35 @@ log.info("mysql template initialized")
 
 def build_raw_sql_with_json_table(check_result, where, name):
     if check_result["table_name"] == "spaces" and check_result["column_name"] == "groupIds":
-        json_table_stmt = "select s.*, jt.group_id " \
-                          "from spaces s ,json_table(groupids,'$[*]' " \
-                          "COLUMNS (group_id varchar2(60) PATH '$[*]') ) as jt"
-        where_stmt = ""
-        for id_ in where["groupIds"]["in"]:
-            if where_stmt == "":
-                where_stmt = "(" + id_
-            else:
-                where_stmt = where_stmt + ", " + id_
-        where_stmt = where_stmt + ")"
-        stmt = "select t.* from (" + json_table_stmt + \
-               ") t where t.group_id in " + where_stmt
+        json_table_stmt = "select s.* " \
+                          "from spaces s "
+        value_ = ",".join(where["groupIds"]["in"])
+        where_stmt = "where JSON_CONTAINS(groupids, '[\"" + value_ + "\"]', '$') = 1"
+        stmt = json_table_stmt + where_stmt
         return stmt
 
     if check_result["table_name"] == "user_groups" and check_result["column_name"] == "userIds":
-        json_table_stmt = "select s.*, jt.user_id " \
-                          "from user_groups s ,json_table(userids,'$[*]' " \
-                          "COLUMNS (user_id varchar2(60) PATH '$[*]') ) as jt"
-        where_stmt = ""
-        for id_ in where["userIds"]["in"]:
-            if where_stmt == "":
-                where_stmt = "(" + id_
-            else:
-                where_stmt = where_stmt + ", " + id_
-        where_stmt = where_stmt + ")"
-        stmt = "select t.* from (" + json_table_stmt + \
-               ") t where t.user_id in " + where_stmt
+        json_table_stmt = "select s.* " \
+                          "from user_groups s "
+        value_ = ",".join(where["userIds"]["in"])
+        where_stmt = "where JSON_CONTAINS(userids, '[\"" + value_ + "\"]', '$') = 1"
+        stmt = json_table_stmt + where_stmt
         return stmt
 
     if check_result["table_name"] == "user_groups" and check_result["column_name"] == "spaceIds":
-        json_table_stmt = "select s.*, jt.space_id " \
-                          "from user_groups s ,json_table(spaceids,'$[*]' " \
-                          "COLUMNS (space_id varchar2(60) PATH '$[*]') ) as jt"
-        where_stmt = ""
-        for id_ in where["spaceIds"]["in"]:
-            if where_stmt == "":
-                where_stmt = "(" + id_
-            else:
-                where_stmt = where_stmt + ", " + id_
-        where_stmt = where_stmt + ")"
-        stmt = "select t.* from (" + json_table_stmt + \
-               ") t where t.space_id in " + where_stmt
+        json_table_stmt = "select s.* " \
+                          "from user_groups s "
+        value_ = ",".join(where["spaceIds"]["in"])
+        where_stmt = "where JSON_CONTAINS(spaceids, '[\"" + value_ + "\"]', '$') = 1"
+        stmt = json_table_stmt + where_stmt
         return stmt
 
     if check_result["table_name"] == "users" and check_result["column_name"] == "groupIds":
-        json_table_stmt = "select s.*, jt.group_id " \
-                          "from users s ,json_table(groupids,'$[*]' " \
-                          "COLUMNS (group_id varchar2(60) PATH '$[*]') ) as jt"
-        where_stmt = ""
-        for id_ in where["groupIds"]["in"]:
-            if where_stmt == "":
-                where_stmt = "(" + id_
-            else:
-                where_stmt = where_stmt + ", " + id_
-        where_stmt = where_stmt + ")"
-        stmt = "select t.* from (" + json_table_stmt + \
-               ") t where t.group_id in " + where_stmt
+        json_table_stmt = "select s.*" \
+                          "from users s "
+        value_ = ",".join(where["groupIds"]["in"])
+        where_stmt = "where JSON_CONTAINS(groupids, '[\"" + value_ + "\"]', '$') = 1"
+        stmt = json_table_stmt + where_stmt
         return stmt
 
 
@@ -426,7 +398,6 @@ def find_(where: dict, model, name: str) -> list:
         if where_expression is not None:
             stmt = stmt.where(where_expression)
     results = []
-    result = {}
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
@@ -435,10 +406,11 @@ def find_(where: dict, model, name: str) -> list:
             return None
         else:
             for record in records:
+                result = {}
                 for index, name in enumerate(columns):
                     result[name] = record[index]
                 results.append(result)
-            return [parse_obj(model, row, table) for row in result]
+            return [parse_obj(model, row, table) for row in results]
 
 
 def list_all(model, name):
@@ -448,9 +420,9 @@ def list_all(model, name):
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
         res = cursor.fetchall()
-    result = {}
     results = []
     for row in res:
+        result = {}
         for index, name in enumerate(columns):
             result[name] = row[index]
         results.append(parse_obj(model,  result, table))
@@ -465,8 +437,8 @@ def list_(where, model, name) -> list:
         columns = [col[0] for col in cursor.description]
         res = cursor.fetchall()
     results = []
-    result = {}
     for row in res:
+        result = {}
         for index, name in enumerate(columns):
             result[name] = row[index]
         results.append(parse_obj(model, result, table))
@@ -487,8 +459,8 @@ def page_all(sort, pageable, model, name) -> DataPage:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
         res = cursor.fetchall()
-    result = {}
     for row in res:
+        result = {}
         for index, name in enumerate(columns):
             result[name] = row[index]
         results.append(parse_obj(model, result, table))
@@ -505,15 +477,15 @@ def page_(where, sort, pageable, model, name) -> DataPage:
     offset = pageable.pageSize * (pageable.pageNumber - 1)
     stmt = stmt.offset(offset).limit(pageable.pageSize)
     results = []
-    result = {}
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
         res = cursor.fetchall()
     for row in res:
+        result = {}
         for index, name in enumerate(columns):
             result[name] = row[index]
-            results.append(parse_obj(model, result, table))
+        results.append(parse_obj(model, result, table))
     return build_data_pages(pageable, results, count)
 
 
@@ -549,7 +521,6 @@ def check_topic_type_is_raw(topic_name):
     table = get_table_by_name("topics")
     select_stmt = select(table).where(
         build_mysql_where_expression(table, {"name": topic_name}))
-    result = {}
     with engine.connect() as conn:
         cursor = conn.execute(select_stmt).cursor
         columns = [col[0] for col in cursor.description]
@@ -557,6 +528,7 @@ def check_topic_type_is_raw(topic_name):
         if row is None:
             raise
         else:
+            result = {}
             for index, name in enumerate(columns):
                 result[name] = row[index]
             if result['TYPE'] == "raw":
@@ -807,9 +779,9 @@ def topic_data_find_(where, topic_name):
     if res is None:
         return None
     else:
-        result = {}
         results = []
         for row in res:
+            result = {}
             for index, name in enumerate(columns):
                 result[name] = row[index]
             results.append(result)
@@ -832,13 +804,13 @@ def topic_data_page_(where, sort, pageable, model, name) -> DataPage:
             stmt = stmt.order_by(order)
         offset = pageable.pageSize * (pageable.pageNumber - 1)
         stmt = stmt.offset(offset).limit(pageable.pageSize)
-        result = {}
         results = []
         with engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             res = cursor.fetchall()
         for row in res:
+            result = {}
             for index, name in enumerate(columns):
                 result[name] = row[index]
             if model is not None:

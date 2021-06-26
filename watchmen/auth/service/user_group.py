@@ -8,28 +8,24 @@ from watchmen.space.storage.space_storage import get_space_list_by_ids, update_s
 
 
 def sync_user_group_to_space(user_group: UserGroup):
-    '''
-    update_many(collection_name=SPACES, query_dict={"groupIds": {"$in": [user_group.userGroupId]}},
-                update_dict={"$pull": {"groupIds": {"$in": [user_group.userGroupId]}}})
-    '''
     pull_update({"groupIds": {"in": [user_group.userGroupId]}}, {"groupIds": {"in": [user_group.userGroupId]}}, Space,
                 SPACES)
     space_list = get_space_list_by_ids(user_group.spaceIds)
     for space in space_list:
+        if space.groupIds is None:
+            space.groupIds = []
         if user_group.userGroupId not in space.groupIds:
             space.groupIds.append(user_group.userGroupId)
             update_space_to_storage(space.spaceId, space)
 
 
 def sync_user_group_to_user(user_group: UserGroup):
-    '''
-    update_many(collection_name=USERS, query_dict={"groupIds": {"$in": [user_group.userGroupId]}},
-                update_dict={"$pull": {"groupIds": {"$in": [user_group.userGroupId]}}})
-    '''
     pull_update({"groupIds": {"in": [user_group.userGroupId]}}, {"groupIds": {"in": [user_group.userGroupId]}}, User,
                 USERS)
     user_list = get_user_list_by_ids(user_group.userIds)
     for user in user_list:
+        if user.groupIds is None:
+            user.groupIds = []
         if user_group.userGroupId not in user.groupIds:
             user.groupIds.append(user_group.userGroupId)
             update_user_storage(user)
