@@ -13,10 +13,10 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
 from watchmen.common.data_page import DataPage
-from watchmen.database.mysql import engine, dumps
+from watchmen.database.mysql.mysql_engine import engine, dumps
 from watchmen.database.mysql.mysql_table_definition import get_table_by_name, metadata, get_topic_table_by_name
-from watchmen.database.mysql import parse_obj, count_table, count_topic_data_table
-from watchmen.database.storage import get_primary_key
+from watchmen.database.mysql.mysql_utils import parse_obj, count_table, count_topic_data_table
+from watchmen.database.storage.utils.table_utils import get_primary_key
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
