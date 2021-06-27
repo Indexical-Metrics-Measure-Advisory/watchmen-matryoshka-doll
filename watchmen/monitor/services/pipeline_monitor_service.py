@@ -2,15 +2,14 @@
 import watchmen.pipeline.index
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.constants import pipeline_constants
-from watchmen.database.storage.storage_template import raw_topic_data_insert_one
+from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.database.storage.storage_template import raw_topic_data_insert_one, insert_one
 
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
-from watchmen.topic.storage.topic_schema_storage import get_topic
-
-
-
+from watchmen.topic.storage.topic_schema_storage import get_topic, get_topic_by_name, save_topic
+from watchmen.topic.topic import Topic
 
 
 def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):
@@ -22,7 +21,18 @@ def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):
         raise Exception("topic name does not exist")
 
     add_audit_columns(topic_event.data, INSERT)
-    raw_topic_data_insert_one(topic_event.data,topic_event.code)
+    raw_topic_data_insert_one(topic_event.data, topic_event.code)
     watchmen.pipeline.index.trigger_pipeline(topic_event.code,
                                              {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
                                              TriggerType.insert)
+
+
+def insert_monitor_topic():
+    monitor_topic = get_topic_by_name("raw_pipeline_monitor")
+    if monitor_topic is None:
+        topic = Topic()
+        topic.topicId = get_surrogate_key()
+        topic.name = "raw_pipeline_monitor"
+        topic.type = "raw"
+        topic.kind = "system"
+        save_topic(topic)

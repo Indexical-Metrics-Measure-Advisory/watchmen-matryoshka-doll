@@ -22,6 +22,7 @@ from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
+
 log = logging.getLogger("app." + __name__)
 
 log.info("mysql template initialized")
@@ -531,7 +532,7 @@ def check_topic_type_is_raw(topic_name):
             result = {}
             for index, name in enumerate(columns):
                 result[name] = row[index]
-            if result['TYPE'] == "raw":
+            if result['type'] == "raw":
                 return True
             else:
                 return False
@@ -711,8 +712,7 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
                 values[key.lower()] = value
     stmt = stmt.values(values)
     with engine.begin() as conn:
-        with conn.begin():
-            conn.execute(stmt)
+        conn.execute(stmt)
 
 
 def topic_data_update_(query_dict, instance, topic_name):
@@ -874,14 +874,12 @@ def convert_dict_key(dict_info, topic_name):
     new_dict = {}
     stmt = "select t.factors from topics t where t.name=:topic_name"
     with engine.connect() as conn:
-        cursor = conn.execute(stmt, {"topic_name": topic_name}).cursor
-        columns = [col[0] for col in cursor.description]
-        cursor.rowfactory = lambda *args: dict(zip(columns, args))
+        cursor = conn.execute(text(stmt), {"topic_name": topic_name}).cursor
         row = cursor.fetchone()
-        factors = json.loads(row['FACTORS'])
+        factors = json.loads(row[0])
     for factor in factors:
-        new_dict[factor['name']] = dict_info[factor['name'].upper()]
-    new_dict['id_'] = dict_info['ID_']
+        new_dict[factor['name']] = dict_info[factor['name'].lower()]
+    new_dict['id_'] = dict_info['id_']
     return new_dict
 
 
@@ -917,17 +915,17 @@ def check_value_type(value):
         return value
 
 
+#ToDo
 '''
-special for raw_pipeline_monitor, need refactor for raw topic schema structure, ToDo
+special for raw_pipeline_monitor, need refactor for raw topic schema structure
 '''
-
 
 def create_raw_pipeline_monitor():
     table = Table('topic_raw_pipeline_monitor', metadata)
     table.append_column(Column(name='id_', type_=String(60), primary_key=True))
-    table.append_column(Column(name='data_', type_=CLOB, nullable=True))
-    table.append_column(Column(name='sys_inserttime', type_=Date, nullable=True))
-    table.append_column(Column(name='sys_updatetime', type_=Date, nullable=True))
+    table.append_column(Column(name='data_', type_=JSON, nullable=True))
+    table.append_column(Column(name='sys_inserttime', type_=DateTime, nullable=True))
+    table.append_column(Column(name='sys_updatetime', type_=DateTime, nullable=True))
     schema = json.loads(PipelineRunStatus.schema_json(indent=1))
     for key, value in schema.get("properties").items():
         column_name = key.lower()
@@ -935,7 +933,7 @@ def create_raw_pipeline_monitor():
         if column_type is None:
             column_format = value.get("format", None)
             if column_format is None:
-                table.append_column(Column(name=column_name, type_=CLOB, nullable=True))
+                table.append_column(Column(name=column_name, type_=JSON, nullable=True))
             else:
                 if column_format == "date-time":
                     table.append_column(Column(name=column_name, type_=Date, nullable=True))
@@ -943,7 +941,7 @@ def create_raw_pipeline_monitor():
             table.append_column(Column(name=column_name, type_=String(5), nullable=True))
         elif column_type == "string":
             if column_name == "error":
-                table.append_column(Column(name=column_name, type_=CLOB, nullable=True))
+                table.append_column(Column(name=column_name, type_=JSON, nullable=True))
             elif column_name == "uid":
                 table.append_column(Column(name=column_name.upper(), type_=String(50), quote=True, nullable=True))
             else:
@@ -951,7 +949,7 @@ def create_raw_pipeline_monitor():
         elif column_type == "integer":
             table.append_column(Column(name=column_name, type_=Integer, nullable=True))
         elif column_type == "array":
-            table.append_column(Column(name=column_name, type_=CLOB, nullable=True))
+            table.append_column(Column(name=column_name, type_=JSON, nullable=True))
         else:
             raise Exception(column_name + "not support type")
     table.create(engine)
@@ -967,7 +965,7 @@ def raw_pipeline_monitor_insert_one(one, topic_name):
         if key == "id_":
             value[key] = get_surrogate_key()
         elif key == "data_":
-            value[key] = dumps(one_dict)
+            value[key] = one_dict
         else:
             if isinstance(table.c[key].type, JSON):
                 if one_lower_dict.get(key) is not None:
@@ -978,7 +976,8 @@ def raw_pipeline_monitor_insert_one(one, topic_name):
                 value[key] = one_lower_dict.get(key)
     stmt = insert(table)
     with engine.connect() as conn:
-        conn.execute(stmt, value)
+        with conn.begin():
+            conn.execute(stmt, value)
 
 
 def raw_pipeline_monitor_page_(where, sort, pageable, model, name) -> DataPage:
