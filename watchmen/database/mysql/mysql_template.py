@@ -4,6 +4,7 @@ import logging
 import operator
 import time
 from operator import eq
+import arrow
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
     text, func, DateTime, BigInteger, Date, Integer, JSON
@@ -21,7 +22,6 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
-
 
 log = logging.getLogger("app." + __name__)
 
@@ -426,7 +426,7 @@ def list_all(model, name):
         result = {}
         for index, name in enumerate(columns):
             result[name] = row[index]
-        results.append(parse_obj(model,  result, table))
+        results.append(parse_obj(model, result, table))
     return results
 
 
@@ -905,20 +905,22 @@ def convert_list_elements_key(list_info, topic_name):
     return new_list
 
 
-
 def check_value_type(value):
     if isinstance(value, datetime.datetime):
-        return func.to_date(value, "yyyy-mm-dd hh24:mi:ss")
+        # return "DATE_FORMAT('" + value + "', '%Y-%m-%d %h:%i:%s')"
+        return value
     elif isinstance(value, datetime.date):
-        return func.to_date(value, "yyyy-mm-dd")
+        # return "DATE_FORMAT('" + value + "', '%Y-%m-%d')"
+        return value
     else:
         return value
 
 
-#ToDo
+# ToDo
 '''
 special for raw_pipeline_monitor, need refactor for raw topic schema structure
 '''
+
 
 def create_raw_pipeline_monitor():
     table = Table('topic_raw_pipeline_monitor', metadata)
@@ -989,19 +991,22 @@ def raw_pipeline_monitor_page_(where, sort, pageable, model, name) -> DataPage:
         stmt = stmt.order_by(order)
     offset = pageable.pageSize * (pageable.pageNumber - 1)
     stmt = stmt.offset(offset).limit(pageable.pageSize)
-    results = []
     with engine.connect() as conn:
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
         res = cursor.fetchall()
-    result = {}
+    results = []
     for row in res:
-        for index,name in enumerate(columns):
-            result[name] = row[index]
+        result = {}
+        for index, name in enumerate(columns):
+            if isinstance(table.c[name].type, JSON):
+                result[name] = json.loads(row[index])
+            else:
+                result[name] = row[index]
         if model is not None:
             results.append(parse_obj(model, result, table))
         else:
-            results.append(result['DATA_'])
+            results.append(result['data_'])
     return build_data_pages(pageable, results, count)
 
 
