@@ -357,13 +357,13 @@ def find_by_id(id_, model, name):
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
         row = cursor.fetchone()
-        result = {}
-        for index, name in enumerate(columns):
-            result[name] = row[index]
-    if result is None:
-        return
-    else:
-        return parse_obj(model, result, table)
+        if row is None:
+            return None
+        else:
+            result = {}
+            for index, name in enumerate(columns):
+                result[name] = row[index]
+            return parse_obj(model, result, table)
 
 
 def find_one(where, model, name):
@@ -531,7 +531,7 @@ def check_topic_type_is_raw(topic_name):
             result = {}
             for index, name in enumerate(columns):
                 result[name] = row[index]
-            if result['TYPE'] == "raw":
+            if result['type'] == "raw":
                 return True
             else:
                 return False
