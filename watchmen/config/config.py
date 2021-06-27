@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     MYSQL_PORT: int = 3306
     MYSQL_USER: str = ""
     MYSQL_PASSWORD: str = ""
-    MYSQL_DATABASE: str = 'watchmen'
+    MYSQL_DATABASE: str = "watchmen"
     MYSQL_POOL_MAXCONNECTIONS: int = 6
     MYSQL_POOL_MINCACHED = 2
     MYSQL_POOL_MAXCACHED = 5

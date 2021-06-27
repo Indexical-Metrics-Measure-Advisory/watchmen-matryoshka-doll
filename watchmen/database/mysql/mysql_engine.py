@@ -16,6 +16,7 @@ connection_url = 'mysql+mysqldb://%s:%s@%s:%s/%s' % (settings.MYSQL_USER,
                                                      settings.MYSQL_PORT,
                                                      settings.MYSQL_DATABASE)
 
+print(connection_url)
 engine = create_engine(connection_url,
                        echo=True,
                        future=True,
