@@ -33,6 +33,8 @@ def sync_space_to_user_group(space: Space):
     pull_update({"spaceIds": {"in": [space.spaceId]}}, {"spaceIds": {"in": [space.spaceId]}}, UserGroup, USER_GROUPS)
     user_group_list = get_user_group_list_by_ids(space.groupIds)
     for user_group in user_group_list:
+        if user_group.spaceIds is None:
+            user_group.spaceIds = []
         if space.spaceId not in user_group.spaceIds:
             user_group.spaceIds.append(space.spaceId)
             update_user_group_storage(user_group)

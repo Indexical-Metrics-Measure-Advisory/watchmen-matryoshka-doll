@@ -3,18 +3,20 @@ import logging
 from watchmen.monitor.model.pipeline_monitor import UnitRunStatus
 from watchmen.pipeline.core.context.stage_context import StageContext
 from watchmen.pipeline.core.context.unit_context import UnitContext
+from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joint
 from watchmen.pipeline.core.worker.unit_worker import run_unit
 from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition
 
 log = logging.getLogger("app." + __name__)
 
 
-def should_run(stageContext: StageContext):
+def should_run(stageContext: StageContext) -> bool:
     stage_ = stageContext.stage
-    pipeline_topic = stageContext.pipelineContext.pipelineTopic
-    data = stageContext.pipelineContext.data
-    context = stageContext.pipelineContext.variables
-    return __check_condition(stage_, pipeline_topic, data, context)
+    if stage_.on is None:
+        return True
+    current_data = stageContext.pipelineContext.currentOfTriggerData
+    variables = stageContext.pipelineContext.variables
+    return parse_parameter_joint(stage_.on, current_data, variables)
 
 
 def run_stage(stageContext: StageContext):

@@ -764,8 +764,7 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
                 values[key.lower()] = value
     stmt = stmt.values(values)
     with engine.begin() as conn:
-        with conn.begin():
-            result = conn.execute(stmt)
+        result = conn.execute(stmt)
     return result.rowcount
 
 

@@ -36,6 +36,8 @@ def get_id_name():
         return "_id"
     elif settings.STORAGE_ENGINE == "oracle":
         return "id_"
+    elif settings.STORAGE_ENGINE == "mysql":
+        return "id_"
 
 
 def get_dict_relationship(model_schema_set):

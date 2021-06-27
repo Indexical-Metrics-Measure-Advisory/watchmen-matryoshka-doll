@@ -14,6 +14,7 @@ from watchmen.common.parameter import Parameter
 from watchmen.database.storage.storage_template import create_raw_pipeline_monitor, clear_metadata
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
+from watchmen.monitor.services.pipeline_monitor_service import insert_monitor_topic
 from watchmen.pipeline.core.dependency.caculate_dependency_new import pipelineExecutionPath
 from watchmen.pipeline.single.pipeline_service import run_pipeline
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
@@ -139,6 +140,7 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
 
 @router.get("/monitor/pipeline", tags=["common"])
 def create_raw_pipeline_monitor_table():
+    insert_monitor_topic()
     create_raw_pipeline_monitor()
     return {"created": True}
 
