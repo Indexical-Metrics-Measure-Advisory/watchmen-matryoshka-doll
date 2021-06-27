@@ -1,6 +1,6 @@
 import logging
 import time
-
+from decimal import Decimal
 
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import ActionContext, get_variables
@@ -56,7 +56,7 @@ def init(actionContext: ActionContext):
                                                                     parse_parameter(source_, previous_data, variables))
                 if previous_value_ is None:
                     previous_value_ = 0
-                value_ = int(current_value_) - int(previous_value_)
+                value_ = Decimal(current_value_) - Decimal(previous_value_)
                 result = {target_factor.name: {"_sum": value_}}
             elif arithmetic == "count":
                 if previous_data is None:
