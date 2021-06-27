@@ -11,6 +11,14 @@ from watchmen.pipeline.core.by.parse_on_parameter import __week_number_of_month
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, AMP, FUNC, \
     get_variable_with_func_pattern, DOT, get_variable_with_dot_pattern
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
+from watchmen.pipeline.core.parameter.operator.equals import do_equals_with_value_type_check
+from watchmen.pipeline.core.parameter.operator.in_operator import do_in_with_value_type_check
+from watchmen.pipeline.core.parameter.operator.less import do_less_with_value_type_check
+from watchmen.pipeline.core.parameter.operator.less_equals import do_less_equals_with_value_type_check
+from watchmen.pipeline.core.parameter.operator.more import do_more_with_value_type_check
+from watchmen.pipeline.core.parameter.operator.more_equals import do_more_equals_with_value_type_check
+from watchmen.pipeline.core.parameter.operator.not_equals import do_not_equals_with_value_type_check
+from watchmen.pipeline.core.parameter.operator.not_in_operator import do_not_in_with_value_type_check
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, convert_datetime, check_and_convert_value_by_factor
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.report.model.column import Operator
@@ -100,7 +108,10 @@ def parse_parameter(parameter_: Parameter, instance, variables):
                 result
         elif parameter_.type == "month-of":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
-            return convert_datetime(result).month
+            if result is not None:
+                return convert_datetime(result).month
+            else:
+                result
         elif parameter_.type == "week-of-year":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
             return convert_datetime(result).isocalendar()[1]
@@ -167,42 +178,34 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
         operator_ = joint.operator
         right = parse_parameter(joint.right, instance, variables)
         if operator_ == "equals":
-            return operator.eq(left, right)
+            # return operator.eq(left, right)
+            return do_equals_with_value_type_check(left, right)
         elif operator_ == "not-equals":
-            return operator.ne(left, right)
+            # return operator.ne(left, right)
+            return do_not_equals_with_value_type_check(left, right)
         elif operator_ == 'empty':
+            if left == "":
+                return operator.is_(None, None)
             return operator.is_(left, None)
         elif operator_ == 'not-empty':
+            if left == "":
+                return operator.is_not(None, None)
             return operator.is_not(left, None)
         elif operator_ == "more":
-            return operator.gt(left, right)
+            # return operator.gt(left, right)
+            return do_more_with_value_type_check(left, right)
         elif operator_ == "more-equals":
-            return operator.ge(left, right)
+            # return operator.ge(left, right)
+            return do_more_equals_with_value_type_check(left,right)
         elif operator_ == "less":
-            return operator.lt(left, right)
+            # return operator.lt(left, right)
+            return do_less_with_value_type_check(left, right)
         elif operator_ == "less-equals":
-            return operator.le(left, right)
+            # return operator.le(left, right)
+            return do_less_equals_with_value_type_check(left, right)
         elif operator_ == 'in':
-            if left is None:
-                return False
-            else:
-                value_list = right.split(',')
-                for value in value_list:
-                    if isinstance(value, str) and str(left) == value:
-                        return True
-                    elif isinstance(value, int) and int(left) == value:
-                        return True
-                return False
+            return do_in_with_value_type_check(left, right)
         elif operator_ == 'not-in':
-            if left is None:
-                return True
-            else:
-                value_list = right.split(',')
-                for value in value_list:
-                    if isinstance(value, str) and str(left) == value:
-                        return True
-                    elif isinstance(value, int) and int(left) == value:
-                        return True
-                return False
+            return do_not_in_with_value_type_check(left, right)
         else:
             raise Exception("operator is not supported")
