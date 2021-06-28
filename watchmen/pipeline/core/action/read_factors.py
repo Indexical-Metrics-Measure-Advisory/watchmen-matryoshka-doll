@@ -52,8 +52,11 @@ def init(actionContext: ActionContext):
 
         if target_data is not None:
             if isinstance(target_data, list):
-                read_value = target_data[target_factor.name]
-                set_variable(actionContext, action.variableName, read_value)
+                factor_value_list = []
+                for item_ in target_data:
+                    read_value = item_[target_factor.name]
+                    factor_value_list.append(read_value)
+                set_variable(actionContext, action.variableName, factor_value_list)
                 status.value = read_value
             else:
                 read_value = target_data[target_factor.name]
@@ -62,4 +65,5 @@ def init(actionContext: ActionContext):
 
         status.complete_time = time.time() - start
         return status, []
+
     return read_factors
