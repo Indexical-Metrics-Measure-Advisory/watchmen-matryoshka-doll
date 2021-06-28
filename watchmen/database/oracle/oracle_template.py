@@ -8,6 +8,7 @@ from operator import eq
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
     text, func, DateTime, BigInteger, Date, Integer
 from sqlalchemy.dialects.mysql import insert
+from sqlalchemy.engine import Inspector
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
@@ -679,12 +680,27 @@ def topic_data_insert_one(one, topic_name):
             if key == "id_":
                 value[key] = get_surrogate_key()
             else:
-                value[key] = one_dict.get(key)
+                if one_dict.get(key) is not None:
+                    value[key] = one_dict.get(key)
+                else:
+                    default_value = get_table_column_default_value(table_name, key)
+                    if default_value is not None:
+                        value[key] = default_value
+                    else:
+                        value[key] = one_dict.get(key)
         stmt = insert(table)
         with engine.connect() as conn:
             with conn.begin():
                 result = conn.execute(stmt, value)
         return result.rowcount
+
+
+def get_table_column_default_value(table_name, column_name):
+    insp = Inspector.from_engine(engine)
+    columns = insp.get_columns(table_name)
+    for column in columns:
+        if column["name"] == column_name:
+            return column["default"]
 
 
 def raw_topic_data_insert_one(one, topic_name):
@@ -729,7 +745,6 @@ def topic_data_insert_(data, topic_name):
         stmt = insert(table)
         with engine.connect() as conn:
             result = conn.execute(stmt, values)
-
 
 
 def raw_topic_data_insert_(data, topic_name):
@@ -786,7 +801,6 @@ def topic_data_update_(query_dict, instance, topic_name):
     stmt = stmt.values(values)
     with engine.begin() as conn:
         result = conn.execute(stmt)
-
 
 
 def topic_data_find_by_id(id_: str, topic_name: str) -> any:

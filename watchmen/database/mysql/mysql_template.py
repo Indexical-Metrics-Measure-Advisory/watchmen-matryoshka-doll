@@ -9,6 +9,7 @@ import arrow
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
     text, func, DateTime, BigInteger, Date, Integer, JSON
 from sqlalchemy.dialects.mysql import insert
+from sqlalchemy.engine import Inspector
 from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
@@ -640,12 +641,26 @@ def topic_data_insert_one(one, topic_name):
             if key == "id_":
                 value[key] = get_surrogate_key()
             else:
-                value[key] = one_dict.get(key)
+                if one_dict.get(key) is not None:
+                    value[key] = one_dict.get(key)
+                else:
+                    default_value = get_table_column_default_value(table_name, key)
+                    if default_value is not None:
+                        value[key] = default_value.strip("'")
+                    else:
+                        value[key] = one_dict.get(key)
         stmt = insert(table)
         with engine.connect() as conn:
             with conn.begin():
                 conn.execute(stmt, value)
 
+
+def get_table_column_default_value(table_name, column_name):
+    insp = Inspector.from_engine(engine)
+    columns = insp.get_columns(table_name)
+    for column in columns:
+        if column["name"] == column_name:
+            return column["default"]
 
 def raw_topic_data_insert_one(one, topic_name):
     if topic_name == "raw_pipeline_monitor":
