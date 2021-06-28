@@ -669,7 +669,7 @@ def raw_topic_data_insert_one(one, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         one_dict: dict = convert_to_dict(one)
-        value = {'id_': get_surrogate_key(), 'data_': one_dict}
+        value = {'ID_': get_surrogate_key(), 'DATA_': one_dict}
         stmt = insert(table)
         with engine.connect() as conn:
             with conn.begin():
@@ -706,7 +706,7 @@ def raw_topic_data_insert_(data, topic_name):
     values = []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
-        value = {'id_': get_surrogate_key(), 'data_': instance_dict}
+        value = {'ID_': get_surrogate_key(), 'DATA_': instance_dict}
         values.append(value)
     stmt = insert(table)
     with engine.connect() as conn:
@@ -804,9 +804,28 @@ def topic_data_find_(where, topic_name):
 
 
 def topic_data_list_all(topic_name) -> list:
+    table_name_prefix = 'topic_' + topic_name
+    if check_topic_type_is_raw(topic_name):
+        return __raw_topic_load_all(table_name_prefix)
+    else:
 
-    #TODO
-    pass
+        table = get_topic_table_by_name(table_name_prefix)
+        stmt = select(table)
+        with engine.connect() as conn:
+            cursor = conn.execute(stmt).cursor
+            columns = [col[0] for col in cursor.description]
+            res = cursor.fetchall()
+            if res is None:
+                return None
+            else:
+                results = []
+                for row in res:
+                    result = {}
+                    for index, name in enumerate(columns):
+                        result[name] = row[index]
+                    results.append(result)
+                return convert_list_elements_key(results, topic_name)
+
 
 
 def topic_data_page_(where, sort, pageable, model, name) -> DataPage:
@@ -905,16 +924,17 @@ def convert_list_elements_key(list_info, topic_name):
         return None
     new_dict = {}
     new_list = []
+    print(topic_name)
     stmt = "select t.factors from topics t where t.name=:topic_name"
     result = {}
     with engine.connect() as conn:
-        cursor = conn.execute(stmt, {"topic_name": topic_name}).cursor
+        cursor = conn.execute(text(stmt), {"topic_name": topic_name}).cursor
         columns = [col[0] for col in cursor.description]
         row = cursor.fetchone()
-        for index, name in row:
-            result[name] = row[index]
-        factors = result['FACTORS']
+        factors = json.loads(row[0])
     for item in list_info:
+
+        print(item)
         for factor in factors:
             new_dict[factor['name']] = item[factor['name'].lower()]
             new_dict['id_'] = item['id_']
@@ -981,9 +1001,9 @@ def raw_pipeline_monitor_insert_one(one, topic_name):
     one_lower_dict = capital_to_lower(one_dict)
     value = {}
     for key in table.c.keys():
-        if key == "id_":
+        if key == "ID_":
             value[key] = get_surrogate_key()
-        elif key == "data_":
+        elif key == "DATA_":
             value[key] = one_dict
         else:
             if isinstance(table.c[key].type, JSON):
@@ -997,6 +1017,31 @@ def raw_pipeline_monitor_insert_one(one, topic_name):
     with engine.connect() as conn:
         with conn.begin():
             conn.execute(stmt, value)
+
+
+def __raw_topic_load_all(topic_name):
+    # count = count_topic_data_table(topic_name)
+    table = get_topic_table_by_name(topic_name)
+    stmt = select(table)
+    with engine.connect() as conn:
+        cursor = conn.execute(stmt).cursor
+        columns = [col[0] for col in cursor.description]
+        res = cursor.fetchall()
+    results = []
+    for row in res:
+        result = {}
+        print(columns)
+        for index, name in enumerate(columns):
+            print(table.c[name].type)
+            if isinstance(table.c[name].type, JSON):
+                result[name] = json.loads(row[index])
+            else:
+                result[name] = row[index]
+            print(result)
+        results.append(result['DATA_'])
+    return results
+    # orders = build_mysql_order(table, sort)
+
 
 
 def raw_pipeline_monitor_page_(where, sort, pageable, model, name) -> DataPage:
@@ -1023,7 +1068,7 @@ def raw_pipeline_monitor_page_(where, sort, pageable, model, name) -> DataPage:
         if model is not None:
             results.append(parse_obj(model, result, table))
         else:
-            results.append(result['data_'])
+            results.append(result['DATA_'])
     return build_data_pages(pageable, results, count)
 
 
