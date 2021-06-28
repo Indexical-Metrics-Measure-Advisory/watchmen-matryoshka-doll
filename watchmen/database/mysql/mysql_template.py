@@ -669,7 +669,7 @@ def raw_topic_data_insert_one(one, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         one_dict: dict = convert_to_dict(one)
-        value = {'ID_': get_surrogate_key(), 'DATA_': one_dict}
+        value = {'id_': get_surrogate_key(), 'data_': one_dict}
         stmt = insert(table)
         with engine.connect() as conn:
             with conn.begin():
@@ -706,7 +706,7 @@ def raw_topic_data_insert_(data, topic_name):
     values = []
     for instance in data:
         instance_dict: dict = convert_to_dict(instance)
-        value = {'ID_': get_surrogate_key(), 'DATA_': instance_dict}
+        value = {'id_': get_surrogate_key(), 'data_': instance_dict}
         values.append(value)
     stmt = insert(table)
     with engine.connect() as conn:
@@ -717,7 +717,7 @@ def raw_topic_data_insert_(data, topic_name):
 def topic_data_update_one(id_: str, one: any, topic_name: str):
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
-    stmt = update(table).where(eq(table.c['id_'], id_))
+    stmt = update(table).where(eq(table.c['ID_'], id_))
     one_dict = convert_to_dict(one)
     one_dict_lower = build_mysql_updates_expression_for_update(table, capital_to_lower(one_dict))
     values = {}
@@ -1001,9 +1001,9 @@ def raw_pipeline_monitor_insert_one(one, topic_name):
     one_lower_dict = capital_to_lower(one_dict)
     value = {}
     for key in table.c.keys():
-        if key == "ID_":
+        if key == "id_":
             value[key] = get_surrogate_key()
-        elif key == "DATA_":
+        elif key == "data_":
             value[key] = one_dict
         else:
             if isinstance(table.c[key].type, JSON):
@@ -1038,7 +1038,7 @@ def __raw_topic_load_all(topic_name):
             else:
                 result[name] = row[index]
             print(result)
-        results.append(result['DATA_'])
+        results.append(result['data_'])
     return results
     # orders = build_mysql_order(table, sort)
 
@@ -1068,7 +1068,7 @@ def raw_pipeline_monitor_page_(where, sort, pageable, model, name) -> DataPage:
         if model is not None:
             results.append(parse_obj(model, result, table))
         else:
-            results.append(result['DATA_'])
+            results.append(result['data_'])
     return build_data_pages(pageable, results, count)
 
 
