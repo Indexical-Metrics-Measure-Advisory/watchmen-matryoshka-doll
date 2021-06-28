@@ -3,6 +3,7 @@ import json
 import logging
 import operator
 import time
+from decimal import Decimal
 from operator import eq
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
@@ -685,7 +686,11 @@ def topic_data_insert_one(one, topic_name):
                 else:
                     default_value = get_table_column_default_value(table_name, key)
                     if default_value is not None:
-                        value[key] = default_value
+                        value_ = default_value.strip("'").strip(" ")
+                        if value_.isdigit():
+                            value[key] = Decimal(value_)
+                        else:
+                            value[key] = value_
                     else:
                         value[key] = one_dict.get(key)
         stmt = insert(table)
