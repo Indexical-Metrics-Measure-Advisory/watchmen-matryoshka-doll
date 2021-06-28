@@ -49,7 +49,6 @@ def run_pipeline(pipelineContext: PipelineContext):
             try:
                 for stage in pipeline.stages:
                     stage_run_status = StageRunStatus(name=stage.name)
-                    # log.info("stage name {0}".format(stage.name))
                     stageContext = StageContext(pipelineContext, stage, stage_run_status)
                     run_stage(stageContext)
                     pipeline_status.stages.append(stageContext.stageStatus)
@@ -66,9 +65,7 @@ def run_pipeline(pipelineContext: PipelineContext):
             except Exception as e:
                 log.exception(e)
                 pipeline_status.error = traceback.format_exc()
-                # pipeline_status.error.d
                 pipeline_status.status = ERROR
-                # log.error(pipeline_status)
             finally:
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                     log.debug("pipeline_status is {0}".format(pipeline_status))
