@@ -57,7 +57,7 @@ def init(actionContext: ActionContext):
                     read_value = item_[target_factor.name]
                     factor_value_list.append(read_value)
                 set_variable(actionContext, action.variableName, factor_value_list)
-                status.value = read_value
+                status.value = factor_value_list
             else:
                 read_value = target_data[target_factor.name]
                 set_variable(actionContext, action.variableName, [read_value])
