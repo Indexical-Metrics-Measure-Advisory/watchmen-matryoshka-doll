@@ -62,19 +62,35 @@ def parse_parameter(parameter_: Parameter, instance, variables):
     elif parameter_.kind == 'computed':
         if parameter_.type == Operator.add:
             result = None
+            left = None
             for item in parameter_.parameters:
-                if result:
-                    result = operator.add(result, parse_parameter(item, instance, variables))
+                if left:
+                    right = parse_parameter(item, instance, variables)
+                    if right is not None:
+                        result = operator.add(left, right)
+                    else:
+                        right = 0
+                        result = operator.add(left, right)
                 else:
-                    result = parse_parameter(item, instance, variables)
+                    left = parse_parameter(item, instance, variables)
+                    if left is None:
+                        left = 0
             return result
         elif parameter_.type == Operator.subtract:
             result = None
+            left = None
             for item in parameter_.parameters:
-                if result:
-                    result = operator.sub(result, parse_parameter(item, instance, variables))
+                if left:
+                    right = parse_parameter(item, instance, variables)
+                    if right is not None:
+                        result = operator.sub(left, right)
+                    else:
+                        right = 0
+                        result = operator.sub(left, right)
                 else:
-                    result = parse_parameter(item, instance, variables)
+                    left = parse_parameter(item, instance, variables)
+                    if left is None:
+                        left = 0
             return result
         elif parameter_.type == Operator.multiply:
             result = None
