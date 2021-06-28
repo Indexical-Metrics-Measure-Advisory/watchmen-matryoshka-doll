@@ -10,6 +10,7 @@
 
 [![GitHub license](https://img.shields.io/github/license/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll?style=flat-square)](https://github.com/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll/blob/master/LICENSE)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll?style=(flat-square))
+[![Publish docker image](https://github.com/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll/actions/workflows/publish-image.yml/badge.svg)](https://github.com/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll/actions/workflows/publish-image.yml)
 
 # Overview
 
