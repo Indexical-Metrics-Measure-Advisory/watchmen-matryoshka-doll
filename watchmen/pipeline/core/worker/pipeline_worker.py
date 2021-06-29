@@ -4,7 +4,7 @@ import time
 import traceback
 from datetime import datetime
 
-import watchmen
+from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joint
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, StageRunStatus
@@ -12,19 +12,19 @@ from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.context.stage_context import StageContext
 from watchmen.pipeline.core.worker.stage_worker import run_stage
 from watchmen.pipeline.single.pipeline_service import __trigger_all_pipeline
-from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition
 from watchmen.pipeline.single.stage.unit.utils import PIPELINE_UID, FINISHED, ERROR
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
 
 
-def should_run(pipelineContext: PipelineContext):
+def should_run(pipelineContext: PipelineContext) -> bool:
     pipeline = pipelineContext.pipeline
-    pipeline_topic = pipelineContext.pipelineTopic
-    data = pipelineContext.data
-    context = pipelineContext.variables
-    return __check_condition(pipeline, pipeline_topic, data, context)
+    if pipeline.on is None:
+        return True
+    current_data = pipelineContext.currentOfTriggerData
+    variables = pipelineContext.variables
+    return parse_parameter_joint(pipeline.on, current_data, variables)
 
 
 def run_pipeline(pipelineContext: PipelineContext):
@@ -71,4 +71,5 @@ def run_pipeline(pipelineContext: PipelineContext):
                     log.debug("pipeline_status is {0}".format(pipeline_status))
                     # pass
                 else:
-                    watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
+                    # watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
+                    pass
