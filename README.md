@@ -69,3 +69,11 @@ WORKERS_NUM=2
 connector.name=mongodb
 mongodb.seeds=localhost:27017
 ```
+
+# License & Distribution
+
+Under MIT License.
+
+When you use our product, for internal use or build copies for your clients,  include a license file contains the following statement and copy it into your presentation materials.
+
+> Powered by Matryoshka Data.
