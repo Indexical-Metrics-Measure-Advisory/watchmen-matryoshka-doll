@@ -31,7 +31,7 @@ if settings.ORACLE_SID == "" and settings.ORACLE_SERVICE != "":
 
 pool = cx_Oracle.SessionPool(
     settings.ORACLE_USER, settings.ORACLE_PASSWORD, dsn=dsn,
-    min=2, max=5, increment=1, threaded=True
+    min=5, max=5, increment=0, threaded=True,getmode=cx_Oracle.SPOOL_ATTRVAL_WAIT
 )
 
 # engine = create_engine(connection_url, future=True)
