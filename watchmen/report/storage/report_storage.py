@@ -1,5 +1,6 @@
 from watchmen.common.pagination import Pagination
-from watchmen.database.storage.storage_template import insert_one, update_one, find_by_id, find_, delete_one, page_
+from watchmen.database.storage.storage_template import insert_one, update_one, find_by_id, find_, delete_one, page_, \
+    delete_by_id
 from watchmen.console_space.model.console_space import Report
 
 CONSOLE_REPORTS = "console_reports"
@@ -30,7 +31,7 @@ def load_reports_by_ids(report_ids):
 
 def delete_report_by_id(report_id):
     # template.delete_one(CONSOLE_REPORTS, {"reportId": report_id})
-    delete_one(report_id, CONSOLE_REPORTS)
+    delete_by_id(report_id, CONSOLE_REPORTS)
 
 
 def import_report_to_db(report):

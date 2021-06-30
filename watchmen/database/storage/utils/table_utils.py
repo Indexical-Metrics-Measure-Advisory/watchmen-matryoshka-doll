@@ -28,3 +28,5 @@ def get_primary_key(table_name):
         return 'enumId'
     elif table_name == 'console_reports':
         return 'reportid'
+    elif table_name == "console_space_last_snapshot":
+        return  "userid"

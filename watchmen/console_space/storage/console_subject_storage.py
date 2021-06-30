@@ -1,6 +1,6 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.database.storage.storage_template import insert_one, find_, update_one, find_by_id, delete_one, delete_, \
-    find_one, update_one_first
+    find_one, update_one_first, delete_by_id
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 
@@ -30,7 +30,7 @@ def load_console_subject_by_id(subject_id) -> ConsoleSpaceSubject:
 
 
 def delete_console_subject_by_id(subject_id):
-    delete_one(subject_id, CONSOLE_SPACE_SUBJECTS)
+    delete_by_id(subject_id, CONSOLE_SPACE_SUBJECTS)
 
 
 def delete_console_subject_by_ids(subject_ids):

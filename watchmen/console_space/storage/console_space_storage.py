@@ -2,7 +2,7 @@ from typing import List
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.database.storage.storage_template import insert_one, update_one_first, find_one, delete_one, \
-    list_, find_
+    list_, find_, delete_by_id
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics
 from watchmen.console_space.model.console_space import ConsoleSpace
@@ -36,7 +36,7 @@ def load_console_space_by_id(connect_id: str) -> ConsoleSpace:
 
 def delete_console_space_storage(connect_id: str):
     # template.delete_one("console_spaces", {"connectId": connect_id})
-    delete_one(connect_id, "console_spaces")
+    delete_by_id(connect_id, "console_spaces")
 
 
 def load_console_space_list_by_user(user_id: str) -> ConsoleSpace:
@@ -46,7 +46,7 @@ def load_console_space_list_by_user(user_id: str) -> ConsoleSpace:
 
 def load_console_space_by_subject_id(subject_id: str) -> ConsoleSpace:
     # return template.find_one("console_spaces", {"subjectIds": subject_id}, ConsoleSpace)
-    return find_one({"subjectIds": subject_id}, ConsoleSpace, "console_spaces")
+    return find_one({"subjectIds": {"in":[subject_id]}}, ConsoleSpace, "console_spaces")
 
 
 def rename_console_space_by_id(connect_id: str, name: str) -> ConsoleSpace:
