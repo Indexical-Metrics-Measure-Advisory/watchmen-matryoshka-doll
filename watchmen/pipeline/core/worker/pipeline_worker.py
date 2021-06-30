@@ -4,6 +4,7 @@ import time
 import traceback
 from datetime import datetime
 
+import watchmen
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joint
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
@@ -71,5 +72,5 @@ def run_pipeline(pipelineContext: PipelineContext):
                     log.debug("pipeline_status is {0}".format(pipeline_status))
                     # pass
                 else:
-                    # watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
-                    pass
+                    watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
+                    # pass

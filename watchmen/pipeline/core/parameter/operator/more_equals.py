@@ -77,7 +77,7 @@ def do_more_equals_with_value_type_check(left, right):
                     left, right))
     if (isinstance(left, datetime) or isinstance(left, date)) and (
             isinstance(right, datetime) or isinstance(right, date)):
-        return operator.operator.ge(arrow.get(left).date(), arrow.get(right).date())
+        return operator.ge(arrow.get(left).date(), arrow.get(right).date())
     if (isinstance(left, datetime) or isinstance(left, date)) and isinstance(right, dict):
         raise TypeError(
             "operator more-equals, the left \"{0}\" is datetime or date, but the right \"{1}\" is dict".format(left, right))
