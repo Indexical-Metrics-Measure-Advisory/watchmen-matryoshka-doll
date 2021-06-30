@@ -192,7 +192,7 @@ def build_oracle_updates_expression_for_update(table, updates):
                     new_updates[k.lower()] = v
         elif key == "version_":
             new_updates[key] = value + 1
-        if isinstance(value, dict):
+        elif isinstance(value, dict):
             for k, v in value.items():
                 if k == "_sum":
                     new_updates[key.lower()] = text(f'{key.lower()} + {v}')
