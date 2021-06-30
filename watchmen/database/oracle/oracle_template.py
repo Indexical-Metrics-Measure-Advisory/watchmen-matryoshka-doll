@@ -190,6 +190,8 @@ def build_oracle_updates_expression_for_update(table, updates):
             if isinstance(value, dict):
                 for k, v in value.items():
                     new_updates[k.lower()] = v
+        elif key == "version_":
+            new_updates[key] = value + 1
         if isinstance(value, dict):
             for k, v in value.items():
                 if k == "_sum":
@@ -809,9 +811,8 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
 def topic_data_update_one_with_version(id_: str, version_: int, one: any, topic_name: str):
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
-    stmt = update(table).where(and_(eq(table.c['id_'], id_), lt(table.c['version_'], version_)))
+    stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
     one_dict = convert_to_dict(one)
-    one_dict['version_'] = version_
     one_dict_lower = build_oracle_updates_expression_for_update(table, capital_to_lower(one_dict))
     values = {}
     for key, value in one_dict_lower.items():

@@ -29,7 +29,8 @@ def update_retry_callback(mappings_results, where_, target_topic):
         id_ = target_data.get("id_", None)
         version_ = target_data.get("version_", None)
         if id_ is not None and version_ is not None:
-            topic_data_update_one_with_version(id_, version_ + 1, mappings_results, target_topic.name)
+            mappings_results['version_'] = version_
+            topic_data_update_one_with_version(id_, version_, mappings_results, target_topic.name)
             data = {**target_data, **mappings_results}
             return TriggerData(topicName=target_topic.name,
                                triggerType="Update",
