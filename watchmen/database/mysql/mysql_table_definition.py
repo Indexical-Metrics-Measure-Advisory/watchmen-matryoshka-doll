@@ -111,14 +111,14 @@ console_spaces_table = Table("console_spaces", metadata,
                              Column("subjectids", JSON, nullable=True),
                              Column("subjects", JSON, nullable=True),
                              Column('createtime', String(50), nullable=True),
-                             Column('last_modified', DateTime, nullable=True),
+                             # Column('last_modified', DateTime, nullable=True),
                              Column('lastmodified', DateTime, nullable=True)
                              )
 
 pipelines_table = Table("pipelines", metadata,
                         Column("pipelineid", String(60), primary_key=True),
                         Column("topicid", String(60), nullable=False),
-                        Column("name", String(25), nullable=False),
+                        Column("name", String(50), nullable=False),
                         Column("type", String(10), nullable=True),
                         Column("stages", JSON, nullable=True),
                         Column("conditional", String(5), nullable=True),
@@ -148,8 +148,6 @@ console_space_subjects_table = Table("console_space_subjects", metadata,
                                      Column("dataset", JSON, nullable=True),
                                      Column("lastvisittime", DateTime, nullable=True),
                                      Column("createdat", String(50), nullable=True),
-                                     Column('last_modified', DateTime, nullable=True),
-                                     Column('lastmodifytime', DateTime, nullable=True),
                                      Column('lastmodified', DateTime, nullable=True),
                                      Column('createtime', String(50), nullable=True)
                                      )
@@ -163,8 +161,8 @@ console_reports_table = Table("reports", metadata,
                               Column("description", String(50), nullable=True),
                               Column("rect", JSON, nullable=True),
                               Column("chart", JSON, nullable=True),
-                              Column("createdAt", String(50), nullable=True),
-                              Column("lastVisitTime", String(50), nullable=True),
+                              Column("createdat", String(50), nullable=True),
+                              Column("lastvisittime", String(50), nullable=True),
                               Column('lastmodified', DateTime, nullable=True),
                               Column('createtime', String(50), nullable=True)
                               )

@@ -40,7 +40,7 @@ def build_raw_sql_with_json_table(check_result, where, name):
         stmt = json_table_stmt + where_stmt
         return stmt
 
-    if check_result["table_name"] == "user_groups" and check_result["column_name"] == "userIds":
+    elif check_result["table_name"] == "user_groups" and check_result["column_name"] == "userIds":
         json_table_stmt = "select s.* " \
                           "from user_groups s "
         value_ = ",".join(where["userIds"]["in"])
@@ -48,7 +48,7 @@ def build_raw_sql_with_json_table(check_result, where, name):
         stmt = json_table_stmt + where_stmt
         return stmt
 
-    if check_result["table_name"] == "user_groups" and check_result["column_name"] == "spaceIds":
+    elif check_result["table_name"] == "user_groups" and check_result["column_name"] == "spaceIds":
         json_table_stmt = "select s.* " \
                           "from user_groups s "
         value_ = ",".join(where["spaceIds"]["in"])
@@ -56,11 +56,26 @@ def build_raw_sql_with_json_table(check_result, where, name):
         stmt = json_table_stmt + where_stmt
         return stmt
 
-    if check_result["table_name"] == "users" and check_result["column_name"] == "groupIds":
+    elif check_result["table_name"] == "users" and check_result["column_name"] == "groupIds":
         json_table_stmt = "select s.*" \
                           "from users s "
         value_ = ",".join(where["groupIds"]["in"])
         where_stmt = "where JSON_CONTAINS(groupids, '[\"" + value_ + "\"]', '$') = 1"
+        stmt = json_table_stmt + where_stmt
+        return stmt
+
+    elif check_result["table_name"] == "console_space_subjects" and check_result["column_name"] == "reportIds":
+        json_table_stmt = "select s.*" \
+                          "from console_space_subjects s "
+        value_ = ",".join(where["reportIds"]["in"])
+        where_stmt = "where JSON_CONTAINS(reportids, '[\"" + value_ + "\"]', '$') = 1"
+        stmt = json_table_stmt + where_stmt
+        return stmt
+    elif check_result["table_name"] == "console_spaces" and check_result["column_name"] == "subjectIds":
+        json_table_stmt = "select s.*" \
+                          "from console_spaces s "
+        value_ = ",".join(where["subjectIds"]["in"])
+        where_stmt = "where JSON_CONTAINS(subjectids, '[\"" + value_ + "\"]', '$') = 1"
         stmt = json_table_stmt + where_stmt
         return stmt
 
@@ -77,6 +92,13 @@ def check_where_column_type(name, where):
     elif name == "users":
         if "groupIds" in where:
             return {"table_name": "users", "column_name": "groupIds"}
+    elif name == "console_space_subjects":
+        if "reportIds" in where:
+            return {"table_name": "console_space_subjects", "column_name": "reportIds"}
+    elif name == "console_spaces":
+        if "subjectIds" in where:
+            return {"table_name": "console_spaces", "column_name": "subjectIds"}
+
     else:
         return None
 
@@ -250,7 +272,7 @@ def update_one_first(where, updates, model, name):
     table = get_table_by_name(name)
     stmt = update(table)
     stmt = stmt.where(build_mysql_where_expression(table, where))
-    stmt = stmt.where(text("limit 1"))
+    # stmt = stmt.where(text("LIMIT 1"))
     instance_dict: dict = convert_to_dict(updates)
     values = {}
     for key, value in instance_dict.items():
@@ -393,7 +415,9 @@ def find_one(where, model, name):
 
 def find_(where: dict, model, name: str) -> list:
     table = get_table_by_name(name)
+    ##TODO refactor code
     check_result = check_where_column_type(name, where)
+
     if check_result is not None:
         stmt = text(build_raw_sql_with_json_table(check_result, where, name))
     else:
@@ -614,7 +638,7 @@ def drop_topic_data_table(topic_name):
         table = get_topic_table_by_name(table_name)
         table.drop(engine)
     except NoSuchTableError:
-        print("drop table \"{0}\" not existed".format(table_name))
+        log.warning("drop table \"{0}\" not existed".format(table_name))
 
 
 def topic_data_delete_(where, topic_name):
@@ -775,7 +799,6 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
 
     stmt = select(table).where(eq(table.c['id_'], id_))
     with engine.connect() as conn:
-
         cursor = conn.execute(stmt).cursor
         columns = [col[0] for col in cursor.description]
         row = cursor.fetchone()
@@ -946,7 +969,6 @@ def convert_list_elements_key(list_info, topic_name):
         return None
     new_dict = {}
     new_list = []
-    print(topic_name)
     stmt = "select t.factors from topics t where t.name=:topic_name"
     result = {}
     with engine.connect() as conn:
@@ -956,7 +978,6 @@ def convert_list_elements_key(list_info, topic_name):
         factors = json.loads(row[0])
     for item in list_info:
 
-        print(item)
         for factor in factors:
             new_dict[factor['name']] = item[factor['name'].lower()]
             new_dict['id_'] = item['id_']
@@ -1052,14 +1073,12 @@ def __raw_topic_load_all(topic_name):
     results = []
     for row in res:
         result = {}
-        print(columns)
         for index, name in enumerate(columns):
-            print(table.c[name].type)
             if isinstance(table.c[name].type, JSON):
                 result[name] = json.loads(row[index])
             else:
                 result[name] = row[index]
-            print(result)
+
         results.append(result['data_'])
     return results
     # orders = build_mysql_order(table, sort)

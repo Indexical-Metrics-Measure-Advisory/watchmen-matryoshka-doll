@@ -912,14 +912,14 @@ def __raw_topic_load_all(topic_name):
     results = []
     for row in res:
         result = {}
-        print(columns)
+
         for index, name in enumerate(columns):
-            print(table.c[name.lower()].type)
+
             if isinstance(table.c[name.lower()].type, CLOB):
                 result[name] = dumps(row[index])
             else:
                 result[name] = row[index]
-            # print(result)
+
         results.append(result['DATA_'])
     return results
     # orders = build_mysql_order(table, sort)
@@ -954,7 +954,7 @@ def convert_list_elements_key(list_info, topic_name):
         return None
     new_dict = {}
     new_list = []
-    print(topic_name)
+
     stmt = "select t.factors from topics t where t.name=:topic_name"
     result = {}
     with engine.connect() as conn:
@@ -963,7 +963,7 @@ def convert_list_elements_key(list_info, topic_name):
         row = cursor.fetchone()
         factors = json.loads(row[0])
     for item in list_info:
-        print(item)
+
         for factor in factors:
             new_dict[factor['name']] = item[factor['name'].upper()]
             new_dict['id_'] = item['ID_']

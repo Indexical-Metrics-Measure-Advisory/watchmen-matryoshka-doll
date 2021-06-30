@@ -145,19 +145,19 @@ async def rename_console_space_subject(subject_id: str, name: str, current_user:
     rename_console_subject_by_id(subject_id, name)
 
 
-@router.get("/console_space/group/rename", tags=["console"])
-async def rename_console_group_subject(group_id: str, name: str, current_user: User = Depends(deps.get_current_user)):
-    rename_console_group_by_id(group_id, name)
+# @router.get("/console_space/group/rename", tags=["console"])
+# async def rename_console_group_subject(group_id: str, name: str, current_user: User = Depends(deps.get_current_user)):
+#     rename_console_group_by_id(group_id, name)
 
-
-@router.post("/console_space/group", tags=["console"], response_model=ConsoleSpaceGroup)
-async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Body(...),
-                               current_user: User = Depends(deps.get_current_user)):
-    console_space = load_console_space_by_id(connect_id)
-    console_group = create_console_group_to_storage(console_group)
-    console_space.groupIds.append(console_group.groupId)
-    save_console_space(console_space)
-    return console_group
+#
+# @router.post("/console_space/group", tags=["console"], response_model=ConsoleSpaceGroup)
+# async def create_console_group(connect_id, console_group: ConsoleSpaceGroup = Body(...),
+#                                current_user: User = Depends(deps.get_current_user)):
+#     console_space = load_console_space_by_id(connect_id)
+#     console_group = create_console_group_to_storage(console_group)
+#     console_space.groupIds.append(console_group.groupId)
+#     save_console_space(console_space)
+#     return console_group
 
 
 @router.get("/console_space/subject/delete", tags=["console"])
@@ -167,6 +167,8 @@ async def delete_subject(subject_id, current_user: User = Depends(deps.get_curre
 
 @router.post("/console_space/subject/save", tags=["console"], response_model=ConsoleSpaceSubject)
 async def save_console_subject(subject: ConsoleSpaceSubject, current_user: User = Depends(deps.get_current_user)):
+    for report in subject.reports:
+        subject.reportIds.append(report.reportId)
     subject.reports = []
     return update_console_subject(subject)
 
@@ -223,6 +225,8 @@ async def delete_report(report_id, current_user: User = Depends(deps.get_current
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_chart(report_id, current_user: User = Depends(deps.get_current_user)):
     result = await load_chart_dataset(report_id)
+
+    print(result)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
 

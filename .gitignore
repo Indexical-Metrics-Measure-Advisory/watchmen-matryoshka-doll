@@ -5,6 +5,8 @@ __pycache__/
 presto
 mongo
 distributions
+presto/
+/presto
 
 # C extensions
 *.so

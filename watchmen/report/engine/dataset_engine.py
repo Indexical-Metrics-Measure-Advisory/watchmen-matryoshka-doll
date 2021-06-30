@@ -102,18 +102,20 @@ async def save_query_monitor_data(query_monitor):
 async def load_chart_dataset(report_id):
     # assert report_id is None
     report = load_report_by_id(report_id)
-    query_monitor = build_query_monitor_report(report, query_type="report")
+
+    print("report",report)
+    # query_monitor = build_query_monitor_report(report, query_type="report")
     try:
         query = build_query_for_subject_chart(report_id, report)
         # query_count_summary = build_query_summary(count_sql)
-        rows = __load_chart_dataset(query, query_monitor=query_monitor)
+        rows = __load_chart_dataset(query, query_monitor=None)
         return rows
     except Exception as e:
         log.exception(e)
-        query_monitor.error = traceback.format_exc()
-        query_monitor.success = False
-    finally:
-        await save_query_monitor_data(query_monitor)
+        # query_monitor.error = traceback.format_exc()
+        # query_monitor.success = False
+    # finally:
+    #     await save_query_monitor_data(query_monitor)
 
 
 def __load_chart_dataset(query, query_monitor=None):
@@ -131,7 +133,7 @@ def __load_chart_dataset(query, query_monitor=None):
     if query_monitor:
         query_monitor.querySummaryList.append(query_sql_summary)
         query_monitor.executionTime = time.time() - start
-    return rows
+    return rows or []
 
 
 def load_chart_dataset_temp(report):

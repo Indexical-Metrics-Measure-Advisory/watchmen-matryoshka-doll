@@ -23,6 +23,8 @@ def parse_obj(base_model, result, table):
                         setattr(model, attr, None)
             else:
                 setattr(model, attr, result[attr.lower()])
+
+    # print(model)
     return base_model.parse_obj(model)
 
 
