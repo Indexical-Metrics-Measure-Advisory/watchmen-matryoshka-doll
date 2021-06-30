@@ -3,13 +3,15 @@ import json
 import logging
 import operator
 import time
+from _operator import lt
 from decimal import Decimal
 from operator import eq
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
-    text, func, DateTime, BigInteger, Date, Integer
+    text, func, DateTime, BigInteger, Date, Integer, Index
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.engine import Inspector
+from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
@@ -17,6 +19,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.database.oracle.oracle_engine import engine, dumps
 from watchmen.database.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
 from watchmen.database.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
+from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
 from watchmen.database.storage.utils.table_utils import get_primary_key
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
@@ -168,6 +171,8 @@ def build_oracle_updates_expression_for_insert(table, updates):
                     new_updates[key.lower()] = v
                 elif k == "_count":
                     new_updates[key.lower()] = v
+                elif k == "_avg":
+                    new_updates[key.lower()] = v
         else:
             new_updates[key] = value
     return new_updates
@@ -185,6 +190,8 @@ def build_oracle_updates_expression_for_update(table, updates):
             if isinstance(value, dict):
                 for k, v in value.items():
                     new_updates[k.lower()] = v
+        elif key == "version_":
+            new_updates[key] = value + 1
         if isinstance(value, dict):
             for k, v in value.items():
                 if k == "_sum":
@@ -585,11 +592,29 @@ def create_topic_data_table(topic):
         table = Table('topic_' + topic_name.lower(), metadata)
         key = Column(name="id_", type_=String(60), primary_key=True)
         table.append_column(key)
+        if topic_type == "aggregate":
+            version_column = Column(name="version_", type_=Integer, server_default=text("0"), nullable=False)
+            table.append_column(version_column)
+            aggregate_assist_column = Column(name="aggregate_assist_", type_=CLOB, nullable=True)
+            table.append_column(aggregate_assist_column)
+        index_ = {}
         for factor in factors:
             name_ = factor.get('name').lower()
             type_ = get_datatype_by_factor_type(factor.get('type'))
-            col = Column(name=name_, type_=type_, nullable=True)
+            default_ = factor.get('defaultValue')
+            if default_ is not None and default_ != "null":
+                col = Column(name=name_, type_=type_, server_default=text(default_), nullable=True)
+            else:
+                col = Column(name=name_, type_=type_, nullable=True)
             table.append_column(col)
+            index_group = factor.get("indexGroup")
+            if index_group is not None and index_group != "null":
+                index_group_column_list = index_.get(index_group, [])
+                index_group_column_list.append(col)
+                index_[index_group] = index_group_column_list
+        for key, value in index_.items():
+            name = "ix_" + topic_name + "_" + key
+            Index(name, *value, unique=True)
         table.create(engine)
 
 
@@ -642,21 +667,16 @@ def alter_topic_data_table(topic):
 
 
 def drop_topic_data_table(topic_name):
-    table_name = 'topic_' + topic_name
-    '''
-    table = Table(table_name, metadata, extend_existing=True,
-                  autoload=True, autoload_with=engine)
-    '''
-    table = get_topic_table_by_name(table_name)
-    table.drop(engine)
+    try:
+        table_name = 'topic_' + topic_name
+        table = get_topic_table_by_name(table_name)
+        table.drop(engine)
+    except NoSuchTableError as err:
+        log.info("NoSuchTableError: {0}".format(table_name))
 
 
 def topic_data_delete_(where, topic_name):
     table_name = 'topic_' + topic_name
-    '''
-    table = Table(table_name, metadata, extend_existing=True,
-                  autoload=True, autoload_with=engine)
-    '''
     table = get_topic_table_by_name(table_name)
     if where is None:
         stmt = delete(table)
@@ -664,7 +684,6 @@ def topic_data_delete_(where, topic_name):
         stmt = delete(table).where(build_oracle_where_expression(table, where))
     with engine.connect() as conn:
         conn.execute(stmt)
-        # conn.commit()
 
 
 def topic_data_insert_one(one, topic_name):
@@ -673,7 +692,6 @@ def topic_data_insert_one(one, topic_name):
     else:
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        # one_dict: dict = convert_to_dict(one)
         one_dict: dict = capital_to_lower(convert_to_dict(one))
         one_dict = build_oracle_updates_expression_for_insert(table, one_dict)
         value = {}
@@ -696,7 +714,10 @@ def topic_data_insert_one(one, topic_name):
         stmt = insert(table)
         with engine.connect() as conn:
             with conn.begin():
-                result = conn.execute(stmt, value)
+                try:
+                    result = conn.execute(stmt, value)
+                except IntegrityError as e:
+                    raise InsertConflictError("InsertConflict")
         return result.rowcount
 
 
@@ -784,8 +805,25 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
                 values[key.lower()] = value
     stmt = stmt.values(values)
     with engine.begin() as conn:
+        conn.execute(stmt)
+
+
+def topic_data_update_one_with_version(id_: str, version_: int, one: any, topic_name: str):
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
+    stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
+    one_dict = convert_to_dict(one)
+    one_dict_lower = build_oracle_updates_expression_for_update(table, capital_to_lower(one_dict))
+    values = {}
+    for key, value in one_dict_lower.items():
+        if key != 'id_':
+            if key.lower() in table.c.keys():
+                values[key.lower()] = value
+    stmt = stmt.values(values)
+    with engine.begin() as conn:
         result = conn.execute(stmt)
-    return result.rowcount
+    if result.rowcount == 0:
+        raise OptimisticLockError("Optimistic lock error")
 
 
 def topic_data_update_(query_dict, instance, topic_name):
@@ -827,10 +865,6 @@ def topic_data_find_by_id(id_: str, topic_name: str) -> any:
 
 
 def topic_data_find_one(where, topic_name) -> any:
-    '''
-    table = Table('topic_' + topic_name, metadata,
-                  extend_existing=True, autoload=True, autoload_with=engine)
-    '''
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
     stmt = select(table).where(build_oracle_where_expression(table, where))
@@ -1043,6 +1077,10 @@ def convert_dict_key(dict_info, topic_name):
     for factor in factors:
         new_dict[factor['name']] = dict_info[factor['name'].upper()]
     new_dict['id_'] = dict_info['ID_']
+    if "VERSION_" in dict_info:
+        new_dict['version_'] = dict_info.get("VERSION_", 0)
+    if "AGGREGATE_ASSIST_" in dict_info:
+        new_dict['aggregate_assist_'] = json.dumps(dict_info.get("AGGREGATE_ASSIST_"))
     return new_dict
 
 

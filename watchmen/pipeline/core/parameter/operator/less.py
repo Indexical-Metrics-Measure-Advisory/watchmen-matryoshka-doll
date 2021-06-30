@@ -77,7 +77,7 @@ def do_less_with_value_type_check(left, right):
                     left, right))
     if (isinstance(left, datetime) or isinstance(left, date)) and (
             isinstance(right, datetime) or isinstance(right, date)):
-        return operator.operator.lt(arrow.get(left).date(), arrow.get(right).date())
+        return operator.lt(arrow.get(left).date(), arrow.get(right).date())
     if (isinstance(left, datetime) or isinstance(left, date)) and isinstance(right, dict):
         raise TypeError(
             "operator less, the left \"{0}\" is datetime or date, but the right \"{1}\" is dict".format(left, right))

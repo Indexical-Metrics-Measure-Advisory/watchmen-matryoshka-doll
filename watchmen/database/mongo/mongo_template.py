@@ -370,6 +370,12 @@ def topic_data_update_one(id_, one, topic_name):
     topic_data_col.update_one({"_id": ObjectId(id_)},  build_mongo_updates_expression_for_update(one))
 
 
+def topic_data_update_one_with_version(id_: str, version_: int, one: any, topic_name: str):
+    # todo
+    # find and modify
+    topic_data_update_one(id_, one, topic_name)
+
+
 def topic_data_update_(where, updates, name):
     codec_options = build_code_options()
     encode_dict(updates)

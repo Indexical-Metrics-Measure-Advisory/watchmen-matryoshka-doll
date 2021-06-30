@@ -3,6 +3,7 @@ import json
 import logging
 import operator
 import time
+from _operator import lt
 from operator import eq
 import arrow
 
@@ -18,6 +19,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.database.mysql.mysql_engine import engine, dumps
 from watchmen.database.mysql.mysql_table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.database.mysql.mysql_utils import parse_obj, count_table, count_topic_data_table
+from watchmen.database.storage.exception.exception import OptimisticLockError
 from watchmen.database.storage.utils.table_utils import get_primary_key
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
@@ -686,6 +688,7 @@ def get_table_column_default_value(table_name, column_name):
         if column["name"] == column_name:
             return column["default"]
 
+
 def raw_topic_data_insert_one(one, topic_name):
     if topic_name == "raw_pipeline_monitor":
         raw_pipeline_monitor_insert_one(one, topic_name)
@@ -741,7 +744,7 @@ def raw_topic_data_insert_(data, topic_name):
 def topic_data_update_one(id_: str, one: any, topic_name: str):
     table_name = 'topic_' + topic_name
     table = get_topic_table_by_name(table_name)
-    stmt = update(table).where(eq(table.c['ID_'], id_))
+    stmt = update(table).where(eq(table.c['id_'], id_))
     one_dict = convert_to_dict(one)
     one_dict_lower = build_mysql_updates_expression_for_update(table, capital_to_lower(one_dict))
     values = {}
@@ -752,6 +755,25 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
     stmt = stmt.values(values)
     with engine.begin() as conn:
         conn.execute(stmt)
+
+
+def topic_data_update_one_with_version(id_: str, version_: int, one: any, topic_name: str):
+    table_name = 'topic_' + topic_name
+    table = get_topic_table_by_name(table_name)
+    stmt = update(table).where(and_(eq(table.c['id_'], id_), lt(table.c['version_'], version_)))
+    one_dict = convert_to_dict(one)
+    one_dict['version_'] = version_
+    one_dict_lower = build_mysql_updates_expression_for_update(table, capital_to_lower(one_dict))
+    values = {}
+    for key, value in one_dict_lower.items():
+        if key != 'id_':
+            if key.lower() in table.c.keys():
+                values[key.lower()] = value
+    stmt = stmt.values(values)
+    with engine.begin() as conn:
+        result = conn.execute(stmt)
+    if result.rowcount == 0:
+        raise OptimisticLockError("Optimistic lock error")
 
 
 def topic_data_update_(query_dict, instance, topic_name):

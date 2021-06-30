@@ -168,6 +168,10 @@ def topic_data_update_one(id_: str, one: any, topic_name: str):
     template.topic_data_update_one(id_, one, topic_name)
 
 
+def topic_data_update_one_with_version(id_: str, version_: int, one: any, topic_name: str):
+    template.topic_data_update_one_with_version(id_, version_, one, topic_name)
+
+
 def topic_data_update_(where: dict, updates: dict, name: str):
     template.topic_data_update_(where, updates, name)
 
