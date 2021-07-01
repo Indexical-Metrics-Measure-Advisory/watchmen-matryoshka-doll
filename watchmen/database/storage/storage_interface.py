@@ -35,47 +35,48 @@ class DataPage(BaseModel):
 class StorageInterface(abc.ABC):
 
     @abc.abstractmethod
-    def insert_one(self,one: any, model: BaseModel, name: str) -> BaseModel:
+    def insert_one(self, one: any, model: BaseModel, name: str) -> BaseModel:
         pass
 
     @abc.abstractmethod
-    def insert_all(self,data: list, model: BaseModel, name: str):
+    def insert_all(self, data: list, model: BaseModel, name: str):
         pass
 
     @abc.abstractmethod
-    def update_one(self,one: any, model: BaseModel, name: str) -> any:
+    def update_one(self, one: any, model: BaseModel, name: str) -> any:
         pass
+
     #
     # @abc.abstractmethod
     # def update_one_with_field(self,one: any, model: BaseModel, name: str, where: dict):
     #     pass
 
     @abc.abstractmethod
-    def update_one_first(self,where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
+    def update_one_first(self, where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
         pass
 
     @abc.abstractmethod
-    def upsert_(self,where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
+    def upsert_(self, where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
         pass
 
     @abc.abstractmethod
-    def update_(self,where: dict, updates: dict, model: BaseModel, name: str):
+    def update_(self, where: dict, updates: dict, model: BaseModel, name: str):
         pass
 
     @abc.abstractmethod
-    def pull_update(self,where: dict, updates: dict, model: BaseModel, name: str):
+    def pull_update(self, where: dict, updates: dict, model: BaseModel, name: str):
         pass
 
     @abc.abstractmethod
-    def delete_by_id(self,id_: str, name: str):
+    def delete_by_id(self, id_: str, name: str):
         pass
 
     @abc.abstractmethod
-    def delete_one(self,where: dict, name: str):
+    def delete_one(self, where: dict, name: str):
         pass
 
     @abc.abstractmethod
-    def delete_(self,where: dict, model: BaseModel, name: str):
+    def delete_(self, where: dict, model: BaseModel, name: str):
         pass
 
     # @abc.abstractmethod
@@ -83,19 +84,19 @@ class StorageInterface(abc.ABC):
     #     pass
 
     @abc.abstractmethod
-    def drop_(self,name: str):
+    def drop_(self, name: str):
         pass
 
     @abc.abstractmethod
-    def find_by_id(self,id_: str, model: BaseModel, name: str) -> BaseModel:
+    def find_by_id(self, id_: str, model: BaseModel, name: str) -> BaseModel:
         pass
 
     @abc.abstractmethod
-    def find_one(self,where: dict, model: BaseModel, name: str) -> BaseModel:
+    def find_one(self, where: dict, model: BaseModel, name: str) -> BaseModel:
         pass
 
     @abc.abstractmethod
-    def find_(self,where: dict, model: BaseModel, name: str) -> list:
+    def find_(self, where: dict, model: BaseModel, name: str) -> list:
         pass
 
     # @abc.abstractmethod
@@ -103,7 +104,7 @@ class StorageInterface(abc.ABC):
     #     pass
 
     @abc.abstractmethod
-    def list_all(self,model: BaseModel, name: str) -> list:
+    def list_all(self, model: BaseModel, name: str) -> list:
         pass
 
     # @abc.abstractmethod
@@ -111,7 +112,7 @@ class StorageInterface(abc.ABC):
     #     pass  # need to do
 
     @abc.abstractmethod
-    def list_(self,where: dict, model: BaseModel, name: str) -> list:
+    def list_(self, where: dict, model: BaseModel, name: str) -> list:
         pass
 
     # @abc.abstractmethod
@@ -119,11 +120,11 @@ class StorageInterface(abc.ABC):
     #     pass  # need to do
 
     @abc.abstractmethod
-    def page_all(self,sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
+    def page_all(self, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
         pass
 
     @abc.abstractmethod
-    def page_(self,where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
+    def page_(self, where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
         pass
 
     # @abc.abstractmethod
@@ -135,7 +136,7 @@ class StorageInterface(abc.ABC):
     '''
 
     @abc.abstractmethod
-    def create_topic_data_table(self,topic):
+    def create_topic_data_table(self, topic):
         pass
 
     # @abc.abstractmethod
@@ -143,59 +144,59 @@ class StorageInterface(abc.ABC):
     #     pass
 
     @abc.abstractmethod
-    def alter_topic_data_table(self,topic):
+    def alter_topic_data_table(self, topic):
         pass
 
     @abc.abstractmethod
-    def topic_data_delete_(self,where, name):
+    def topic_data_delete_(self, where, name):
         pass
 
     @abc.abstractmethod
-    def drop_topic_data_table(self,name):
+    def drop_topic_data_table(self, name):
         pass
 
     @abc.abstractmethod
-    def topic_data_insert_one(self,one: any, topic_name: str) -> tuple:
+    def topic_data_insert_one(self, one: any, topic_name: str) -> tuple:
         pass
 
     @abc.abstractmethod
-    def topic_data_insert_(self,data: list, topic_name: str):
+    def topic_data_insert_(self, data: list, topic_name: str):
         pass
 
     @abc.abstractmethod
-    def topic_data_update_one(self,id_: str, one: any, topic_name: str):
+    def topic_data_update_one(self, id_: str, one: any, topic_name: str):
         pass
 
     @abc.abstractmethod
-    def topic_data_update_(self,where: dict, updates: dict, name: str):
+    def topic_data_update_(self, where: dict, updates: dict, name: str):
         pass
 
     @abc.abstractmethod
-    def topic_data_find_by_id(self,id_: str, topic_name: str) -> any:
+    def topic_data_find_by_id(self, id_: str, topic_name: str) -> any:
         pass
 
     @abc.abstractmethod
-    def topic_data_find_one(self,where: dict, topic_name: str) -> any:
+    def topic_data_find_one(self, where: dict, topic_name: str) -> any:
         pass
 
     @abc.abstractmethod
-    def topic_data_find_(self,where, topic_name):
+    def topic_data_find_(self, where, topic_name):
         pass
 
     @abc.abstractmethod
-    def raw_topic_data_insert_one(self,one, topic_name):
+    def raw_topic_data_insert_one(self, one, topic_name):
         pass
 
     @abc.abstractmethod
-    def topic_data_list_all(self,topic_name) -> list:
+    def topic_data_list_all(self, topic_name) -> list:
         pass
 
     @abc.abstractmethod
-    def topic_data_page_(self,where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
+    def topic_data_page_(self, where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
         pass
 
     @abc.abstractmethod
-    def topic_find_one_and_update(self,where: dict, updates: dict, name: str) -> any:
+    def topic_find_one_and_update(self, where: dict, updates: dict, name: str) -> any:
         pass
 
     '''
@@ -209,4 +210,3 @@ class StorageInterface(abc.ABC):
     @abc.abstractmethod
     def clear_metadata(self):
         pass
-

@@ -39,7 +39,8 @@ def do_less_equals_with_value_type_check(left, right):
             return operator.le(Decimal(left), Decimal(right))
         else:
             raise TypeError(
-                "operator less-equals, the left \"{0}\" is int or decimal, the right \"{1}\" is str".format(left, right))
+                "operator less-equals, the left \"{0}\" is int or decimal, the right \"{1}\" is str".format(left,
+                                                                                                            right))
     if (isinstance(left, int) or isinstance(left, Decimal)) and (
             isinstance(right, int) or isinstance(right, Decimal)):
         return operator.le(Decimal(left), Decimal(right))
@@ -80,10 +81,12 @@ def do_less_equals_with_value_type_check(left, right):
         return operator.le(arrow.get(left).date(), arrow.get(right).date())
     if (isinstance(left, datetime) or isinstance(left, date)) and isinstance(right, dict):
         raise TypeError(
-            "operator less-equals, the left \"{0}\" is datetime or date, but the right \"{1}\" is dict".format(left, right))
+            "operator less-equals, the left \"{0}\" is datetime or date, but the right \"{1}\" is dict".format(left,
+                                                                                                               right))
     if (isinstance(left, datetime) or isinstance(left, date)) and isinstance(right, list):
         raise TypeError(
-            "operator less-equals, the left \"{0}\" is datetime or date, but the right \"{1}\" is list".format(left, right))
+            "operator less-equals, the left \"{0}\" is datetime or date, but the right \"{1}\" is list".format(left,
+                                                                                                               right))
 
     # dict
     if isinstance(left, dict) and isinstance(right, str):

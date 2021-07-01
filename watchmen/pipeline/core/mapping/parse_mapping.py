@@ -14,12 +14,14 @@ def parse_mappings(mappings, target_topic, previous_data, current_data, variable
 
         result = None
         source = mapping.source
-        current_value_ = check_and_convert_value_by_factor(target_factor, parse_parameter(source, current_data, variables))
+        current_value_ = check_and_convert_value_by_factor(target_factor,
+                                                           parse_parameter(source, current_data, variables))
 
         if arithmetic is None or arithmetic == "none":  # mean AS IS
             result = {target_factor.name: current_value_}
         elif arithmetic == "sum":
-            previous_value_ = check_and_convert_value_by_factor(target_factor, parse_parameter(source, previous_data, variables))
+            previous_value_ = check_and_convert_value_by_factor(target_factor,
+                                                                parse_parameter(source, previous_data, variables))
             if previous_value_ is None:
                 previous_value_ = 0
             value_ = current_value_ - previous_value_

@@ -12,7 +12,6 @@ from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import update_to
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
-
 log = logging.getLogger("app." + __name__)
 
 

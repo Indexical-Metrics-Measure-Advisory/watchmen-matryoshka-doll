@@ -6,7 +6,6 @@ from watchmen.pipeline.core.context.unit_context import UnitContext
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joint
 from watchmen.pipeline.core.worker.unit_worker import run_unit
 
-
 log = logging.getLogger("app." + __name__)
 
 

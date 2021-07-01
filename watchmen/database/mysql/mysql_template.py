@@ -35,55 +35,19 @@ log.info("mysql template initialized")
 
 class MysqlStorage(StorageInterface):
 
-    def build_raw_sql_with_json_table(self, check_result, where, name):
-        if check_result["table_name"] == "spaces" and check_result["column_name"] == "groupIds":
-            json_table_stmt = "select s.* " \
-                              "from spaces s "
-            value_ = ",".join(where["groupIds"]["in"])
-            where_stmt = "where JSON_CONTAINS(groupids, '[\"" + value_ + "\"]', '$') = 1"
-            stmt = json_table_stmt + where_stmt
-            return stmt
+    @staticmethod
+    def build_raw_sql_with_json_table(check_result, where, name):
+        table_name = check_result["table_name"]
+        column_name = check_result["column_name"]
+        json_table_stmt = "select s.* " \
+                          "from" + table_name + "s "
+        value_ = ",".join(where[column_name]["in"])
+        where_stmt = "where JSON_CONTAINS(" + column_name.lower() + ", '[\"" + value_ + "\"]', '$') = 1"
+        stmt = json_table_stmt + where_stmt
+        return stmt
 
-        elif check_result["table_name"] == "user_groups" and check_result["column_name"] == "userIds":
-            json_table_stmt = "select s.* " \
-                              "from user_groups s "
-            value_ = ",".join(where["userIds"]["in"])
-            where_stmt = "where JSON_CONTAINS(userids, '[\"" + value_ + "\"]', '$') = 1"
-            stmt = json_table_stmt + where_stmt
-            return stmt
-
-        elif check_result["table_name"] == "user_groups" and check_result["column_name"] == "spaceIds":
-            json_table_stmt = "select s.* " \
-                              "from user_groups s "
-            value_ = ",".join(where["spaceIds"]["in"])
-            where_stmt = "where JSON_CONTAINS(spaceids, '[\"" + value_ + "\"]', '$') = 1"
-            stmt = json_table_stmt + where_stmt
-            return stmt
-
-        elif check_result["table_name"] == "users" and check_result["column_name"] == "groupIds":
-            json_table_stmt = "select s.*" \
-                              "from users s "
-            value_ = ",".join(where["groupIds"]["in"])
-            where_stmt = "where JSON_CONTAINS(groupids, '[\"" + value_ + "\"]', '$') = 1"
-            stmt = json_table_stmt + where_stmt
-            return stmt
-
-        elif check_result["table_name"] == "console_space_subjects" and check_result["column_name"] == "reportIds":
-            json_table_stmt = "select s.*" \
-                              "from console_space_subjects s "
-            value_ = ",".join(where["reportIds"]["in"])
-            where_stmt = "where JSON_CONTAINS(reportids, '[\"" + value_ + "\"]', '$') = 1"
-            stmt = json_table_stmt + where_stmt
-            return stmt
-        elif check_result["table_name"] == "console_spaces" and check_result["column_name"] == "subjectIds":
-            json_table_stmt = "select s.*" \
-                              "from console_spaces s "
-            value_ = ",".join(where["subjectIds"]["in"])
-            where_stmt = "where JSON_CONTAINS(subjectids, '[\"" + value_ + "\"]', '$') = 1"
-            stmt = json_table_stmt + where_stmt
-            return stmt
-
-    def check_where_column_type(self, name, where):
+    @staticmethod
+    def check_where_column_type(name, where):
         if name == "spaces":
             if "groupIds" in where:
                 return {"table_name": "spaces", "column_name": "groupIds"}
@@ -606,7 +570,7 @@ class MysqlStorage(StorageInterface):
                             conn.execute(text(stmt))
             metadata.remove(table)
 
-    def drop_(self,topic_name):
+    def drop_(self, topic_name):
         return self.drop_topic_data_table(topic_name)
 
     def drop_topic_data_table(self, topic_name):

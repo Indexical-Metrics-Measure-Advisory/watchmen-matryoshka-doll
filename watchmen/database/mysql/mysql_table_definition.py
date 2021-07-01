@@ -152,7 +152,6 @@ console_space_subjects_table = Table("console_space_subjects", metadata,
                                      Column('createtime', String(50), nullable=True)
                                      )
 
-
 console_reports_table = Table("reports", metadata,
                               Column("reportid", String(60), primary_key=True),
                               Column("name", String(50), nullable=False),

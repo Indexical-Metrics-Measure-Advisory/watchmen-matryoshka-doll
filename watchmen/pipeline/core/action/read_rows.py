@@ -1,16 +1,10 @@
 import time
 
-from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import UnitActionStatus
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import ActionContext, set_variable
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
-from watchmen.pipeline.model.pipeline import UnitAction
-from watchmen.pipeline.single.stage.unit.mongo.index import process_variable, build_query_conditions, \
-    __build_mongo_query
-from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_multiple_topic_data, query_topic_data
+from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
-from watchmen.topic.topic import Topic
 
 
 def init(actionContext: ActionContext):

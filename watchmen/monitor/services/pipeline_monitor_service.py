@@ -3,7 +3,7 @@ import watchmen.pipeline.index
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.database.storage.storage_template import raw_topic_data_insert_one, insert_one
+from watchmen.database.storage.storage_template import raw_topic_data_insert_one
 
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.pipeline.model.trigger_type import TriggerType

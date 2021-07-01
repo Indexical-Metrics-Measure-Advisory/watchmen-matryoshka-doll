@@ -2,8 +2,7 @@ import importlib
 import logging
 import time
 
-from watchmen.pipeline.core.context.action_context import get_variables
-from watchmen.pipeline.single.pipeline_service import find_action_type_func, convert_action_type
+from watchmen.pipeline.single.pipeline_service import convert_action_type
 
 log = logging.getLogger("app." + __name__)
 

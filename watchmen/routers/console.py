@@ -14,7 +14,7 @@ from watchmen.common.security.index import validate_jwt
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, check_fake_id
 from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics
-from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceGroup, ConsoleSpaceSubject, \
+from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceSubject, \
     ConsoleSpaceSubjectChartDataSet
 from watchmen.console_space.model.favorite import Favorite
 from watchmen.console_space.model.last_snapshot import LastSnapshot
@@ -226,7 +226,6 @@ async def delete_report(report_id, current_user: User = Depends(deps.get_current
 async def load_chart(report_id, current_user: User = Depends(deps.get_current_user)):
     result = await load_chart_dataset(report_id)
 
-    print(result)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
 

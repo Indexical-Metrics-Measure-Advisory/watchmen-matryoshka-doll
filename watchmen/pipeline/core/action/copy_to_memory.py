@@ -26,4 +26,5 @@ def init(actionContext: ActionContext):
         elapsed_time = time.time() - start
         status.complete_time = elapsed_time
         return status, []
+
     return copy_to_memory

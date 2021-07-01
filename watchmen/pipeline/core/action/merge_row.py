@@ -1,20 +1,13 @@
 import logging
 import time
 
-from watchmen.common.constants import pipeline_constants
-from watchmen.monitor.model.pipeline_monitor import MergeRowAction
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
-from watchmen.pipeline.model.pipeline import UnitAction
-from watchmen.pipeline.single.stage.unit.mongo.index import run_mapping_rules, build_query_conditions, \
-    __build_mongo_query, index_conditions
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
 from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import update_topic_data
-from watchmen.pipeline.single.stage.unit.utils import PIPELINE_UID
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
-from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 

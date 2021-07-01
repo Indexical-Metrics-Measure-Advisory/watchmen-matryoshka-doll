@@ -2,15 +2,13 @@ from decimal import Decimal
 
 from bson import Decimal128
 from bson.codec_options import TypeCodec, TypeRegistry, CodecOptions
+from pymongo import MongoClient
 
 import watchmen
-
-from pymongo import MongoClient
 from watchmen.config.config import settings
 
 client = MongoClient(settings.MONGO_HOST, settings.MONGO_PORT, username=settings.MONGO_USERNAME,
                      password=settings.MONGO_PASSWORD)
-
 
 db = client[settings.MONGO_DATABASE]
 

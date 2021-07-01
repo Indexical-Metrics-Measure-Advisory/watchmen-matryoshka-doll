@@ -10,7 +10,7 @@ from watchmen.console_space.storage.console_subject_storage import load_console_
     load_console_subject_by_report_id
 from watchmen.monitor.model.query_monitor import QueryMonitor
 from watchmen.monitor.services.query_monitor_service import build_query_summary, \
-    build_result_summary, build_query_monitor, sync_query_monitor_data, build_query_monitor_report
+    build_result_summary, build_query_monitor
 from watchmen.report.engine.sql_builder import _from, _select, _join, _filter, _groupby, _indicator, _orderby, \
     _dimension, _limit
 from watchmen.report.model.report import ChartType
@@ -96,14 +96,15 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
 
 
 async def save_query_monitor_data(query_monitor):
-    await sync_query_monitor_data(query_monitor)
+    pass  ## TODO save_query_monitor_data
+    # await sync_query_monitor_data(query_monitor)
 
 
 async def load_chart_dataset(report_id):
     # assert report_id is None
     report = load_report_by_id(report_id)
 
-    print("report",report)
+    print("report", report)
     # query_monitor = build_query_monitor_report(report, query_type="report")
     try:
         query = build_query_for_subject_chart(report_id, report)

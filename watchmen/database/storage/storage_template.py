@@ -47,7 +47,6 @@ def update_one(one: any, model: BaseModel, name: str) -> any:
     return template.update_one(one, model, name)
 
 
-
 def update_one_first(where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
     return template.update_one_first(where, updates, model, name)
 
@@ -94,9 +93,6 @@ def find_one(where: dict, model: BaseModel, name: str) -> BaseModel:
 
 def find_(where: dict, model: BaseModel, name: str) -> list:
     return template.find_(where, model, name)
-
-
-
 
 
 def list_all(model: BaseModel, name: str) -> list:
@@ -184,8 +180,8 @@ def topic_data_find_(where, topic_name):
     return template.topic_data_find_(where, topic_name)
 
 
-def raw_topic_data_insert_one(one,topic_name):
-    return template.raw_topic_data_insert_one(one,topic_name)
+def raw_topic_data_insert_one(one, topic_name):
+    return template.raw_topic_data_insert_one(one, topic_name)
 
 
 def topic_data_list_all(topic_name) -> list:

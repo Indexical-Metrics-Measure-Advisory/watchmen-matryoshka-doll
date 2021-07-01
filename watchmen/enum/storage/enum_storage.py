@@ -3,9 +3,9 @@ from typing import List
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.database.storage.storage_template import find_by_id, insert_one, update_one, find_one, find_, \
     page_, page_all, list_all, drop_, insert_all
-from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.enum.model.enum import Enum, EnumItem
 
 ENUMS = "enums"

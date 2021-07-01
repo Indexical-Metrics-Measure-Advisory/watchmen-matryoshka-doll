@@ -20,4 +20,3 @@ def do_in_with_value_type_check(left, right):
 
     log.info("operator in, the left \"{0}\" is not in the right \"{1}\"".format(left, right))
     return False
-

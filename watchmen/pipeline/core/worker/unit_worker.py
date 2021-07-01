@@ -5,7 +5,6 @@ from watchmen.pipeline.core.context.action_context import ActionContext
 from watchmen.pipeline.core.context.unit_context import UnitContext
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joint
 from watchmen.pipeline.core.worker.action_worker import run_action
-from watchmen.pipeline.single.stage.unit.mongo.index import __check_condition
 
 log = logging.getLogger("app." + __name__)
 

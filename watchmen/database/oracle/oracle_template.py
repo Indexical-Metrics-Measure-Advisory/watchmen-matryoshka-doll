@@ -3,7 +3,6 @@ import json
 import logging
 import operator
 import time
-from _operator import lt
 from decimal import Decimal
 from operator import eq
 
@@ -16,14 +15,15 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
 from watchmen.common.data_page import DataPage
+from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.utils.data_utils import build_data_pages
+from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.database.oracle.oracle_engine import engine, dumps
 from watchmen.database.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
 from watchmen.database.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
+from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
-from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import build_data_pages
-from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
 log = logging.getLogger("app." + __name__)
@@ -901,6 +901,7 @@ def topic_data_find_(where, topic_name):
         else:
             return result
 
+
 def __raw_topic_load_all(topic_name):
     # count = count_topic_data_table(topic_name)
     table = get_topic_table_by_name(topic_name)
@@ -1185,3 +1186,7 @@ def raw_pipeline_monitor_page_(where, sort, pageable, model, name) -> DataPage:
 
 def clear_metadata():
     metadata.clear()
+
+
+class OracleStorage(StorageInterface):
+    pass

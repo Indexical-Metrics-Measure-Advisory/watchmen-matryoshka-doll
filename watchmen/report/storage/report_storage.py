@@ -1,7 +1,7 @@
 from watchmen.common.pagination import Pagination
-from watchmen.database.storage.storage_template import insert_one, update_one, find_by_id, find_, delete_one, page_, \
-    delete_by_id
 from watchmen.console_space.model.console_space import Report
+from watchmen.database.storage.storage_template import insert_one, update_one, find_by_id, find_, page_, \
+    delete_by_id
 
 CONSOLE_REPORTS = "console_reports"
 

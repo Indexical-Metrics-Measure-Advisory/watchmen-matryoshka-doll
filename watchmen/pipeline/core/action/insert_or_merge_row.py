@@ -13,8 +13,7 @@ from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
 from watchmen.pipeline.core.retry.retry_template import RetryPolicy, retry_template
 from watchmen.pipeline.single.stage.unit.model.trigger_data import TriggerData
 from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
-from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import insert_topic_data, update_topic_data_one, \
-    update_topic_data_one_with_version
+from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import insert_topic_data, update_topic_data_one
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
@@ -28,7 +27,7 @@ def update_retry_callback(mappings_results, where_, target_topic):
     target_data = query_topic_data(where_,
                                    target_topic.name)
 
-    print("target_data",target_data)
+    print("target_data", target_data)
     if target_data is not None:
         id_ = target_data.get(get_id_name(), None)
         version_ = target_data.get("version_", None)
@@ -51,7 +50,7 @@ def init(actionContext: ActionContext):
         if action.topicId is None:
             raise ValueError("action.topicId is empty {0}".format(action.name))
         target_topic = get_topic_by_id(action.topicId)
-        if target_topic.type == "aggregate" and settings.STORAGE_ENGINE != MONGO: ## TODO aggregation_topic_merge_or_insert_topic
+        if target_topic.type == "aggregate" and settings.STORAGE_ENGINE != MONGO:  ## TODO aggregation_topic_merge_or_insert_topic
             return aggregation_topic_merge_or_insert_topic()
         else:
             return not_aggregation_topic_merge_or_insert_topic()

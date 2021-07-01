@@ -28,7 +28,7 @@ def add_edge(graph: Graph, relationship: Relationship) -> Graph:
 def show_graph(graph: Graph):
     for key, node in graph.nodes.items():
         if len(graph.adj.get(node.id, {})) != 0:
-            #print(node.name + '(' + node.object_id + ')' + '->')
+            # print(node.name + '(' + node.object_id + ')' + '->')
             for k, item in graph.adj.get(node.id, {}).items():
                 print(item.name + '(' + item.object_id + ')')
             print('\n')

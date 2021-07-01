@@ -4,7 +4,6 @@ from datetime import date
 import arrow
 import pymongo
 from bson import regex, ObjectId
-from pymongo import ReturnDocument
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
@@ -434,8 +433,6 @@ log.info("mongo template initialized")
 
 
 class MongoStorage(StorageInterface):
-
-
 
     def build_mongo_where_expression(self, where: dict):
         """

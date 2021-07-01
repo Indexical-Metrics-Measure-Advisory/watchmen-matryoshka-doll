@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 import operator
 from typing import List
 
@@ -212,7 +210,7 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
             return do_more_with_value_type_check(left, right)
         elif operator_ == "more-equals":
             # return operator.ge(left, right)
-            return do_more_equals_with_value_type_check(left,right)
+            return do_more_equals_with_value_type_check(left, right)
         elif operator_ == "less":
             # return operator.lt(left, right)
             return do_less_with_value_type_check(left, right)

@@ -11,10 +11,10 @@ def dumps(o):
 
 
 connection_url = 'mysql://%s:%s@%s:%s/%s?charset=utf8' % (settings.MYSQL_USER,
-                                                                  settings.MYSQL_PASSWORD,
-                                                                  settings.MYSQL_HOST,
-                                                                  settings.MYSQL_PORT,
-                                                                  settings.MYSQL_DATABASE)
+                                                          settings.MYSQL_PASSWORD,
+                                                          settings.MYSQL_HOST,
+                                                          settings.MYSQL_PORT,
+                                                          settings.MYSQL_DATABASE)
 
 # print(connection_url)
 engine = create_engine(connection_url,

@@ -40,10 +40,9 @@ def add_edge(graph: Graph, relationship: Relationship) -> Graph:
 def show_graph(graph: Graph):
     for node in graph.nodes:
         if len(graph.adj.get(node.id, [])) != 0:
-            #print(node.name + '(' + node.object_id + ')' + '->')
+            # print(node.name + '(' + node.object_id + ')' + '->')
             for item in graph.adj.get(node.id, []):
                 pass
-
 
 
 def bfs(node: Node, graph: Graph):
