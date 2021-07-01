@@ -21,6 +21,7 @@ from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.database.oracle.oracle_engine import engine, dumps
 from watchmen.database.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
 from watchmen.database.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
+from watchmen.database.singleton import singleton
 from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
@@ -33,7 +34,7 @@ log.info("oracle template initialized")
 
 
 
-
+@singleton
 class OracleStorage(StorageInterface):
 
     def build_raw_sql_with_json_table(self,check_result, where, name):

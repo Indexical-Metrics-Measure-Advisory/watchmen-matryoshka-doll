@@ -21,6 +21,7 @@ from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.database.mysql.mysql_engine import engine
 from watchmen.database.mysql.mysql_table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.database.mysql.mysql_utils import parse_obj, count_table, count_topic_data_table
+from watchmen.database.singleton import singleton
 from watchmen.database.storage.exception.exception import OptimisticLockError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
@@ -32,7 +33,7 @@ log = logging.getLogger("app." + __name__)
 
 log.info("mysql template initialized")
 
-
+@singleton
 class MysqlStorage(StorageInterface):
 
     @staticmethod
