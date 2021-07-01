@@ -47,10 +47,10 @@ class StorageInterface(abc.ABC):
     @abc.abstractmethod
     def update_one(self,one: any, model: BaseModel, name: str) -> any:
         pass
-
-    @abc.abstractmethod
-    def update_one_with_field(self,one: any, model: BaseModel, name: str, where: dict):
-        pass
+    #
+    # @abc.abstractmethod
+    # def update_one_with_field(self,one: any, model: BaseModel, name: str, where: dict):
+    #     pass
 
     @abc.abstractmethod
     def update_one_first(self,where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
@@ -81,7 +81,7 @@ class StorageInterface(abc.ABC):
         pass
 
     # @abc.abstractmethod
-    # def delete_all(self,model: BaseModel, name: str) -> list:
+    # def delete_all(self,model: BaseModel, name: str) -> licreate_topic_data_table_indexst:
     #     pass
 
     @abc.abstractmethod
@@ -140,9 +140,9 @@ class StorageInterface(abc.ABC):
     def create_topic_data_table(self,topic):
         pass
 
-    @abc.abstractmethod
-    def create_topic_data_table_index(self,name: str, index_name: list, index_type: str):
-        pass
+    # @abc.abstractmethod
+    # def create_topic_data_table_index(self,name: str, index_name: list, index_type: str):
+    #     pass
 
     @abc.abstractmethod
     def alter_topic_data_table(self,topic):

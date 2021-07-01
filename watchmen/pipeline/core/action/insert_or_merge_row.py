@@ -2,6 +2,8 @@ import logging
 import time
 
 from watchmen.common.utils.data_utils import get_id_name
+from watchmen.config.config import settings
+from watchmen.database.storage.engine_adaptor import MONGO
 from watchmen.database.storage.exception.exception import InsertConflictError
 from watchmen.database.storage.storage_template import topic_data_update_one_with_version
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
@@ -49,7 +51,7 @@ def init(actionContext: ActionContext):
         if action.topicId is None:
             raise ValueError("action.topicId is empty {0}".format(action.name))
         target_topic = get_topic_by_id(action.topicId)
-        if target_topic.type == "aggregate":
+        if target_topic.type == "aggregate" and settings.STORAGE_ENGINE != MONGO: ## TODO aggregation_topic_merge_or_insert_topic
             return aggregation_topic_merge_or_insert_topic()
         else:
             return not_aggregation_topic_merge_or_insert_topic()

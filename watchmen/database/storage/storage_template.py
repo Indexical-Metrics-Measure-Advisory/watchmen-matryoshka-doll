@@ -47,8 +47,8 @@ def update_one(one: any, model: BaseModel, name: str) -> any:
     return template.update_one(one, model, name)
 
 
-def update_one_with_field(one: any, model: BaseModel, name: str, where: dict):
-    return template.update_one_with_field(where, one, model, name)
+# def update_one_with_field(one: any, model: BaseModel, name: str, where: dict):
+#     return template.update_one_with_field(where, one, model, name)
 
 
 def update_one_first(where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
@@ -140,8 +140,8 @@ def create_topic_data_table(topic):
     template.create_topic_data_table(topic)
 
 
-def create_topic_data_table_index(name: str, index_name: list, index_type: str):
-    pass
+# def create_topic_data_table_index(name: str, index_name: list, index_type: str):
+#     pass
 
 
 def alter_topic_data_table(topic):

@@ -629,8 +629,8 @@ def create_raw_topic_data_table(topic):
     table.create(engine)
 
 
-def create_topic_data_table_index(name: str, index_name: list, index_type: str):
-    pass
+# def create_topic_data_table_index(name: str, index_name: list, index_type: str):
+#     pass
 
 
 def alter_topic_data_table(topic):

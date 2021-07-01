@@ -796,3 +796,6 @@ class MongoStorage(StorageInterface):
     def clear_metadata(self):
         pass
 
+
+    # def create_topic_data_table_index(self):
+
