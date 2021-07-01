@@ -4,8 +4,6 @@ from typing import List
 
 from pydantic.main import BaseModel
 
-# from watchmen.database.storage.engine_adaptor import find_template
-# from watchmen.database.storage.storage_template import Pageable, DataPage
 
 class OrderType(Enum):
     """Ascending sort order."""
@@ -100,9 +98,9 @@ class StorageInterface(abc.ABC):
     def find_(self,where: dict, model: BaseModel, name: str) -> list:
         pass
 
-    @abc.abstractmethod
-    def exists(self,where: dict, model: BaseModel, name: str):
-        pass
+    # @abc.abstractmethod
+    # def exists(self,where: dict, model: BaseModel, name: str):
+    #     pass
 
     @abc.abstractmethod
     def list_all(self,model: BaseModel, name: str) -> list:
@@ -128,9 +126,9 @@ class StorageInterface(abc.ABC):
     def page_(self,where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
         pass
 
-    @abc.abstractmethod
-    def find_one_and_update(self,where: dict, updates: dict, name: str) -> any:
-        pass
+    # @abc.abstractmethod
+    # def find_one_and_update(self,where: dict, updates: dict, name: str) -> any:
+    #     pass
 
     '''
     for topic data storage interface

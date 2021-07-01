@@ -1,4 +1,6 @@
 
+
+## TODO  factor it
 def get_primary_key(table_name):
     if table_name == 'topics':
         return 'topicId'
@@ -27,6 +29,6 @@ def get_primary_key(table_name):
     elif table_name == 'enums':
         return 'enumId'
     elif table_name == 'console_reports':
-        return 'reportid'
+        return 'reportId'
     elif table_name == "console_space_last_snapshot":
-        return  "userid"
+        return  "userId"

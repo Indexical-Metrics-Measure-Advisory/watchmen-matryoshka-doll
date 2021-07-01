@@ -47,9 +47,6 @@ def update_one(one: any, model: BaseModel, name: str) -> any:
     return template.update_one(one, model, name)
 
 
-# def update_one_with_field(one: any, model: BaseModel, name: str, where: dict):
-#     return template.update_one_with_field(where, one, model, name)
-
 
 def update_one_first(where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
     return template.update_one_first(where, updates, model, name)
@@ -99,8 +96,7 @@ def find_(where: dict, model: BaseModel, name: str) -> list:
     return template.find_(where, model, name)
 
 
-def exists(where: dict, model: BaseModel, name: str):
-    return template.exists(where, model, name)
+
 
 
 def list_all(model: BaseModel, name: str) -> list:
@@ -127,8 +123,8 @@ def page_(where: dict, sort: list, pageable: Pageable, model: BaseModel, name: s
     return template.page_(where, sort, pageable, model, name)
 
 
-def find_one_and_update(where: dict, updates: dict, name: str) -> any:
-    return template.find_one_and_update(where, updates, name)
+# def find_one_and_update(where: dict, updates: dict, name: str) -> any:
+#     return template.find_one_and_update(where, updates, name)
 
 
 '''

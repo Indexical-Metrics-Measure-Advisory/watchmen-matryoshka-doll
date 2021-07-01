@@ -636,13 +636,13 @@ class MongoStorage(StorageInterface):
         result_list = list(cursor)
         return [model.parse_obj(result) for result in result_list]
 
-    def exists(self, where, model, name):
-        collection = client.get_collection(name)
-        result = collection.find_one(self.build_mongo_where_expression(where))
-        if result is None:
-            return False
-        else:
-            return True
+    # def exists_(self, where, model, name):
+    #     collection = client.get_collection(name)
+    #     result = collection.find_one(self.build_mongo_where_expression(where))
+    #     if result is None:
+    #         return False
+    #     else:
+    #         return True
 
     def list_all(self, model, name: str):
         collection = client.get_collection(name)
@@ -780,12 +780,12 @@ class MongoStorage(StorageInterface):
         result = topic_data_col.find()
         return list(result)
 
-    def topic_find_one_and_update(self, where: dict, updates: dict, name: str):
-        codec_options = build_code_options()
-        collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
-        return collection.find_one_and_update(filter=self.build_mongo_where_expression(where), update=updates,
-                                              upsert=True,
-                                              return_document=ReturnDocument.AFTER)
+    # def topic_find_one_and_update(self, where: dict, updates: dict, name: str):
+    #     codec_options = build_code_options()
+    #     collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
+    #     return collection.find_one_and_update(filter=self.build_mongo_where_expression(where), update=updates,
+    #                                           upsert=True,
+    #                                           return_document=ReturnDocument.AFTER)
 
     def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
         return self.page_(self.build_mongo_where_expression(where), sort, pageable, model, name)

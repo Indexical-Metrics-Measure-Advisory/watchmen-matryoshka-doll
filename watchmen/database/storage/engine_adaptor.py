@@ -1,5 +1,5 @@
 from watchmen.config.config import settings
-
+from watchmen.database.mysql.mysql_template import MysqlStorage
 
 MYSQL = "mysql"
 MONGO = "mongo"
@@ -15,8 +15,9 @@ def find_template():
         return MongoStorage()
 
     elif settings.STORAGE_ENGINE == MYSQL:
-        from watchmen.database.mysql import mysql_template
-        return mysql_template
+        # from watchmen.database.mysql import mysql_template
+        # return mysql_template
+        return MysqlStorage()
     elif settings.STORAGE_ENGINE == ORACLE:
         from watchmen.database.oracle import oracle_template
         return oracle_template
