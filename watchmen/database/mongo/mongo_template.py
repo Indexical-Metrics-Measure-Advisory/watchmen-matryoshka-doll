@@ -554,18 +554,18 @@ class MongoStorage(StorageInterface):
 
     def insert_one(self,one, model, name):
         collection = client.get_collection(name)
-        collection.insert_one(__convert_to_dict(one))
+        collection.insert_one(self.__convert_to_dict(one))
         return model.parse_obj(one)
 
     def insert_all(self,data, model, name):
         collection = client.get_collection(name)
-        collection.insert_many(__convert_list_to_dict(data))
+        collection.insert_many(self.__convert_list_to_dict(data))
         return data
 
     def update_one(self,one, model, name) -> any:
         collection = client.get_collection(name)
         primary_key = get_primary_key(name)
-        one_dict = __convert_to_dict(one)
+        one_dict = self.__convert_to_dict(one)
         query_dict = {primary_key: one_dict.get(primary_key)}
         collection.update_one(query_dict, {"$set": one_dict})
         return model.parse_obj(one)
@@ -573,27 +573,27 @@ class MongoStorage(StorageInterface):
     def update_one_first(self,where, updates, model, name):
         collection = client.get_collection(name)
         query_dict = build_mongo_where_expression(where)
-        collection.update_one(query_dict, {"$set": __convert_to_dict(updates)})
+        collection.update_one(query_dict, {"$set": self.__convert_to_dict(updates)})
         return model.parse_obj(updates)
 
     # equal create_or_update, To avoid multiple upserts, ensure that the filter fields are uniquely indexed.
     def upsert_(self,where, updates, model, name):
         collections = client.get_collection(name)
-        collections.update_one(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)}, upsert=True)
+        collections.update_one(build_mongo_where_expression(where), {"$set": self.__convert_to_dict(updates)}, upsert=True)
         return model.parse_obj(updates)
 
     def update_one_with_condition(self,where, one, model, name):
         collections = client.get_collection(name)
-        collections.update_one(build_mongo_where_expression(where), {"$set": __convert_to_dict(one)})
+        collections.update_one(build_mongo_where_expression(where), {"$set": self.__convert_to_dict(one)})
 
     def update_(self,where, updates, model, name):
         collections = client.get_collection(name)
-        collections.update_many(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)})
+        collections.update_many(build_mongo_where_expression(where), {"$set": self.__convert_to_dict(updates)})
 
     def pull_update(self,where, updates, model, name):
         collections = client.get_collection(name)
         collections.update_many(build_mongo_where_expression(where),
-                                {"$pull": build_mongo_update_expression(__convert_to_dict(updates))})
+                                {"$pull": build_mongo_update_expression(self.__convert_to_dict(updates))})
 
     def delete_by_id(self,id_, name):
         collection = client.get_collection(name)
@@ -682,7 +682,7 @@ class MongoStorage(StorageInterface):
     def __convert_list_to_dict(self,items: list):
         result = []
         for item in items:
-            result.append(__convert_to_dict(item))
+            result.append(self.__convert_to_dict(item))
         return result
 
     def __convert_to_dict(self,instance) -> dict:
@@ -753,7 +753,7 @@ class MongoStorage(StorageInterface):
         codec_options = build_code_options()
         encode_dict(updates)
         collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
-        collection.update_many(build_mongo_where_expression(where), {"$set": __convert_to_dict(updates)})
+        collection.update_many(build_mongo_where_expression(where), {"$set": self.__convert_to_dict(updates)})
 
     def topic_data_find_by_id(self,id_, topic_name):
         codec_options = build_code_options()
