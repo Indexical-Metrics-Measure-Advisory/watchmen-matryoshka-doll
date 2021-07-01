@@ -36,7 +36,7 @@ log.info("mysql template initialized")
 class MysqlStorage(StorageInterface):
 
     @staticmethod
-    def build_raw_sql_with_json_table(check_result, where, name):
+    def build_raw_sql_with_json_table(check_result, where):
         table_name = check_result["table_name"]
         column_name = check_result["column_name"]
         json_table_stmt = "select s.* " \
@@ -347,7 +347,7 @@ class MysqlStorage(StorageInterface):
         table = get_table_by_name(name)
         check_result = self.check_where_column_type(name, where)
         if check_result is not None:
-            stmt = text(self.build_raw_sql_with_json_table(check_result, where, name))
+            stmt = text(self.build_raw_sql_with_json_table(check_result, where))
         else:
             stmt = select(table)
             stmt = stmt.where(self.build_mysql_where_expression(table, where))
@@ -369,7 +369,7 @@ class MysqlStorage(StorageInterface):
         check_result = self.check_where_column_type(name, where)
 
         if check_result is not None:
-            stmt = text(self.build_raw_sql_with_json_table(check_result, where, name))
+            stmt = text(self.build_raw_sql_with_json_table(check_result, where))
         else:
             stmt = select(table)
             where_expression = self.build_mysql_where_expression(table, where)
