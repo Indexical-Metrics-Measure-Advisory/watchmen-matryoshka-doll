@@ -1,5 +1,9 @@
 import logging
 
+from distributed import as_completed
+
+from watchmen.common.dask.client import client
+from watchmen.config.config import settings
 from watchmen.monitor.model.pipeline_monitor import UnitRunStatus
 from watchmen.pipeline.core.context.action_context import ActionContext
 from watchmen.pipeline.core.context.unit_context import UnitContext
@@ -8,55 +12,60 @@ from watchmen.pipeline.core.worker.action_worker import run_action
 
 log = logging.getLogger("app." + __name__)
 
-'''
-def should_run(unitContext: UnitContext) -> bool:
-    unit = unitContext.unit
-    pipeline_topic = unitContext.stageContext.pipelineContext.pipelineTopic
-    data = unitContext.stageContext.pipelineContext.data
-    context = unitContext.stageContext.pipelineContext.variables
-    return __check_condition(unit, pipeline_topic, data, context)
-'''
 
-
-def should_run(unitContext: UnitContext) -> bool:
-    unit = unitContext.unit
+def should_run(unit_context: UnitContext) -> bool:
+    unit = unit_context.unit
     if unit.on is None:
         return True
-    current_data = unitContext.stageContext.pipelineContext.currentOfTriggerData
-    variables = unitContext.stageContext.pipelineContext.variables
+    current_data = unit_context.stageContext.pipelineContext.currentOfTriggerData
+    variables = unit_context.stageContext.pipelineContext.variables
     return parse_parameter_joint(unit.on, current_data, variables)
 
 
-def run_unit(unitContext: UnitContext):
-    loopVariableName = unitContext.unit.loopVariableName
-    if loopVariableName is not None and loopVariableName != "":
-        loopVariable = unitContext.stageContext.pipelineContext.variables[loopVariableName]
-        if isinstance(loopVariable, list):
-            for value in unitContext.stageContext.pipelineContext.variables[loopVariableName]:
-                if unitContext.unit.do is not None:
-                    if should_run(unitContext):
-                        unitContext.unitStatus = UnitRunStatus()
-                        for action in unitContext.unit.do:
-                            actionContext = ActionContext(unitContext, action)
-                            actionContext.delegateVariableName = loopVariableName
-                            actionContext.delegateValue = value
-                            run_action(actionContext)
-                            unitContext.unitStatus.actions.append(actionContext.actionStatus)
-        elif loopVariable is not None:  # the loop variable just have one element.
-            if unitContext.unit.do is not None:
-                if should_run(unitContext):
-                    unitContext.unitStatus = UnitRunStatus()
-                    for action in unitContext.unit.do:
-                        actionContext = ActionContext(unitContext, action)
-                        actionContext.delegateVariableName = loopVariableName
-                        actionContext.delegateValue = loopVariable
-                        run_action(actionContext)
-                        unitContext.unitStatus.actions.append(actionContext.actionStatus)
+def run_unit(unit_context: UnitContext):
+    loop_variable_name = unit_context.unit.loopVariableName
+    if loop_variable_name is not None and loop_variable_name != "":
+        loop_variable = unit_context.stageContext.pipelineContext.variables[loop_variable_name]
+        if isinstance(loop_variable, list):
+            if settings.DASK_ON:
+                run_loop_with_dask(loop_variable_name, unit_context)
+            else:
+                run_actions(loop_variable, loop_variable_name, unit_context)
+        elif loop_variable is not None:  # the loop variable just have one element.
+            run_actions(loop_variable_name, unit_context)
     else:
-        if unitContext.unit.do is not None:
-            if should_run(unitContext):
-                unitContext.unitStatus = UnitRunStatus()
-                for action in unitContext.unit.do:
-                    actionContext = ActionContext(unitContext, action)
-                    run_action(actionContext)
-                    unitContext.unitStatus.actions.append(actionContext.actionStatus)
+        if unit_context.unit.do is not None:
+            if should_run(unit_context):
+                unit_context.unitStatus = UnitRunStatus()
+                for action in unit_context.unit.do:
+                    action_context = ActionContext(unit_context, action)
+                    run_action(action_context)
+                    unit_context.unitStatus.actions.append(action_context.actionStatus)
+
+
+def run_actions(loop_variable_name, unit_context):
+    for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
+        if unit_context.unit.do is not None:
+            if should_run(unit_context):
+                unit_context.unitStatus = UnitRunStatus()
+                for action in unit_context.unit.do:
+                    action_context = ActionContext(unit_context, action)
+                    action_context.delegateVariableName = loop_variable_name
+                    action_context.delegateValue = value
+                    unit_context.unitStatus.actions.append(action_context.actionStatus)
+
+
+def run_loop_with_dask(loop_variable_name, unit_context):
+    futures = []
+    for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
+        if unit_context.unit.do is not None:
+            if should_run(unit_context):
+                unit_context.unitStatus = UnitRunStatus()
+                for action in unit_context.unit.do:
+                    action_context = ActionContext(unit_context, action)
+                    action_context.delegateVariableName = loop_variable_name
+                    action_context.delegateValue = value
+                    futures.append(client.submit(run_action, action_context))
+    for future in as_completed(futures):
+        result = future.result()
+        unit_context.unitStatus.actions.append(result.actionStatus)
