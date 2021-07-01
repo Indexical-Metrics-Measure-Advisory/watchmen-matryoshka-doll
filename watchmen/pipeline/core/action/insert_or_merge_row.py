@@ -25,8 +25,10 @@ def update_recovery_callback():
 def update_retry_callback(mappings_results, where_, target_topic):
     target_data = query_topic_data(where_,
                                    target_topic.name)
+
+    print("target_data",target_data)
     if target_data is not None:
-        id_ = target_data.get("id_", None)
+        id_ = target_data.get(get_id_name(), None)
         version_ = target_data.get("version_", None)
         if id_ is not None and version_ is not None:
             mappings_results['version_'] = version_
