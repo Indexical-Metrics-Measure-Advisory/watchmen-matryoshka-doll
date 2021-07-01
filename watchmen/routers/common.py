@@ -15,8 +15,9 @@ from watchmen.console_space.storage.console_subject_storage import load_console_
 from watchmen.database.mongo.index import delete_topic_collection
 from watchmen.database.storage.storage_template import create_raw_pipeline_monitor, clear_metadata
 from watchmen.monitor.services.pipeline_monitor_service import insert_monitor_topic
+from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.dependency.caculate_dependency_new import pipelineExecutionPath
-from watchmen.pipeline.single.pipeline_service import run_pipeline
+from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
 from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
@@ -59,7 +60,7 @@ async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_
     return instances
 
 
-@router.post("/topic/data/rerun", tags=["common"])
+@router.post("/topic/data/rerun", tags=["common"]) ## TODO  move to pipeline worker
 async def rerun_pipeline(topic_name, instance_id, pipeline_id):
     instance = find_topic_data_by_id_and_topic_name(topic_name, instance_id)
     topic = get_topic(topic_name)
@@ -67,7 +68,8 @@ async def rerun_pipeline(topic_name, instance_id, pipeline_id):
     for pipeline in pipeline_list:
         if pipeline.pipelineId == pipeline_id:
             log.info("rerun topic {0} and pipeline {1}".format(topic_name, pipeline.pipelineId))
-            run_pipeline(pipeline, instance)
+            pipeline_context = PipelineContext(pipeline, instance)
+            run_pipeline(pipeline_context)
     return {"received": True}
 
 

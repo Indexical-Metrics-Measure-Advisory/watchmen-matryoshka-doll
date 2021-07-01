@@ -1,11 +1,15 @@
 import importlib
 import logging
 import time
-
-from watchmen.pipeline.single.pipeline_service import convert_action_type
+from functools import lru_cache
+#
+# from watchmen.pipeline.single.pipeline_service import convert_action_type
 
 log = logging.getLogger("app." + __name__)
 
+@lru_cache(maxsize=16)
+def convert_action_type(action_type: str):
+    return action_type.replace("-", "_")
 
 def run_action(actionContext):
     action = actionContext.action
@@ -35,3 +39,4 @@ def run_action(actionContext):
             *trigger_pipeline_data_list]
 
     actionContext.actionStatus = action_run_status
+    return actionContext
