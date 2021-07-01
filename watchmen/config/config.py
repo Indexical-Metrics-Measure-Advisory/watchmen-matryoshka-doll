@@ -2,6 +2,9 @@ from typing import List, Dict, Any, Optional
 
 from pydantic import AnyHttpUrl, BaseSettings, validator
 
+DEV = "dev"
+PROD = "production"
+
 
 class Settings(BaseSettings):
     API_V1_STR: str = ""
@@ -9,6 +12,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str = '801GtEAdlE8o-iZRLBMgz30PGE_zxry82EaUYMAhNq8'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+
+    ENVIRONMENT:str = DEV
+
     # HOST_URL = "http://localhost:8000"
     ALGORITHM = "HS256"
     STORAGE_ENGINE = "mongo"
