@@ -20,8 +20,6 @@ from watchmen.console_space.model.favorite import Favorite
 from watchmen.console_space.model.last_snapshot import LastSnapshot
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
     delete_console_space_and_sub_data
-# from watchmen.console_space.storage.console_group_storage import create_console_group_to_storage, \
-#     rename_console_group_by_id
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
     load_console_space_by_id, rename_console_space_by_id, create_console_space_graph, update_console_space_graph, \
     load_console_space_graph_by_user_id, load_console_space_graph
@@ -114,14 +112,12 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
 
 ## SUBJECT
 
-
 @router.post("/console_space/subject", tags=["console"], response_model=ConsoleSpaceSubject)
 async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body(...),
                                  current_user: User = Depends(deps.get_current_user)):
     if check_fake_id(subject.subjectId):
         subject.subjectId = None
         console_space = load_console_space_by_id(connect_id)
-
         for report in subject.reports:
             report.reportId = get_surrogate_key()
             subject.reportIds.append(report.reportId)
@@ -129,7 +125,6 @@ async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body
         subject = create_console_subject_to_storage(subject)
         console_space.subjectIds.append(subject.subjectId)
         save_console_space(console_space)
-
         return subject
     else:
         raise Exception("id is not fake ID")

@@ -15,7 +15,6 @@ class Settings(BaseSettings):
     DASK_ON:bool = False
     DASK_PROCESSES:bool = False
 
-
     ENVIRONMENT:str = DEV
 
     # HOST_URL = "http://localhost:8000"

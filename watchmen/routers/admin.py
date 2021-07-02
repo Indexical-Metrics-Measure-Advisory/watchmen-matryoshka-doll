@@ -134,6 +134,7 @@ async def create_topic(topic: Topic, current_user: User = Depends(deps.get_curre
 
 @router.post("/save/topic", tags=["admin"], response_model=Topic)
 async def save_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
+
     if check_fake_id(topic.topicId):
         result = create_topic_schema(topic)
         create_or_update_presto_schema_fields(result)

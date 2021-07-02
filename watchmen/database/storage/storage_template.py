@@ -4,35 +4,36 @@ from typing import List
 from pydantic.main import BaseModel
 
 from watchmen.database.storage.engine_adaptor import find_template
+from watchmen.database.storage.storage_interface import Pageable, DataPage
 
 template = find_template()
 
 
-class OrderType(Enum):
-    """Ascending sort order."""
-    ASCENDING = 1
-    """Descending sort order."""
-    DESCENDING = -1
-
-
-'''
-class SqlOperator(Enum):
-    AND = "and"
-    OR = "or"
-'''
-
-
-class Pageable(BaseModel):
-    pageSize: int = None
-    pageNumber: int = None
-
-
-class DataPage(BaseModel):
-    data: List = []
-    itemCount: int = None
-    pageNumber: int = None
-    pageSize: int = None
-    pageCount: int = None
+# class OrderType(Enum):
+#     """Ascending sort order."""
+#     ASCENDING = 1
+#     """Descending sort order."""
+#     DESCENDING = -1
+#
+#
+# '''
+# class SqlOperator(Enum):
+#     AND = "and"
+#     OR = "or"
+# '''
+#
+#
+# class Pageable(BaseModel):
+#     pageSize: int = None
+#     pageNumber: int = None
+#
+#
+# class DataPage(BaseModel):
+#     data: List = []
+#     itemCount: int = None
+#     pageNumber: int = None
+#     pageSize: int = None
+#     pageCount: int = None
 
 
 def insert_one(one: any, model: BaseModel, name: str) -> BaseModel:

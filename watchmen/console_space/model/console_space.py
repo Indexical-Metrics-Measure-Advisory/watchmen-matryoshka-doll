@@ -3,7 +3,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.common.parameter import ParameterJoint, Parameter
 from watchmen.report.model.report import Report
 from watchmen.topic.topic import Topic
@@ -12,28 +12,6 @@ from watchmen.topic.topic import Topic
 class ConsoleSpaceSubjectChartDataSet(BaseModel):
     meta: List[str] = []
     data: list = []
-
-
-#
-# class ConsoleSpaceSubjectDataSetFilter(BaseModel):
-#     topicId: str = None
-#     factorId: str = None
-#     operator: str = None
-#     value: str = None
-#
-#
-# class ConsoleSpaceSubjectDataSetFilterJoint(BaseModel):
-#     jointType: str = None
-#     filters: List[ConsoleSpaceSubjectDataSetFilter] = []
-
-
-# class ConsoleSpaceSubjectDataSetColumn(BaseModel):
-#     topicId: str = None
-#     factorId: str = None
-#     operator: str = None
-#     secondaryTopicId: str = None
-#     secondaryFactorId: str = None
-#     alias: str = None
 
 
 class SubjectDataSetJoin(BaseModel):
@@ -64,7 +42,7 @@ class SubjectDataSet(BaseModel):
     joins: List[SubjectDataSetJoin] = []
 
 
-class ConsoleSpaceSubject(MongoModel):
+class ConsoleSpaceSubject(WatchmenModel):
     subjectId: str = None
     name: str = None
     topicCount: int = None
@@ -74,16 +52,18 @@ class ConsoleSpaceSubject(MongoModel):
     reports: List[Report] = []
     reportIds: list = []
     dataset: SubjectDataSet = None
+    tenantId: str = None
 
 
-class ConsoleSpaceGroup(MongoModel):
+class ConsoleSpaceGroup(WatchmenModel):
     groupId: str = None
     name: str = None
     subjects: List[ConsoleSpaceSubject] = []
     subjectIds: list = []
+    tenantId: str = None
 
 
-class ConsoleSpace(MongoModel):
+class ConsoleSpace(WatchmenModel):
     spaceId: str = None
     name: str = None
     connectId: str = None
@@ -95,4 +75,5 @@ class ConsoleSpace(MongoModel):
     subjectIds: list = []
     userId: str = None
     topics: List[Topic] = []
+    tenantId: str = None
     # topicRelations: List[TopicRelationship] = []

@@ -2,7 +2,8 @@ from typing import List
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
-from watchmen.database.storage.storage_template import insert_one, list_all, update_one, page_all, OrderType, find_one, \
+from watchmen.database.storage.storage_interface import OrderType
+from watchmen.database.storage.storage_template import insert_one, list_all, update_one, page_all, find_one, \
     page_, find_, find_by_id
 from watchmen.topic.topic import Topic
 

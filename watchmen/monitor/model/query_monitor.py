@@ -3,7 +3,7 @@ from typing import List
 
 from pydantic.main import BaseModel
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
 class QuerySource(BaseModel):
@@ -23,10 +23,11 @@ class QuerySummary(BaseModel):
     resultSummary: ResultSummary = None
 
 
-class QueryMonitor(MongoModel):
+class QueryMonitor(WatchmenModel):
     queryUid: int = None
     querySource: QuerySource = None
     querySummaryList: List[QuerySummary] = []
     executionTime: int = None
     success: bool = True
     error: str = None
+    tenantId: str = None

@@ -3,7 +3,7 @@ from typing import Optional, Dict
 
 #
 # from watchmen.common.event.event import Event
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.raw_data.context import Context
 from watchmen.raw_data.model_field import ModelField
 from watchmen.raw_data.model_relationship import ModelRelationship
@@ -17,7 +17,7 @@ class SubDomain(str, Enum):
     POLICY = "policy"
 
 
-class ModelSchema(MongoModel):
+class ModelSchema(WatchmenModel):
     model_id: str = None
     domain: Domain = None
     subDomain: SubDomain = None

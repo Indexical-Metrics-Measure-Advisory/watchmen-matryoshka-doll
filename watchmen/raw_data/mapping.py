@@ -1,7 +1,7 @@
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
-class Mapping(MongoModel):
+class Mapping(WatchmenModel):
     mapping_id: int
     source_entity_id: int
     source_entity_name: str

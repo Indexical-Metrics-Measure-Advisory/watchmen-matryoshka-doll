@@ -1,7 +1,8 @@
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
-class Favorite(MongoModel):
+class Favorite(WatchmenModel):
     connectedSpaceIds: list = []
     dashboardIds: list = []
     userId: str = None
+    tenantId: str = None

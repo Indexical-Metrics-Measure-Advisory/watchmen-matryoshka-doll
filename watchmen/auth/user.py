@@ -1,7 +1,7 @@
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
-class User(MongoModel):
+class User(WatchmenModel):
     userId: str = None
     name: str = None
     nickName: str = None
@@ -9,3 +9,4 @@ class User(MongoModel):
     is_active: bool = True
     groupIds: list = None
     role: str = None
+    tenantId:str =None

@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.topic.factor.factor import Factor
 
 
@@ -15,7 +15,7 @@ class TopicType(Enum):
     SYSTEM = "system"
 
 
-class Topic(MongoModel):
+class Topic(WatchmenModel):
     topicId: str = None
     name: str = None
     # code: str = None
@@ -23,6 +23,7 @@ class Topic(MongoModel):
     kind: str = None
     factors: List[Factor] = []
     description: str = None
+    tenantId: str = None
     # factorIds: list = []
 
     '''

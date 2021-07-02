@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.common.parameter import Parameter, ParameterJoint
 
 
@@ -12,7 +12,7 @@ class MappingFactor(BaseModel):
     factorId: str = None
 
 
-class Conditional(MongoModel):
+class Conditional(WatchmenModel):
     conditional: bool = None
     on: ParameterJoint = None
 
@@ -57,3 +57,4 @@ class Pipeline(Conditional):
     type: str = None
     stages: List[Stage] = []
     enabled: bool = None
+    tenantId: str = None
