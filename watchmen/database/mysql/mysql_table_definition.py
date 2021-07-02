@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON
 
 from watchmen.database.mysql.mysql_engine import engine
@@ -167,6 +169,7 @@ console_reports_table = Table("reports", metadata,
                               )
 
 
+@lru_cache(maxsize=10)
 def get_table_by_name(table_name):
     if table_name == "users":
         return users_table

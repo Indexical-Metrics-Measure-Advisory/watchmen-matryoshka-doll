@@ -14,10 +14,7 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
     DASK_ON:bool = False
     DASK_PROCESSES:bool = False
-
-
     ENVIRONMENT:str = DEV
-
     # HOST_URL = "http://localhost:8000"
     ALGORITHM = "HS256"
     STORAGE_ENGINE = "mongo"

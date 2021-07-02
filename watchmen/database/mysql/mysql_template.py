@@ -4,6 +4,7 @@ import logging
 import operator
 import time
 from _operator import lt
+from functools import lru_cache
 from operator import eq
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, desc, asc, \
@@ -116,7 +117,8 @@ class MysqlStorage(StorageInterface):
                 else:
                     return table.c[key.lower()] == value
 
-    def build_mysql_updates_expression_for_insert(self, table, updates):
+    @staticmethod
+    def build_mysql_updates_expression_for_insert(table, updates):
         new_updates = {"id_": get_surrogate_key()}
         for key, value in updates.items():
             if key == "$inc":
@@ -137,7 +139,9 @@ class MysqlStorage(StorageInterface):
                 new_updates[key] = value
         return new_updates
 
-    def build_mysql_updates_expression_for_update(self, table, updates):
+
+    @staticmethod
+    def build_mysql_updates_expression_for_update(table, updates):
         new_updates = {}
         for key, value in updates.items():
             if key == "$inc":
@@ -159,7 +163,9 @@ class MysqlStorage(StorageInterface):
                 new_updates[key] = value
         return new_updates
 
-    def build_mysql_order(self, table, order_: list):
+
+    @staticmethod
+    def build_mysql_order(table, order_: list):
         result = []
         if order_ is None:
             return result
@@ -467,7 +473,9 @@ class MysqlStorage(StorageInterface):
     topic data interface
     '''
 
-    def get_datatype_by_factor_type(self, factor_type: str):
+    @staticmethod
+    @lru_cache(maxsize=10)
+    def get_datatype_by_factor_type(factor_type: str):
         if factor_type == "text":
             return String(30)
         elif factor_type == "sequence":
@@ -619,6 +627,7 @@ class MysqlStorage(StorageInterface):
             with engine.connect() as conn:
                 with conn.begin():
                     conn.execute(stmt, value)
+
 
     def get_table_column_default_value(self, table_name, column_name):
         insp = Inspector.from_engine(engine)
@@ -877,30 +886,29 @@ class MysqlStorage(StorageInterface):
             return None
 
         new_dict = {}
+        factors = self.get_factors(topic_name)
+        for factor in factors:
+            new_dict[factor['name']] = dict_info[factor['name'].lower()]
+        new_dict['id_'] = dict_info['id_']
+        return new_dict
+
+    # @lru_cache(maxsize=50)
+    def get_factors(self, topic_name):
         stmt = "select t.factors from topics t where t.name=:topic_name"
         with engine.connect() as conn:
             cursor = conn.execute(text(stmt), {"topic_name": topic_name}).cursor
             row = cursor.fetchone()
             factors = json.loads(row[0])
-        for factor in factors:
-            new_dict[factor['name']] = dict_info[factor['name'].lower()]
-        new_dict['id_'] = dict_info['id_']
-        return new_dict
+        return factors
 
     def convert_list_elements_key(self, list_info, topic_name):
         if list_info is None:
             return None
         new_dict = {}
         new_list = []
-        stmt = "select t.factors from topics t where t.name=:topic_name"
-        result = {}
-        with engine.connect() as conn:
-            cursor = conn.execute(text(stmt), {"topic_name": topic_name}).cursor
-            columns = [col[0] for col in cursor.description]
-            row = cursor.fetchone()
-            factors = json.loads(row[0])
+        # result = {}
+        factors = self.get_factors(topic_name)
         for item in list_info:
-
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].lower()]
                 new_dict['id_'] = item['id_']
@@ -917,7 +925,6 @@ class MysqlStorage(StorageInterface):
         else:
             return value
 
-    # ToDo
     '''
     special for raw_pipeline_monitor, need refactor for raw topic schema structure
     '''

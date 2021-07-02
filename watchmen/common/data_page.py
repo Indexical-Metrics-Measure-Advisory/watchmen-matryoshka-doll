@@ -1,7 +1,8 @@
-from watchmen.common.watchmen_model import WatchmenModel
+# from watchmen.common.watchmen_model import WatchmenModel
+from pydantic import BaseModel
 
 
-class DataPage(WatchmenModel):
+class DataPage(BaseModel):
     data: list = []
     itemCount: int = None
     pageNumber: int = None
