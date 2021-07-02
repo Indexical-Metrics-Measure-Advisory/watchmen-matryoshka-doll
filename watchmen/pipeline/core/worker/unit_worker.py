@@ -2,7 +2,7 @@ import logging
 
 from distributed import as_completed
 
-from watchmen.common.dask.client import client
+from watchmen.common.dask.client import client, get_dask_client
 from watchmen.config.config import settings
 from watchmen.monitor.model.pipeline_monitor import UnitRunStatus
 from watchmen.pipeline.core.context.action_context import ActionContext
@@ -74,7 +74,7 @@ def run_loop_with_dask(loop_variable_name, unit_context):
                     action_context = ActionContext(unit_context, action)
                     action_context.delegateVariableName = loop_variable_name
                     action_context.delegateValue = value
-                    futures.append(client.submit(run_action, action_context))
+                    futures.append(get_dask_client().submit(run_action, action_context))
     for future in as_completed(futures):
         result = future.result()
         unit_context.unitStatus.actions.append(result.actionStatus)
