@@ -892,7 +892,6 @@ class MysqlStorage(StorageInterface):
         new_dict['id_'] = dict_info['id_']
         return new_dict
 
-    # @lru_cache(maxsize=50)
     def get_factors(self, topic_name):
         stmt = "select t.factors from topics t where t.name=:topic_name"
         with engine.connect() as conn:
@@ -915,7 +914,8 @@ class MysqlStorage(StorageInterface):
             new_list.append(new_dict)
         return new_list
 
-    def check_value_type(self, value):
+    @staticmethod
+    def check_value_type(value):
         if isinstance(value, datetime.datetime):
             # return "DATE_FORMAT('" + value + "', '%Y-%m-%d %h:%i:%s')"
             return value
