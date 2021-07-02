@@ -12,7 +12,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.security.index import validate_jwt
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import build_data_pages, check_fake_id
+from watchmen.common.utils.data_utils import build_data_pages, check_fake_id, add_tenant_id_to_model
 from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceSubject, \
     ConsoleSpaceSubjectChartDataSet
@@ -80,6 +80,7 @@ async def load_space_list_by_user(current_user: User = Depends(deps.get_current_
 async def connect_to_space(space_id, name, current_user: User = Depends(deps.get_current_user)):
     topic_list = load_topic_list_by_space_id(space_id)
     console_space = ConsoleSpace()
+    console_space = add_tenant_id_to_model(console_space, current_user)
     console_space.topics = topic_list
     console_space.spaceId = space_id
     console_space.name = name
@@ -115,6 +116,7 @@ async def load_connected_space(current_user: User = Depends(deps.get_current_use
 @router.post("/console_space/subject", tags=["console"], response_model=ConsoleSpaceSubject)
 async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body(...),
                                  current_user: User = Depends(deps.get_current_user)):
+    subject = add_tenant_id_to_model(subject, current_user)
     if check_fake_id(subject.subjectId):
         subject.subjectId = None
         console_space = load_console_space_by_id(connect_id)
@@ -162,6 +164,7 @@ async def delete_subject(subject_id, current_user: User = Depends(deps.get_curre
 
 @router.post("/console_space/subject/save", tags=["console"], response_model=ConsoleSpaceSubject)
 async def save_console_subject(subject: ConsoleSpaceSubject, current_user: User = Depends(deps.get_current_user)):
+    subject = add_tenant_id_to_model(subject, current_user)
     for report in subject.reports:
         subject.reportIds.append(report.reportId)
     subject.reports = []
@@ -178,6 +181,7 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...),
 @router.post("/console_space/graphics", tags=["console"], response_model=ConnectedSpaceGraphics)
 async def save_console_space_graph(console_space_graph: ConnectedSpaceGraphics,
                                    current_user: User = Depends(deps.get_current_user)):
+    console_space_graph = add_tenant_id_to_model(console_space_graph, current_user)
     old_console_space_graph = load_console_space_graph(console_space_graph.connectId)
     console_space_graph.userId = current_user.userId
     if old_console_space_graph is None:
@@ -194,6 +198,7 @@ async def load_my_console_space_graph(current_user: User = Depends(deps.get_curr
 
 @router.post("/console_space/subject/report/save", tags=["console"], response_model=Report)
 async def save_report(subject_id: str, report: Report, current_user: User = Depends(deps.get_current_user)):
+    report = add_tenant_id_to_model(report, current_user)
     report.reportId = get_surrogate_key()
     # report.subjectId = subject_id
     new_report = create_report(report)
@@ -205,6 +210,7 @@ async def save_report(subject_id: str, report: Report, current_user: User = Depe
 
 @router.post("/console_space/subject/report/update", tags=["console"], response_model=Report)
 async def update_report(report: Report, current_user: User = Depends(deps.get_current_user)):
+    report = add_tenant_id_to_model(report, current_user)
     save_subject_report(report)
     return report
 
@@ -235,6 +241,7 @@ async def load_temporary_chart(report: Report, current_user: User = Depends(deps
 @router.get("/dashboard/create", tags=["console"], response_model=ConsoleDashboard)
 async def create_dashboard(name: str, current_user: User = Depends(deps.get_current_user)):
     dashboard = ConsoleDashboard()
+    dashboard = add_tenant_id_to_model(dashboard, current_user)
     dashboard.name = name
     # dashboard.lastVisitTime = datetime.now()
     dashboard.userId = current_user.userId
@@ -244,6 +251,7 @@ async def create_dashboard(name: str, current_user: User = Depends(deps.get_curr
 @router.post("/dashboard/save", tags=["console"], response_model=ConsoleDashboard)
 async def save_dashboard(dashboard: ConsoleDashboard, current_user: User = Depends(deps.get_current_user)):
     dashboard.userId = current_user.userId
+    dashboard = add_tenant_id_to_model(dashboard, current_user)
     return update_dashboard_to_storage(dashboard)
 
 
@@ -300,6 +308,7 @@ async def load_favorites_by_user(current_user: User = Depends(deps.get_current_u
 @router.post('/favorites/save', tags=["console"], response_model=Favorite)
 async def save_favorite_with_user(favorite: Favorite, current_user: User = Depends(deps.get_current_user)):
     favorite.userId = current_user.userId
+    favorite = add_tenant_id_to_model(favorite, current_user)
     save_favorite(favorite)
     return favorite
 
@@ -318,5 +327,6 @@ async def load_last_snapshot_by_user(current_user: User = Depends(deps.get_curre
 async def save_last_snapshot_with_user(last_snapshot: LastSnapshot,
                                        current_user: User = Depends(deps.get_current_user)):
     last_snapshot.userId = current_user.userId
+    last_snapshot = add_tenant_id_to_model(last_snapshot, current_user)
     save_last_snapshot(last_snapshot)
     return last_snapshot

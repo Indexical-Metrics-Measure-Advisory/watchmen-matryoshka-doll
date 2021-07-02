@@ -19,7 +19,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import check_fake_id, build_collection_name
+from watchmen.common.utils.data_utils import check_fake_id, build_collection_name, add_tenant_id_to_model
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
@@ -72,6 +72,7 @@ class MonitorLogQuery(BaseModel):
 # ADMIN
 @router.post("/space", tags=["admin"], response_model=Space)
 async def save_space(space: Space, current_user: User = Depends(deps.get_current_user)):
+    space = add_tenant_id_to_model(space,current_user)
     if space.spaceId is None or check_fake_id(space.spaceId):
         # sync space group id
         result = create_space(space)
@@ -84,6 +85,7 @@ async def save_space(space: Space, current_user: User = Depends(deps.get_current
 
 @router.post("/update/space", tags=["admin"], response_model=Space)
 async def update_space(space_id, space: Space = Body(...), current_user: User = Depends(deps.get_current_user)):
+    space = add_tenant_id_to_model(space, current_user)
     sync_space_to_user_group(space)
     return update_space_by_id(space_id, space)
 
@@ -129,12 +131,13 @@ async def load_topic(topic_id, current_user: User = Depends(deps.get_current_use
 
 @router.post("/topic", tags=["admin"], response_model=Topic)
 async def create_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
+    topic = add_tenant_id_to_model(topic, current_user)
     return create_topic_schema(topic)
 
 
 @router.post("/save/topic", tags=["admin"], response_model=Topic)
 async def save_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
-
+    topic = add_tenant_id_to_model(topic, current_user)
     if check_fake_id(topic.topicId):
         result = create_topic_schema(topic)
         create_or_update_presto_schema_fields(result)
@@ -149,6 +152,7 @@ async def save_topic(topic: Topic, current_user: User = Depends(deps.get_current
 @router.post("/update/topic", tags=["admin"], response_model=Topic)
 async def update_topic(topic_id, topic: Topic = Body(...), current_user: User = Depends(deps.get_current_user)):
     topic = Topic.parse_obj(topic)
+    topic = add_tenant_id_to_model(topic, current_user)
     data = update_topic_schema(topic_id, topic)
     # remove_presto_schema_by_name(topic.name)
     create_or_update_presto_schema_fields(data)
@@ -242,6 +246,7 @@ async def query_user_list_for_user_group(query_name, current_user: User = Depend
 
 @router.post("/user_group", tags=["admin"], response_model=UserGroup)
 async def save_user_group(user_group: UserGroup, current_user: User = Depends(deps.get_current_user)):
+    user_group = add_tenant_id_to_model(user_group, current_user)
     if check_fake_id(user_group.userGroupId):
         user_group.userGroupId = None
     if user_group.userGroupId is None or check_fake_id(user_group.userGroupId):
@@ -257,6 +262,7 @@ async def save_user_group(user_group: UserGroup, current_user: User = Depends(de
 
 @router.post("/update/user_group", tags=["admin"], response_model=UserGroup)
 async def update_user_group(user_group: UserGroup, current_user: User = Depends(deps.get_current_user)):
+    user_group = add_tenant_id_to_model(user_group, current_user)
     sync_user_group_to_space(user_group)
     sync_user_group_to_user(user_group)
     return update_user_group_storage(user_group)
@@ -305,7 +311,8 @@ async def load_user_list_by_name_list(name_list: List[str], current_user: User =
 
 @router.post("/pipeline", tags=["admin"], response_model=Pipeline)
 async def save_pipeline(pipeline: Pipeline, current_user: User = Depends(deps.get_current_user)):
-    if pipeline.pipelineId.startswith("f-"):
+    pipeline = add_tenant_id_to_model(pipeline, current_user)
+    if check_fake_id(pipeline.pipelineId):
         return create_pipeline(pipeline)
     else:
         return update_pipeline(pipeline)
@@ -348,6 +355,7 @@ async def rename_pipeline(pipeline_id, name, current_user: User = Depends(deps.g
 
 @router.post("/pipeline/graphics", tags=["admin"], response_model=PipelinesGraphics)
 async def save_pipeline_graph(pipeline_graph: PipelinesGraphics, current_user: User = Depends(deps.get_current_user)):
+    pipeline_graph = add_tenant_id_to_model(pipeline_graph, current_user)
     user_id = current_user.userId
     pipeline_graph.userId = user_id
     if check_fake_id(pipeline_graph.pipelineGraphId):
@@ -369,9 +377,7 @@ async def load_pipeline_graph_by_user(current_user: User = Depends(deps.get_curr
     return results
 
 
-@router.post("/enum", tags=["admin"], response_model=Enum)
-async def save_enum(enum: Enum):
-    return save_enum_to_storage(enum)
+
 
 
 @router.post("/enum/name", tags=["admin"], response_model=DataPage)
@@ -403,7 +409,8 @@ async def load_admin_dashboard(current_user: User = Depends(deps.get_current_use
 ## ENUM
 
 @router.post("/enum", tags=["admin"], response_model=Enum)
-async def save_enum(enum: Enum):
+async def save_enum(enum: Enum,current_user: User = Depends(deps.get_current_user)):
+    enum = add_tenant_id_to_model(enum, current_user)
     return save_enum_to_storage(enum)
 
 

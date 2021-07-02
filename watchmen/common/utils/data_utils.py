@@ -103,3 +103,8 @@ def convert_to_dict(instance):
         return instance.dict(by_alias=True)
     else:
         return instance
+
+
+def add_tenant_id_to_model(instance, user):
+    instance.tenantId = user.tenantId
+    return instance

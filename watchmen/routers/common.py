@@ -12,6 +12,7 @@ from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
 from watchmen.common.pagination import Pagination
 from watchmen.common.parameter import Parameter
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
@@ -175,17 +176,18 @@ def clear_table_metadata():
 @router.post("/tenant", tags=["common"], response_model=Tenant)
 def save_tenant(tenant: Tenant) -> Tenant:
     if check_fake_id(tenant.tenantId):
+        tenant.tenantId = get_surrogate_key()
         return tenant_service.create(tenant)
     else:
         return tenant_service.update(tenant)
 
 
-@router.post("/tenant", tags=["common"], response_model=Tenant)
+@router.post("/tenant/id", tags=["common"], response_model=Tenant)
 def load_tenant_by_id(tenant_id: str) -> Tenant:
     return tenant_service.load(tenant_id)
 
 
-@router.post("/tenant/code", tags=["admin"], response_model=DataPage)
+@router.post("/tenant/code", tags=["common"], response_model=DataPage)
 def load_tenant_by_name(query_name: str, pagination: Pagination = Body(...),
                         current_user: User = Depends(deps.get_current_user)) -> DataPage:
     return tenant_service.query_by_code(query_name)
