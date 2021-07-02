@@ -1,7 +1,7 @@
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
-class UserGroup(MongoModel):
+class UserGroup(WatchmenModel):
     userGroupId: str = None
     name: str = None
     description: str = None

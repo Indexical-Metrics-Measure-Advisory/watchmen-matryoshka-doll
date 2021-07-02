@@ -1,9 +1,9 @@
 from typing import List
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
-class EnumItem(MongoModel):
+class EnumItem(WatchmenModel):
     itemId: str = None
     code: str = None
     label: str = None
@@ -12,7 +12,7 @@ class EnumItem(MongoModel):
     enumId: str = None
 
 
-class Enum(MongoModel):
+class Enum(WatchmenModel):
     enumId: str = None
     name: str = None
     description: str = None

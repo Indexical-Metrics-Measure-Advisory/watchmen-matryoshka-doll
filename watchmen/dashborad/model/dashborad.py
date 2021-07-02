@@ -2,7 +2,7 @@ from typing import List, Any
 
 from pydantic import BaseModel
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
 class DashboardReport(BaseModel):
@@ -19,7 +19,7 @@ class Paragraph(BaseModel):
     y: int = None
 
 
-class ConsoleDashboard(MongoModel):
+class ConsoleDashboard(WatchmenModel):
     dashboardId: str = None
     name: str = None
     reports: List[DashboardReport] = None

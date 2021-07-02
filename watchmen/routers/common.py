@@ -8,7 +8,7 @@ from watchmen.auth.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.common.parameter import Parameter
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
@@ -32,7 +32,7 @@ router = APIRouter()
 log = logging.getLogger("app." + __name__)
 
 
-class TopicInstance(MongoModel):
+class TopicInstance(WatchmenModel):
     data: Any = None
 
 

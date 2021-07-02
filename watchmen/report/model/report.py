@@ -3,7 +3,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
 class ReportIndicatorArithmetic(str, Enum):
@@ -52,7 +52,7 @@ class Chart(BaseModel):
     settings: dict = None
 
 
-class Report(MongoModel):
+class Report(WatchmenModel):
     reportId: str = None
     name: str = None
     indicators: List[ReportIndicator] = None

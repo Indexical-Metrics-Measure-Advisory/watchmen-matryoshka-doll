@@ -1,7 +1,7 @@
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
-class DataPage(MongoModel):
+class DataPage(WatchmenModel):
     data: list = []
     itemCount: int = None
     pageNumber: int = None

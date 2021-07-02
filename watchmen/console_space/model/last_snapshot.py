@@ -1,9 +1,9 @@
 # from pydantic import BaseModel
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
-class LastSnapshot(MongoModel):
+class LastSnapshot(WatchmenModel):
     language: str = None
     lastDashboardId: str = None
     adminDashboardId: str = None

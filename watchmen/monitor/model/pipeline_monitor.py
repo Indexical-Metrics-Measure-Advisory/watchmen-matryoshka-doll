@@ -4,7 +4,7 @@ from typing import Any, List
 
 from pydantic import BaseModel
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
 class UnitActionStatus(BaseModel):
@@ -70,7 +70,7 @@ class StageRunStatus(ConditionHolder):
     units: List[UnitRunStatus] = []
 
 
-class PipelineRunStatus(MongoModel, ConditionHolder):
+class PipelineRunStatus(WatchmenModel, ConditionHolder):
     status: str = None  # DONE ,ERROR
     pipelineId: str = None
     uid: str = None

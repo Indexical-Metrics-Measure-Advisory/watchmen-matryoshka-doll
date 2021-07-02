@@ -1,8 +1,8 @@
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.raw_data.rule_schema import RuleType, DSLType
 
 
-class RuleContext(MongoModel):
+class RuleContext(WatchmenModel):
     type: RuleType = None
     dsl: DSLType = None
     orgId: int = None

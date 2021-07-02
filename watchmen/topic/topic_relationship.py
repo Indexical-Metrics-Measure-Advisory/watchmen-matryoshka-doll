@@ -1,9 +1,9 @@
 from typing import List
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
-class TopicRelationship(MongoModel):
+class TopicRelationship(WatchmenModel):
     relationId: str = None
     sourceTopicId: str = None
     sourceFactorNames: List[str] = []

@@ -3,7 +3,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.common.parameter import ParameterJoint, Parameter
 from watchmen.report.model.report import Report
 from watchmen.topic.topic import Topic
@@ -64,7 +64,7 @@ class SubjectDataSet(BaseModel):
     joins: List[SubjectDataSetJoin] = []
 
 
-class ConsoleSpaceSubject(MongoModel):
+class ConsoleSpaceSubject(WatchmenModel):
     subjectId: str = None
     name: str = None
     topicCount: int = None
@@ -76,14 +76,14 @@ class ConsoleSpaceSubject(MongoModel):
     dataset: SubjectDataSet = None
 
 
-class ConsoleSpaceGroup(MongoModel):
+class ConsoleSpaceGroup(WatchmenModel):
     groupId: str = None
     name: str = None
     subjects: List[ConsoleSpaceSubject] = []
     subjectIds: list = []
 
 
-class ConsoleSpace(MongoModel):
+class ConsoleSpace(WatchmenModel):
     spaceId: str = None
     name: str = None
     connectId: str = None

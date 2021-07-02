@@ -4,7 +4,7 @@ from bson import ObjectId
 from pydantic import BaseModel, BaseConfig
 
 
-class MongoModel(BaseModel):
+class WatchmenModel(BaseModel):
     lastModified: datetime = datetime.now().replace(tzinfo=None)
     createTime: str = None
 

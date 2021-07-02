@@ -1,6 +1,6 @@
 from enum import Enum
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
 class FactorType(Enum):
@@ -14,7 +14,7 @@ class FactorType(Enum):
     ARRAY = "array"
 
 
-class Factor(MongoModel):
+class Factor(WatchmenModel):
     type: str = None
     factorId: str = None
     name: str = None

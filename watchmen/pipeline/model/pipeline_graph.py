@@ -2,7 +2,7 @@ from typing import List, Any
 
 from pydantic import BaseModel
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
 # class GraphicsPosition(BaseModel):
@@ -18,7 +18,7 @@ class TopicGraphics(BaseModel):
     rect: Any = None
 
 
-class PipelinesGraphics(MongoModel):
+class PipelinesGraphics(WatchmenModel):
     pipelineGraphId: str = None
     name: str = None
     userId: str = None

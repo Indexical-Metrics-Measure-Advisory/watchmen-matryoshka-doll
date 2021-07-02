@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from watchmen.common.mongo_model import MongoModel
+from watchmen.common.watchmen_model import WatchmenModel
 
 
 class FieldType(str, Enum):
@@ -15,7 +15,7 @@ class FieldType(str, Enum):
     IdCard = "IDCard"
 
 
-class ModelField(MongoModel):
+class ModelField(WatchmenModel):
     field_id: int = None
     name: str = None
     description: Optional[str] = None
