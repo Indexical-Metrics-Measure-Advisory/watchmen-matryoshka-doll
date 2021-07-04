@@ -21,9 +21,8 @@ def save_last_snapshot(last_snapshot):
     return last_snapshot
 
 
-def load_last_snapshot(user_id) -> LastSnapshot:
-    # return template.find_one(LAST_SNAPSHOT, {"userId": user_id}, LastSnapshot)
-    return find_one({"userId": user_id}, LastSnapshot, LAST_SNAPSHOT)
+def load_last_snapshot(user_id,current_user) -> LastSnapshot:
+    return find_one({"and":[{"userId": user_id},{"tenantId":current_user.tenantId}]}, LastSnapshot, LAST_SNAPSHOT)
 
 
 def update_last_snapshot(user_id, last_snapshot):

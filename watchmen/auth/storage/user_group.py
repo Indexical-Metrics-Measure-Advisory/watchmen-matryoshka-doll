@@ -13,25 +13,25 @@ USER_GROUPS = "user_groups"
 # template = find_template()
 
 
-def get_user_group(user_group_id) -> UserGroup:
+def get_user_group(user_group_id,current_user) -> UserGroup:
     # return template.find_one(USER_GROUPS, {"userGroupId": user_group_id}, UserGroup)
-    return find_one({"userGroupId": user_group_id}, UserGroup, USER_GROUPS)
+    return find_one({"and":[{"userGroupId": user_group_id},{"tenantId":current_user.tenantId}]}, UserGroup, USER_GROUPS)
 
 
-def get_user_group_list_by_ids(user_group_ids: list) -> List[UserGroup]:
+def get_user_group_list_by_ids(user_group_ids: list,current_user) -> List[UserGroup]:
     if user_group_ids:
-        return find_({"userGroupId": {"in": user_group_ids}}, UserGroup, USER_GROUPS)
+        return find_({"and":[{"userGroupId": {"in": user_group_ids}},{"tenantId":current_user.tenantId}]}, UserGroup, USER_GROUPS)
     else:
         return []
 
 
-def load_group_list_by_name(query_name) -> List[UserGroup]:
+def load_group_list_by_name(query_name,current_user) -> List[UserGroup]:
     # return template.find(USER_GROUPS, {"name": regex.Regex(query_name)}, UserGroup)
-    return find_({"name": {"like": query_name}}, UserGroup, USER_GROUPS)
+    return find_({"and":[{"name": {"like": query_name}},{"tenantId":current_user.tenantId}]}, UserGroup, USER_GROUPS)
 
 
-def get_user_group_by_name(name):
-    return find_one({"name": name}, UserGroup, USER_GROUPS)
+def get_user_group_by_name(name,current_user):
+    return find_one({"and":[{"name": name},{"tenantId":current_user.tenantId}]}, UserGroup, USER_GROUPS)
 
 
 def create_user_group_storage(user_group: UserGroup) -> UserGroup:
@@ -46,9 +46,9 @@ def update_user_group_storage(user_group: UserGroup) -> UserGroup:
     return update_one(user_group, UserGroup, USER_GROUPS)
 
 
-def query_user_groups_by_name_with_paginate(query_name: str, pagination: Pagination) -> DataPage:
+def query_user_groups_by_name_with_paginate(query_name: str, pagination: Pagination,current_user) -> DataPage:
     # return template.query_with_pagination(USER_GROUPS, pagination, UserGroup, {"name": regex.Regex(query_name)})
-    return page_({"name": {"like": query_name}}, [("name", "desc")], pagination, UserGroup, USER_GROUPS)
+    return page_({"and":[{"name": {"like": query_name}},{"tenantId":current_user.tenantId}]}, [("name", "desc")], pagination, UserGroup, USER_GROUPS)
 
 
 def import_user_group_to_db(group) -> UserGroup:

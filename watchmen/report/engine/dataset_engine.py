@@ -54,8 +54,8 @@ def get_factor_value_by_subject_and_condition(console_subject, factor_name, filt
         raise KeyError("factor_name :{0} can't find in subject {1}".format(factor_name, console_subject.name))
 
 
-async def load_dataset_by_subject_id(subject_id, pagination: Pagination):
-    console_subject = load_console_subject_by_id(subject_id)
+async def load_dataset_by_subject_id(subject_id, pagination: Pagination,current_user):
+    console_subject = load_console_subject_by_id(subject_id,current_user)
     query_monitor: QueryMonitor = build_query_monitor(console_subject, query_type="dataset")
     try:
         # build query condition
@@ -100,9 +100,9 @@ async def save_query_monitor_data(query_monitor):
     # await sync_query_monitor_data(query_monitor)
 
 
-async def load_chart_dataset(report_id):
+async def load_chart_dataset(report_id,current_user):
     # assert report_id is None
-    report = load_report_by_id(report_id)
+    report = load_report_by_id(report_id,current_user)
 
     print("report", report)
     # query_monitor = build_query_monitor_report(report, query_type="report")
@@ -137,8 +137,8 @@ def __load_chart_dataset(query, query_monitor=None):
     return rows or []
 
 
-def load_chart_dataset_temp(report):
-    query = build_query_for_subject_chart(report.reportId, report)
+def load_chart_dataset_temp(report,current_user):
+    query = build_query_for_subject_chart(report.reportId, report,current_user)
     return __load_chart_dataset(query)
 
 
@@ -187,11 +187,11 @@ def build_count_query_for_subject(console_subject):
     return query
 
 
-def build_query_for_subject_chart(chart_id, report=None):
-    console_subject = load_console_subject_by_report_id(chart_id)
+def build_query_for_subject_chart(chart_id, report=None,current_user=None):
+    console_subject = load_console_subject_by_report_id(chart_id,current_user)
     columns_dict = column_list_convert_dict(console_subject.dataset.columns)
     if report is None:
-        report = load_report_by_id(chart_id)
+        report = load_report_by_id(chart_id,current_user)
     if report.chart.type == ChartType.COUNT:
         q = build_count_query_for_subject_chart(console_subject, columns_dict, report)
     else:

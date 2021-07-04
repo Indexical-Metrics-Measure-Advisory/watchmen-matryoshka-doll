@@ -47,11 +47,11 @@ async def health():
 
 
 @router.post("/topic/data", tags=["common"])
-async def save_topic_data(topic_event: TopicEvent):
+async def save_topic_data(topic_event: TopicEvent,current_user: User = Depends(deps.get_current_user)):
     # TODO user check URP
     # client = get_dask_client()
     # task  = client.submit(import_raw_topic_data,topic_event)
-    await import_raw_topic_data(topic_event)
+    await import_raw_topic_data(topic_event,current_user)
     # fire_and_forget(task)
     return {"received": True}
 

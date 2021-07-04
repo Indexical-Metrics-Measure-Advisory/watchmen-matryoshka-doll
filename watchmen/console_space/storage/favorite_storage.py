@@ -1,4 +1,4 @@
-from watchmen.database.storage.storage_template import insert_one, find_by_id, update_one
+from watchmen.database.storage.storage_template import insert_one, find_by_id, update_one, find_one
 from watchmen.console_space.model.favorite import Favorite
 
 CONSOLE_SPACE_FAVORITES = "console_space_favorites"
@@ -21,9 +21,9 @@ def save_favorite(favorite):
     return favorite
 
 
-def load_favorite(user_id):
+def load_favorite(user_id,current_user):
     # return template.find_one(CONSOLE_SPACE_FAVORITES, {"userId": user_id}, Favorite)
-    return find_by_id(user_id, Favorite, CONSOLE_SPACE_FAVORITES)
+    return find_one({"and":[{"userId": user_id},{"tenantId":current_user.tenantId}]}, Favorite, CONSOLE_SPACE_FAVORITES)
 
 
 def update_favorite(user_id, favorite: Favorite):

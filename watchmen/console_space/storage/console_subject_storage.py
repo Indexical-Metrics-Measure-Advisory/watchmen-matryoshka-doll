@@ -13,8 +13,8 @@ def create_console_subject_to_storage(subject: ConsoleSpaceSubject):
     return insert_one(subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
-def load_console_subject_list_by_ids(subject_id_list):
-    return find_({"subjectId": {"in": subject_id_list}}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
+def load_console_subject_list_by_ids(subject_id_list,current_user):
+    return find_({"and":[{"subjectId": {"in": subject_id_list}},{"tenantId":current_user.tenantId}]}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
 def update_console_subject(console_subject: ConsoleSpaceSubject):
@@ -25,8 +25,8 @@ def update_console_subject(console_subject: ConsoleSpaceSubject):
     return update_one(console_subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
-def load_console_subject_by_id(subject_id) -> ConsoleSpaceSubject:
-    return find_by_id(subject_id, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
+def load_console_subject_by_id(subject_id,current_user) -> ConsoleSpaceSubject:
+    return find_one({"and":[{"subjectId":subject_id},{"tenantId":current_user.tenantId}]}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
 def delete_console_subject_by_id(subject_id):
@@ -41,8 +41,8 @@ def rename_console_subject_by_id(subject_id, name):
     return update_one_first({"subjectId": subject_id}, {"name": name}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
-def load_console_subject_by_report_id(report_id):
-    return find_one({"reportIds": {"in": [report_id]}}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
+def load_console_subject_by_report_id(report_id,current_user):
+    return find_one({"and":[{"reportIds": {"in": [report_id]}},{"tenantId":current_user.tenantId}]}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
 def import_console_subject_to_db(subject):

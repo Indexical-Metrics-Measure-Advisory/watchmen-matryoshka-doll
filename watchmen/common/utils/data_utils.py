@@ -108,3 +108,11 @@ def convert_to_dict(instance):
 def add_tenant_id_to_model(instance, user):
     instance.tenantId = user.tenantId
     return instance
+
+
+def compare_tenant(instance,user):
+    if instance.tenantId == user.tenantId:
+        return True
+    else:
+        return False
+
