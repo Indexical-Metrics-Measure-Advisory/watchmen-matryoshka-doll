@@ -17,6 +17,8 @@ class Settings(BaseSettings):
 
     ENVIRONMENT:str = DEV
 
+    SUPER_USER:str = "imma-super"
+
     # HOST_URL = "http://localhost:8000"
     ALGORITHM = "HS256"
     STORAGE_ENGINE = "mongo"

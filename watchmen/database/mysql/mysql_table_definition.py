@@ -13,6 +13,14 @@ users_table = Table("users", metadata,
                     Column('groupids', JSON, nullable=True),
                     Column('role', String(45), nullable=True),
                     Column('createtime', String(50), nullable=True),
+                    Column('tenantid', String(60), nullable=False),
+                    Column('lastmodified', Date, nullable=True)
+                    )
+
+tenants_table = Table("tenants", metadata,
+                    Column('tenantid', String(60), primary_key=True),
+                    Column('name', String(45), nullable=False),
+                    Column('createtime', String(50), nullable=True),
                     Column('lastmodified', Date, nullable=True)
                     )
 
@@ -23,6 +31,7 @@ user_groups_table = Table("user_groups", metadata,
                           Column('userids', JSON, nullable=True),
                           Column('spaceids', JSON, nullable=True),
                           Column('createtime', String(50), nullable=True),
+                          Column('tenantid', String(60), nullable=True),
                           Column('lastmodified', Date, nullable=True)
                           )
 
@@ -32,6 +41,7 @@ console_space_last_snapshot_table = Table("console_space_last_snapshot", metadat
                                           Column('lastdashboardid', String(25), nullable=True),
                                           Column('admindashboardid', String(25), nullable=True),
                                           Column('favoritepin', String(5), nullable=True),
+                                          Column('tenantid', String(60), nullable=False),
                                           Column('createtime', String(50), nullable=True),
                                           Column('lastmodified', Date, nullable=True)
                                           )
@@ -43,6 +53,7 @@ console_dashboards_table = Table("console_dashboards", metadata,
                                  Column('paragraphs', JSON, nullable=True),
                                  Column('lastvisittime', String(25), nullable=False),
                                  Column('userid', String(60), nullable=False),
+                                 Column('tenantid', String(60), nullable=False),
                                  Column('createtime', String(50), nullable=True),
                                  Column('lastmodified', DateTime, nullable=True)
                                  )
@@ -55,7 +66,8 @@ topics_table = Table("topics", metadata,
                      Column("description", String(50), nullable=True),
                      Column("factors", JSON, nullable=True),
                      Column('createtime', String(50), nullable=True),
-                     Column('last_modified', DateTime, nullable=True),
+                     Column('tenantid', String(60), nullable=False),
+                     # Column('last_modified', DateTime, nullable=True),
                      Column('lastmodified', DateTime, nullable=True)
                      )
 
@@ -66,6 +78,7 @@ enums_table = Table("enums", metadata,
                     Column("parentenumid", String(60), nullable=True),
                     Column("items", JSON, nullable=True),
                     Column('createtime', String(50), nullable=True),
+                    Column('tenantid', String(60), nullable=False),
                     Column('lastmodified', DateTime, nullable=True)
                     )
 
@@ -76,7 +89,8 @@ spaces_table = Table("spaces", metadata,
                      Column("name", String(25), nullable=False),
                      Column("description", String(25), nullable=True),
                      Column('createtime', String(50), nullable=True),
-                     Column('last_modified', DateTime, nullable=True),
+                     Column('tenantid', String(60), nullable=False),
+                     # Column('last_modified', DateTime, nullable=True),
                      Column('lastmodified', DateTime, nullable=True)
                      )
 
@@ -85,9 +99,11 @@ console_space_favorites_table = Table("console_space_favorites", metadata,
                                       Column("connectedspaceids", JSON, nullable=True),
                                       Column("dashboardids", JSON, nullable=True),
                                       Column('createtime', String(50), nullable=True),
-                                      Column('last_modified', DateTime, nullable=True),
+                                      # Column('last_modified', DateTime, nullable=True),
+                                      Column('tenantid', String(60), nullable=False),
                                       Column('lastmodified', DateTime, nullable=True)
-                                      )
+
+)
 
 console_space_graph_table = Table("console_space_graph", metadata,
                                   Column("connectid", String(60), primary_key=True),
@@ -95,7 +111,8 @@ console_space_graph_table = Table("console_space_graph", metadata,
                                   Column("subjects", JSON, nullable=True),
                                   Column("userid", String(60), nullable=False),
                                   Column('createtime', String(50), nullable=True),
-                                  Column('last_modified', DateTime, nullable=True),
+                                  Column('tenantid', String(60), nullable=False),
+                                  # Column('last_modified', DateTime, nullable=True),
                                   Column('lastmodified', DateTime, nullable=True)
                                   )
 
@@ -111,6 +128,7 @@ console_spaces_table = Table("console_spaces", metadata,
                              Column("subjectids", JSON, nullable=True),
                              Column("subjects", JSON, nullable=True),
                              Column('createtime', String(50), nullable=True),
+                             Column('tenantid', String(60), nullable=False),
                              # Column('last_modified', DateTime, nullable=True),
                              Column('lastmodified', DateTime, nullable=True)
                              )
@@ -125,7 +143,8 @@ pipelines_table = Table("pipelines", metadata,
                         Column("enabled", String(5), nullable=True),
                         Column("on", JSON, nullable=True),
                         Column('createtime', String(50), nullable=True),
-                        Column('last_modified', DateTime, nullable=True),
+                        Column('tenantid', String(60), nullable=False),
+                        # Column('last_modified', DateTime, nullable=True),
                         Column('lastmodified', DateTime, nullable=True)
                         )
 
@@ -134,6 +153,7 @@ pipeline_graph_table = Table("pipeline_graph", metadata,
                              Column("name", String(50), nullable=True),
                              Column("userid", String(60), nullable=False),
                              Column("topics", JSON, nullable=True),
+                             Column('tenantid', String(60), nullable=False),
                              Column('lastmodified', DateTime, nullable=True),
                              Column('createtime', String(50), nullable=True)
                              )
@@ -145,6 +165,7 @@ console_space_subjects_table = Table("console_space_subjects", metadata,
                                      Column("graphicscount", Integer, nullable=True),
                                      Column("reports", JSON, nullable=True),
                                      Column("reportids", JSON, nullable=True),
+                                     Column('tenantid', String(60), nullable=False),
                                      Column("dataset", JSON, nullable=True),
                                      Column("lastvisittime", DateTime, nullable=True),
                                      Column("createdat", String(50), nullable=True),
@@ -162,6 +183,7 @@ console_reports_table = Table("reports", metadata,
                               Column("chart", JSON, nullable=True),
                               Column("createdat", String(50), nullable=True),
                               Column("lastvisittime", String(50), nullable=True),
+                              Column('tenantid', String(60), nullable=False),
                               Column('lastmodified', DateTime, nullable=True),
                               Column('createtime', String(50), nullable=True)
                               )
@@ -196,6 +218,8 @@ def get_table_by_name(table_name):
         return console_space_subjects_table
     elif table_name == "console_reports":
         return console_reports_table
+    elif table_name == "tenants":
+        return tenants_table
 
 
 def get_topic_table_by_name(table_name):

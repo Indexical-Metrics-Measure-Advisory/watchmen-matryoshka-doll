@@ -12,8 +12,8 @@ def create_last_snapshot(last_snapshot):
     return insert_one(last_snapshot, LastSnapshot, LAST_SNAPSHOT)
 
 
-def save_last_snapshot(last_snapshot):
-    result = load_last_snapshot(last_snapshot.userId)
+def save_last_snapshot(last_snapshot,current_user):
+    result = load_last_snapshot(last_snapshot.userId,current_user)
     if result is not None:
         update_last_snapshot(last_snapshot.userId, last_snapshot)
     else:

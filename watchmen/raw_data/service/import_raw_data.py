@@ -22,9 +22,9 @@ async def import_raw_topic_data(topic_event,current_user):
     # task = client.submit(__trigger_pipeline, topic_event)
     # # import_raw_topic_data(topic_event)
     # fire_and_forget(task)
-    __trigger_pipeline(topic_event)
+    __trigger_pipeline(topic_event,current_user)
 
 
-def __trigger_pipeline(topic_event):
+def __trigger_pipeline(topic_event,current_user):
     trigger_pipeline(topic_event.code, {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
-                     TriggerType.insert)
+                     TriggerType.insert,current_user)

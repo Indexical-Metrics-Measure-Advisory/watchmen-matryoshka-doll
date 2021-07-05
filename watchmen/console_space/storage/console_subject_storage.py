@@ -42,8 +42,9 @@ def rename_console_subject_by_id(subject_id, name):
 
 
 def load_console_subject_by_report_id(report_id,current_user):
-    return find_one({"and":[{"reportIds": {"in": [report_id]}},{"tenantId":current_user.tenantId}]}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
-
+    # return find_one({"and":[{"reportIds": {"in": [report_id]}},{"tenantId":current_user.tenantId}]}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
+    return find_one({"reportIds": {"in": [report_id]}},
+                    ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 def import_console_subject_to_db(subject):
     return insert_one(subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)

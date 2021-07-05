@@ -68,7 +68,7 @@ def build_data_pages(pagination, result, item_count):
 
 
 def check_fake_id(id: str) -> bool:
-    return id.startswith('f-', 0, 2)
+    return id.startswith("f-")
 
 
 def is_presto_varchar_type(factor_type):
@@ -116,3 +116,16 @@ def compare_tenant(instance,user):
     else:
         return False
 
+
+def is_superuser(username):
+    if username == settings.SUPER_USER:
+        return True
+    else:
+        return False
+
+
+def clean_password(user_list):
+    for user in user_list:
+        user.password = None
+
+    return  user_list

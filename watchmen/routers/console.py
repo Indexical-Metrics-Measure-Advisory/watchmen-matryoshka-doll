@@ -313,5 +313,5 @@ async def save_last_snapshot_with_user(last_snapshot: LastSnapshot,
                                        current_user: User = Depends(deps.get_current_user)):
     last_snapshot.userId = current_user.userId
     last_snapshot = add_tenant_id_to_model(last_snapshot, current_user)
-    save_last_snapshot(last_snapshot)
+    save_last_snapshot(last_snapshot,current_user)
     return last_snapshot

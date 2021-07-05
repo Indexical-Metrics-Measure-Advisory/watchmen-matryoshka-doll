@@ -29,9 +29,9 @@ def load_space(name: str) -> List[Space]:
     return load_space_by_name(name)
 
 
-def sync_space_to_user_group(space: Space):
+def sync_space_to_user_group(space: Space,current_user):
     pull_update({"spaceIds": {"in": [space.spaceId]}}, {"spaceIds": {"in": [space.spaceId]}}, UserGroup, USER_GROUPS)
-    user_group_list = get_user_group_list_by_ids(space.groupIds)
+    user_group_list = get_user_group_list_by_ids(space.groupIds,current_user)
     for user_group in user_group_list:
         if user_group.spaceIds is None:
             user_group.spaceIds = []

@@ -107,7 +107,7 @@ async def load_chart_dataset(report_id,current_user):
     print("report", report)
     # query_monitor = build_query_monitor_report(report, query_type="report")
     try:
-        query = build_query_for_subject_chart(report_id, report)
+        query = build_query_for_subject_chart(report_id, report,current_user)
         # query_count_summary = build_query_summary(count_sql)
         rows = __load_chart_dataset(query, query_monitor=None)
         return rows

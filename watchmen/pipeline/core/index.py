@@ -20,10 +20,10 @@ def __match_trigger_type(trigger_type, pipeline):
         return False
 
 
-def trigger_pipeline_2(topic_name, instance, trigger_type: TriggerType):
+def trigger_pipeline_2(topic_name, instance, trigger_type: TriggerType,current_user=None):
     # log.info("trigger_pipeline topic_name :{0}".format(topic_name))
-    topic = get_topic(topic_name)
-    pipeline_list = load_pipeline_by_topic_id(topic.topicId)
+    topic = get_topic(topic_name,current_user)
+    pipeline_list = load_pipeline_by_topic_id(topic.topicId,current_user)
     # client = get_dask_client()
 
     # import_raw_topic_data(topic_event)

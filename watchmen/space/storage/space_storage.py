@@ -32,9 +32,11 @@ def get_space_list_by_ids(space_ids,current_user) -> List[Space]:
         return []
 
 
+## TODO  in for and
 def load_space_by_user(group_ids,current_user) -> List[Space]:
     if group_ids:
-        return find_({"and":[{"groupIds": {"in": group_ids}},{"tenantId":current_user.tenantId}]}, Space, SPACES)
+        # return find_({"and":[{"groupIds": {"in": group_ids}},{"tenantId":current_user.tenantId}]}, Space, SPACES)
+        return find_({"groupIds": {"in": group_ids}}, Space,SPACES)
     else:
         return []
 

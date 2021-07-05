@@ -31,9 +31,11 @@ def __convert_to_object(x):
 
 
 # @lru_cache(maxsize=50)
-def load_pipeline_by_topic_id(topic_id,current_user):
-    # return template.find(PIPELINES, {"topicId": topic_id}, Pipeline)
-    return find_({"and":[{"topicId": topic_id},{"tenantId":current_user.tenantId}]}, Pipeline, PIPELINES)
+def load_pipeline_by_topic_id(topic_id,current_user=None):
+    if current_user is None:
+        return find_({"topicId": topic_id}, Pipeline, PIPELINES)
+    else:
+        return find_({"and":[{"topicId": topic_id},{"tenantId":current_user.tenantId}]}, Pipeline, PIPELINES)
 
 
 def load_pipeline_by_id(pipeline_id,current_user):

@@ -20,7 +20,7 @@ from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id, build_collection_name, add_tenant_id_to_model, \
-    compare_tenant
+    compare_tenant, clean_password
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
@@ -77,10 +77,10 @@ async def save_space(space: Space, current_user: User = Depends(deps.get_current
     if space.spaceId is None or check_fake_id(space.spaceId):
         # sync space group id
         result = create_space(space)
-        sync_space_to_user_group(result)
+        sync_space_to_user_group(result,current_user)
         return result
     else:
-        sync_space_to_user_group(space)
+        sync_space_to_user_group(space,current_user)
         return update_space_by_id(space.spaceId, space)
 
 
@@ -140,7 +140,7 @@ async def create_topic(topic: Topic, current_user: User = Depends(deps.get_curre
 @router.post("/save/topic", tags=["admin"], response_model=Topic)
 async def save_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
     topic = add_tenant_id_to_model(topic, current_user)
-    if check_fake_id(topic.topicId):
+    if topic.topicId is None or check_fake_id(topic.topicId):
         result = create_topic_schema(topic)
         create_or_update_presto_schema_fields(result)
         return result
@@ -213,8 +213,10 @@ async def query_topic_list_by_ids(topic_ids: List[str], current_user: User = Dep
 # User
 
 @router.post("/user", tags=["admin"], response_model=User)
-async def save_user(user: User) -> User:
+async def save_user(user: User,current_user: User = Depends(deps.get_current_user)) -> User:
     if user.userId is None or check_fake_id(user.userId):
+        if current_user.tenantId is not None:
+            user.tenantId = current_user.tenantId
         result = create_user_storage(user)
         sync_user_to_user_groups(result)
         return result
@@ -226,12 +228,15 @@ async def save_user(user: User) -> User:
 @router.post("/user/name", tags=["admin"], response_model=DataPage)
 async def query_user_list_by_name(query_name: str, pagination: Pagination = Body(...),
                                   current_user: User = Depends(deps.get_current_user)):
+
     return query_users_by_name_with_pagination(query_name, pagination,current_user)
 
 
 @router.post("/user/ids", tags=["admin"], response_model=List[User])
 async def query_user_list_by_ids(user_ids: List[str], current_user: User = Depends(deps.get_current_user)):
-    return get_user_list_by_ids(user_ids,current_user)
+    list_user =  get_user_list_by_ids(user_ids,current_user)
+    # lambda user : user.password = None ,
+    return clean_password(list_user)
 
 
 @router.get("/user", tags=["admin"], response_model=User)
@@ -254,8 +259,8 @@ async def save_user_group(user_group: UserGroup, current_user: User = Depends(de
         user_group.userGroupId = None
     if user_group.userGroupId is None or check_fake_id(user_group.userGroupId):
         result = create_user_group_storage(user_group)
-        sync_user_group_to_space(result)
-        sync_user_group_to_user(result)
+        sync_user_group_to_space(result,current_user)
+        sync_user_group_to_user(result,current_user)
         return result
     else:
         sync_user_group_to_space(user_group,current_user)
@@ -311,7 +316,8 @@ async def load_user_list_by_name_list(name_list: List[str], current_user: User =
     results = []
     for name in name_list:
         results.append(load_user_by_name(name))
-    return results
+
+    return clean_password(results)
 
 
 # pipeline
@@ -410,7 +416,7 @@ async def load_admin_dashboard(current_user: User = Depends(deps.get_current_use
         dashboard = load_dashboard_by_id(admin_dashboard_id,current_user)
         if dashboard is not None:
             # report_ids = list(lambda x: return x.reportId,dashboard.reports)
-            reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)))
+            reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)),current_user)
             return AdminDashboard(dashboard=dashboard, reports=reports)
 
 
@@ -478,6 +484,9 @@ async def query_log_by_critical(query: MonitorLogQuery):
         query_dict['and'] = query_list
     else:
         query_dict = query_list[0]
+
+
+    # print("query_dict",query_dict)
 
     return query_pipeline_monitor(build_collection_name("raw_pipeline_monitor"), query_dict, query.pagination)
 

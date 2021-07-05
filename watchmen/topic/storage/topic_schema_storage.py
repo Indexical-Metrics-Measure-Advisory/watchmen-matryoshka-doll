@@ -30,8 +30,11 @@ def get_topic_by_name(topic_name: str, current_user) -> Topic:
     return find_one({"and":[{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
 
 
-def get_topic(topic_name: str, current_user) -> Topic:
-    return find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+def get_topic(topic_name: str, current_user= None) -> Topic:
+    if current_user is None:
+        return find_one({"name": topic_name}, Topic, TOPICS)
+    else:
+        return find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
 
 
 def load_topic_list_by_name(topic_name: str, current_user) -> List[Topic]:
@@ -43,8 +46,11 @@ def load_topic_by_name(topic_name: str, current_user) -> Topic:
     return find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
 
 
-def get_topic_by_id(topic_id: str, current_user) -> Topic:
-    return find_one({"and":[{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
+    if current_user is None:
+        return find_one({"topicId": topic_id}, Topic, TOPICS)
+    else:
+        return find_one({"and":[{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
 
 
 def get_topic_list_by_ids(topic_ids: List[str], current_user) -> List[Topic]:
@@ -65,10 +71,10 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination, cu
 
     if query_name != '':
         query_dict = {"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]}
-        sort_dict = [("last_modified", "desc")]
+        sort_dict = [("lastmodified", "desc")]
         return page_(query_dict, sort_dict, pagination, Topic, TOPICS)
     else:
-        sort_dict = [("last_modified", "desc")]
+        sort_dict = [("lastmodified", "desc")]
         return page_({"tenantId": current_user.tenantId}, sort_dict, pagination, Topic, TOPICS)
 
 

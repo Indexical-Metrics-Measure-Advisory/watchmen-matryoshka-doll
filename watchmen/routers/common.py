@@ -187,7 +187,7 @@ def load_tenant_by_id(tenant_id: str) -> Tenant:
     return tenant_service.load(tenant_id)
 
 
-@router.post("/tenant/code", tags=["common"], response_model=DataPage)
+@router.post("/tenant/name", tags=["common"], response_model=DataPage)
 def load_tenant_by_name(query_name: str, pagination: Pagination = Body(...),
                         current_user: User = Depends(deps.get_current_user)) -> DataPage:
-    return tenant_service.query_by_code(query_name)
+    return tenant_service.query_by_name(query_name,pagination)

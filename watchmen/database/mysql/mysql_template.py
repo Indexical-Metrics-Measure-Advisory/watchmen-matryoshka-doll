@@ -41,7 +41,7 @@ class MysqlStorage(StorageInterface):
         table_name = check_result["table_name"]
         column_name = check_result["column_name"]
         json_table_stmt = "select s.* " \
-                          "from" + table_name + "s "
+                          "from " + table_name + " s "
         value_ = ",".join(where[column_name]["in"])
         where_stmt = "where JSON_CONTAINS(" + column_name.lower() + ", '[\"" + value_ + "\"]', '$') = 1"
         stmt = json_table_stmt + where_stmt
@@ -49,6 +49,9 @@ class MysqlStorage(StorageInterface):
 
     @staticmethod
     def check_where_column_type(name, where):
+        print(name)
+        print(where)
+
         if name == "spaces":
             if "groupIds" in where:
                 return {"table_name": "spaces", "column_name": "groupIds"}
