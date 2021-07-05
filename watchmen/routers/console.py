@@ -167,7 +167,7 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...),
 async def save_console_space_graph(console_space_graph: ConnectedSpaceGraphics,
                                    current_user: User = Depends(deps.get_current_user)):
     console_space_graph = add_tenant_id_to_model(console_space_graph, current_user)
-    old_console_space_graph = load_console_space_graph(console_space_graph.connectId)
+    old_console_space_graph = load_console_space_graph(console_space_graph.connectId,current_user)
     console_space_graph.userId = current_user.userId
     if old_console_space_graph is None:
         create_console_space_graph(console_space_graph)
@@ -211,7 +211,6 @@ async def delete_report(report_id, current_user: User = Depends(deps.get_current
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_chart(report_id, current_user: User = Depends(deps.get_current_user)):
     result = await load_chart_dataset(report_id,current_user)
-
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
 
@@ -228,7 +227,6 @@ async def create_dashboard(name: str, current_user: User = Depends(deps.get_curr
     dashboard = ConsoleDashboard()
     dashboard = add_tenant_id_to_model(dashboard, current_user)
     dashboard.name = name
-    # dashboard.lastVisitTime = datetime.now()
     dashboard.userId = current_user.userId
     return create_dashboard_to_storage(dashboard)
 
@@ -294,7 +292,7 @@ async def load_favorites_by_user(current_user: User = Depends(deps.get_current_u
 async def save_favorite_with_user(favorite: Favorite, current_user: User = Depends(deps.get_current_user)):
     favorite.userId = current_user.userId
     favorite = add_tenant_id_to_model(favorite, current_user)
-    save_favorite(favorite)
+    save_favorite(favorite,current_user)
     return favorite
 
 

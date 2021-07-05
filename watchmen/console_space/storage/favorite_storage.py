@@ -12,8 +12,8 @@ def create_favorite(favorite):
     return insert_one(favorite, Favorite, CONSOLE_SPACE_FAVORITES)
 
 
-def save_favorite(favorite):
-    result = load_favorite(favorite.userId)
+def save_favorite(favorite,current_user):
+    result = load_favorite(favorite.userId,current_user)
     if result is not None:
         update_favorite(favorite.userId, favorite)
     else:
