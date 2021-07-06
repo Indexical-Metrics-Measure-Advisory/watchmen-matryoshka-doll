@@ -96,8 +96,12 @@ class MysqlStorage(StorageInterface):
                         if k == "in":
                             if isinstance(table.c[key.lower()].type, JSON):
                                 # not support clob to operate in here
+                                '''
                                 raise ValueError("the json type field \"{0}\" of table \"{1}\" , should not support "
                                                  "\"in\" of where expression".format(key.lower(), table.name))
+                                '''
+                                stmt = "JSON_CONTAINS(" + key.lower() + ", '[\"" + v + "\"]', '$') = 1"
+                                return text(stmt)
                             else:
                                 if isinstance(v, list):
                                     if len(v) != 0:
