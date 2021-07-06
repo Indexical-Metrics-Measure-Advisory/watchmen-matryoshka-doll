@@ -87,7 +87,7 @@ async def save_space(space: Space, current_user: User = Depends(deps.get_current
 @router.post("/update/space", tags=["admin"], response_model=Space)
 async def update_space(space_id, space: Space = Body(...), current_user: User = Depends(deps.get_current_user)):
     space = add_tenant_id_to_model(space, current_user)
-    sync_space_to_user_group(space)
+    sync_space_to_user_group(space,current_user)
     return update_space_by_id(space_id, space)
 
 
