@@ -445,13 +445,13 @@ async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
 
 
 @router.post("/topic/raw/generation", tags=["common"])
-async def create_raw_topic_schema(event: RawTopicGenerateEvent):
+async def create_raw_topic_schema(event: RawTopicGenerateEvent,current_user: User = Depends(deps.get_current_user)):
     json_list = []
     for data in event.data:
         json_list.append(data)
     # print(len(json_list))
     result = create_raw_data_model_set(event.code, json_list)
-    return build_topic(result)
+    return build_topic(result,current_user)
 
 
 ### LOG
