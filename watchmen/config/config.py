@@ -12,12 +12,12 @@ class Settings(BaseSettings):
     SECRET_KEY: str = '801GtEAdlE8o-iZRLBMgz30PGE_zxry82EaUYMAhNq8'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
-    DASK_ON:bool = False
-    DASK_PROCESSES:bool = False
+    DASK_ON: bool = True
+    DASK_PROCESSES: bool = False
 
-    ENVIRONMENT:str = DEV
+    ENVIRONMENT: str = DEV
 
-    SUPER_USER:str = "imma-super"
+    SUPER_USER: str = "imma-super"
 
     # HOST_URL = "http://localhost:8000"
     ALGORITHM = "HS256"
@@ -56,8 +56,12 @@ class Settings(BaseSettings):
     CONNECTOR_KAFKA = False
     CONNECTOR_RABBITMQ = False
 
-    RABBITMQ_HOST: str = "amqp://guest:guest@localhost"
-    RABBITMQ_QUEUE: str = "test"
+    RABBITMQ_HOST: str = ""
+    RABBITMQ_PORT: str = "5672"
+    RABBITMQ_USERNAME: str = ""
+    RABBITMQ_PASSWORD: str = ""
+    RABBITMQ_VIRTUALHOST :str = ""
+    RABBITMQ_QUEUE: str = ""
     RABBITMQ_DURABLE: bool = True
     RABBITMQ_AUTO_DELETE: bool = False
 
@@ -76,6 +80,8 @@ class Settings(BaseSettings):
     EMAILS_TO: Optional[str] = None
     TOPIC_DATE_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
     DECIMAL = "decimal(32,2)"
+
+    MOCK_USER="demo_user"
 
     @validator("STORAGE_ENGINE", pre=True)
     def get_emails_enabled(cls, v: str, values: Dict[str, Any]) -> bool:
