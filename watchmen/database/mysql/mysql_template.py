@@ -888,7 +888,12 @@ class MysqlStorage(StorageInterface):
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].lower()]
         new_dict['id_'] = dict_info['id_']
+        if "version_" in dict_info:
+            new_dict['version_'] = dict_info.get("version_", None)
+        if "aggregate_assist_" in dict_info:
+            new_dict['aggregate_assist_'] = json.dumps(dict_info.get("aggregate_assist_"))
         return new_dict
+
 
     def get_topic_factors(self, topic_name):
         if topic_name in cache and settings.ENVIRONMENT == PROD:
@@ -912,6 +917,10 @@ class MysqlStorage(StorageInterface):
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].lower()]
                 new_dict['id_'] = item['id_']
+                if "version_" in item:
+                    new_dict['version_'] = item.get("version_", None)
+                if "aggregate_assist_" in item:
+                    new_dict['aggregate_assist_'] = json.dumps(item.get("aggregate_assist_"))
             new_list.append(new_dict)
         return new_list
 
