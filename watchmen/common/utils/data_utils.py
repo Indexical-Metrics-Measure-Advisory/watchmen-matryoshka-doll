@@ -68,7 +68,7 @@ def build_data_pages(pagination, result, item_count):
 
 
 def check_fake_id(id: str) -> bool:
-    return id.startswith('f-', 0, 2)
+    return id.startswith("f-")
 
 
 def is_presto_varchar_type(factor_type):
@@ -103,3 +103,33 @@ def convert_to_dict(instance):
         return instance.dict(by_alias=True)
     else:
         return instance
+
+
+def add_tenant_id_to_model(instance, user):
+    if settings.DEFAULT_DATA_ZONE_ON:
+        instance.tenantId = "1"
+    else:
+        instance.tenantId = user.tenantId
+
+    return instance
+
+
+def compare_tenant(instance, user):
+    if instance.tenantId == user.tenantId:
+        return True
+    else:
+        return False
+
+
+def is_superuser(username):
+    if username == settings.SUPER_USER:
+        return True
+    else:
+        return False
+
+
+def clean_password(user_list):
+    for user in user_list:
+        user.password = None
+
+    return user_list

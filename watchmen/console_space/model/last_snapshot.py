@@ -9,3 +9,4 @@ class LastSnapshot(WatchmenModel):
     adminDashboardId: str = None
     favoritePin: bool = False
     userId: str = None
+    tenantId: str = None

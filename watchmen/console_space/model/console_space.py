@@ -4,7 +4,9 @@ from typing import List
 from pydantic import BaseModel
 
 from watchmen.common.watchmen_model import WatchmenModel
+
 from watchmen.common.parameter import ParameterJoint, Parameter
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.report.model.report import Report
 from watchmen.topic.topic import Topic
 
@@ -12,28 +14,6 @@ from watchmen.topic.topic import Topic
 class ConsoleSpaceSubjectChartDataSet(BaseModel):
     meta: List[str] = []
     data: list = []
-
-
-#
-# class ConsoleSpaceSubjectDataSetFilter(BaseModel):
-#     topicId: str = None
-#     factorId: str = None
-#     operator: str = None
-#     value: str = None
-#
-#
-# class ConsoleSpaceSubjectDataSetFilterJoint(BaseModel):
-#     jointType: str = None
-#     filters: List[ConsoleSpaceSubjectDataSetFilter] = []
-
-
-# class ConsoleSpaceSubjectDataSetColumn(BaseModel):
-#     topicId: str = None
-#     factorId: str = None
-#     operator: str = None
-#     secondaryTopicId: str = None
-#     secondaryFactorId: str = None
-#     alias: str = None
 
 
 class SubjectDataSetJoin(BaseModel):
@@ -74,6 +54,7 @@ class ConsoleSpaceSubject(WatchmenModel):
     reports: List[Report] = []
     reportIds: list = []
     dataset: SubjectDataSet = None
+    tenantId: str = None
 
 
 class ConsoleSpaceGroup(WatchmenModel):
@@ -81,6 +62,7 @@ class ConsoleSpaceGroup(WatchmenModel):
     name: str = None
     subjects: List[ConsoleSpaceSubject] = []
     subjectIds: list = []
+    tenantId: str = None
 
 
 class ConsoleSpace(WatchmenModel):
@@ -95,4 +77,5 @@ class ConsoleSpace(WatchmenModel):
     subjectIds: list = []
     userId: str = None
     topics: List[Topic] = []
+    tenantId: str = None
     # topicRelations: List[TopicRelationship] = []

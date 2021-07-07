@@ -34,8 +34,9 @@ def update_topic_schema(
     return Topic.parse_obj(topic)
 
 
-def build_topic(model_schema_set: ModelSchemaSet):
+def build_topic(model_schema_set: ModelSchemaSet, current_user):
     topic = Topic()
+    topic.tenantId = current_user.tenantId
     topic.topicId = get_surrogate_key()
     topic.name = model_schema_set.code
     topic.type = "raw"

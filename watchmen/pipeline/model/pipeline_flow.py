@@ -8,3 +8,4 @@ class PipelineFlow(WatchmenModel):
     topicId: str = None
     consume: List[Pipeline]
     produce: List[Pipeline]
+    tenantId: str = None

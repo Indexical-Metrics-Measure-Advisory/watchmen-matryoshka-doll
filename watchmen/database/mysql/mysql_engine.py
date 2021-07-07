@@ -16,9 +16,9 @@ connection_url = 'mysql://%s:%s@%s:%s/%s?charset=utf8' % (settings.MYSQL_USER,
                                                           settings.MYSQL_PORT,
                                                           settings.MYSQL_DATABASE)
 
-# print(connection_url)
+
 engine = create_engine(connection_url,
-                       echo=True,
+                       echo=settings.MYSQL_ECHO,
                        future=True,
                        pool_recycle=3600,
                        json_serializer=dumps, encoding='utf-8')

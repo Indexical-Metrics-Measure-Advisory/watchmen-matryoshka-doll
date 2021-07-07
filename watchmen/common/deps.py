@@ -4,9 +4,10 @@ from jose import jwt
 from jsonschema import ValidationError
 from starlette import status
 
-from watchmen.auth.storage.user import get_user
-from watchmen.auth.user import User
+from watchmen.auth.storage.user import load_user_by_name
+from watchmen.auth.user import User, SUPER_ADMIN
 from watchmen.common.security.index import validate_jwt
+from watchmen.common.utils.data_utils import is_superuser
 from watchmen.config.config import settings
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -14,19 +15,25 @@ reusable_oauth2 = OAuth2PasswordBearer(
 )
 
 
-
 def get_current_user(token: str = Depends(reusable_oauth2)
                      ) -> User:
     try:
         payload = validate_jwt(token)
 
-    # token_data = token.TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
         )
-    user = get_user(payload["sub"])
+    username = payload["sub"]
+    if is_superuser(username):
+        user = User(name=username, role=SUPER_ADMIN)
+    else:
+        user = load_user_by_name(username)
+
+    if settings.DEFAULT_DATA_ZONE_ON:
+        user.tenantId="1"
+
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 

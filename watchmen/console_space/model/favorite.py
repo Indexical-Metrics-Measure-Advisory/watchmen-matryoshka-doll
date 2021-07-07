@@ -5,3 +5,4 @@ class Favorite(WatchmenModel):
     connectedSpaceIds: list = []
     dashboardIds: list = []
     userId: str = None
+    tenantId: str = None

@@ -26,3 +26,4 @@ class ConsoleDashboard(WatchmenModel):
     paragraphs: List[Paragraph] = None
     lastVisitTime: str = None
     userId: str = None
+    tenantId: str = None

@@ -12,3 +12,4 @@ class TopicRelationship(WatchmenModel):
     type: str = None
     strictToTarget: bool = False
     strictToSource: bool = False
+    tenantId: str = None

@@ -2,30 +2,36 @@ import importlib
 import logging
 import time
 from functools import lru_cache
-#
-# from watchmen.pipeline.single.pipeline_service import convert_action_type
+
+PIPELINE_CORE_ACTION_ = "watchmen.pipeline.core.action."
 
 log = logging.getLogger("app." + __name__)
+
 
 @lru_cache(maxsize=16)
 def convert_action_type(action_type: str):
     return action_type.replace("-", "_")
 
-def run_action(actionContext):
-    action = actionContext.action
 
-    stage_method = importlib.import_module("watchmen.pipeline.core.action." + convert_action_type(action.type))
-    func = stage_method.init(actionContext)
+def get_action_func(action):
+    stage_method = importlib.import_module(PIPELINE_CORE_ACTION_ + convert_action_type(action.type))
+    return stage_method
+
+
+def run_action(action_context):
+    action = action_context.action
+    stage_method = get_action_func(action)
+    func = stage_method.init(action_context)
 
     start = time.time()
     action_run_status, trigger_pipeline_data_list = func()
     elapsed_time = time.time() - start
 
-    unit = actionContext.unitContext.unit
+    unit = action_context.unitContext.unit
     unit_name = unit.name
-    stage = actionContext.unitContext.stageContext.stage
+    stage = action_context.unitContext.stageContext.stage
     stage_name = stage.name
-    pipeline = actionContext.unitContext.stageContext.pipelineContext.pipeline
+    pipeline = action_context.unitContext.stageContext.pipelineContext.pipeline
     pipeline_name = pipeline.name
 
     action_name = action.actionId
@@ -35,9 +41,9 @@ def run_action(actionContext):
         pipeline_name, stage_name, unit_name, action_name, elapsed_time))
     '''
     if trigger_pipeline_data_list:
-        actionContext.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list = [
-            *actionContext.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
+        action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list = [
+            *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
             *trigger_pipeline_data_list]
 
-    actionContext.actionStatus = action_run_status
-    return actionContext
+    action_context.actionStatus = action_run_status
+    return action_context

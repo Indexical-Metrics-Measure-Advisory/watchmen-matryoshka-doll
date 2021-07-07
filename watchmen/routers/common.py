@@ -1,19 +1,28 @@
 import logging
 from typing import List, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from pydantic import BaseModel
 
+from watchmen.auth.service import tenant_service
+from watchmen.auth.tenant import Tenant
 from watchmen.auth.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
+
+from watchmen.common.pagination import Pagination
+
 from watchmen.common.watchmen_model import WatchmenModel
+
 from watchmen.common.parameter import Parameter
+from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.utils.data_utils import check_fake_id
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.database.mongo.index import delete_topic_collection
-from watchmen.database.storage.storage_template import create_raw_pipeline_monitor, clear_metadata
+from watchmen.database.storage.storage_template import create_raw_pipeline_monitor, clear_metadata, DataPage
 from watchmen.monitor.services.pipeline_monitor_service import insert_monitor_topic
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.dependency.caculate_dependency_new import pipelineExecutionPath
@@ -41,12 +50,11 @@ async def health():
     return {"health": True}
 
 
+## TODO pass user pat when system integration
 @router.post("/topic/data", tags=["common"])
-async def save_topic_data(topic_event: TopicEvent):
+async def save_topic_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
     # TODO user check URP
-    # client = get_dask_client()
-    # task  = client.submit(import_raw_topic_data,topic_event)
-    await import_raw_topic_data(topic_event)
+    await import_raw_topic_data(topic_event, current_user)
     # fire_and_forget(task)
     return {"received": True}
 
@@ -60,7 +68,7 @@ async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_
     return instances
 
 
-@router.post("/topic/data/rerun", tags=["common"]) ## TODO  move to pipeline worker
+@router.post("/topic/data/rerun", tags=["common"])  ## TODO  move to pipeline worker
 async def rerun_pipeline(topic_name, instance_id, pipeline_id):
     instance = find_topic_data_by_id_and_topic_name(topic_name, instance_id)
     topic = get_topic(topic_name)
@@ -166,3 +174,23 @@ def show_pipeline_graph(topic_id):
 @router.get("/table/metadata/clear", tags=["common"])
 def clear_table_metadata():
     clear_metadata()
+
+
+@router.post("/tenant", tags=["common"], response_model=Tenant)
+def save_tenant(tenant: Tenant) -> Tenant:
+    if check_fake_id(tenant.tenantId):
+        tenant.tenantId = get_surrogate_key()
+        return tenant_service.create(tenant)
+    else:
+        return tenant_service.update(tenant)
+
+
+@router.post("/tenant/id", tags=["common"], response_model=Tenant)
+def load_tenant_by_id(tenant_id: str) -> Tenant:
+    return tenant_service.load(tenant_id)
+
+
+@router.post("/tenant/name", tags=["common"], response_model=DataPage)
+def load_tenant_by_name(query_name: str, pagination: Pagination = Body(...),
+                        current_user: User = Depends(deps.get_current_user)) -> DataPage:
+    return tenant_service.query_by_name(query_name, pagination)

@@ -18,9 +18,9 @@ log = logging.getLogger("app." + __name__)
 
 log.info("mongo template initialized")
 
+
 @singleton
 class MongoStorage(StorageInterface):
-
 
     def build_mongo_where_expression(self, where: dict):
         """
@@ -114,7 +114,7 @@ class MongoStorage(StorageInterface):
     def build_mongo_updates_expression_for_update(self, updates):
         new_updates = {}
         new_updates["$set"] = {}
-        print("updates", updates)
+        # print("updates", updates)
         for key, value in updates.items():
             if isinstance(value, dict):
                 for k, v in value.items():

@@ -23,3 +23,4 @@ class PipelinesGraphics(WatchmenModel):
     name: str = None
     userId: str = None
     topics: List[TopicGraphics] = []
+    tenantId: str = None

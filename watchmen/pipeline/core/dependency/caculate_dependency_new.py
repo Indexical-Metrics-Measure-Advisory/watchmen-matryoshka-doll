@@ -40,7 +40,7 @@ def buildPipelinesGraph():
         if pipeline.enabled:
             buildPipelineGraph(pipeline, pipeline_graph)
     end_tm = datetime.datetime.now()
-    #print((end_tm - start_tm).seconds)
+    # print((end_tm - start_tm).seconds)
     # show_graph(pipeline_graph)
     return pipeline_graph
 

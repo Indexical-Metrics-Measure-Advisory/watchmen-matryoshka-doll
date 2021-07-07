@@ -23,6 +23,7 @@ class Topic(WatchmenModel):
     kind: str = None
     factors: List[Factor] = []
     description: str = None
+    tenantId: str = None
     # factorIds: list = []
 
     '''

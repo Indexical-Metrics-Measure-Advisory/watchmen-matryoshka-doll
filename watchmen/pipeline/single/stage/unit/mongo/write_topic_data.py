@@ -1,8 +1,8 @@
 from watchmen.common.constants import pipeline_constants
-from watchmen.database.storage.storage_template import topic_data_update_one_with_version
+from watchmen.common.utils.data_utils import get_id_name
 from watchmen.database.storage.storage_template import topic_data_find_by_id, \
     topic_data_insert_one, topic_find_one_and_update, topic_data_update_, topic_data_update_one
-from watchmen.common.utils.data_utils import get_id_name
+from watchmen.database.storage.storage_template import topic_data_update_one_with_version
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.single.stage.unit.model.trigger_data import TriggerData
 from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE

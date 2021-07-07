@@ -8,7 +8,6 @@ class WatchmenModel(BaseModel):
     lastModified: datetime = datetime.now().replace(tzinfo=None)
     createTime: str = None
 
-    # lastModifyTime: str = None
 
     class Config(BaseConfig):
         json_encoders = {

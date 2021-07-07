@@ -10,6 +10,7 @@ class EnumItem(WatchmenModel):
     parentCode: str = None
     replaceCode: str = None
     enumId: str = None
+    tenantId: str = None
 
 
 class Enum(WatchmenModel):
@@ -18,3 +19,4 @@ class Enum(WatchmenModel):
     description: str = None
     parentEnumId: str = None
     items: List[EnumItem] = []
+    tenantId: str = None

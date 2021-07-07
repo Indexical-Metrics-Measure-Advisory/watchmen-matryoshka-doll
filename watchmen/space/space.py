@@ -9,3 +9,4 @@ class Space(WatchmenModel):
     groupIds: List[str] = None
     name: str = None
     description: str = None
+    tenantId: str = None

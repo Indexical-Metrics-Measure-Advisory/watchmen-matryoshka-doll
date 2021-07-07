@@ -22,3 +22,4 @@ class ConnectedSpaceGraphics(WatchmenModel):
     topics: List[TopicGraphics] = None
     subjects: List[SubjectGraphics] = None
     userId: str = None
+    tenantId: str = None

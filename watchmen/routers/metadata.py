@@ -1,8 +1,10 @@
 # IMPORT data
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from watchmen.auth.storage.user_group import import_user_group_to_db, get_user_group, update_user_group_storage
 from watchmen.auth.user_group import UserGroup
+from watchmen.common import deps
+from watchmen.common.utils.data_utils import add_tenant_id_to_model
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceSubject
 from watchmen.console_space.storage.console_space_storage import import_console_spaces, load_console_space_by_id, \
     update_console_space
@@ -43,8 +45,9 @@ async def import_user(user: User):
 
 
 @router.post("/import/admin/user/group", tags=["import"])
-async def import_user_group(group: UserGroup):
-    result = get_user_group(group.userGroupId)
+async def import_user_group(group: UserGroup, current_user: User = Depends(deps.get_current_user)):
+    result = get_user_group(group.userGroupId, current_user)
+    group = add_tenant_id_to_model(group, current_user)
     if result is None:
         import_user_group_to_db(group)
     else:
@@ -54,8 +57,9 @@ async def import_user_group(group: UserGroup):
 ### import space
 
 @router.post("/import/admin/space", tags=["import"])
-async def import_space(space: Space):
-    result = get_space_by_id(space.spaceId)
+async def import_space(space: Space, current_user: User = Depends(deps.get_current_user)):
+    result = get_space_by_id(space.spaceId, current_user)
+    space = add_tenant_id_to_model(space, current_user)
     if result is None:
         import_space_to_db(space)
     else:
@@ -64,8 +68,9 @@ async def import_space(space: Space):
 
 ## import topic data
 @router.post("/import/admin/topic", tags=["import"])
-async def import_topic(topic: Topic):
-    result = get_topic_by_id(topic.topicId)
+async def import_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
+    result = get_topic_by_id(topic.topicId, current_user)
+    topic = add_tenant_id_to_model(topic, current_user)
     if result is None:
         # import_topic_to_db(topic)
         create_topic_schema(topic)
@@ -76,8 +81,9 @@ async def import_topic(topic: Topic):
 ## import pipeline data
 
 @router.post("/import/admin/pipeline", tags=["import"])
-async def import_pipeline(pipeline: Pipeline):
-    result = load_pipeline_by_id(pipeline.pipelineId)
+async def import_pipeline(pipeline: Pipeline, current_user: User = Depends(deps.get_current_user)):
+    result = load_pipeline_by_id(pipeline.pipelineId, current_user)
+    pipeline = add_tenant_id_to_model(pipeline, current_user)
     if result is None:
         import_pipeline_to_db(pipeline)
     else:
@@ -86,8 +92,9 @@ async def import_pipeline(pipeline: Pipeline):
 
 ## import connect space
 @router.post("/import/console/space", tags=["import"])
-async def import_console_space(console_space: ConsoleSpace):
-    result = load_console_space_by_id(console_space.connectId)
+async def import_console_space(console_space: ConsoleSpace, current_user: User = Depends(deps.get_current_user)):
+    result = load_console_space_by_id(console_space.connectId, current_user)
+    console_space = add_tenant_id_to_model(console_space, current_user)
     if result is None:
         import_console_spaces(console_space)
     else:
@@ -96,8 +103,9 @@ async def import_console_space(console_space: ConsoleSpace):
 
 ## import dataset
 @router.post("/import/console/space/subject", tags=["import"])
-async def import_console_subject(subject: ConsoleSpaceSubject):
-    result = load_console_subject_by_id(subject.subjectId)
+async def import_console_subject(subject: ConsoleSpaceSubject, current_user: User = Depends(deps.get_current_user)):
+    result = load_console_subject_by_id(subject.subjectId, current_user)
+    subject = add_tenant_id_to_model(subject, current_user)
     if result is None:
         import_console_subject_to_db(subject)
     else:
@@ -107,8 +115,9 @@ async def import_console_subject(subject: ConsoleSpaceSubject):
 ## import report
 
 @router.post("/import/console/report", tags=["import"])
-async def import_console_report(report: Report):
-    result = load_report_by_id(report.reportId)
+async def import_console_report(report: Report, current_user: User = Depends(deps.get_current_user)):
+    result = load_report_by_id(report.reportId, current_user)
+    report = add_tenant_id_to_model(report, current_user)
     if result is None:
         import_report_to_db(report)
     else:
@@ -117,8 +126,9 @@ async def import_console_report(report: Report):
 
 ## import dashborad
 @router.post("/import/console/dashboard", tags=["import"])
-async def import_dashboard(dashboard: ConsoleDashboard):
-    result = load_dashboard_by_id(dashboard.dashboardId)
+async def import_dashboard(dashboard: ConsoleDashboard, current_user: User = Depends(deps.get_current_user)):
+    result = load_dashboard_by_id(dashboard.dashboardId, current_user)
+    dashboard = add_tenant_id_to_model(dashboard, current_user)
     if result is None:
         import_dashboard_to_db(dashboard)
     else:

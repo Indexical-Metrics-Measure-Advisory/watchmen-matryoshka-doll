@@ -23,6 +23,7 @@ class Factor(WatchmenModel):
     description: str = None
     defaultValue: str = None
     indexGroup: str = None
+    tenantId: str = None
 
 
 '''

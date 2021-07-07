@@ -2,13 +2,12 @@ import logging
 import time
 import traceback
 from datetime import datetime
+from functools import lru_cache
 
 import watchmen
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-
-from watchmen.config.config import settings, PROD, DEV
-
+from watchmen.config.config import settings, PROD
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, StageRunStatus
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.context.stage_context import StageContext
@@ -21,6 +20,7 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 log = logging.getLogger("app." + __name__)
 
 
+@lru_cache(maxsize=20)
 def __build_merge_key(topic_name, trigger_type):
     return topic_name + "_" + trigger_type.value
 
@@ -30,7 +30,7 @@ def __merge_pipeline_data(pipeline_trigger_merge_list):
     id_dict = {}
     for pipeline_data in pipeline_trigger_merge_list:
         # print("-----pipeline", pipeline_data)
-        key = __build_merge_key(pipeline_data.topicName, pipeline_data.triggerType)
+        # key = __build_merge_key(pipeline_data.topicName, pipeline_data.triggerType)
         if pipeline_data.topicName in merge_context:
             data_list = merge_context[pipeline_data.topicName].get(pipeline_data.triggerType.value, [])
             data_list.append(pipeline_data.data)
@@ -40,14 +40,17 @@ def __merge_pipeline_data(pipeline_trigger_merge_list):
     # print(merge_context)
     return merge_context
 
+
 def __build_merge_key(topic_name, trigger_type):
     return topic_name + "_" + trigger_type.value
+
 
 def __get_unique_key_name() -> str:
     if settings.STORAGE_ENGINE == "mongo":
         return "_id"
     else:
         return "id_"
+
 
 def __trigger_all_pipeline(pipeline_trigger_merge_list):
     after_merge_list = __merge_pipeline_data(pipeline_trigger_merge_list)
@@ -72,12 +75,12 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list):
                 watchmen.pipeline.index.trigger_pipeline(topic_name, insert_data, TriggerType.insert)
 
 
-def should_run(pipelineContext: PipelineContext) -> bool:
-    pipeline = pipelineContext.pipeline
+def should_run(pipeline_context: PipelineContext) -> bool:
+    pipeline = pipeline_context.pipeline
     if pipeline.on is None:
         return True
-    current_data = pipelineContext.currentOfTriggerData
-    variables = pipelineContext.variables
+    current_data = pipeline_context.currentOfTriggerData
+    variables = pipeline_context.variables
     return parse_parameter_joint(pipeline.on, current_data, variables)
 
 

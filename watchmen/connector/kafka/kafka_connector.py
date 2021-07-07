@@ -3,7 +3,6 @@ import json
 import logging
 import traceback
 
-
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.config.config import settings
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data

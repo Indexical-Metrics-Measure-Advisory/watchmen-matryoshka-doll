@@ -81,3 +81,4 @@ class PipelineRunStatus(WatchmenModel, ConditionHolder):
     error: str = None
     oldValue: Any = None
     newValue: Any = None
+    tenantId: str = None

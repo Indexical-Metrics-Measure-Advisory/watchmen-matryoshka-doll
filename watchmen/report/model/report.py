@@ -62,4 +62,5 @@ class Report(WatchmenModel):
     chart: Chart = None
     createdAt: str = None
     lastVisitTime: str = None
+    tenantId: str = None
     # subjectId: str = None

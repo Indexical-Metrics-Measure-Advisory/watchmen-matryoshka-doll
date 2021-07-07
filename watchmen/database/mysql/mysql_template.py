@@ -7,6 +7,7 @@ from _operator import lt
 from functools import lru_cache
 from operator import eq
 
+from cacheout import Cache
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, desc, asc, \
     text, func, DateTime, BigInteger, Date, Integer, JSON
 from sqlalchemy.dialects.mysql import insert
@@ -19,6 +20,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
+from watchmen.config.config import settings, PROD
 from watchmen.database.mysql.mysql_engine import engine
 from watchmen.database.mysql.mysql_table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.database.mysql.mysql_utils import parse_obj, count_table, count_topic_data_table
@@ -28,11 +30,17 @@ from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
+cache = Cache()
+
+
+cache_column  = Cache()
+insp = Inspector.from_engine(engine)
 # import arrow
 
 log = logging.getLogger("app." + __name__)
 
 log.info("mysql template initialized")
+
 
 @singleton
 class MysqlStorage(StorageInterface):
@@ -42,7 +50,7 @@ class MysqlStorage(StorageInterface):
         table_name = check_result["table_name"]
         column_name = check_result["column_name"]
         json_table_stmt = "select s.* " \
-                          "from" + table_name + "s "
+                          "from " + table_name + " s "
         value_ = ",".join(where[column_name]["in"])
         where_stmt = "where JSON_CONTAINS(" + column_name.lower() + ", '[\"" + value_ + "\"]', '$') = 1"
         stmt = json_table_stmt + where_stmt
@@ -50,6 +58,7 @@ class MysqlStorage(StorageInterface):
 
     @staticmethod
     def check_where_column_type(name, where):
+
         if name == "spaces":
             if "groupIds" in where:
                 return {"table_name": "spaces", "column_name": "groupIds"}
@@ -157,7 +166,9 @@ class MysqlStorage(StorageInterface):
                 if isinstance(value, dict):
                     for k, v in value.items():
                         new_updates[k.lower()] = v
-            if isinstance(value, dict):
+            elif key == "version_":
+                new_updates[key] = value + 1
+            elif isinstance(value, dict):
                 for k, v in value.items():
                     if k == "_sum":
                         new_updates[key.lower()] = text(f'{key.lower()} + {v}')
@@ -243,7 +254,6 @@ class MysqlStorage(StorageInterface):
         table = get_table_by_name(name)
         stmt = update(table)
         stmt = stmt.where(self.build_mysql_where_expression(table, where))
-        # stmt = stmt.where(text("LIMIT 1"))
         instance_dict: dict = convert_to_dict(updates)
         values = {}
         for key, value in instance_dict.items():
@@ -376,9 +386,7 @@ class MysqlStorage(StorageInterface):
 
     def find_(self, where: dict, model, name: str) -> list:
         table = get_table_by_name(name)
-        ##TODO refactor code
         check_result = self.check_where_column_type(name, where)
-
         if check_result is not None:
             stmt = text(self.build_raw_sql_with_json_table(check_result, where))
         else:
@@ -477,6 +485,7 @@ class MysqlStorage(StorageInterface):
     topic data interface
     '''
 
+
     @staticmethod
     @lru_cache(maxsize=10)
     def get_datatype_by_factor_type(factor_type: str):
@@ -501,6 +510,7 @@ class MysqlStorage(StorageInterface):
         else:
             return String(20)
 
+    @lru_cache(maxsize=30)
     def check_topic_type_is_raw(self, topic_name):
         table = get_table_by_name("topics")
         select_stmt = select(table).where(
@@ -633,12 +643,25 @@ class MysqlStorage(StorageInterface):
                     conn.execute(stmt, value)
 
 
-    def get_table_column_default_value(self, table_name, column_name):
-        insp = Inspector.from_engine(engine)
+    def get_table_columns(self,table_name):
+        key = table_name
+        if key in cache_column and settings.ENVIRONMENT == PROD:
+            return cache_column.get(key)
+          
         columns = insp.get_columns(table_name)
+        if columns is not None:
+            cache_column.set(key,columns)
+        return columns
+
+
+    def get_table_column_default_value(self, table_name, column_name):
+        columns = self.get_table_columns(table_name)
         for column in columns:
             if column["name"] == column_name:
+                # cache_column.set(key,column["default"])
                 return column["default"]
+
+
 
     def raw_topic_data_insert_one(self, one, topic_name):
         if topic_name == "raw_pipeline_monitor":
@@ -707,7 +730,8 @@ class MysqlStorage(StorageInterface):
     def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        stmt = update(table).where(and_(eq(table.c['id_'], id_), lt(table.c['version_'], version_)))
+        stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
+
         one_dict = convert_to_dict(one)
         one_dict['version_'] = version_
         one_dict_lower = self.build_mysql_updates_expression_for_update(table, self.capital_to_lower(one_dict))
@@ -717,6 +741,7 @@ class MysqlStorage(StorageInterface):
                 if key.lower() in table.c.keys():
                     values[key.lower()] = value
         stmt = stmt.values(values)
+
         with engine.begin() as conn:
             result = conn.execute(stmt)
         if result.rowcount == 0:
@@ -890,18 +915,30 @@ class MysqlStorage(StorageInterface):
             return None
 
         new_dict = {}
-        factors = self.get_factors(topic_name)
+
+        factors = self.get_topic_factors(topic_name)
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].lower()]
         new_dict['id_'] = dict_info['id_']
+        if "version_" in dict_info:
+            new_dict['version_'] = dict_info.get("version_", None)
+        if "aggregate_assist_" in dict_info:
+            new_dict['aggregate_assist_'] = json.dumps(dict_info.get("aggregate_assist_"))
         return new_dict
 
-    def get_factors(self, topic_name):
+
+    def get_topic_factors(self, topic_name):
+        if topic_name in cache and settings.ENVIRONMENT == PROD:
+            return cache.get(topic_name)
+
         stmt = "select t.factors from topics t where t.name=:topic_name"
         with engine.connect() as conn:
             cursor = conn.execute(text(stmt), {"topic_name": topic_name}).cursor
             row = cursor.fetchone()
             factors = json.loads(row[0])
+
+            cache.set(topic_name, factors)
+
         return factors
 
     def convert_list_elements_key(self, list_info, topic_name):
@@ -909,12 +946,17 @@ class MysqlStorage(StorageInterface):
             return None
         new_dict = {}
         new_list = []
-        # result = {}
-        factors = self.get_factors(topic_name)
+
+        factors = self.get_topic_factors(topic_name)
+
         for item in list_info:
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].lower()]
                 new_dict['id_'] = item['id_']
+                if "version_" in item:
+                    new_dict['version_'] = item.get("version_", None)
+                if "aggregate_assist_" in item:
+                    new_dict['aggregate_assist_'] = json.dumps(item.get("aggregate_assist_"))
             new_list.append(new_dict)
         return new_list
 

@@ -23,9 +23,6 @@ def init(action: UnitAction, pipeline_topic: Topic):
         unit_action_status.uid = pipeline_uid
         # print(json.loads(raw_data))
 
-
-
-
         if action.topicId is None:
             raise ValueError("action.topicId is empty {0}".format(action.name))
 

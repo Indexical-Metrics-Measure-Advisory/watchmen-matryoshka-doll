@@ -1,32 +1,53 @@
 ## TODO  factor it
+
+from cacheout import Cache
+
+from watchmen.config.config import settings, PROD
+
+cache = Cache()
+
+
 def get_primary_key(table_name):
+    if table_name in cache and settings.ENVIRONMENT == PROD:
+        return cache.get(table_name)
+
+    pid = get_pid(table_name)
+    if pid is not None:
+        cache.set(table_name, pid)
+    return pid
+
+
+def get_pid(table_name):
     if table_name == 'topics':
-        return 'topicId'
+        pid = 'topicId'
     elif table_name == 'console_space_subjects':
-        return 'subjectId'
+        pid = 'subjectId'
     elif table_name == 'pipelines':
-        return 'pipelineId'
+        pid = 'pipelineId'
     elif table_name == 'users':
-        return 'userId'
+        pid = 'userId'
     elif table_name == 'console_dashboards':
-        return 'dashboardId'
+        pid = 'dashboardId'
     elif table_name == 'pipeline_graph':
-        return 'pipelineGraphId'
+        pid = 'pipelineGraphId'
     elif table_name == 'console_spaces':
-        return 'connectId'
+        pid = 'connectId'
     elif table_name == 'console_space_favorites':
-        return 'userId'
+        pid = 'userId'
     elif table_name == 'spaces':
-        return 'spaceId'
+        pid = 'spaceId'
     elif table_name == 'console_space_subjects':
-        return 'subjectId'
+        pid = 'subjectId'
     elif table_name == 'console_reports':
-        return 'reportId'
+        pid = 'reportId'
     elif table_name == 'user_groups':
-        return 'userGroupId'
+        pid = 'userGroupId'
     elif table_name == 'enums':
-        return 'enumId'
+        pid = 'enumId'
     elif table_name == 'console_reports':
-        return 'reportId'
+        pid = 'reportId'
     elif table_name == "console_space_last_snapshot":
-        return "userId"
+        pid = "userId"
+    elif table_name == "tenants":
+        pid = "tenantId"
+    return pid

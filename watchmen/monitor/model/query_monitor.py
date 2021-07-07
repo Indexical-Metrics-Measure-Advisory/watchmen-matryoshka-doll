@@ -30,3 +30,4 @@ class QueryMonitor(WatchmenModel):
     executionTime: int = None
     success: bool = True
     error: str = None
+    tenantId: str = None
