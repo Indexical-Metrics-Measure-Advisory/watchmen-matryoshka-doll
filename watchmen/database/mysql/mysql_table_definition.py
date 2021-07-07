@@ -197,6 +197,13 @@ def get_table_by_name(table_name):
     if table_name in cache and settings.ENVIRONMENT == PROD:
         return cache.get(table_name)
 
+    table = get_meta_table(table_name)
+
+    cache.set(table_name, table)
+    return table
+
+
+def get_meta_table(table_name):
     if table_name == "users":
         table = users_table
     elif table_name == "console_space_last_snapshot":
@@ -227,8 +234,6 @@ def get_table_by_name(table_name):
         table = console_reports_table
     elif table_name == "tenants":
         table = tenants_table
-
-    cache.set(table_name, table)
     return table
 
 

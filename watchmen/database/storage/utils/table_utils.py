@@ -11,6 +11,12 @@ def get_primary_key(table_name):
     if table_name in cache and settings.ENVIRONMENT == PROD:
         return cache.get(table_name)
 
+    pid = get_pid(table_name)
+    cache.set(table_name, pid)
+    return pid
+
+
+def get_pid(table_name):
     if table_name == 'topics':
         pid = 'topicId'
     elif table_name == 'console_space_subjects':
@@ -43,6 +49,4 @@ def get_primary_key(table_name):
         pid = "userId"
     elif table_name == "tenants":
         pid = "tenantId"
-
-    cache.set(table_name, pid)
     return pid
