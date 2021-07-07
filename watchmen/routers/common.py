@@ -48,9 +48,9 @@ async def health():
 
 ## TODO pass user pat when system integration
 @router.post("/topic/data", tags=["common"])
-async def save_topic_data(topic_event: TopicEvent,current_user: User = Depends(deps.get_current_user)):
+async def save_topic_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
     # TODO user check URP
-    await import_raw_topic_data(topic_event,current_user)
+    await import_raw_topic_data(topic_event, current_user)
     # fire_and_forget(task)
     return {"received": True}
 
@@ -189,4 +189,4 @@ def load_tenant_by_id(tenant_id: str) -> Tenant:
 @router.post("/tenant/name", tags=["common"], response_model=DataPage)
 def load_tenant_by_name(query_name: str, pagination: Pagination = Body(...),
                         current_user: User = Depends(deps.get_current_user)) -> DataPage:
-    return tenant_service.query_by_name(query_name,pagination)
+    return tenant_service.query_by_name(query_name, pagination)

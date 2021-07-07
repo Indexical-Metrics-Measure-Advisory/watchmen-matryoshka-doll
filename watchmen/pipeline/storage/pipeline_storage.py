@@ -1,6 +1,5 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.database.storage.storage_template import insert_one, update_one, find_, find_by_id, update_, list_all, \
-    delete_one, find_one
+from watchmen.database.storage.storage_template import insert_one, update_one, find_, update_, delete_one, find_one
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 
@@ -31,16 +30,16 @@ def __convert_to_object(x):
 
 
 # @lru_cache(maxsize=50)
-def load_pipeline_by_topic_id(topic_id,current_user=None):
+def load_pipeline_by_topic_id(topic_id, current_user=None):
     if current_user is None:
         return find_({"topicId": topic_id}, Pipeline, PIPELINES)
     else:
-        return find_({"and":[{"topicId": topic_id},{"tenantId":current_user.tenantId}]}, Pipeline, PIPELINES)
+        return find_({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Pipeline, PIPELINES)
 
 
-def load_pipeline_by_id(pipeline_id,current_user):
+def load_pipeline_by_id(pipeline_id, current_user):
     # return template.find_one(PIPELINES, {"pipelineId": pipeline_id}, Pipeline)
-    return find_one({"and":[{"pipelineId":pipeline_id},{"tenantId":current_user.tenantId}]}, Pipeline, PIPELINES)
+    return find_one({"and": [{"pipelineId": pipeline_id}, {"tenantId": current_user.tenantId}]}, Pipeline, PIPELINES)
 
 
 def update_pipeline_status(pipeline_id, enabled):
@@ -57,7 +56,7 @@ def update_pipeline_name(pipeline_id, name):
 
 def load_pipeline_list(current_user):
     # return template.find_all(PIPELINES, Pipeline)
-    return find_({"tenantId":current_user.tenantId},Pipeline, PIPELINES)
+    return find_({"tenantId": current_user.tenantId}, Pipeline, PIPELINES)
 
 
 def create_pipeline_graph(pipeline_graph: PipelinesGraphics):
@@ -74,8 +73,8 @@ def remove_pipeline_graph(pipeline_graph_id):
     return delete_one({"pipelineGraphId": pipeline_graph_id}, PIPELINE_GRAPH)
 
 
-def load_pipeline_graph(user_id,current_user):
-    return find_({"and":[{"userId": user_id},{"tenantId":current_user.tenantId}]}, PipelinesGraphics, PIPELINE_GRAPH)
+def load_pipeline_graph(user_id, current_user):
+    return find_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}]}, PipelinesGraphics, PIPELINE_GRAPH)
 
 
 # def load_all_pipelines

@@ -63,7 +63,7 @@ class SharedSubject(BaseModel):
 
 @router.get("/space/available", tags=["console"], response_model=List[AvailableSpace])
 async def load_space_list_by_user(current_user: User = Depends(deps.get_current_user)):
-    space_list = load_space_by_user(current_user.groupIds,current_user)
+    space_list = load_space_by_user(current_user.groupIds, current_user)
     available_space_list = []
     for space in list(space_list):
         space = Space.parse_obj(space)
@@ -78,7 +78,7 @@ async def load_space_list_by_user(current_user: User = Depends(deps.get_current_
 
 @router.get("/space/connect", tags=["console"], response_model=ConsoleSpace)
 async def connect_to_space(space_id, name, current_user: User = Depends(deps.get_current_user)):
-    topic_list = load_topic_list_by_space_id(space_id,current_user)
+    topic_list = load_topic_list_by_space_id(space_id, current_user)
     console_space = ConsoleSpace()
     console_space = add_tenant_id_to_model(console_space, current_user)
     console_space.topics = topic_list
@@ -97,15 +97,15 @@ async def rename_console_space(connect_id: str, name: str, current_user: User = 
 @router.get("/console_space/connected/me", tags=["console"], response_model=List[ConsoleSpace])
 async def load_connected_space(current_user: User = Depends(deps.get_current_user)):
     user_id = current_user.userId
-    console_space_list = load_console_space_list_by_user(user_id,current_user)
+    console_space_list = load_console_space_list_by_user(user_id, current_user)
     result = []
     for console_space in console_space_list:
-        topic_list = load_topic_list_by_space_id(console_space.spaceId,current_user)
+        topic_list = load_topic_list_by_space_id(console_space.spaceId, current_user)
         console_space.topics = topic_list
         if console_space.subjectIds is not None:
-            subjects = load_console_subject_list_by_ids(console_space.subjectIds,current_user)
+            subjects = load_console_subject_list_by_ids(console_space.subjectIds, current_user)
             for subject in subjects:
-                subject.reports = load_reports_by_ids(subject.reportIds,current_user)
+                subject.reports = load_reports_by_ids(subject.reportIds, current_user)
             console_space.subjects = subjects
         result.append(console_space)
     return result
@@ -119,7 +119,7 @@ async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body
     subject = add_tenant_id_to_model(subject, current_user)
     if check_fake_id(subject.subjectId):
         subject.subjectId = None
-        console_space = load_console_space_by_id(connect_id,current_user)
+        console_space = load_console_space_by_id(connect_id, current_user)
         for report in subject.reports:
             report.reportId = get_surrogate_key()
             subject.reportIds.append(report.reportId)
@@ -159,7 +159,7 @@ async def save_console_subject(subject: ConsoleSpaceSubject, current_user: User 
 @router.post("/console_space/subject/dataset", tags=["console"], response_model=DataPage)
 async def load_dataset(subject_id, pagination: Pagination = Body(...),
                        current_user: User = Depends(deps.get_current_user)):
-    data, count = await load_dataset_by_subject_id(subject_id, pagination,current_user)
+    data, count = await load_dataset_by_subject_id(subject_id, pagination, current_user)
     return build_data_pages(pagination, data, count)
 
 
@@ -167,7 +167,7 @@ async def load_dataset(subject_id, pagination: Pagination = Body(...),
 async def save_console_space_graph(console_space_graph: ConnectedSpaceGraphics,
                                    current_user: User = Depends(deps.get_current_user)):
     console_space_graph = add_tenant_id_to_model(console_space_graph, current_user)
-    old_console_space_graph = load_console_space_graph(console_space_graph.connectId,current_user)
+    old_console_space_graph = load_console_space_graph(console_space_graph.connectId, current_user)
     console_space_graph.userId = current_user.userId
     if old_console_space_graph is None:
         create_console_space_graph(console_space_graph)
@@ -178,7 +178,7 @@ async def save_console_space_graph(console_space_graph: ConnectedSpaceGraphics,
 
 @router.get("/console_space/graphics/me", tags=["console"], response_model=List[ConnectedSpaceGraphics])
 async def load_my_console_space_graph(current_user: User = Depends(deps.get_current_user)):
-    return load_console_space_graph_by_user_id(current_user.userId,current_user)
+    return load_console_space_graph_by_user_id(current_user.userId, current_user)
 
 
 @router.post("/console_space/subject/report/save", tags=["console"], response_model=Report)
@@ -187,7 +187,7 @@ async def save_report(subject_id: str, report: Report, current_user: User = Depe
     report.reportId = get_surrogate_key()
     # report.subjectId = subject_id
     new_report = create_report(report)
-    subject = load_console_subject_by_id(subject_id,current_user)
+    subject = load_console_subject_by_id(subject_id, current_user)
     subject.reportIds.append(report.reportId)
     update_console_subject(subject)
     return new_report
@@ -202,7 +202,7 @@ async def update_report(report: Report, current_user: User = Depends(deps.get_cu
 
 @router.get("/console_space/subject/report/delete", tags=["console"])
 async def delete_report(report_id, current_user: User = Depends(deps.get_current_user)):
-    subject = load_console_subject_by_report_id(report_id,current_user)
+    subject = load_console_subject_by_report_id(report_id, current_user)
     subject.reportIds.remove(report_id)
     update_console_subject(subject)
     delete_report_by_id(report_id)
@@ -210,13 +210,13 @@ async def delete_report(report_id, current_user: User = Depends(deps.get_current
 
 @router.get("/console_space/dataset/chart", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_chart(report_id, current_user: User = Depends(deps.get_current_user)):
-    result = await load_chart_dataset(report_id,current_user)
+    result = await load_chart_dataset(report_id, current_user)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
 
 @router.post("/console_space/dataset/chart/temporary", tags=["console"], response_model=ConsoleSpaceSubjectChartDataSet)
 async def load_temporary_chart(report: Report, current_user: User = Depends(deps.get_current_user)):
-    result = load_chart_dataset_temp(report,current_user)
+    result = load_chart_dataset_temp(report, current_user)
     return ConsoleSpaceSubjectChartDataSet(meta=[], data=result)
 
 
@@ -240,7 +240,7 @@ async def save_dashboard(dashboard: ConsoleDashboard, current_user: User = Depen
 
 @router.get("/dashboard/me", tags=["console"], response_model=List[ConsoleDashboard])
 async def load_dashboard(current_user: User = Depends(deps.get_current_user)):
-    return load_dashboard_by_user_id(current_user.userId,current_user)
+    return load_dashboard_by_user_id(current_user.userId, current_user)
 
 
 @router.get("/dashboard/delete", tags=["console"])
@@ -257,12 +257,12 @@ async def rename_dashboard(dashboard_id, name: str, current_user: User = Depends
 @router.get("/share/dashboard", tags=["share"], response_model=ShareDashboard)
 async def share_dashboard(dashboard_id: str, token: str):
     security_payload = validate_jwt(token)
-    user:User = get_user(security_payload["sub"])
+    user: User = get_user(security_payload["sub"])
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-    dashboard = load_dashboard_by_id(dashboard_id,user)
+    dashboard = load_dashboard_by_id(dashboard_id, user)
 
-    reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)),user)
+    reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)), user)
 
     return {"dashboard": dashboard, "reports": reports}
 
@@ -273,7 +273,7 @@ async def share_subject(subject_id: str, token: str):
     user = get_user(security_payload["sub"])
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-    subject = load_console_subject_by_id(subject_id,user)
+    subject = load_console_subject_by_id(subject_id, user)
     return {"subject": subject}
 
 
@@ -281,7 +281,7 @@ async def share_subject(subject_id: str, token: str):
 
 @router.get('/favorites/me', tags=["console"], response_model=Favorite)
 async def load_favorites_by_user(current_user: User = Depends(deps.get_current_user)):
-    result = load_favorite(current_user.userId,current_user)
+    result = load_favorite(current_user.userId, current_user)
     if result is None:
         return Favorite()
     else:
@@ -292,14 +292,14 @@ async def load_favorites_by_user(current_user: User = Depends(deps.get_current_u
 async def save_favorite_with_user(favorite: Favorite, current_user: User = Depends(deps.get_current_user)):
     favorite.userId = current_user.userId
     favorite = add_tenant_id_to_model(favorite, current_user)
-    save_favorite(favorite,current_user)
+    save_favorite(favorite, current_user)
     return favorite
 
 
 ## LastSnapshot
 @router.get('/last_snapshot/me', tags=["console"], response_model=LastSnapshot)
 async def load_last_snapshot_by_user(current_user: User = Depends(deps.get_current_user)):
-    result = load_last_snapshot(current_user.userId,current_user)
+    result = load_last_snapshot(current_user.userId, current_user)
     if result is None:
         return LastSnapshot()
     else:
@@ -311,5 +311,5 @@ async def save_last_snapshot_with_user(last_snapshot: LastSnapshot,
                                        current_user: User = Depends(deps.get_current_user)):
     last_snapshot.userId = current_user.userId
     last_snapshot = add_tenant_id_to_model(last_snapshot, current_user)
-    save_last_snapshot(last_snapshot,current_user)
+    save_last_snapshot(last_snapshot, current_user)
     return last_snapshot

@@ -17,14 +17,14 @@ template = find_template()
 
 def __clean_password(user):
     if user is None:
-        return  None
+        return None
     else:
         user.password = None
         return user
 
 
 def get_user(user_id):
-    user =  find_one({"userId": user_id}, User, USERS)
+    user = find_one({"userId": user_id}, User, USERS)
     return __clean_password(user)
 
 

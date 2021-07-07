@@ -110,7 +110,7 @@ def add_tenant_id_to_model(instance, user):
     return instance
 
 
-def compare_tenant(instance,user):
+def compare_tenant(instance, user):
     if instance.tenantId == user.tenantId:
         return True
     else:
@@ -128,4 +128,4 @@ def clean_password(user_list):
     for user in user_list:
         user.password = None
 
-    return  user_list
+    return user_list

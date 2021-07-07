@@ -18,9 +18,9 @@ log = logging.getLogger("app." + __name__)
 
 log.info("mongo template initialized")
 
+
 @singleton
 class MongoStorage(StorageInterface):
-
 
     def build_mongo_where_expression(self, where: dict):
         """

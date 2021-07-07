@@ -17,14 +17,14 @@ def save_subject_report(report):
     return update_one(report, Report, CONSOLE_REPORTS)
 
 
-def load_report_by_id(report_id,current_user):
+def load_report_by_id(report_id, current_user):
+    return find_one({"and": [{"reportId": report_id}, {"tenantId": current_user.tenantId}]}, Report, CONSOLE_REPORTS)
 
-    return find_one({"and":[{"reportId":report_id},{"tenantId":current_user.tenantId}]}, Report, CONSOLE_REPORTS)
 
-
-def load_reports_by_ids(report_ids,current_user):
+def load_reports_by_ids(report_ids, current_user):
     # return template.find(CONSOLE_REPORTS, {"reportId": {"$in": report_ids}}, Report)
-    return find_({"and":[{"reportId": {"in": report_ids}},{"tenantId":current_user.tenantId}]}, Report, CONSOLE_REPORTS)
+    return find_({"and": [{"reportId": {"in": report_ids}}, {"tenantId": current_user.tenantId}]}, Report,
+                 CONSOLE_REPORTS)
 
 
 def delete_report_by_id(report_id):
@@ -37,12 +37,12 @@ def import_report_to_db(report):
     insert_one(report, Report, CONSOLE_REPORTS)
 
 
-def query_report_list_with_pagination(query_name: str, pagination: Pagination,current_user:User):
+def query_report_list_with_pagination(query_name: str, pagination: Pagination, current_user: User):
     '''
     return template.query_with_pagination(CONSOLE_REPORTS, pagination, Report,
                                           query_dict={"name": regex.Regex(query_name)},
                                           sort_dict=["last_modified", pymongo.DESCENDING])
     '''
-    query_dict = {"and":[{"name": {"like": query_name}},{"tenantId":current_user.tenantId}]}
+    query_dict = {"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]}
     sort_dict = [("last_modified", "desc")]
     return page_(query_dict, sort_dict, pagination, Report, CONSOLE_REPORTS)

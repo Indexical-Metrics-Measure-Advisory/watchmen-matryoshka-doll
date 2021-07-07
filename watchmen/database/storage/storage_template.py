@@ -1,6 +1,3 @@
-from enum import Enum
-from typing import List
-
 from pydantic.main import BaseModel
 
 from watchmen.database.storage.engine_adaptor import find_template

@@ -15,14 +15,13 @@ reusable_oauth2 = OAuth2PasswordBearer(
 )
 
 
-
 def get_current_user(token: str = Depends(reusable_oauth2)
                      ) -> User:
     try:
-        print("token",token)
+        print("token", token)
         payload = validate_jwt(token)
 
-        print("payload",payload)
+        print("payload", payload)
 
     # token_data = token.TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):
@@ -32,7 +31,7 @@ def get_current_user(token: str = Depends(reusable_oauth2)
         )
     username = payload["sub"]
     if is_superuser(username):
-       user = User(name=username,role=SUPER_ADMIN)
+        user = User(name=username, role=SUPER_ADMIN)
     else:
         user = load_user_by_name(username)
 

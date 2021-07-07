@@ -7,4 +7,4 @@ class UserGroup(WatchmenModel):
     description: str = None
     userIds: list = None
     spaceIds: list = None
-    tenantId:str =None
+    tenantId: str = None

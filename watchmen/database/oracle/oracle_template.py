@@ -29,6 +29,7 @@ from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
+insp = Inspector.from_engine(engine)
 
 from cacheout import Cache
 
@@ -39,12 +40,10 @@ log = logging.getLogger("app." + __name__)
 log.info("oracle template initialized")
 
 
-
-
 @singleton
 class OracleStorage(StorageInterface):
 
-    def build_raw_sql_with_json_table(self,check_result, where, name):
+    def build_raw_sql_with_json_table(self, check_result, where, name):
 
         # table_name  = check_result["table_name"]
         # column_name = check_result["column_name"
@@ -109,7 +108,7 @@ class OracleStorage(StorageInterface):
                    ") t where t.group_id in " + where_stmt
             return stmt
 
-    def check_where_column_type(self,name, where):
+    def check_where_column_type(self, name, where):
         if name == "spaces":
             if "groupIds" in where:
                 return {"table_name": "spaces", "column_name": "groupIds"}
@@ -124,7 +123,7 @@ class OracleStorage(StorageInterface):
         else:
             return None
 
-    def build_oracle_where_expression(self,table, where):
+    def build_oracle_where_expression(self, table, where):
         for key, value in where.items():
             if key == "and" or key == "or":
                 if isinstance(value, list):
@@ -164,11 +163,12 @@ class OracleStorage(StorageInterface):
                             return table.c[key.lower()] <= v
                         if k == "between":
                             if (isinstance(v, tuple)) and len(v) == 2:
-                                return table.c[key.lower()].between(self.check_value_type(v[0]), self.check_value_type(v[1]))
+                                return table.c[key.lower()].between(self.check_value_type(v[0]),
+                                                                    self.check_value_type(v[1]))
                 else:
                     return table.c[key.lower()] == value
 
-    def build_oracle_updates_expression_for_insert(self,table, updates):
+    def build_oracle_updates_expression_for_insert(self, table, updates):
         new_updates = {"id_": get_surrogate_key()}
         for key, value in updates.items():
             if key == "$inc":
@@ -191,7 +191,7 @@ class OracleStorage(StorageInterface):
                 new_updates[key] = value
         return new_updates
 
-    def build_oracle_updates_expression_for_update(self,table, updates):
+    def build_oracle_updates_expression_for_update(self, table, updates):
         new_updates = {}
         for key, value in updates.items():
             if key == "$inc":
@@ -215,7 +215,7 @@ class OracleStorage(StorageInterface):
                 new_updates[key] = value
         return new_updates
 
-    def build_oracle_order(self,table, order_: list):
+    def build_oracle_order(self, table, order_: list):
         result = []
         if order_ is None:
             return result
@@ -230,7 +230,7 @@ class OracleStorage(StorageInterface):
                         result.append(new_)
             return result
 
-    def insert_one(self,one, model, name):
+    def insert_one(self, one, model, name):
         table = get_table_by_name(name)
         one_dict: dict = convert_to_dict(one)
         values = {}
@@ -248,7 +248,7 @@ class OracleStorage(StorageInterface):
             # conn.commit()
         return model.parse_obj(one)
 
-    def insert_all(self,data, model, name):
+    def insert_all(self, data, model, name):
         table = get_table_by_name(name)
         stmt = insert(table)
         value_list = []
@@ -262,7 +262,7 @@ class OracleStorage(StorageInterface):
             conn.execute(stmt, value_list)
             # conn.commit()
 
-    def update_one(self,one, model, name) -> any:
+    def update_one(self, one, model, name) -> any:
         table = get_table_by_name(name)
         stmt = update(table)
         one_dict: dict = convert_to_dict(one)
@@ -284,7 +284,7 @@ class OracleStorage(StorageInterface):
                 conn.execute(stmt)
         return model.parse_obj(one)
 
-    def update_one_first(self,where, updates, model, name):
+    def update_one_first(self, where, updates, model, name):
         table = get_table_by_name(name)
         stmt = update(table)
         stmt = stmt.where(self.build_oracle_where_expression(table, where))
@@ -309,7 +309,7 @@ class OracleStorage(StorageInterface):
     The where condition must hit the unique index, for row lock
     '''
 
-    def upsert_(self,where, updates, model, name):
+    def upsert_(self, where, updates, model, name):
         table = get_table_by_name(name)
         instance_dict: dict = convert_to_dict(updates)
         select_stmt = select(func.count(1).label("count")). \
@@ -327,7 +327,7 @@ class OracleStorage(StorageInterface):
                     conn.execute(update_stmt)
         return model.parse_obj(updates)
 
-    def update_(self,where, updates, model, name):
+    def update_(self, where, updates, model, name):
         table = get_table_by_name(name)
         stmt = update(table)
         stmt = stmt.where(self.build_oracle_where_expression(table, where))
@@ -347,7 +347,7 @@ class OracleStorage(StorageInterface):
         finally:
             session.close()
 
-    def pull_update(self,where, updates, model, name):
+    def pull_update(self, where, updates, model, name):
         results = self.find_(where, model, name)
         updates_dict = convert_to_dict(updates)
         for key, value in updates_dict.items():
@@ -358,7 +358,7 @@ class OracleStorage(StorageInterface):
         # can't use update_, because the where have the json filed query
         # update_(where, results, model, name)
 
-    def delete_by_id(self,id_, name):
+    def delete_by_id(self, id_, name):
         table = get_table_by_name(name)
         key = get_primary_key(name)
         stmt = delete(table).where(eq(table.c[key.lower()], id_))
@@ -366,14 +366,14 @@ class OracleStorage(StorageInterface):
             conn.execute(stmt)
             # conn.commit()
 
-    def delete_one(self,where: dict, name: str):
+    def delete_one(self, where: dict, name: str):
         table = get_table_by_name(name)
         stmt = delete(table).where(self.build_oracle_where_expression(table, where))
         with engine.connect() as conn:
             conn.execute(stmt)
             # conn.commit()
 
-    def delete_(self,where, model, name):
+    def delete_(self, where, model, name):
         table = get_table_by_name(name)
         if where is None:
             stmt = delete(table)
@@ -383,7 +383,7 @@ class OracleStorage(StorageInterface):
             conn.execute(stmt)
             # conn.commit()
 
-    def find_by_id(self,id_, model, name):
+    def find_by_id(self, id_, model, name):
         table = get_table_by_name(name)
         primary_key = get_primary_key(name)
         stmt = select(table).where(eq(table.c[primary_key.lower()], id_))
@@ -397,7 +397,7 @@ class OracleStorage(StorageInterface):
         else:
             return parse_obj(model, result, table)
 
-    def find_one(self,where, model, name):
+    def find_one(self, where, model, name):
         table = get_table_by_name(name)
         check_result = self.check_where_column_type(name, where)
         if check_result is not None:
@@ -415,7 +415,7 @@ class OracleStorage(StorageInterface):
         else:
             return parse_obj(model, result, table)
 
-    def find_(self,where: dict, model, name: str) -> list:
+    def find_(self, where: dict, model, name: str) -> list:
         table = get_table_by_name(name)
         check_result = self.check_where_column_type(name, where)
         if check_result is not None:
@@ -436,7 +436,7 @@ class OracleStorage(StorageInterface):
         else:
             return None
 
-    def list_all(self,model, name):
+    def list_all(self, model, name):
         table = get_table_by_name(name)
         stmt = select(table)
         with engine.connect() as conn:
@@ -449,7 +449,7 @@ class OracleStorage(StorageInterface):
             result.append(parse_obj(model, row, table))
         return result
 
-    def list_(self,where, model, name) -> list:
+    def list_(self, where, model, name) -> list:
         table = get_table_by_name(name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
         with engine.connect() as conn:
@@ -483,7 +483,7 @@ class OracleStorage(StorageInterface):
         return build_data_pages(pageable, result, count)
     '''
 
-    def page_all(self,sort, pageable, model, name) -> DataPage:
+    def page_all(self, sort, pageable, model, name) -> DataPage:
         count = count_table(name)
         table = get_table_by_name(name)
         stmt = select(table)
@@ -505,7 +505,7 @@ class OracleStorage(StorageInterface):
             result.append(parse_obj(model, row, table))
         return build_data_pages(pageable, result, count)
 
-    def page_(self,where, sort, pageable, model, name) -> DataPage:
+    def page_(self, where, sort, pageable, model, name) -> DataPage:
         count = count_table(name)
         table = get_table_by_name(name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
@@ -530,8 +530,9 @@ class OracleStorage(StorageInterface):
     '''
     topic data interface
     '''
+
     @lru_cache(maxsize=10)
-    def get_datatype_by_factor_type(self,type: str):
+    def get_datatype_by_factor_type(self, type: str):
         if type == "text":
             return String(30)
         elif type == "sequence":
@@ -555,7 +556,7 @@ class OracleStorage(StorageInterface):
         else:
             return String(20)
 
-    def check_topic_type_is_raw(self,topic_name):
+    def check_topic_type_is_raw(self, topic_name):
         table = get_table_by_name("topics")
         select_stmt = select(table).where(
             self.build_oracle_where_expression(table, {"name": topic_name}))
@@ -572,7 +573,7 @@ class OracleStorage(StorageInterface):
                 else:
                     return False
 
-    def create_topic_data_table(self,topic):
+    def create_topic_data_table(self, topic):
         topic_dict: dict = convert_to_dict(topic)
         topic_type = topic_dict.get("type")
         if topic_type == "raw":
@@ -608,7 +609,7 @@ class OracleStorage(StorageInterface):
                 Index(name, *value, unique=True)
             table.create(engine)
 
-    def create_raw_topic_data_table(self,topic):
+    def create_raw_topic_data_table(self, topic):
         topic_dict: dict = convert_to_dict(topic)
         topic_name = topic_dict.get('name')
         table = Table('topic_' + topic_name.lower(), metadata)
@@ -621,7 +622,7 @@ class OracleStorage(StorageInterface):
     # def create_topic_data_table_index(name: str, index_name: list, index_type: str):
     #     pass
 
-    def alter_topic_data_table(self,topic):
+    def alter_topic_data_table(self, topic):
         topic_dict: dict = convert_to_dict(topic)
         if topic_dict.get("type") == "raw":
             pass
@@ -653,11 +654,10 @@ class OracleStorage(StorageInterface):
                         # conn.commit()
             metadata.remove(table)
 
-    def drop_(self,topic_name):
+    def drop_(self, topic_name):
         return self.drop_topic_data_table(topic_name)
 
-
-    def drop_topic_data_table(self,topic_name):
+    def drop_topic_data_table(self, topic_name):
         try:
             table_name = 'topic_' + topic_name
             table = get_topic_table_by_name(table_name)
@@ -665,7 +665,7 @@ class OracleStorage(StorageInterface):
         except NoSuchTableError as err:
             log.info("NoSuchTableError: {0}".format(table_name))
 
-    def topic_data_delete_(self,where, topic_name):
+    def topic_data_delete_(self, where, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         if where is None:
@@ -675,7 +675,7 @@ class OracleStorage(StorageInterface):
         with engine.connect() as conn:
             conn.execute(stmt)
 
-    def topic_data_insert_one(self,one, topic_name):
+    def topic_data_insert_one(self, one, topic_name):
         if self.check_topic_type_is_raw(topic_name):
             self.raw_topic_data_insert_one(one, topic_name)
         else:
@@ -709,14 +709,14 @@ class OracleStorage(StorageInterface):
                         raise InsertConflictError("InsertConflict")
             return result.rowcount
 
-    def get_table_column_default_value(self,table_name, column_name):
-        insp = Inspector.from_engine(engine)
+    def get_table_column_default_value(self, table_name, column_name):
+
         columns = insp.get_columns(table_name)
         for column in columns:
             if column["name"] == column_name:
                 return column["default"]
 
-    def raw_topic_data_insert_one(self,one, topic_name):
+    def raw_topic_data_insert_one(self, one, topic_name):
         if topic_name == "raw_pipeline_monitor":
             self.raw_pipeline_monitor_insert_one(one, topic_name)
         else:
@@ -733,7 +733,7 @@ class OracleStorage(StorageInterface):
                 conn.execute(stmt, value)
                 # conn.commit()
 
-    def topic_data_insert_(self,data, topic_name):
+    def topic_data_insert_(self, data, topic_name):
         if self.check_topic_type_is_raw(topic_name):
             self.raw_topic_data_insert_(data, topic_name)
         else:
@@ -758,7 +758,7 @@ class OracleStorage(StorageInterface):
             with engine.connect() as conn:
                 result = conn.execute(stmt, values)
 
-    def raw_topic_data_insert_(self,data, topic_name):
+    def raw_topic_data_insert_(self, data, topic_name):
         '''
         table = Table('topic_' + topic_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
         '''
@@ -776,7 +776,7 @@ class OracleStorage(StorageInterface):
             conn.execute(stmt, values)
             # conn.commit()
 
-    def topic_data_update_one(self,id_: str, one: any, topic_name: str):
+    def topic_data_update_one(self, id_: str, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         stmt = update(table).where(eq(table.c['id_'], id_))
@@ -791,7 +791,7 @@ class OracleStorage(StorageInterface):
         with engine.begin() as conn:
             conn.execute(stmt)
 
-    def topic_data_update_one_with_version(self,id_: str, version_: int, one: any, topic_name: str):
+    def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
@@ -808,7 +808,7 @@ class OracleStorage(StorageInterface):
         if result.rowcount == 0:
             raise OptimisticLockError("Optimistic lock error")
 
-    def topic_data_update_(self,query_dict, instance, topic_name):
+    def topic_data_update_(self, query_dict, instance, topic_name):
         '''
         table = Table('topic_' + topic_name, metadata,
                       extend_existing=True, autoload=True, autoload_with=engine)
@@ -827,7 +827,7 @@ class OracleStorage(StorageInterface):
         with engine.begin() as conn:
             result = conn.execute(stmt)
 
-    def topic_data_find_by_id(self,id_: str, topic_name: str) -> any:
+    def topic_data_find_by_id(self, id_: str, topic_name: str) -> any:
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         stmt = select(table).where(eq(table.c['id_'], id_))
@@ -844,7 +844,7 @@ class OracleStorage(StorageInterface):
             # return capital_to_lower(result)
             return self.convert_dict_key(result, topic_name)
 
-    def topic_data_find_one(self,where, topic_name) -> any:
+    def topic_data_find_one(self, where, topic_name) -> any:
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
@@ -859,7 +859,7 @@ class OracleStorage(StorageInterface):
             # return capital_to_lower(result)
             return self.convert_dict_key(result, topic_name)
 
-    def topic_data_find_(self,where, topic_name):
+    def topic_data_find_(self, where, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
@@ -880,7 +880,7 @@ class OracleStorage(StorageInterface):
             else:
                 return result
 
-    def __raw_topic_load_all(self,topic_name):
+    def __raw_topic_load_all(self, topic_name):
         # count = count_topic_data_table(topic_name)
         table = get_topic_table_by_name(topic_name)
         stmt = select(table)
@@ -903,7 +903,7 @@ class OracleStorage(StorageInterface):
         return results
         # orders = build_mysql_order(table, sort)
 
-    def topic_data_list_all(self,topic_name) -> list:
+    def topic_data_list_all(self, topic_name) -> list:
         table_name_prefix = 'topic_' + topic_name
         if self.check_topic_type_is_raw(topic_name):
             return self.__raw_topic_load_all(table_name_prefix)
@@ -926,7 +926,7 @@ class OracleStorage(StorageInterface):
                         results.append(result)
                     return self.convert_list_elements_key(results, topic_name)
 
-    def convert_list_elements_key(self,list_info, topic_name):
+    def convert_list_elements_key(self, list_info, topic_name):
         if list_info is None:
             return None
         new_dict = {}
@@ -941,7 +941,7 @@ class OracleStorage(StorageInterface):
                 new_list.append(new_dict)
         return new_list
 
-    def topic_data_page_(self,where, sort, pageable, model, name) -> DataPage:
+    def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
         if name == "topic_raw_pipeline_monitor":
             return self.raw_pipeline_monitor_page_(where, sort, pageable, model, name)
         else:
@@ -969,7 +969,7 @@ class OracleStorage(StorageInterface):
                     result.append(row)
             return build_data_pages(pageable, result, count)
 
-    def topic_find_one_and_update(self,where, updates, name):
+    def topic_find_one_and_update(self, where, updates, name):
         '''
         table = Table('topic_' + name, metadata, extend_existing=True,
                       autoload=True, autoload_with=engine)
@@ -1022,13 +1022,13 @@ class OracleStorage(StorageInterface):
 
         return self.convert_dict_key(result, name)
 
-    def capital_to_lower(self,dict_info):
+    def capital_to_lower(self, dict_info):
         new_dict = {}
         for i, j in dict_info.items():
             new_dict[i.lower()] = j
         return new_dict
 
-    def convert_dict_key(self,dict_info, topic_name):
+    def convert_dict_key(self, dict_info, topic_name):
         if dict_info is None:
             return None
 
@@ -1043,7 +1043,6 @@ class OracleStorage(StorageInterface):
             new_dict['aggregate_assist_'] = json.dumps(dict_info.get("AGGREGATE_ASSIST_"))
         return new_dict
 
-
     def get_topic_factors(self, topic_name):
         if topic_name in cache and settings.ENVIRONMENT == PROD:
             return cache.get(topic_name)
@@ -1055,10 +1054,10 @@ class OracleStorage(StorageInterface):
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
             row = cursor.fetchone()
             factors = json.loads(row['FACTORS'])
-            cache.set(topic_name,factors)
+            cache.set(topic_name, factors)
         return factors
 
-    def check_value_type(self,value):
+    def check_value_type(self, value):
         if isinstance(value, datetime.datetime):
             return func.to_date(value, "yyyy-mm-dd hh24:mi:ss")
         elif isinstance(value, datetime.date):
@@ -1104,7 +1103,7 @@ class OracleStorage(StorageInterface):
                 raise Exception(column_name + "not support type")
         table.create(engine)
 
-    def raw_pipeline_monitor_insert_one(self,one, topic_name):
+    def raw_pipeline_monitor_insert_one(self, one, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         one_dict: dict = convert_to_dict(one)
@@ -1127,7 +1126,7 @@ class OracleStorage(StorageInterface):
         with engine.connect() as conn:
             conn.execute(stmt, value)
 
-    def raw_pipeline_monitor_page_(self,where, sort, pageable, model, name) -> DataPage:
+    def raw_pipeline_monitor_page_(self, where, sort, pageable, model, name) -> DataPage:
         count = count_topic_data_table(name)
         table = get_topic_table_by_name(name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
@@ -1152,5 +1151,5 @@ class OracleStorage(StorageInterface):
                 result.append(json.loads(row['DATA_']))
         return build_data_pages(pageable, result, count)
 
-    def clear_metadata(self,):
+    def clear_metadata(self, ):
         metadata.clear()

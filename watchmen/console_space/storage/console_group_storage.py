@@ -1,7 +1,4 @@
-from watchmen.common.snowflake.snowflake import get_surrogate_key
 # from watchmen.common.storage.engine.storage_engine import get_client, get_client_db
-from watchmen.common.utils.data_utils import WATCHMEN, check_fake_id
-from watchmen.console_space.model.console_space import ConsoleSpaceGroup
 
 # db = get_client()
 

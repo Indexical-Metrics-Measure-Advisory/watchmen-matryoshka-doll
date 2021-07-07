@@ -1,9 +1,7 @@
-from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
-from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 from cacheout import Cache
 
-from watchmen.config.config import settings, PROD
-
+from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
+from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 # TOPICS = "topics"
 from watchmen.topic.topic import Topic
 
@@ -50,7 +48,7 @@ def parse_mappings(mappings, target_topic, previous_data, current_data, variable
     return mappings_results, having_aggregate_functions
 
 
-def get_factor(factor_id, target_topic:Topic):
+def get_factor(factor_id, target_topic: Topic):
     # cache_key  = factor_id +"_"+target_topic.topicId
     # if cache_key in cache and settings.ENVIRONMENT == PROD:
     #     return cache.get(cache_key)

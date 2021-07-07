@@ -1,9 +1,8 @@
+from cacheout import Cache
 from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON
 
 from watchmen.config.config import PROD, settings
 from watchmen.database.mysql.mysql_engine import engine
-
-from cacheout import Cache
 
 cache = Cache()
 
@@ -23,11 +22,11 @@ users_table = Table("users", metadata,
                     )
 
 tenants_table = Table("tenants", metadata,
-                    Column('tenantid', String(60), primary_key=True),
-                    Column('name', String(45), nullable=False),
-                    Column('createtime', String(50), nullable=True),
-                    Column('lastmodified', Date, nullable=True)
-                    )
+                      Column('tenantid', String(60), primary_key=True),
+                      Column('name', String(45), nullable=False),
+                      Column('createtime', String(50), nullable=True),
+                      Column('lastmodified', Date, nullable=True)
+                      )
 
 user_groups_table = Table("user_groups", metadata,
                           Column('usergroupid', String(60), primary_key=True),
@@ -108,7 +107,7 @@ console_space_favorites_table = Table("console_space_favorites", metadata,
                                       Column('tenantid', String(60), nullable=False),
                                       Column('lastmodified', DateTime, nullable=True)
 
-)
+                                      )
 
 console_space_graph_table = Table("console_space_graph", metadata,
                                   Column("connectid", String(60), primary_key=True),
@@ -195,17 +194,17 @@ console_reports_table = Table("reports", metadata,
 
 
 def get_table_by_name(table_name):
-    if table_name in cache and settings.ENVIRONMENT==PROD:
-        return  cache.get(table_name)
+    if table_name in cache and settings.ENVIRONMENT == PROD:
+        return cache.get(table_name)
 
     if table_name == "users":
-        table =  users_table
+        table = users_table
     elif table_name == "console_space_last_snapshot":
-        table =  console_space_last_snapshot_table
+        table = console_space_last_snapshot_table
     elif table_name == "console_dashboards":
-        table =  console_dashboards_table
+        table = console_dashboards_table
     elif table_name == "topics":
-        table =  topics_table
+        table = topics_table
     elif table_name == "enums":
         table = enums_table
     elif table_name == "spaces":
@@ -229,19 +228,19 @@ def get_table_by_name(table_name):
     elif table_name == "tenants":
         table = tenants_table
 
-    cache.set(table_name,table)
+    cache.set(table_name, table)
     return table
 
 
 def get_topic_table_by_name(table_name):
-    if table_name in cache and settings.ENVIRONMENT==PROD:
-        return  cache.get(table_name)
+    if table_name in cache and settings.ENVIRONMENT == PROD:
+        return cache.get(table_name)
     if table_name == "topic_raw_pipeline_monitor":
-        table =  Table(table_name, metadata,
-                     extend_existing=True, autoload=True, autoload_with=engine)
-        cache.set(table_name,table)
+        table = Table(table_name, metadata,
+                      extend_existing=True, autoload=True, autoload_with=engine)
+        cache.set(table_name, table)
         return table
     else:
-        table =  Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
-        cache.set(table_name,table)
+        table = Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+        cache.set(table_name, table)
         return table

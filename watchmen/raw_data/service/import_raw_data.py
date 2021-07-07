@@ -6,8 +6,8 @@ from watchmen.topic.storage.topic_data_storage import save_topic_instance
 from watchmen.topic.storage.topic_schema_storage import get_topic
 
 
-async def import_raw_topic_data(topic_event,current_user):
-    topic = get_topic(topic_event.code,current_user)
+async def import_raw_topic_data(topic_event, current_user):
+    topic = get_topic(topic_event.code, current_user)
     if topic is None:
         raise Exception(topic_event.code + " topic name does not exist")
     # todo
@@ -22,9 +22,9 @@ async def import_raw_topic_data(topic_event,current_user):
     # task = client.submit(__trigger_pipeline, topic_event)
     # # import_raw_topic_data(topic_event)
     # fire_and_forget(task)
-    __trigger_pipeline(topic_event,current_user)
+    __trigger_pipeline(topic_event, current_user)
 
 
-def __trigger_pipeline(topic_event,current_user):
+def __trigger_pipeline(topic_event, current_user):
     trigger_pipeline(topic_event.code, {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
-                     TriggerType.insert,current_user)
+                     TriggerType.insert, current_user)

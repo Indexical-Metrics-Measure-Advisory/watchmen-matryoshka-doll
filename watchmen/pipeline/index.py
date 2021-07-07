@@ -30,5 +30,5 @@ def trigger_pipeline(topic_name, instance, trigger_type: TriggerType):
 '''
 
 
-def trigger_pipeline(topic_name, instance, trigger_type: TriggerType,current_user=None):
-    trigger_pipeline_2(topic_name, instance, trigger_type,current_user)
+def trigger_pipeline(topic_name, instance, trigger_type: TriggerType, current_user=None):
+    trigger_pipeline_2(topic_name, instance, trigger_type, current_user)

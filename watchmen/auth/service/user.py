@@ -7,15 +7,12 @@ from watchmen.auth.storage.user_group import USER_GROUPS, get_user_group_list_by
 from watchmen.auth.user import User, SUPER_ADMIN
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.utils.data_utils import is_superuser
-
-from watchmen.config.config import settings
 from watchmen.database.storage.storage_template import pull_update
-
 
 
 def authenticate(username, password):
     if is_superuser(username):
-        return User(name=username,role=SUPER_ADMIN)
+        return User(name=username, role=SUPER_ADMIN)
     else:
         user = load_user_by_name(username)
         if user is None:
@@ -30,7 +27,7 @@ def authenticate(username, password):
 
 def sync_user_to_user_groups(user: User):
     pull_update({"userIds": {"in": [user.userId]}}, {"userIds": {"in": [user.userId]}}, UserGroup, USER_GROUPS)
-    user_groups = get_user_group_list_by_ids(user.groupIds,user)
+    user_groups = get_user_group_list_by_ids(user.groupIds, user)
     for user_group in user_groups:
         if user_group.userIds is None or user.userId not in user_group.userIds:
             user_group.userIds.append(user.userId)

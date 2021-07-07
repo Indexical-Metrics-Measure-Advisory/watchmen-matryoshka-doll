@@ -60,7 +60,7 @@ class Settings(BaseSettings):
     RABBITMQ_PORT: str = "5672"
     RABBITMQ_USERNAME: str = ""
     RABBITMQ_PASSWORD: str = ""
-    RABBITMQ_VIRTUALHOST :str = ""
+    RABBITMQ_VIRTUALHOST: str = ""
     RABBITMQ_QUEUE: str = ""
     RABBITMQ_DURABLE: bool = True
     RABBITMQ_AUTO_DELETE: bool = False
@@ -81,7 +81,7 @@ class Settings(BaseSettings):
     TOPIC_DATE_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
     DECIMAL = "decimal(32,2)"
 
-    MOCK_USER="demo_user"
+    MOCK_USER = "demo_user"
 
     @validator("STORAGE_ENGINE", pre=True)
     def get_emails_enabled(cls, v: str, values: Dict[str, Any]) -> bool:

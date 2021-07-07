@@ -4,7 +4,7 @@ import traceback
 
 from aio_pika import ExchangeType
 
-from watchmen.auth.storage.user import get_user, load_user_by_name
+from watchmen.auth.storage.user import load_user_by_name
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.config.config import settings
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
@@ -44,7 +44,7 @@ async def consume(loop):
                         payload = json.loads(message.body)
                         topic_event = TopicEvent.parse_obj(payload)
                         user = load_user_by_name(settings.MOCK_USER)
-                        await import_raw_topic_data(topic_event,user)
+                        await import_raw_topic_data(topic_event, user)
             except:
                 log.error(traceback.format_exc())
                 consume(loop)

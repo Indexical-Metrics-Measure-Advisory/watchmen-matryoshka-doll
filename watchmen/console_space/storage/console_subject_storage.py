@@ -1,8 +1,8 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.database.storage.storage_template import insert_one, find_, update_one, find_by_id, delete_one, delete_, \
-    find_one, update_one_first, delete_by_id
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
+from watchmen.database.storage.storage_template import insert_one, find_, update_one, delete_, \
+    find_one, update_one_first, delete_by_id
 
 CONSOLE_SPACE_SUBJECTS = "console_space_subjects"
 
@@ -13,8 +13,9 @@ def create_console_subject_to_storage(subject: ConsoleSpaceSubject):
     return insert_one(subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
-def load_console_subject_list_by_ids(subject_id_list,current_user):
-    return find_({"and":[{"subjectId": {"in": subject_id_list}},{"tenantId":current_user.tenantId}]}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
+def load_console_subject_list_by_ids(subject_id_list, current_user):
+    return find_({"and": [{"subjectId": {"in": subject_id_list}}, {"tenantId": current_user.tenantId}]},
+                 ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
 def update_console_subject(console_subject: ConsoleSpaceSubject):
@@ -25,8 +26,9 @@ def update_console_subject(console_subject: ConsoleSpaceSubject):
     return update_one(console_subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
-def load_console_subject_by_id(subject_id,current_user) -> ConsoleSpaceSubject:
-    return find_one({"and":[{"subjectId":subject_id},{"tenantId":current_user.tenantId}]}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
+def load_console_subject_by_id(subject_id, current_user) -> ConsoleSpaceSubject:
+    return find_one({"and": [{"subjectId": subject_id}, {"tenantId": current_user.tenantId}]}, ConsoleSpaceSubject,
+                    CONSOLE_SPACE_SUBJECTS)
 
 
 def delete_console_subject_by_id(subject_id):
@@ -41,10 +43,11 @@ def rename_console_subject_by_id(subject_id, name):
     return update_one_first({"subjectId": subject_id}, {"name": name}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
-def load_console_subject_by_report_id(report_id,current_user):
+def load_console_subject_by_report_id(report_id, current_user):
     # return find_one({"and":[{"reportIds": {"in": [report_id]}},{"tenantId":current_user.tenantId}]}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
     return find_one({"reportIds": {"in": [report_id]}},
                     ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
+
 
 def import_console_subject_to_db(subject):
     return insert_one(subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)

@@ -2,8 +2,8 @@ from typing import List
 
 from pydantic import BaseModel
 
-from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.common.parameter import Parameter, ParameterJoint
+from watchmen.common.watchmen_model import WatchmenModel
 
 
 class MappingFactor(BaseModel):

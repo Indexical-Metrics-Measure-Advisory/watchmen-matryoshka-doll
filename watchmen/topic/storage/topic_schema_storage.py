@@ -1,21 +1,18 @@
 from typing import List
 
+from cacheout import Cache
+
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
+from watchmen.config.config import settings, PROD
 from watchmen.database.storage.storage_interface import OrderType
 from watchmen.database.storage.storage_template import insert_one, update_one, find_one, \
     page_, find_
 from watchmen.topic.topic import Topic
 
-from cacheout import Cache
-
-from watchmen.config.config import settings, PROD
-
 TOPICS = "topics"
 
 cache = Cache()
-
-
 
 
 def save_topic(topic: Topic) -> Topic:
@@ -35,10 +32,10 @@ def load_all_topic_list(pagination: Pagination, current_user) -> DataPage:
 
 def get_topic_by_name(topic_name: str, current_user) -> Topic:
     # return template.find_one(TOPICS, {"name": topic_name}, Topic)
-    return find_one({"and":[{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+    return find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
 
 
-def get_topic(topic_name: str, current_user= None) -> Topic:
+def get_topic(topic_name: str, current_user=None) -> Topic:
     if current_user is None:
         return find_one({"name": topic_name}, Topic, TOPICS)
     else:
@@ -61,8 +58,8 @@ def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
     if current_user is None:
         result = find_one({"topicId": topic_id}, Topic, TOPICS)
     else:
-        result =  find_one({"and":[{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
-    cache.set(topic_id,result)
+        result = find_one({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+    cache.set(topic_id, result)
     return result
 
 

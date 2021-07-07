@@ -15,5 +15,3 @@ class User(WatchmenModel):
     groupIds: list = None
     role: str = None
     tenantId: str = None
-
-

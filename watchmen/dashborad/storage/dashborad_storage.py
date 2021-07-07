@@ -1,8 +1,8 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.database.storage.storage_template import insert_one, update_one, find_by_id, delete_one, update_, find_, \
-    find_one
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
+from watchmen.database.storage.storage_template import insert_one, update_one, delete_one, update_, find_, \
+    find_one
 
 DASHBOARD_ID = "dashboardId"
 
@@ -24,14 +24,15 @@ def update_dashboard_to_storage(dashboard: ConsoleDashboard):
     return update_one(dashboard, ConsoleDashboard, DASHBOARDS)
 
 
-def load_dashboard_by_id(dashboard_id,current_user) -> ConsoleDashboard:
+def load_dashboard_by_id(dashboard_id, current_user) -> ConsoleDashboard:
     # return template.find_one(DASHBOARDS, {DASHBOARD_ID: dashboard_id}, ConsoleDashboard)
-    return find_one({"and":[{"dashboardId":dashboard_id},{"tenantId":current_user.tenantId}]}, ConsoleDashboard, DASHBOARDS)
+    return find_one({"and": [{"dashboardId": dashboard_id}, {"tenantId": current_user.tenantId}]}, ConsoleDashboard,
+                    DASHBOARDS)
 
 
-def load_dashboard_by_user_id(user_id,current_user):
+def load_dashboard_by_user_id(user_id, current_user):
     # return template.find(DASHBOARDS, {"userId": user_id}, ConsoleDashboard)
-    return find_({"and":[{"userId": user_id},{"tenantId":current_user.tenantId}]}, ConsoleDashboard, DASHBOARDS)
+    return find_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}]}, ConsoleDashboard, DASHBOARDS)
 
 
 def delete_dashboard_by_id(dashboard_id):
