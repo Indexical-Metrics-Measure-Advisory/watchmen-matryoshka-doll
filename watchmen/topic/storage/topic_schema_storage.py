@@ -52,15 +52,24 @@ def load_topic_by_name(topic_name: str, current_user) -> Topic:
 
 
 def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
-    if topic_id in cache and settings.ENVIRONMENT == PROD:
-        return cache.get(topic_id)
+    if cache.has(topic_id) and settings.ENVIRONMENT == PROD:
+        result = cache.get(topic_id)
+        if result is None:
+            raise Exception("result is None in cache {}")
+        return  result
+
     if current_user is None:
         result = find_one({"topicId": topic_id}, Topic, TOPICS)
-        cache.set(topic_id, result)
+        if result is not None:
+            cache.set(topic_id, result)
         return result
+
     else:
         result = find_one({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
-        cache.set(topic_id, result)
+        # if result is None:
+        #     raise Exception("result is None in load ")
+        if result is not None:
+            cache.set(topic_id, result)
         return result
 
 
@@ -89,12 +98,11 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination, cu
 
 
 def update_topic(topic_id: str, topic: Topic) -> Topic:
-    # get_topic_by_id.cache_clear()
-    # get_topic.cache_clear()
+
     return update_one(topic, Topic, TOPICS)
 
 
+
 def import_topic_to_db(topic: Topic) -> Topic:
-    # get_topic_by_id.cache_clear()
-    # get_topic.cache_clear()
+
     return insert_one(topic, Topic, TOPICS)

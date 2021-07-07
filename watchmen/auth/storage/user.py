@@ -47,9 +47,6 @@ def create_user_storage(user: User):
 
 
 def update_user_storage(user: User):
-    # if user.password is not None:
-    #     user.password = get_password_hash(user.password)
-
     return update_one(user, User, USERS)
 
 

@@ -12,7 +12,8 @@ def get_primary_key(table_name):
         return cache.get(table_name)
 
     pid = get_pid(table_name)
-    cache.set(table_name, pid)
+    if pid is not None:
+        cache.set(table_name, pid)
     return pid
 
 

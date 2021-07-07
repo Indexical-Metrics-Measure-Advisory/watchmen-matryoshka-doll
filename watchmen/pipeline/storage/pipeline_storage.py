@@ -1,7 +1,9 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.config.config import settings, PROD
 from watchmen.database.storage.storage_template import insert_one, update_one, find_, update_, delete_one, find_one
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
+from cacheout import Cache
 
 USER_ID = "userId"
 
@@ -10,6 +12,9 @@ PIPELINES = "pipelines"
 PIPELINE_GRAPH = "pipeline_graph"
 
 
+
+
+cache = Cache()
 # template = find_template()
 
 
@@ -31,10 +36,20 @@ def __convert_to_object(x):
 
 # @lru_cache(maxsize=50)
 def load_pipeline_by_topic_id(topic_id, current_user=None):
+
+    if topic_id in cache and settings.ENVIRONMENT == PROD:
+        return cache.get(topic_id)
+
     if current_user is None:
-        return find_({"topicId": topic_id}, Pipeline, PIPELINES)
+        pipeline =  find_({"topicId": topic_id}, Pipeline, PIPELINES)
+        if pipeline is not None:
+            cache.set(topic_id,pipeline)
+        return pipeline
     else:
-        return find_({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Pipeline, PIPELINES)
+        pipeline =  find_({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Pipeline, PIPELINES)
+        if pipeline is not None:
+            cache.set(topic_id, pipeline)
+        return pipeline
 
 
 def load_pipeline_by_id(pipeline_id, current_user):

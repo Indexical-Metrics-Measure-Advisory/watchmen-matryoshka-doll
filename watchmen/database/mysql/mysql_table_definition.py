@@ -198,8 +198,8 @@ def get_table_by_name(table_name):
         return cache.get(table_name)
 
     table = get_meta_table(table_name)
-
-    cache.set(table_name, table)
+    if table is not None:
+        cache.set(table_name, table)
     return table
 
 

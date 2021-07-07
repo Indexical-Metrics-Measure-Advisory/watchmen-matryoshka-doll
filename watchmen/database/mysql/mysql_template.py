@@ -637,7 +637,8 @@ class MysqlStorage(StorageInterface):
             return cache_column.get(key)
 
         columns = insp.get_columns(table_name)
-        cache_column.set(key,columns)
+        if columns is not None:
+            cache_column.set(key,columns)
         return columns
 
 
@@ -719,7 +720,6 @@ class MysqlStorage(StorageInterface):
         table = get_topic_table_by_name(table_name)
         stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
 
-        print(stmt)
         one_dict = convert_to_dict(one)
         one_dict['version_'] = version_
         one_dict_lower = self.build_mysql_updates_expression_for_update(table, self.capital_to_lower(one_dict))

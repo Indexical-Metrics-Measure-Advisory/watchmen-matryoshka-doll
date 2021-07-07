@@ -31,6 +31,9 @@ def get_current_user(token: str = Depends(reusable_oauth2)
     else:
         user = load_user_by_name(username)
 
+    if settings.DEFAULT_DATA_ZONE_ON:
+        user.tenantId="1"
+
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 
