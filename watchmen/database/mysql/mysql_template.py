@@ -32,6 +32,8 @@ from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
 cache = Cache()
 
+
+cache_column  = Cache()
 insp = Inspector.from_engine(engine)
 # import arrow
 
@@ -629,12 +631,24 @@ class MysqlStorage(StorageInterface):
                 with conn.begin():
                     conn.execute(stmt, value)
 
-    def get_table_column_default_value(self, table_name, column_name):
+    def get_table_columns(self,table_name):
+        key = table_name
+        if key in cache_column and settings.ENVIRONMENT == PROD:
+            return cache_column.get(key)
 
         columns = insp.get_columns(table_name)
+        cache_column.set(key,columns)
+        return columns
+
+
+    def get_table_column_default_value(self, table_name, column_name):
+        columns = self.get_table_columns(table_name)
         for column in columns:
             if column["name"] == column_name:
+                # cache_column.set(key,column["default"])
                 return column["default"]
+
+
 
     def raw_topic_data_insert_one(self, one, topic_name):
         if topic_name == "raw_pipeline_monitor":
