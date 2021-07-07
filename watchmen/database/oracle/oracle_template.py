@@ -1096,7 +1096,7 @@ class OracleStorage(StorageInterface):
         table.create(engine)
 
     def raw_pipeline_monitor_insert_one(self, one, topic_name):
-        table_name = 'topic_' + topic_name
+        table_name = build_collection_name(topic_name)
         table = get_topic_table_by_name(table_name)
         one_dict: dict = convert_to_dict(one)
         one_lower_dict = self.capital_to_lower(one_dict)
