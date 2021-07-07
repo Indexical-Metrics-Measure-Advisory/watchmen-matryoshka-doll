@@ -1,6 +1,11 @@
 from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer
 
+from watchmen.config.config import settings, PROD
 from watchmen.database.oracle.oracle_engine import engine
+
+from cacheout import Cache
+
+cache = Cache()
 
 metadata = MetaData()
 
@@ -170,34 +175,40 @@ console_reports_table = Table("reports", metadata,
 
 
 def get_table_by_name(table_name):
+    if table_name in cache and settings.ENVIRONMENT == PROD:
+        return cache.get(table_name)
+
     if table_name == "users":
-        return users_table
+        table =  users_table
     elif table_name == "console_space_last_snapshot":
-        return console_space_last_snapshot_table
+        table =   console_space_last_snapshot_table
     elif table_name == "console_dashboards":
-        return console_dashboards_table
+        table =   console_dashboards_table
     elif table_name == "topics":
-        return topics_table
+        table =   topics_table
     elif table_name == "enums":
-        return enums_table
+        table =   enums_table
     elif table_name == "spaces":
-        return spaces_table
+        table =   spaces_table
     elif table_name == "console_space_favorites":
-        return console_space_favorites_table
+        table =   console_space_favorites_table
     elif table_name == "console_space_graph":
-        return console_space_graph_table
+        table =   console_space_graph_table
     elif table_name == "console_spaces":
-        return console_spaces_table
+        table =   console_spaces_table
     elif table_name == "user_groups":
-        return user_groups_table
+        table =   user_groups_table
     elif table_name == "pipelines":
-        return pipelines_table
+        table =   pipelines_table
     elif table_name == "pipeline_graph":
-        return pipeline_graph_table
+        table =   pipeline_graph_table
     elif table_name == "console_space_subjects":
-        return console_space_subjects_table
+        table =   console_space_subjects_table
     elif table_name == "console_reports":
-        return console_reports_table
+        table =   console_reports_table
+
+    cache.set(table_name, table)
+    return table
 
 
 '''
@@ -214,9 +225,15 @@ def get_topic_table_by_name(table_name):
 
 
 def get_topic_table_by_name(table_name):
+    if table_name in cache and settings.ENVIRONMENT == PROD:
+        return cache.get(table_name)
+
     if table_name == "topic_raw_pipeline_monitor":
-        return Table(table_name, metadata,
+        table =  Table(table_name, metadata,
                      Column('UID', String(50), nullable=False, quote=True),
                      extend_existing=True, autoload=True, autoload_with=engine)
     else:
-        return Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+        table =  Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+
+    cache.set(table_name, table)
+    return table

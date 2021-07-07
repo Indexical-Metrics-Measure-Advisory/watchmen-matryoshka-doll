@@ -4,6 +4,7 @@ import logging
 import operator
 import time
 from decimal import Decimal
+from functools import lru_cache
 from operator import eq
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
@@ -18,6 +19,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
+from watchmen.config.config import settings, PROD
 from watchmen.database.oracle.oracle_engine import engine, dumps
 from watchmen.database.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
 from watchmen.database.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
@@ -26,6 +28,11 @@ from watchmen.database.storage.exception.exception import InsertConflictError, O
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
+
+
+from cacheout import Cache
+
+cache = Cache()
 
 log = logging.getLogger("app." + __name__)
 
@@ -523,7 +530,7 @@ class OracleStorage(StorageInterface):
     '''
     topic data interface
     '''
-
+    @lru_cache(maxsize=10)
     def get_datatype_by_factor_type(self,type: str):
         if type == "text":
             return String(30)
@@ -925,15 +932,8 @@ class OracleStorage(StorageInterface):
         new_dict = {}
         new_list = []
 
-        stmt = "select t.factors from topics t where t.name=:topic_name"
-        result = {}
-        with engine.connect() as conn:
-            cursor = conn.execute(text(stmt), {"topic_name": topic_name}).cursor
-            columns = [col[0] for col in cursor.description]
-            row = cursor.fetchone()
-            factors = json.loads(row[0])
+        factors = self.get_topic_factors(topic_name)
         for item in list_info:
-
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].upper()]
                 new_dict['id_'] = item['ID_']
@@ -1033,13 +1033,7 @@ class OracleStorage(StorageInterface):
             return None
 
         new_dict = {}
-        stmt = "select t.factors from topics t where t.name=:topic_name"
-        with engine.connect() as conn:
-            cursor = conn.execute(stmt, {"topic_name": topic_name}).cursor
-            columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
-            row = cursor.fetchone()
-            factors = json.loads(row['FACTORS'])
+        factors = self.get_topic_factors(topic_name)
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].upper()]
         new_dict['id_'] = dict_info['ID_']
@@ -1048,6 +1042,21 @@ class OracleStorage(StorageInterface):
         if "AGGREGATE_ASSIST_" in dict_info:
             new_dict['aggregate_assist_'] = json.dumps(dict_info.get("AGGREGATE_ASSIST_"))
         return new_dict
+
+
+    def get_topic_factors(self, topic_name):
+        if topic_name in cache and settings.ENVIRONMENT == PROD:
+            return cache.get(topic_name)
+
+        stmt = "select t.factors from topics t where t.name=:topic_name"
+        with engine.connect() as conn:
+            cursor = conn.execute(stmt, {"topic_name": topic_name}).cursor
+            columns = [col[0] for col in cursor.description]
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            row = cursor.fetchone()
+            factors = json.loads(row['FACTORS'])
+            cache.set(topic_name,factors)
+        return factors
 
     def check_value_type(self,value):
         if isinstance(value, datetime.datetime):
