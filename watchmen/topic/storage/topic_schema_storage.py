@@ -54,13 +54,15 @@ def load_topic_by_name(topic_name: str, current_user) -> Topic:
 def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
     if topic_id in cache and settings.ENVIRONMENT == PROD:
         return cache.get(topic_id)
-
     if current_user is None:
         result = find_one({"topicId": topic_id}, Topic, TOPICS)
+        cache.set(topic_id, result)
+        return result
     else:
         result = find_one({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
-    cache.set(topic_id, result)
-    return result
+        cache.set(topic_id, result)
+        return result
+
 
 
 def get_topic_list_by_ids(topic_ids: List[str], current_user) -> List[Topic]:
