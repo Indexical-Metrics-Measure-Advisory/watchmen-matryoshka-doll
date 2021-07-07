@@ -47,3 +47,4 @@ async def consume(loop):
                         await import_raw_topic_data(topic_event,user)
             except:
                 log.error(traceback.format_exc())
+                consume(loop)

@@ -96,6 +96,17 @@ python-dateutil = ">=2.4.0"
 six = ">=1.9.0"
 
 [[package]]
+name = "cacheout"
+version = "0.13.1"
+description = "A caching library for Python"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.extras]
+dev = ["black", "coverage", "docformatter", "flake8", "flake8-black", "flake8-bugbear", "flake8-isort", "invoke", "isort", "mypy", "pylint", "pytest", "pytest-cov", "pytest-flake8", "pytest-mypy", "pytest-pylint", "sphinx", "sphinx-autodoc-typehints", "sphinx-rtd-theme", "tox", "twine", "wheel"]
+
+[[package]]
 name = "certifi"
 version = "2020.12.5"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -832,7 +843,7 @@ rabbit = ["aio-pika"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9.2"
-content-hash = "6dcde63ea45e4b84de3ef055c3030e1678cd8a055a50aae159b0d9e7d33a2afe"
+content-hash = "1605f8bb8ccaf9edc90719332679a0f2334c9ebdd45034e7e8a622a2da348a47"
 
 [metadata.files]
 aio-pika = [
@@ -893,6 +904,10 @@ bcrypt = [
 ]
 bson = [
     {file = "bson-0.5.10.tar.gz", hash = "sha256:d6511b2ab051139a9123c184de1a04227262173ad593429d21e443d6462d6590"},
+]
+cacheout = [
+    {file = "cacheout-0.13.1-py3-none-any.whl", hash = "sha256:dc357ba56599444e24a41a514bd18b6a2460e9a9de6aa960e5ee3bb8c0bebb3f"},
+    {file = "cacheout-0.13.1.tar.gz", hash = "sha256:296d1a46ce7858e6f45b0fd5d407e5236fefe8fc01be80c56161c23b386849ff"},
 ]
 certifi = [
     {file = "certifi-2020.12.5-py2.py3-none-any.whl", hash = "sha256:719a74fb9e33b9bd44cc7f3a8d94bc35e4049deebe19ba7d8e108280cfd59830"},

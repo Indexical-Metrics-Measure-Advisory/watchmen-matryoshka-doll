@@ -369,9 +369,7 @@ class MysqlStorage(StorageInterface):
 
     def find_(self, where: dict, model, name: str) -> list:
         table = get_table_by_name(name)
-        ##TODO refactor code
         check_result = self.check_where_column_type(name, where)
-
         if check_result is not None:
             stmt = text(self.build_raw_sql_with_json_table(check_result, where))
         else:
