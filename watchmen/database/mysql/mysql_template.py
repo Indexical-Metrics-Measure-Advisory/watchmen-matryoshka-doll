@@ -157,7 +157,9 @@ class MysqlStorage(StorageInterface):
                 if isinstance(value, dict):
                     for k, v in value.items():
                         new_updates[k.lower()] = v
-            if isinstance(value, dict):
+            elif key == "version_":
+                new_updates[key] = value + 1
+            elif isinstance(value, dict):
                 for k, v in value.items():
                     if k == "_sum":
                         new_updates[key.lower()] = text(f'{key.lower()} + {v}')
@@ -701,7 +703,9 @@ class MysqlStorage(StorageInterface):
     def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        stmt = update(table).where(and_(eq(table.c['id_'], id_), lt(table.c['version_'], version_)))
+        stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
+
+        print(stmt)
         one_dict = convert_to_dict(one)
         one_dict['version_'] = version_
         one_dict_lower = self.build_mysql_updates_expression_for_update(table, self.capital_to_lower(one_dict))
@@ -711,6 +715,7 @@ class MysqlStorage(StorageInterface):
                 if key.lower() in table.c.keys():
                     values[key.lower()] = value
         stmt = stmt.values(values)
+        print("values",values)
         with engine.begin() as conn:
             result = conn.execute(stmt)
         if result.rowcount == 0:
