@@ -13,5 +13,5 @@ def query_pipeline_monitor(topic_name, query, pagination):
     return page_(query, None, pagination, None, topic_name)
     '''
     result = topic_data_page_(query, None, pagination, None, topic_name)
-    print(result)
+    # print(result)
     return result

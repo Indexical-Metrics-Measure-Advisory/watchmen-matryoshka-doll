@@ -729,7 +729,7 @@ class MysqlStorage(StorageInterface):
                 if key.lower() in table.c.keys():
                     values[key.lower()] = value
         stmt = stmt.values(values)
-        print("values",values)
+
         with engine.begin() as conn:
             result = conn.execute(stmt)
         if result.rowcount == 0:

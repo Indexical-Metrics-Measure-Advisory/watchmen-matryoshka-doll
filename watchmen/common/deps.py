@@ -18,12 +18,8 @@ reusable_oauth2 = OAuth2PasswordBearer(
 def get_current_user(token: str = Depends(reusable_oauth2)
                      ) -> User:
     try:
-        print("token", token)
         payload = validate_jwt(token)
 
-        print("payload", payload)
-
-    # token_data = token.TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

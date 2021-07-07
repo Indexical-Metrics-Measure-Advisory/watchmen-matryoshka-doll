@@ -104,7 +104,7 @@ async def load_chart_dataset(report_id, current_user):
     # assert report_id is None
     report = load_report_by_id(report_id, current_user)
 
-    print("report", report)
+    # print("report", report)
     # query_monitor = build_query_monitor_report(report, query_type="report")
     try:
         query = build_query_for_subject_chart(report_id, report, current_user)
