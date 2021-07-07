@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     MYSQL_POOL_MAXCONNECTIONS: int = 6
     MYSQL_POOL_MINCACHED = 2
     MYSQL_POOL_MAXCACHED = 5
+    MYSQL_ECHO=False
 
     ORACLE_LIB_DIR: str = ""
     ORACLE_HOST: str = ""
