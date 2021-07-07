@@ -1,4 +1,8 @@
+
 from cacheout import Cache
+
+from functools import lru_cache
+
 from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON
 
 from watchmen.config.config import PROD, settings
@@ -193,6 +197,7 @@ console_reports_table = Table("reports", metadata,
                               )
 
 
+@lru_cache(maxsize=10)
 def get_table_by_name(table_name):
     if table_name in cache and settings.ENVIRONMENT == PROD:
         return cache.get(table_name)

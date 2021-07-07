@@ -3,6 +3,8 @@ from typing import List
 
 from pydantic import BaseModel
 
+from watchmen.common.watchmen_model import WatchmenModel
+
 from watchmen.common.parameter import ParameterJoint, Parameter
 from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.report.model.report import Report

@@ -105,8 +105,12 @@ class MysqlStorage(StorageInterface):
                         if k == "in":
                             if isinstance(table.c[key.lower()].type, JSON):
                                 # not support clob to operate in here
+                                '''
                                 raise ValueError("the json type field \"{0}\" of table \"{1}\" , should not support "
                                                  "\"in\" of where expression".format(key.lower(), table.name))
+                                '''
+                                stmt = "JSON_CONTAINS(" + key.lower() + ", '[\"" + v + "\"]', '$') = 1"
+                                return text(stmt)
                             else:
                                 if isinstance(v, list):
                                     if len(v) != 0:
@@ -126,7 +130,8 @@ class MysqlStorage(StorageInterface):
                 else:
                     return table.c[key.lower()] == value
 
-    def build_mysql_updates_expression_for_insert(self, table, updates):
+    @staticmethod
+    def build_mysql_updates_expression_for_insert(table, updates):
         new_updates = {"id_": get_surrogate_key()}
         for key, value in updates.items():
             if key == "$inc":
@@ -147,7 +152,9 @@ class MysqlStorage(StorageInterface):
                 new_updates[key] = value
         return new_updates
 
-    def build_mysql_updates_expression_for_update(self, table, updates):
+
+    @staticmethod
+    def build_mysql_updates_expression_for_update(table, updates):
         new_updates = {}
         for key, value in updates.items():
             if key == "$inc":
@@ -171,7 +178,9 @@ class MysqlStorage(StorageInterface):
                 new_updates[key] = value
         return new_updates
 
-    def build_mysql_order(self, table, order_: list):
+
+    @staticmethod
+    def build_mysql_order(table, order_: list):
         result = []
         if order_ is None:
             return result
@@ -476,8 +485,10 @@ class MysqlStorage(StorageInterface):
     topic data interface
     '''
 
+
+    @staticmethod
     @lru_cache(maxsize=10)
-    def get_datatype_by_factor_type(self, factor_type: str):
+    def get_datatype_by_factor_type(factor_type: str):
         if factor_type == "text":
             return String(30)
         elif factor_type == "sequence":
@@ -631,11 +642,12 @@ class MysqlStorage(StorageInterface):
                 with conn.begin():
                     conn.execute(stmt, value)
 
+
     def get_table_columns(self,table_name):
         key = table_name
         if key in cache_column and settings.ENVIRONMENT == PROD:
             return cache_column.get(key)
-
+          
         columns = insp.get_columns(table_name)
         if columns is not None:
             cache_column.set(key,columns)
@@ -903,6 +915,7 @@ class MysqlStorage(StorageInterface):
             return None
 
         new_dict = {}
+
         factors = self.get_topic_factors(topic_name)
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].lower()]
@@ -923,7 +936,9 @@ class MysqlStorage(StorageInterface):
             cursor = conn.execute(text(stmt), {"topic_name": topic_name}).cursor
             row = cursor.fetchone()
             factors = json.loads(row[0])
+
             cache.set(topic_name, factors)
+
         return factors
 
     def convert_list_elements_key(self, list_info, topic_name):
@@ -931,7 +946,9 @@ class MysqlStorage(StorageInterface):
             return None
         new_dict = {}
         new_list = []
+
         factors = self.get_topic_factors(topic_name)
+
         for item in list_info:
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].lower()]
@@ -943,7 +960,8 @@ class MysqlStorage(StorageInterface):
             new_list.append(new_dict)
         return new_list
 
-    def check_value_type(self, value):
+    @staticmethod
+    def check_value_type(value):
         if isinstance(value, datetime.datetime):
             # return "DATE_FORMAT('" + value + "', '%Y-%m-%d %h:%i:%s')"
             return value
@@ -953,7 +971,6 @@ class MysqlStorage(StorageInterface):
         else:
             return value
 
-    # ToDo
     '''
     special for raw_pipeline_monitor, need refactor for raw topic schema structure
     '''

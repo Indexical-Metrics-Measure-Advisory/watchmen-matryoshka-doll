@@ -1,3 +1,6 @@
+
+from watchmen.common.watchmen_model import WatchmenModel
+
 from watchmen.common.utils.data_utils import RelationshipType
 from watchmen.common.watchmen_model import WatchmenModel
 

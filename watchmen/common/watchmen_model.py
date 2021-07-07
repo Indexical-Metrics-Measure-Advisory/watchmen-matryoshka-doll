@@ -8,6 +8,7 @@ class WatchmenModel(BaseModel):
     lastModified: datetime = datetime.now().replace(tzinfo=None)
     createTime: str = None
 
+
     class Config(BaseConfig):
         json_encoders = {
             datetime: lambda dt: dt.isoformat(),

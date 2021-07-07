@@ -1,13 +1,38 @@
 
+
+# Core Concepts
+-Topic
+-Pipeline
+-DataSet
+-Report
+
 # Topic
+data model
+
+##Factor
 
 
-# Topic Type
-Raw
-Distinct
-Aggregate
-Time
-Ratio
+
+## Topic Type
+
+| \#  | Topic Type  |
+| --- | ----------- |
+| 1   | Raw         |
+| 2   | Distinct    |
+| 3   | Aggregate   |
+| 4   | Time        |
+| 5   | Ratio       |
+
+###Raw Topic
+
+Generate raw topic definition. 
+
+###Distinct Topic
+
+
+
+
+## Create Topic
 
 
 # Pipeline
@@ -134,4 +159,12 @@ Any value will be casted to string, and compare with the given options.
 - `&sum`
 
 - `&old`
+
+
+##Deployment
+
+###initial db script
+
+
+##Export and Import pipelines and topics
 

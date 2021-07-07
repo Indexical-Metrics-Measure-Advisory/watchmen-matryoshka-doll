@@ -18,6 +18,7 @@ from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
+from watchmen.common.security.pat.pat_service import createPAT
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id, build_collection_name, add_tenant_id_to_model, \
     compare_tenant, clean_password
@@ -434,6 +435,12 @@ async def query_enum_list_by_name(query_name: str, pagination: Pagination = Body
 @router.get("/enum/all", tags=["admin"], response_model=List[Enum])
 async def load_enum_all(current_user: User = Depends(deps.get_current_user)):
     return load_enum_list(current_user)
+
+
+
+@router.post("/auth/pat/create", tags=["admin"], response_model=dict)
+async def pat_create(note: str, current_user: User = Depends(deps.get_current_user)):
+    return createPAT(note, current_user.userId, "1")
 
 
 @router.post("/topic/raw/generation", tags=["common"])

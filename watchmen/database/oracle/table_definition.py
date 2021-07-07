@@ -172,6 +172,18 @@ console_reports_table = Table("reports", metadata,
                               Column('createtime', String(50), nullable=True)
                               )
 
+pats_table = Table("pats", metadata,
+                   Column("pat_id", String(60), primary_key=True),
+                   Column("token_id", String(50), nullable=False),
+                   Column("user_id", String(50), nullable=False),
+                   Column("tenant_id", String(50), nullable=False),
+                   Column("note", String(50), nullable=False),
+                   Column("expired", Date, nullable=True),
+                   Column("permissions", CLOB, nullable=True),
+                   Column('lastmodified', DateTime, nullable=True),
+                   Column('createtime', String(50), nullable=True)
+                   )
+
 
 def get_table_by_name(table_name):
     if table_name in cache and settings.ENVIRONMENT == PROD:
@@ -208,6 +220,7 @@ def get_table_by_name(table_name):
 
     cache.set(table_name, table)
     return table
+
 
 
 '''

@@ -10,7 +10,11 @@ from watchmen.auth.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
+
 from watchmen.common.pagination import Pagination
+
+from watchmen.common.watchmen_model import WatchmenModel
+
 from watchmen.common.parameter import Parameter
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id

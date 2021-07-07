@@ -27,7 +27,6 @@ def update_retry_callback(mappings_results, where_, target_topic):
     target_data = query_topic_data(where_,
                                    target_topic.name)
 
-    # print("target_data", target_data)
     if target_data is not None:
         id_ = target_data.get(get_id_name(), None)
         version_ = target_data.get("version_", None)
