@@ -242,7 +242,6 @@ class OracleStorage(StorageInterface):
         stmt = insert(table).values(values)
         with engine.connect() as conn:
             conn.execute(stmt)
-            # conn.commit()
         return model.parse_obj(one)
 
     def insert_all(self, data, model, name):
