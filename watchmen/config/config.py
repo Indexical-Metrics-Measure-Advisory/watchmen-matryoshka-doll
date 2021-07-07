@@ -36,6 +36,8 @@ class Settings(BaseSettings):
     PRESTO_SCHEMA = "watchmen"
     PRESTO_ON = True
 
+    DEFAULT_DATA_ZONE_ON = False
+
     MYSQL_HOST: str = ""
     MYSQL_PORT: int = 3306
     MYSQL_USER: str = ""

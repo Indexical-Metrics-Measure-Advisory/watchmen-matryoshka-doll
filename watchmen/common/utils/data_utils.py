@@ -106,7 +106,11 @@ def convert_to_dict(instance):
 
 
 def add_tenant_id_to_model(instance, user):
-    instance.tenantId = user.tenantId
+    if settings.DEFAULT_DATA_ZONE_ON:
+        instance.tenantId = "1"
+    else:
+        instance.tenantId = user.tenantId
+
     return instance
 
 
