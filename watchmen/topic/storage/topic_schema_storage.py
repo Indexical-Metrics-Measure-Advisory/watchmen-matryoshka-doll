@@ -7,7 +7,15 @@ from watchmen.database.storage.storage_template import insert_one, update_one, f
     page_, find_
 from watchmen.topic.topic import Topic
 
+from cacheout import Cache
+
+from watchmen.config.config import settings, PROD
+
 TOPICS = "topics"
+
+cache = Cache()
+
+
 
 
 def save_topic(topic: Topic) -> Topic:
@@ -47,15 +55,18 @@ def load_topic_by_name(topic_name: str, current_user) -> Topic:
 
 
 def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
+    if topic_id in cache and settings.ENVIRONMENT == PROD:
+        return cache.get(topic_id)
+
     if current_user is None:
-        return find_one({"topicId": topic_id}, Topic, TOPICS)
+        result = find_one({"topicId": topic_id}, Topic, TOPICS)
     else:
-        return find_one({"and":[{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+        result =  find_one({"and":[{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+    cache.set(topic_id,result)
+    return result
 
 
 def get_topic_list_by_ids(topic_ids: List[str], current_user) -> List[Topic]:
-    # return template.find(TOPICS, {"topicId": {"$in": topic_ids}}, Topic)
-    # print(topic_ids)
     if len(topic_ids) > 0:
         where = {"and": [{"topicId": {"in": topic_ids}}, {"tenantId": current_user.tenantId}], }
         return find_(where, Topic, TOPICS)
