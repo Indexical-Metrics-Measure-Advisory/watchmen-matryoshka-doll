@@ -47,7 +47,7 @@ def load_console_space_list_by_user(user_id: str, current_user: User) -> Console
 
 def load_console_space_by_subject_id(subject_id: str, current_user) -> ConsoleSpace:
     # return template.find_one("console_spaces", {"subjectIds": subject_id}, ConsoleSpace)
-    return find_one({"and": [{"subjectIds": {"in": [subject_id]}}, {"tenantId": current_user.tenantId}]}, ConsoleSpace,
+    return find_one({"subjectIds": {"in": [subject_id]}}, ConsoleSpace,
                     "console_spaces")
 
 

@@ -49,9 +49,6 @@ def parse_mappings(mappings, target_topic, previous_data, current_data, variable
 
 
 def get_factor(factor_id, target_topic: Topic):
-    # cache_key  = factor_id +"_"+target_topic.topicId
-    # if cache_key in cache and settings.ENVIRONMENT == PROD:
-    #     return cache.get(cache_key)
 
     for factor in target_topic.factors:
         if factor.factorId == factor_id:

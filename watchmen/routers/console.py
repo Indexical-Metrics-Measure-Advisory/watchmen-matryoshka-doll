@@ -144,7 +144,7 @@ async def rename_console_space_subject(subject_id: str, name: str, current_user:
 
 @router.get("/console_space/subject/delete", tags=["console"])
 async def delete_subject(subject_id, current_user: User = Depends(deps.get_current_user)):
-    delete_console_subject(subject_id)
+    delete_console_subject(subject_id,current_user)
 
 
 @router.post("/console_space/subject/save", tags=["console"], response_model=ConsoleSpaceSubject)
