@@ -16,6 +16,7 @@ users_table = Table("users", metadata,
                     Column('is_active', String(5), nullable=True),
                     Column('groupids', CLOB, nullable=True),
                     Column('role', String(45), nullable=True),
+                    Column('tenantid', String(60), nullable=False),
                     Column('createtime', String(50), nullable=True),
                     Column('lastmodified', Date, nullable=True)
                     )
@@ -26,6 +27,7 @@ user_groups_table = Table("user_groups", metadata,
                           Column('description', String(45), nullable=True),
                           Column('userids', CLOB, nullable=True),
                           Column('spaceids', CLOB, nullable=True),
+                          Column('tenantid', String(60), nullable=False),
                           Column('createtime', String(50), nullable=True),
                           Column('lastmodified', Date, nullable=True)
                           )
@@ -36,6 +38,7 @@ console_space_last_snapshot_table = Table("console_space_last_snapshot", metadat
                                           Column('lastdashboardid', String(25), nullable=True),
                                           Column('admindashboardid', String(25), nullable=True),
                                           Column('favoritepin', String(5), nullable=True),
+                                          Column('tenantid', String(60), nullable=False),
                                           Column('createtime', String(50), nullable=True),
                                           Column('lastmodified', Date, nullable=True)
                                           )
@@ -47,6 +50,7 @@ console_dashboards_table = Table("console_dashboards", metadata,
                                  Column('paragraphs', CLOB, nullable=True),
                                  Column('lastvisittime', String(25), nullable=False),
                                  Column('userid', String(60), nullable=False),
+                                 Column('tenantid', String(60), nullable=False),
                                  Column('createtime', String(50), nullable=True),
                                  Column('lastmodified', DateTime, nullable=True)
                                  )
@@ -58,8 +62,9 @@ topics_table = Table("topics", metadata,
                      Column("type", String(10), nullable=True),
                      Column("description", String(50), nullable=True),
                      Column("factors", CLOB, nullable=True),
+                     Column('tenantid', String(60), nullable=False),
                      Column('createtime', String(50), nullable=True),
-                     Column('last_modified', DateTime, nullable=True),
+                     # Column('last_modified', DateTime, nullable=True),
                      Column('lastmodified', DateTime, nullable=True)
                      )
 
@@ -69,6 +74,7 @@ enums_table = Table("enums", metadata,
                     Column("description", String(25), nullable=True),
                     Column("parentenumid", String(60), nullable=True),
                     Column("items", CLOB, nullable=True),
+                    Column('tenantid', String(60), nullable=False),
                     Column('createtime', String(50), nullable=True),
                     Column('lastmodified', DateTime, nullable=True)
                     )
@@ -79,8 +85,9 @@ spaces_table = Table("spaces", metadata,
                      Column("groupids", CLOB, nullable=True),
                      Column("name", String(25), nullable=False),
                      Column("description", String(25), nullable=True),
+                     Column('tenantid', String(60), nullable=False),
                      Column('createtime', String(50), nullable=True),
-                     Column('last_modified', DateTime, nullable=True),
+                     # Column('last_modified', DateTime, nullable=True),
                      Column('lastmodified', DateTime, nullable=True)
                      )
 
@@ -88,8 +95,9 @@ console_space_favorites_table = Table("console_space_favorites", metadata,
                                       Column("userid", String(60), primary_key=True),
                                       Column("connectedspaceids", CLOB, nullable=True),
                                       Column("dashboardids", CLOB, nullable=True),
+                                      Column('tenantid', String(60), nullable=False),
                                       Column('createtime', String(50), nullable=True),
-                                      Column('last_modified', DateTime, nullable=True),
+                                      # Column('last_modified', DateTime, nullable=True),
                                       Column('lastmodified', DateTime, nullable=True)
                                       )
 
@@ -98,8 +106,9 @@ console_space_graph_table = Table("console_space_graph", metadata,
                                   Column("topics", CLOB, nullable=True),
                                   Column("subjects", CLOB, nullable=True),
                                   Column("userid", String(60), nullable=False),
+                                  Column('tenantid', String(60), nullable=False),
                                   Column('createtime', String(50), nullable=True),
-                                  Column('last_modified', DateTime, nullable=True),
+                                  # Column('last_modified', DateTime, nullable=True),
                                   Column('lastmodified', DateTime, nullable=True)
                                   )
 
@@ -114,8 +123,9 @@ console_spaces_table = Table("console_spaces", metadata,
                              Column("userid", String(60), nullable=True),
                              Column("subjectids", CLOB, nullable=True),
                              Column("subjects", CLOB, nullable=True),
+                             Column('tenantid', String(60), nullable=False),
                              Column('createtime', String(50), nullable=True),
-                             Column('last_modified', DateTime, nullable=True),
+                             # Column('last_modified', DateTime, nullable=True),
                              Column('lastmodified', DateTime, nullable=True)
                              )
 
@@ -128,8 +138,9 @@ pipelines_table = Table("pipelines", metadata,
                         Column("conditional", String(5), nullable=True),
                         Column("enabled", String(5), nullable=True),
                         Column("on", CLOB, nullable=True),
+                        Column('tenantid', String(60), nullable=False),
                         Column('createtime', String(50), nullable=True),
-                        Column('last_modified', DateTime, nullable=True),
+                        # Column('last_modified', DateTime, nullable=True),
                         Column('lastmodified', DateTime, nullable=True)
                         )
 
@@ -138,6 +149,7 @@ pipeline_graph_table = Table("pipeline_graph", metadata,
                              Column("name", String(50), nullable=True),
                              Column("userid", String(60), nullable=False),
                              Column("topics", CLOB, nullable=True),
+                             Column('tenantid', String(60), nullable=False),
                              Column('lastmodified', DateTime, nullable=True),
                              Column('createtime', String(50), nullable=True)
                              )
@@ -150,9 +162,10 @@ console_space_subjects_table = Table("console_space_subjects", metadata,
                                      Column("reports", CLOB, nullable=True),
                                      Column("reportids", CLOB, nullable=True),
                                      Column("dataset", CLOB, nullable=True),
+                                     Column('tenantid', String(60), nullable=False),
                                      Column("lastvisittime", DateTime, nullable=True),
                                      Column("createdat", String(50), nullable=True),
-                                     Column('last_modified', DateTime, nullable=True),
+                                     # Column('last_modified', DateTime, nullable=True),
                                      Column('lastmodifytime', DateTime, nullable=True),
                                      Column('lastmodified', DateTime, nullable=True),
                                      Column('createtime', String(50), nullable=True)
@@ -166,6 +179,7 @@ console_reports_table = Table("reports", metadata,
                               Column("description", String(50), nullable=True),
                               Column("rect", CLOB, nullable=True),
                               Column("chart", CLOB, nullable=True),
+                              Column('tenantid', String(60), nullable=False),
                               Column("createdAt", String(50), nullable=True),
                               Column("lastVisitTime", String(50), nullable=True),
                               Column('lastmodified', DateTime, nullable=True),
@@ -173,10 +187,10 @@ console_reports_table = Table("reports", metadata,
                               )
 
 pats_table = Table("pats", metadata,
-                   Column("pat_id", String(60), primary_key=True),
-                   Column("token_id", String(50), nullable=False),
-                   Column("user_id", String(50), nullable=False),
-                   Column("tenant_id", String(50), nullable=False),
+                   Column("patid", String(60), primary_key=True),
+                   Column("tokenid", String(50), nullable=False),
+                   Column("userid", String(50), nullable=False),
+                   Column("tenantid", String(60), nullable=False),
                    Column("note", String(50), nullable=False),
                    Column("expired", Date, nullable=True),
                    Column("permissions", CLOB, nullable=True),
