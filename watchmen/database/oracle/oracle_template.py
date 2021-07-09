@@ -375,7 +375,6 @@ class OracleStorage(StorageInterface):
         stmt = delete(table).where(self.build_oracle_where_expression(table, where))
         with engine.connect() as conn:
             conn.execute(stmt)
-            # conn.commit()
 
     def delete_(self, where, model, name):
         table = get_table_by_name(name)

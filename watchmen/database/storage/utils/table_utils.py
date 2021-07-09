@@ -50,4 +50,6 @@ def get_pid(table_name):
         pid = "userId"
     elif table_name == "tenants":
         pid = "tenantId"
+    elif table_name == "pats":
+        pid = "patId"
     return pid

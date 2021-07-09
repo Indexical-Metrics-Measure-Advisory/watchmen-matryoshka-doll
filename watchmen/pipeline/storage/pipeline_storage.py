@@ -11,10 +11,9 @@ PIPELINES = "pipelines"
 
 PIPELINE_GRAPH = "pipeline_graph"
 
-
-
-
 cache = Cache()
+
+
 # template = find_template()
 
 
@@ -36,17 +35,16 @@ def __convert_to_object(x):
 
 # @lru_cache(maxsize=50)
 def load_pipeline_by_topic_id(topic_id, current_user=None):
-
     if topic_id in cache and settings.ENVIRONMENT == PROD:
         return cache.get(topic_id)
 
     if current_user is None:
-        pipeline =  find_({"topicId": topic_id}, Pipeline, PIPELINES)
+        pipeline = find_({"topicId": topic_id}, Pipeline, PIPELINES)
         if pipeline is not None:
-            cache.set(topic_id,pipeline)
+            cache.set(topic_id, pipeline)
         return pipeline
     else:
-        pipeline =  find_({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Pipeline, PIPELINES)
+        pipeline = find_({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Pipeline, PIPELINES)
         if pipeline is not None:
             cache.set(topic_id, pipeline)
         return pipeline

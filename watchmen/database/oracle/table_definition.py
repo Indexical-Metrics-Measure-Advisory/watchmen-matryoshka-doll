@@ -190,6 +190,7 @@ pats_table = Table("pats", metadata,
                    Column("patid", String(60), primary_key=True),
                    Column("tokenid", String(50), nullable=False),
                    Column("userid", String(50), nullable=False),
+                   Column("username", String(50), nullable=False),
                    Column("tenantid", String(60), nullable=False),
                    Column("note", String(50), nullable=False),
                    Column("expired", Date, nullable=True),
@@ -231,6 +232,8 @@ def get_table_by_name(table_name):
         table = console_space_subjects_table
     elif table_name == "console_reports":
         table = console_reports_table
+    elif table_name == "pats":
+        table = pats_table
 
     cache.set(table_name, table)
     return table
