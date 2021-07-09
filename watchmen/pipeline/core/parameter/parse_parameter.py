@@ -1,4 +1,5 @@
 import operator
+from decimal import Decimal
 from typing import List
 
 import pandas as pd
@@ -92,11 +93,19 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             return result
         elif parameter_.type == Operator.multiply:
             result = None
+            left = None
             for item in parameter_.parameters:
-                if result:
-                    result = operator.mul(result, parse_parameter(item, instance, variables))
+                if left:
+                    right = parse_parameter(item, instance, variables)
+                    if isinstance(right, str):
+                        if right.lstrip('-').isdigit():
+                            right = Decimal(right)
+                    result = operator.mul(left, right)
                 else:
-                    result = parse_parameter(item, instance, variables)
+                    left = parse_parameter(item, instance, variables)
+                    if isinstance(left, str):
+                        if left.lstrip('-').isdigit():
+                            left = Decimal(left)
             return result
         elif parameter_.type == Operator.divide:
             result = None
