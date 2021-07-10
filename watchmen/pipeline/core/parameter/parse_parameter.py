@@ -19,7 +19,7 @@ from watchmen.pipeline.core.parameter.operator.more_equals import do_more_equals
 from watchmen.pipeline.core.parameter.operator.not_equals import do_not_equals_with_value_type_check
 from watchmen.pipeline.core.parameter.operator.not_in_operator import do_not_in_with_value_type_check
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, convert_datetime, check_and_convert_value_by_factor
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
+from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.report.model.column import Operator
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 

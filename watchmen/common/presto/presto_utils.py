@@ -9,7 +9,7 @@ from watchmen.common.utils.data_utils import build_collection_name, is_presto_va
     is_presto_datetime
 from watchmen.config.config import settings
 from watchmen.database.storage.storage_template import find_one, insert_one, delete_one
-from watchmen.pipeline.single.stage.unit.utils.units_func import BOOLEAN, NUMBER, TIME
+from watchmen.pipeline.utils.units_func import BOOLEAN, NUMBER, TIME
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 

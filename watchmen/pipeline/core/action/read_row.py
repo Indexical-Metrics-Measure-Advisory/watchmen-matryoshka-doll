@@ -3,7 +3,7 @@ import time
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import ActionContext, set_variable, get_variables
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
-from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
+from watchmen.pipeline.storage.read_topic_data import query_topic_data
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

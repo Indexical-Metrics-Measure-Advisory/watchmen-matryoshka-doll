@@ -6,7 +6,7 @@ from watchmen.common.constants import pipeline_constants
 from watchmen.common.notify.notify_service import send_notifier
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
-from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
+from watchmen.pipeline.utils import add_audit_columns, INSERT
 from watchmen.topic.storage.topic_data_storage import save_topic_instance
 from watchmen.topic.storage.topic_schema_storage import get_topic
 

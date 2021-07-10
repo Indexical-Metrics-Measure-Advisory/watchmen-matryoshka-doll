@@ -5,8 +5,8 @@ from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
-from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
-from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import update_topic_data
+from watchmen.pipeline.storage.read_topic_data import query_topic_data
+from watchmen.pipeline.storage.write_topic_data import update_topic_data
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)

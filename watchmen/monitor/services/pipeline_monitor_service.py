@@ -7,7 +7,7 @@ from watchmen.database.storage.storage_template import raw_topic_data_insert_one
 
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.pipeline.model.trigger_type import TriggerType
-from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, INSERT
+from watchmen.pipeline.utils.units_func import add_audit_columns, INSERT
 from watchmen.topic.storage.topic_schema_storage import get_topic, get_topic_by_name, save_topic
 from watchmen.topic.topic import Topic
 

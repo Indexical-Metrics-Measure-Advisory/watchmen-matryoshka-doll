@@ -7,9 +7,9 @@ from watchmen.pipeline.core.context.action_context import ActionContext, get_var
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
-from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
-from watchmen.pipeline.single.stage.unit.mongo.write_topic_data import update_topic_data_one
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
+from watchmen.pipeline.storage.read_topic_data import query_topic_data
+from watchmen.pipeline.storage.write_topic_data import update_topic_data_one
+from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)

@@ -7,7 +7,7 @@ from pypika.queries import QueryBuilder
 
 from watchmen.common.parameter import Parameter
 from watchmen.common.utils.data_utils import build_collection_name
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
+from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.report.model.column import Column, Operator
 from watchmen.report.model.filter import Filter, ConnectiveType
 from watchmen.report.model.join import Join, JoinType

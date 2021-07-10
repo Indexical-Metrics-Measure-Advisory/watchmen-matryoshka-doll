@@ -1,10 +1,9 @@
 import pandas as pd
 
-from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, get_variable_with_func_pattern, \
     get_variable_with_dot_pattern, convert_datetime, check_and_convert_value_by_factor
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
+from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.report.model.column import Operator
 from watchmen.topic.topic import Topic
 

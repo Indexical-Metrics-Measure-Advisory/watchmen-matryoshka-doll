@@ -4,8 +4,8 @@ from watchmen.database.storage.storage_template import topic_data_find_by_id, \
     topic_data_insert_one, topic_find_one_and_update, topic_data_update_, topic_data_update_one
 from watchmen.database.storage.storage_template import topic_data_update_one_with_version
 from watchmen.pipeline.model.trigger_type import TriggerType
-from watchmen.pipeline.single.stage.unit.model.trigger_data import TriggerData
-from watchmen.pipeline.single.stage.unit.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE
+from watchmen.pipeline.model.trigger_data import TriggerData
+from watchmen.pipeline.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE
 
 
 def __build_trigger_pipeline_data(topic_name: str, data, trigger_type):

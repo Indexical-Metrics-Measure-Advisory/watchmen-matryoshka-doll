@@ -4,8 +4,8 @@ import time
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, set_variable
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
-from watchmen.pipeline.single.stage.unit.mongo.read_topic_data import query_topic_data
-from watchmen.pipeline.single.stage.unit.utils.units_func import get_factor
+from watchmen.pipeline.storage.read_topic_data import query_topic_data
+from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
