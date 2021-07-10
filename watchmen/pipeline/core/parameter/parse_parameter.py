@@ -46,8 +46,11 @@ def parse_parameter(parameter_: Parameter, instance, variables):
                     res = None
                     if var_name.startswith(AMP):
                         real_name = var_name.lstrip('&')
-                        res = instance.get(real_name)
-                    elif var_name == "snowflake":
+                        if real_name == "nextSeq":
+                            res = get_surrogate_key()
+                        else:
+                            res = instance.get(real_name)
+                    elif var_name == "snowflake":  # use nextSeq, prepare to remove in next version todo
                         res = get_surrogate_key()
                     elif FUNC in var_name:
                         res = get_variable_with_func_pattern(var_name, variables)
@@ -65,15 +68,19 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             for item in parameter_.parameters:
                 if left:
                     right = parse_parameter(item, instance, variables)
-                    if right is not None:
-                        result = operator.add(left, right)
-                    else:
+                    if right is None:
                         right = 0
-                        result = operator.add(left, right)
+                    elif isinstance(right, str):
+                        if right.lstrip('-').isdigit():
+                            right = Decimal(right)
+                    result = operator.add(left, right)
                 else:
                     left = parse_parameter(item, instance, variables)
                     if left is None:
                         left = 0
+                    elif isinstance(left, str):
+                        if left.lstrip('-').isdigit():
+                            left = Decimal(left)
             return result
         elif parameter_.type == Operator.subtract:
             result = None
@@ -81,15 +88,19 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             for item in parameter_.parameters:
                 if left:
                     right = parse_parameter(item, instance, variables)
-                    if right is not None:
-                        result = operator.sub(left, right)
-                    else:
+                    if right is None:
                         right = 0
-                        result = operator.sub(left, right)
+                    elif isinstance(right, str):
+                        if right.lstrip('-').isdigit():
+                            right = Decimal(right)
+                    result = operator.sub(left, right)
                 else:
                     left = parse_parameter(item, instance, variables)
                     if left is None:
                         left = 0
+                    elif isinstance(left, str):
+                        if left.lstrip('-').isdigit():
+                            left = Decimal(left)
             return result
         elif parameter_.type == Operator.multiply:
             result = None
@@ -97,31 +108,59 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             for item in parameter_.parameters:
                 if left:
                     right = parse_parameter(item, instance, variables)
-                    if isinstance(right, str):
+                    if right is None:
+                        right = 0
+                    elif isinstance(right, str):
                         if right.lstrip('-').isdigit():
                             right = Decimal(right)
                     result = operator.mul(left, right)
                 else:
                     left = parse_parameter(item, instance, variables)
-                    if isinstance(left, str):
+                    if left is None:
+                        left = 0
+                    elif isinstance(left, str):
                         if left.lstrip('-').isdigit():
                             left = Decimal(left)
             return result
         elif parameter_.type == Operator.divide:
             result = None
+            left = None
             for item in parameter_.parameters:
-                if result:
-                    result = operator.truediv(result, parse_parameter(item, instance, variables))
+                if left:
+                    right = parse_parameter(item, instance, variables)
+                    if right is None:
+                        right = 0
+                    elif isinstance(right, str):
+                        if right.lstrip('-').isdigit():
+                            right = Decimal(right)
+                    result = operator.truediv(left, right)
                 else:
-                    result = parse_parameter(item, instance, variables)
+                    left = parse_parameter(item, instance, variables)
+                    if left is None:
+                        left = 0
+                    elif isinstance(left, str):
+                        if left.lstrip('-').isdigit():
+                            left = Decimal(left)
             return result
         elif parameter_.type == Operator.modulus:
             result = None
+            left = None
             for item in parameter_.parameters:
-                if result:
-                    result = operator.mod(result, parse_parameter(item, instance, variables))
+                if left:
+                    right = parse_parameter(item, instance, variables)
+                    if right is None:
+                        right = 0
+                    elif isinstance(right, str):
+                        if right.lstrip('-').isdigit():
+                            right = Decimal(right)
+                    result = operator.mod(left, right)
                 else:
-                    result = parse_parameter(item, instance, variables)
+                    left = parse_parameter(item, instance, variables)
+                    if left is None:
+                        left = 0
+                    elif isinstance(left, str):
+                        if left.lstrip('-').isdigit():
+                            left = Decimal(left)
             return result
         elif parameter_.type == "year-of":
             result = parse_parameter(parameter_.parameters[0], instance, variables)

@@ -69,8 +69,13 @@ def get_current_user(request: Request) -> User:
         username = payload["sub"]
     elif scheme.lower() == "pat":
         pat: PersonAccessToken = verifyPAT(token)
-        username = pat.username
-
+        if pat is not None:
+            username = pat.username
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+            )
     if is_superuser(username):
         user = User(name=username, role=SUPER_ADMIN)
     else:

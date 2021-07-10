@@ -29,8 +29,6 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
             return {"value": None, "position": "right"}
         elif not parameter_.value:
             return {"value": None, "position": "right"}
-        elif "{&nextSeq}" in parameter_.value or "{snowflake}" in parameter_.value:
-            return {"value": get_surrogate_key(), "position": "right"}
         elif parameter_.value.startswith("{"):
             constant_variable = parameter_.value.replace("{", "").replace("}", "")
             if ".&" in constant_variable:
