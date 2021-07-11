@@ -49,10 +49,6 @@ def update_one_first(where: dict, updates: dict, model: BaseModel, name: str) ->
     return template.update_one_first(where, updates, model, name)
 
 
-def upsert_(where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
-    return template.upsert(where, updates, model, name)
-
-
 def update_(where: dict, updates: dict, model: BaseModel, name: str):
     template.update_(where, updates, model, name)
 
@@ -126,16 +122,12 @@ for topic data storage interface
 '''
 
 
-def create_topic_data_table(topic):
-    template.create_topic_data_table(topic)
+def topic_data_insert_one(one: any, topic_name: str) -> tuple:
+    return template.topic_data_insert_one(one, topic_name)
 
 
-# def create_topic_data_table_index(name: str, index_name: list, index_type: str):
-#     pass
-
-
-def alter_topic_data_table(topic):
-    template.alter_topic_data_table(topic)
+def topic_data_insert_(data: list, topic_name: str):
+    template.topic_data_insert_(data, topic_name)
 
 
 def topic_data_delete_(where, name):
@@ -144,14 +136,6 @@ def topic_data_delete_(where, name):
 
 def drop_topic_data_table(name):
     template.drop_topic_data_table(name)
-
-
-def topic_data_insert_one(one: any, topic_name: str) -> tuple:
-    return template.topic_data_insert_one(one, topic_name)
-
-
-def topic_data_insert_(data: list, topic_name: str):
-    template.topic_data_insert_(data, topic_name)
 
 
 def topic_data_update_one(id_: str, one: any, topic_name: str):
@@ -178,29 +162,12 @@ def topic_data_find_(where, topic_name):
     return template.topic_data_find_(where, topic_name)
 
 
-def raw_topic_data_insert_one(one, topic_name):
-    return template.raw_topic_data_insert_one(one, topic_name)
-
-
 def topic_data_list_all(topic_name) -> list:
     return template.topic_data_list_all(topic_name)
 
 
 def topic_data_page_(where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
     return template.topic_data_page_(where, sort, pageable, model, name)
-
-
-def topic_find_one_and_update(where: dict, updates: dict, name: str) -> any:
-    return template.topic_find_one_and_update(where, updates, name)
-
-
-'''
-special for raw_pipeline_monitor, need refactor for raw topic schema structure, ToDo
-'''
-
-
-def create_raw_pipeline_monitor():
-    template.create_raw_pipeline_monitor()
 
 
 def clear_metadata():

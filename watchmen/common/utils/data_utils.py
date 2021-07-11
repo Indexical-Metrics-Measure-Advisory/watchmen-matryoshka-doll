@@ -105,6 +105,13 @@ def convert_to_dict(instance):
         return instance
 
 
+def capital_to_lower(dict_info):
+    new_dict = {}
+    for i, j in dict_info.items():
+        new_dict[i.lower()] = j
+    return new_dict
+
+
 def add_tenant_id_to_model(instance, user):
     if settings.DEFAULT_DATA_ZONE_ON:
         instance.tenantId = "1"

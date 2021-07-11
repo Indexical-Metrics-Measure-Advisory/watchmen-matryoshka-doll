@@ -1,8 +1,6 @@
 from enum import Enum
 from typing import Optional, Dict
 
-#
-# from watchmen.common.event.event import Event
 from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.raw_data.context import Context
 from watchmen.raw_data.model_field import ModelField

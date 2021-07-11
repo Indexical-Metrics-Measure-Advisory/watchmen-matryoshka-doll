@@ -56,7 +56,7 @@ def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
         result = cache.get(topic_id)
         if result is None:
             raise Exception("result is None in cache {}")
-        return  result
+        return result
 
     if current_user is None:
         result = find_one({"topicId": topic_id}, Topic, TOPICS)
@@ -73,7 +73,6 @@ def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
         return result
 
 
-
 def get_topic_list_by_ids(topic_ids: List[str], current_user) -> List[Topic]:
     if len(topic_ids) > 0:
         where = {"and": [{"topicId": {"in": topic_ids}}, {"tenantId": current_user.tenantId}], }
@@ -83,11 +82,6 @@ def get_topic_list_by_ids(topic_ids: List[str], current_user) -> List[Topic]:
 
 
 def query_topic_list_with_pagination(query_name: str, pagination: Pagination, current_user) -> DataPage:
-    '''
-    return template.query_with_pagination(TOPICS, pagination, Topic, query_dict={"name": regex.Regex(query_name)},
-                                          sort_dict=["last_modified", pymongo.DESCENDING])
-    '''
-
     if query_name != '':
         query_dict = {"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]}
         sort_dict = [("lastmodified", "desc")]
@@ -98,11 +92,8 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination, cu
 
 
 def update_topic(topic_id: str, topic: Topic) -> Topic:
-
     return update_one(topic, Topic, TOPICS)
 
 
-
 def import_topic_to_db(topic: Topic) -> Topic:
-
     return insert_one(topic, Topic, TOPICS)

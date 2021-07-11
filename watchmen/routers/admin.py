@@ -25,7 +25,7 @@ from watchmen.common.utils.data_utils import check_fake_id, build_collection_nam
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
-from watchmen.database.storage.storage_template import drop_topic_data_table, create_topic_data_table
+from watchmen.database.storage.storage_template import drop_topic_data_table
 from watchmen.enum.model.enum import Enum
 from watchmen.enum.storage.enum_storage import save_enum_to_storage, query_enum_list_with_pagination, load_enum_by_id, \
     load_enum_list
@@ -473,13 +473,9 @@ async def query_log_by_critical(query: MonitorLogQuery):
     query_dict = {}
     query_list = []
     if query.criteria.topicId is not None:
-        # query_dict["topicId"] = query.criteria.topicId
         query_list.append({"topicId": query.criteria.topicId})
-
     if query.criteria.pipelineId is not None:
-        # query_dict["pipelineId"] = query.criteria.pipelineId
         query_list.append({"pipelineId": query.criteria.pipelineId})
-
     if query.criteria.startDate is not None and query.criteria.endDate is not None:
         query_list.append({"sys_insertTime": {
             "between": (
@@ -487,23 +483,10 @@ async def query_log_by_critical(query: MonitorLogQuery):
                 arrow.get(query.criteria.endDate).datetime.replace(tzinfo=None)
             )
         }})
-
     if query.criteria.status is not None:
-        # query_dict["status"] = query.criteria.status.upper()
         query_list.append({"status": query.criteria.status.upper()})
-
     if len(query_list) > 1:
         query_dict['and'] = query_list
     else:
         query_dict = query_list[0]
-
-    # print("query_dict",query_dict)
-
-    return query_pipeline_monitor(build_collection_name("raw_pipeline_monitor"), query_dict, query.pagination)
-
-
-@router.get("/topic/table/recreate", tags=["admin"])
-async def drop_topic_table(topic_name):
-    drop_topic_data_table(topic_name)
-    topic = load_topic_by_name(topic_name)
-    create_topic_data_table(topic)
+    return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)

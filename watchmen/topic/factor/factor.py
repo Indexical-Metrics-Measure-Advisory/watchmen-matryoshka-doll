@@ -22,8 +22,10 @@ class Factor(WatchmenModel):
     label: str = None
     description: str = None
     defaultValue: str = None
+    flatten: bool = None
     indexGroup: str = None
     tenantId: str = None
+
 
 
 '''

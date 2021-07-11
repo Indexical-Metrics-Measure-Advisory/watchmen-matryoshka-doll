@@ -9,6 +9,3 @@ class Mapping(WatchmenModel):
     target_topic_name: str
     mapping_detail_list: list
 
-# class MappingDetail(BaseModel):
-#     source_attr: Attribute
-#     target_factor: Factor

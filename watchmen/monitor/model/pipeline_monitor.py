@@ -70,7 +70,7 @@ class StageRunStatus(ConditionHolder):
     units: List[UnitRunStatus] = []
 
 
-class PipelineRunStatus(WatchmenModel, ConditionHolder):
+class PipelineRunStatus(ConditionHolder):
     status: str = None  # DONE ,ERROR
     pipelineId: str = None
     uid: str = None

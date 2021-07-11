@@ -30,8 +30,6 @@ def update_retry_callback(mappings_results, where_, target_topic):
     if target_data is not None:
         id_ = target_data.get(get_id_name(), None)
         version_ = target_data.get("version_", None)
-
-
         if id_ is not None and version_ is not None:
             mappings_results['version_'] = version_
             topic_data_update_one_with_version(id_, version_, mappings_results, target_topic.name)

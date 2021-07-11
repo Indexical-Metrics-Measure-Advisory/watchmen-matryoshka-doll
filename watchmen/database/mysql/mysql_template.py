@@ -1,10 +1,8 @@
-import datetime
+from datetime import datetime
 import json
 import logging
 import operator
-import time
-from _operator import lt
-from functools import lru_cache
+from decimal import Decimal
 from operator import eq
 
 from cacheout import Cache
@@ -18,7 +16,7 @@ from sqlalchemy.orm import Session
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import build_data_pages
+from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.config.config import settings, PROD
 from watchmen.database.mysql.mysql_engine import engine
@@ -28,12 +26,10 @@ from watchmen.database.singleton import singleton
 from watchmen.database.storage.exception.exception import OptimisticLockError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
-from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
 cache = Cache()
 
-
-cache_column  = Cache()
+cache_column = Cache()
 insp = Inspector.from_engine(engine)
 # import arrow
 
@@ -44,41 +40,6 @@ log.info("mysql template initialized")
 
 @singleton
 class MysqlStorage(StorageInterface):
-
-    @staticmethod
-    def build_raw_sql_with_json_table(check_result, where):
-        table_name = check_result["table_name"]
-        column_name = check_result["column_name"]
-        json_table_stmt = "select s.* " \
-                          "from " + table_name + " s "
-        value_ = ",".join(where[column_name]["in"])
-        where_stmt = "where JSON_CONTAINS(" + column_name.lower() + ", '[\"" + value_ + "\"]', '$') = 1"
-        stmt = json_table_stmt + where_stmt
-        return stmt
-
-    @staticmethod
-    def check_where_column_type(name, where):
-
-        if name == "spaces":
-            if "groupIds" in where:
-                return {"table_name": "spaces", "column_name": "groupIds"}
-        elif name == "user_groups":
-            if "userIds" in where:
-                return {"table_name": "user_groups", "column_name": "userIds"}
-            if "spaceIds" in where:
-                return {"table_name": "user_groups", "column_name": "spaceIds"}
-        elif name == "users":
-            if "groupIds" in where:
-                return {"table_name": "users", "column_name": "groupIds"}
-        elif name == "console_space_subjects":
-            if "reportIds" in where:
-                return {"table_name": "console_space_subjects", "column_name": "reportIds"}
-        elif name == "console_spaces":
-            if "subjectIds" in where:
-                return {"table_name": "console_spaces", "column_name": "subjectIds"}
-
-        else:
-            return None
 
     def build_mysql_where_expression(self, table, where):
         for key, value in where.items():
@@ -104,12 +65,11 @@ class MysqlStorage(StorageInterface):
                                 return table.c[key.lower()].like("%" + v + "%")
                         if k == "in":
                             if isinstance(table.c[key.lower()].type, JSON):
-                                # not support clob to operate in here
-                                '''
-                                raise ValueError("the json type field \"{0}\" of table \"{1}\" , should not support "
-                                                 "\"in\" of where expression".format(key.lower(), table.name))
-                                '''
-                                stmt = "JSON_CONTAINS(" + key.lower() + ", '[\"" + v + "\"]', '$') = 1"
+                                if isinstance(v, list):
+                                    value_ = ",".join(v)
+                                else:
+                                    value_ = v
+                                stmt = "JSON_CONTAINS(" + key.lower() + ", '[\"" + value_ + "\"]', '$') = 1"
                                 return text(stmt)
                             else:
                                 if isinstance(v, list):
@@ -125,59 +85,61 @@ class MysqlStorage(StorageInterface):
                             return table.c[key.lower()] <= v
                         if k == "between":
                             if (isinstance(v, tuple)) and len(v) == 2:
-                                return table.c[key.lower()].between(self.check_value_type(v[0]),
-                                                                    self.check_value_type(v[1]))
+                                return table.c[key.lower()].between(v[0],
+                                                                    v[1])
                 else:
                     return table.c[key.lower()] == value
 
-    @staticmethod
-    def build_mysql_updates_expression_for_insert(table, updates):
-        new_updates = {"id_": get_surrogate_key()}
-        for key, value in updates.items():
-            if key == "$inc":
-                if isinstance(value, dict):
-                    for k, v in value.items():
-                        new_updates[k.lower()] = v
-            elif key == "$set":
-                if isinstance(value, dict):
-                    for k, v in value.items():
-                        new_updates[k.lower()] = v
-            if isinstance(value, dict):
-                for k, v in value.items():
-                    if k == "_sum":
-                        new_updates[key.lower()] = v
-                    elif k == "_count":
-                        new_updates[key.lower()] = v
-            else:
-                new_updates[key] = value
-        return new_updates
-
-
-    @staticmethod
-    def build_mysql_updates_expression_for_update(table, updates):
+    def build_mysql_updates_expression(self, table, updates, stmt_type: str) -> dict:
         new_updates = {}
-        for key, value in updates.items():
-            if key == "$inc":
-                if isinstance(value, dict):
-                    for k, v in value.items():
-                        key = k.lower()
-                        new_updates[key] = operator.add(table.c[key], v)
-            elif key == "$set":
-                if isinstance(value, dict):
-                    for k, v in value.items():
-                        new_updates[k.lower()] = v
+        for key in table.c.keys():
+            if key == "id_":
+                if stmt_type == "insert":
+                    new_updates[key] = get_surrogate_key()
             elif key == "version_":
-                new_updates[key] = value + 1
-            elif isinstance(value, dict):
-                for k, v in value.items():
-                    if k == "_sum":
-                        new_updates[key.lower()] = text(f'{key.lower()} + {v}')
-                    elif k == "_count":
-                        new_updates[key.lower()] = text(f'{key.lower()} + {v}')
+                if stmt_type == "insert":
+                    new_updates[key] = 0
+                elif stmt_type == "update":
+                    new_updates[key] = updates.get(key) + 1
             else:
-                new_updates[key] = value
+                if isinstance(table.c[key].type, JSON):
+                    if updates.get(key) is not None:
+                        new_updates[key] = updates.get(key)
+                    else:
+                        new_updates[key] = None
+                else:
+                    if updates.get(key) is not None:
+                        value_ = updates.get(key)
+                        if isinstance(value_, dict):
+                            for k, v in value_.items():
+                                if k == "_sum":
+                                    if stmt_type == "insert":
+                                        new_updates[key.lower()] = v
+                                    elif stmt_type == "update":
+                                        new_updates[key.lower()] = text(f'{key.lower()} + {v}')
+                                elif k == "_count":
+                                    if stmt_type == "insert":
+                                        new_updates[key.lower()] = v
+                                    elif stmt_type == "update":
+                                        new_updates[key.lower()] = text(f'{key.lower()} + {v}')
+                                elif k == "_avg":
+                                    if stmt_type == "insert":
+                                        new_updates[key.lower()] = v
+                                    elif stmt_type == "update":
+                                        pass  # todo
+                        else:
+                            new_updates[key] = value_
+                    else:
+                        default_value = self._get_table_column_default_value(table.name, key)
+                        if default_value is not None:
+                            value_ = default_value.strip("'").strip(" ")
+                            if value_.isdigit():
+                                new_updates[key] = Decimal(value_)
+                            else:
+                                new_updates[key] = value_
+                        else:
+                            new_updates[key] = None
         return new_updates
-
 
     @staticmethod
     def build_mysql_order(table, order_: list):
@@ -202,7 +164,6 @@ class MysqlStorage(StorageInterface):
         for key, value in one_dict.items():
             if isinstance(table.c[key.lower()].type, JSON):
                 if value is not None:
-                    # values[key.lower()] = dumps(value)
                     values[key.lower()] = value
                 else:
                     values[key.lower()] = None
@@ -270,28 +231,6 @@ class MysqlStorage(StorageInterface):
                 conn.execute(stmt)
         return model.parse_obj(updates)
 
-    '''
-    The where condition must hit the unique index, for row lock
-    '''
-
-    def upsert_(self, where, updates, model, name):
-        table = get_table_by_name(name)
-        instance_dict: dict = convert_to_dict(updates)
-        select_stmt = select(func.count(1).label("count")). \
-            select_from(table). \
-            with_for_update(nowait=True). \
-            where(self.build_mysql_where_expression(where))
-        insert_stmt = insert(table).values(instance_dict)
-        update_stmt = update(table).values(instance_dict)
-        with engine.connect() as conn:
-            with conn.begin():
-                row = conn.execute(select_stmt).fetchone()
-                if row._mapping['count'] == 0:
-                    conn.execute(insert_stmt)
-                if row._mapping['count'] == 1:
-                    conn.execute(update_stmt)
-        return model.parse_obj(updates)
-
     def update_(self, where, updates, model, name):
         table = get_table_by_name(name)
         stmt = update(table)
@@ -320,8 +259,6 @@ class MysqlStorage(StorageInterface):
                 if isinstance(getattr(res, key), list):
                     setattr(res, key, getattr(res, key).remove(value["in"][0]))
                     self.update_one(res, model, name)
-        # can't use update_, because the where have the json filed query
-        # update_(where, results, model, name)
 
     def delete_by_id(self, id_, name):
         table = get_table_by_name(name)
@@ -366,12 +303,8 @@ class MysqlStorage(StorageInterface):
 
     def find_one(self, where, model, name):
         table = get_table_by_name(name)
-        check_result = self.check_where_column_type(name, where)
-        if check_result is not None:
-            stmt = text(self.build_raw_sql_with_json_table(check_result, where))
-        else:
-            stmt = select(table)
-            stmt = stmt.where(self.build_mysql_where_expression(table, where))
+        stmt = select(table)
+        stmt = stmt.where(self.build_mysql_where_expression(table, where))
         with engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
@@ -386,14 +319,10 @@ class MysqlStorage(StorageInterface):
 
     def find_(self, where: dict, model, name: str) -> list:
         table = get_table_by_name(name)
-        check_result = self.check_where_column_type(name, where)
-        if check_result is not None:
-            stmt = text(self.build_raw_sql_with_json_table(check_result, where))
-        else:
-            stmt = select(table)
-            where_expression = self.build_mysql_where_expression(table, where)
-            if where_expression is not None:
-                stmt = stmt.where(where_expression)
+        stmt = select(table)
+        where_expression = self.build_mysql_where_expression(table, where)
+        if where_expression is not None:
+            stmt = stmt.where(where_expression)
         results = []
         with engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
@@ -481,117 +410,12 @@ class MysqlStorage(StorageInterface):
             results.append(parse_obj(model, result, table))
         return build_data_pages(pageable, results, count)
 
+    def clear_metadata(self):
+        metadata.clear()
+
     '''
     topic data interface
     '''
-
-
-    @staticmethod
-    @lru_cache(maxsize=10)
-    def get_datatype_by_factor_type(factor_type: str):
-        if factor_type == "text":
-            return String(30)
-        elif factor_type == "sequence":
-            return BigInteger
-        elif factor_type == "number":
-            return DECIMAL(32)
-        if factor_type == 'datetime':
-            return DateTime
-        if factor_type == 'date':
-            return Date
-        if factor_type == "boolean":
-            return String(5)
-        elif factor_type == "enum":
-            return String(20)
-        elif factor_type == "object":
-            return JSON
-        elif factor_type == "array":
-            return JSON
-        else:
-            return String(20)
-
-    @lru_cache(maxsize=30)
-    def check_topic_type_is_raw(self, topic_name):
-        table = get_table_by_name("topics")
-        select_stmt = select(table).where(
-            self.build_mysql_where_expression(table, {"name": topic_name}))
-        with engine.connect() as conn:
-            cursor = conn.execute(select_stmt).cursor
-            columns = [col[0] for col in cursor.description]
-            row = cursor.fetchone()
-            if row is None:
-                raise
-            else:
-                result = {}
-                for index, name in enumerate(columns):
-                    result[name] = row[index]
-                if result['type'] == "raw":
-                    return True
-                else:
-                    return False
-
-    def create_topic_data_table(self, topic):
-        topic_dict: dict = convert_to_dict(topic)
-        topic_type = topic_dict.get("type")
-        if topic_type == "raw":
-            self.create_raw_topic_data_table(topic)
-        else:
-            topic_name = topic_dict.get('name')
-            factors = topic_dict.get('factors')
-            table = Table('topic_' + topic_name.lower(), metadata)
-            key = Column(name="id_", type_=String(60), primary_key=True)
-            table.append_column(key)
-            for factor in factors:
-                name_ = factor.get('name').lower()
-                type_ = self.get_datatype_by_factor_type(factor.get('type'))
-                col = Column(name=name_, type_=type_, nullable=True)
-                table.append_column(col)
-            table.create(engine)
-
-    def create_raw_topic_data_table(self, topic):
-        topic_dict: dict = convert_to_dict(topic)
-        topic_name = topic_dict.get('name')
-        table = Table('topic_' + topic_name.lower(), metadata)
-        key = Column(name="id_", type_=String(60), primary_key=True)
-        table.append_column(key)
-        col = Column(name="data_", type_=JSON, nullable=True)
-        table.append_column(col)
-        table.create(engine)
-
-    # def create_topic_data_table_index(name: str, index_name: list, index_type: str):
-    #     pass
-
-    def alter_topic_data_table(self, topic):
-        topic_dict: dict = convert_to_dict(topic)
-        if topic_dict.get("type") == "raw":
-            pass
-        else:
-            topic_name = topic_dict.get('name')
-            table_name = 'topic_' + topic_name
-            '''
-            table = Table(table_name, metadata, extend_existing=True,
-                          autoload=True, autoload_with=engine)
-            '''
-            table = get_topic_table_by_name(table_name)
-            factors = topic_dict.get('factors')
-            existed_cols = []
-            for col in table.columns:
-                existed_cols.append(col.name)
-            for factor in factors:
-                factor_name = factor.get('name').lower()
-                factor_type = self.get_datatype_by_factor_type(factor.get('type'))
-                if factor_name in existed_cols:
-                    continue
-                else:
-                    column = Column(factor_name, factor_type)
-                    column_name = column.compile(dialect=engine.dialect)
-                    column_type = column.type.compile(engine.dialect)
-                    stmt = 'ALTER TABLE %s ADD %s %s' % (
-                        table_name, column_name, column_type)
-                    with engine.connect() as conn:
-                        with conn.begin():
-                            conn.execute(text(stmt))
-            metadata.remove(table)
 
     def drop_(self, topic_name):
         return self.drop_topic_data_table(topic_name)
@@ -616,96 +440,25 @@ class MysqlStorage(StorageInterface):
                 conn.execute(stmt)
 
     def topic_data_insert_one(self, one, topic_name):
-        if self.check_topic_type_is_raw(topic_name):
-            self.raw_topic_data_insert_one(one, topic_name)
-        else:
-            table_name = 'topic_' + topic_name
-            table = get_topic_table_by_name(table_name)
-            # one_dict: dict = convert_to_dict(one)
-            one_dict: dict = self.capital_to_lower(convert_to_dict(one))
-            one_dict = self.build_mysql_updates_expression_for_insert(table, one_dict)
-            value = {}
-            for key in table.c.keys():
-                if key == "id_":
-                    value[key] = get_surrogate_key()
-                else:
-                    if one_dict.get(key) is not None:
-                        value[key] = one_dict.get(key)
-                    else:
-                        default_value = self.get_table_column_default_value(table_name, key)
-                        if default_value is not None:
-                            value[key] = default_value.strip("'")
-                        else:
-                            value[key] = one_dict.get(key)
-            stmt = insert(table)
-            with engine.connect() as conn:
-                with conn.begin():
-                    conn.execute(stmt, value)
-
-
-    def get_table_columns(self,table_name):
-        key = table_name
-        if key in cache_column and settings.ENVIRONMENT == PROD:
-            return cache_column.get(key)
-          
-        columns = insp.get_columns(table_name)
-        if columns is not None:
-            cache_column.set(key,columns)
-        return columns
-
-
-    def get_table_column_default_value(self, table_name, column_name):
-        columns = self.get_table_columns(table_name)
-        for column in columns:
-            if column["name"] == column_name:
-                # cache_column.set(key,column["default"])
-                return column["default"]
-
-
-
-    def raw_topic_data_insert_one(self, one, topic_name):
-        if topic_name == "raw_pipeline_monitor":
-            self.raw_pipeline_monitor_insert_one(one, topic_name)
-        else:
-            table_name = 'topic_' + topic_name
-            table = get_topic_table_by_name(table_name)
-            one_dict: dict = convert_to_dict(one)
-            value = {'id_': get_surrogate_key(), 'data_': one_dict}
-            stmt = insert(table)
-            with engine.connect() as conn:
-                with conn.begin():
-                    conn.execute(stmt, value)
-
-    def topic_data_insert_(self, data, topic_name):
-        if self.check_topic_type_is_raw(topic_name):
-            self.raw_topic_data_insert_(data, topic_name)
-        else:
-            start_time = time.time()
-            table_name = 'topic_' + topic_name
-            table = get_topic_table_by_name(table_name)
-            elapsed_time = time.time() - start_time
-
-            values = []
-            for instance in data:
-                instance_dict: dict = convert_to_dict(instance)
-                instance_dict['id_'] = get_surrogate_key()
-                value = {}
-                for key in table.c.keys():
-                    value[key] = instance_dict.get(key)
-                values.append(value)
-            stmt = insert(table)
-            with engine.connect() as conn:
-                with conn.begin():
-                    conn.execute(stmt, values)
-
-    def raw_topic_data_insert_(self, data, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
+        one_dict: dict = capital_to_lower(convert_to_dict(one))
+        value = self.build_mysql_updates_expression(table, one_dict, "insert")
+        stmt = insert(table)
+        with engine.connect() as conn:
+            with conn.begin():
+                conn.execute(stmt, value)
 
+    def topic_data_insert_(self, data, topic_name):
+        table_name = 'topic_' + topic_name
+        table = get_topic_table_by_name(table_name)
         values = []
         for instance in data:
             instance_dict: dict = convert_to_dict(instance)
-            value = {'id_': get_surrogate_key(), 'data_': instance_dict}
+            instance_dict['id_'] = get_surrogate_key()
+            value = {}
+            for key in table.c.keys():
+                value[key] = instance_dict.get(key)
             values.append(value)
         stmt = insert(table)
         with engine.connect() as conn:
@@ -717,12 +470,7 @@ class MysqlStorage(StorageInterface):
         table = get_topic_table_by_name(table_name)
         stmt = update(table).where(eq(table.c['id_'], id_))
         one_dict = convert_to_dict(one)
-        one_dict_lower = self.build_mysql_updates_expression_for_update(table, self.capital_to_lower(one_dict))
-        values = {}
-        for key, value in one_dict_lower.items():
-            if key != 'id_':
-                if key.lower() in table.c.keys():
-                    values[key.lower()] = value
+        values = self.build_mysql_updates_expression(table, capital_to_lower(one_dict), "update")
         stmt = stmt.values(values)
         with engine.begin() as conn:
             conn.execute(stmt)
@@ -731,17 +479,10 @@ class MysqlStorage(StorageInterface):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
         stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
-
         one_dict = convert_to_dict(one)
         one_dict['version_'] = version_
-        one_dict_lower = self.build_mysql_updates_expression_for_update(table, self.capital_to_lower(one_dict))
-        values = {}
-        for key, value in one_dict_lower.items():
-            if key != 'id_':
-                if key.lower() in table.c.keys():
-                    values[key.lower()] = value
+        values = self.build_mysql_updates_expression(table, capital_to_lower(one_dict), "update")
         stmt = stmt.values(values)
-
         with engine.begin() as conn:
             result = conn.execute(stmt)
         if result.rowcount == 0:
@@ -764,21 +505,7 @@ class MysqlStorage(StorageInterface):
                 conn.execute(stmt)
 
     def topic_data_find_by_id(self, id_: str, topic_name: str) -> any:
-        table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
-
-        stmt = select(table).where(eq(table.c['id_'], id_))
-        with engine.connect() as conn:
-            cursor = conn.execute(stmt).cursor
-            columns = [col[0] for col in cursor.description]
-            row = cursor.fetchone()
-        if row is None:
-            return None
-        else:
-            result = {}
-            for index, name in enumerate(columns):
-                result[name] = row[index]
-            return self.convert_dict_key(result, topic_name)
+        return self.topic_data_find_one({"id_": id_}, topic_name)
 
     def topic_data_find_one(self, where, topic_name) -> any:
         table_name = 'topic_' + topic_name
@@ -793,8 +520,14 @@ class MysqlStorage(StorageInterface):
         else:
             result = {}
             for index, name in enumerate(columns):
-                result[name] = row[index]
-            return self.convert_dict_key(result, topic_name)
+                if isinstance(table.c[name.lower()].type, JSON):
+                    if row[index] is not None:
+                        result[name] = json.loads(row[index])
+                    else:
+                        result[name] = None
+                else:
+                    result[name] = row[index]
+            return self._convert_dict_key(result, topic_name)
 
     def topic_data_find_(self, where, topic_name):
         table_name = 'topic_' + topic_name
@@ -811,275 +544,172 @@ class MysqlStorage(StorageInterface):
             for row in res:
                 result = {}
                 for index, name in enumerate(columns):
-                    result[name] = row[index]
+                    if isinstance(table.c[name.lower()].type, JSON):
+                        if row[index] is not None:
+                            result[name] = json.loads(row[index])
+                        else:
+                            result[name] = None
+                    else:
+                        result[name] = row[index]
                 results.append(result)
-            return self.convert_list_elements_key(results, topic_name)
+            return self._convert_list_elements_key(results, topic_name)
 
     def topic_data_list_all(self, topic_name) -> list:
-        table_name_prefix = 'topic_' + topic_name
-        if self.check_topic_type_is_raw(topic_name):
-            return self.__raw_topic_load_all(table_name_prefix)
-        else:
-
-            table = get_topic_table_by_name(table_name_prefix)
-            stmt = select(table)
-            with engine.connect() as conn:
-                cursor = conn.execute(stmt).cursor
-                columns = [col[0] for col in cursor.description]
-                res = cursor.fetchall()
-                if res is None:
-                    return None
-                else:
-                    results = []
-                    for row in res:
-                        result = {}
-                        for index, name in enumerate(columns):
-                            result[name] = row[index]
-                        results.append(result)
-                    return self.convert_list_elements_key(results, topic_name)
-
-    def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
-        if name == "topic_raw_pipeline_monitor":
-            return self.raw_pipeline_monitor_page_(where, sort, pageable, model, name)
-        else:
-            count = count_topic_data_table(name)
-            table = get_topic_table_by_name(name)
-            stmt = select(table).where(self.build_mysql_where_expression(table, where))
-            orders = self.build_mysql_order(table, sort)
-            for order in orders:
-                stmt = stmt.order_by(order)
-            offset = pageable.pageSize * (pageable.pageNumber - 1)
-            stmt = stmt.offset(offset).limit(pageable.pageSize)
-            results = []
-            with engine.connect() as conn:
-                cursor = conn.execute(stmt).cursor
-                columns = [col[0] for col in cursor.description]
-                res = cursor.fetchall()
-            for row in res:
-                result = {}
-                for index, name in enumerate(columns):
-                    result[name] = row[index]
-                if model is not None:
-                    results.append(parse_obj(model, result, table))
-                else:
-                    results.append(result)
-            return build_data_pages(pageable, results, count)
-
-    def topic_find_one_and_update(self, where, updates, name):
-        table_name = 'topic_' + name
-        table = get_topic_table_by_name(table_name)
-        data_dict: dict = convert_to_dict(updates)
-
-        select_for_update_stmt = select(table). \
-            with_for_update(nowait=False). \
-            where(self.build_mysql_where_expression(table, where))
-
-        # if "id_" not in updates:
-        #     updates["id_"] = get_surrogate_key()
-        insert_stmt = insert(table).values(
-            self.build_mysql_updates_expression_for_insert(table, data_dict))
-
-        update_stmt = update(table).where(
-            self.build_mysql_where_expression(table, where)).values(
-            self.build_mysql_updates_expression_for_update(table, data_dict))
-
-        select_new_stmt = select(table). \
-            where(self.build_mysql_where_expression(table, where))
-
-        with engine.connect() as conn:
-            with conn.begin():
-                row = conn.execute(select_for_update_stmt).fetchone()
-                if row is not None:
-                    conn.execute(update_stmt)
-                else:
-                    conn.execute(insert_stmt)
-
-        with engine.connect() as conn:
-            with conn.begin():
-                cursor = conn.execute(select_new_stmt).cursor
-                columns = [col[0] for col in cursor.description]
-                row = cursor.fetchone()
-                result = {}
-                for index, name in enumerate(columns):
-                    result[name] = row[index]
-        return self.convert_dict_key(result, name)
-
-    def capital_to_lower(self, dict_info):
-        new_dict = {}
-        for i, j in dict_info.items():
-            new_dict[i.lower()] = j
-        return new_dict
-
-    def convert_dict_key(self, dict_info, topic_name):
-        if dict_info is None:
-            return None
-
-        new_dict = {}
-
-        factors = self.get_topic_factors(topic_name)
-        for factor in factors:
-            new_dict[factor['name']] = dict_info[factor['name'].lower()]
-        new_dict['id_'] = dict_info['id_']
-        if "version_" in dict_info:
-            new_dict['version_'] = dict_info.get("version_", None)
-        if "aggregate_assist_" in dict_info:
-            new_dict['aggregate_assist_'] = json.dumps(dict_info.get("aggregate_assist_"))
-        return new_dict
-
-
-    def get_topic_factors(self, topic_name):
-        if topic_name in cache and settings.ENVIRONMENT == PROD:
-            return cache.get(topic_name)
-
-        stmt = "select t.factors from topics t where t.name=:topic_name"
-        with engine.connect() as conn:
-            cursor = conn.execute(text(stmt), {"topic_name": topic_name}).cursor
-            row = cursor.fetchone()
-            factors = json.loads(row[0])
-
-            cache.set(topic_name, factors)
-
-        return factors
-
-    def convert_list_elements_key(self, list_info, topic_name):
-        if list_info is None:
-            return None
-        new_dict = {}
-        new_list = []
-
-        factors = self.get_topic_factors(topic_name)
-
-        for item in list_info:
-            for factor in factors:
-                new_dict[factor['name']] = item[factor['name'].lower()]
-                new_dict['id_'] = item['id_']
-                if "version_" in item:
-                    new_dict['version_'] = item.get("version_", None)
-                if "aggregate_assist_" in item:
-                    new_dict['aggregate_assist_'] = json.dumps(item.get("aggregate_assist_"))
-            new_list.append(new_dict)
-        return new_list
-
-    @staticmethod
-    def check_value_type(value):
-        if isinstance(value, datetime.datetime):
-            # return "DATE_FORMAT('" + value + "', '%Y-%m-%d %h:%i:%s')"
-            return value
-        elif isinstance(value, datetime.date):
-            # return "DATE_FORMAT('" + value + "', '%Y-%m-%d')"
-            return value
-        else:
-            return value
-
-    '''
-    special for raw_pipeline_monitor, need refactor for raw topic schema structure
-    '''
-
-    def create_raw_pipeline_monitor(self):
-        table = Table('topic_raw_pipeline_monitor', metadata)
-        table.append_column(Column(name='id_', type_=String(60), primary_key=True))
-        table.append_column(Column(name='data_', type_=JSON, nullable=True))
-        table.append_column(Column(name='sys_inserttime', type_=DateTime, nullable=True))
-        table.append_column(Column(name='sys_updatetime', type_=DateTime, nullable=True))
-        schema = json.loads(PipelineRunStatus.schema_json(indent=1))
-        for key, value in schema.get("properties").items():
-            column_name = key.lower()
-            column_type = value.get("type", None)
-            if column_type is None:
-                column_format = value.get("format", None)
-                if column_format is None:
-                    table.append_column(Column(name=column_name, type_=JSON, nullable=True))
-                else:
-                    if column_format == "date-time":
-                        table.append_column(Column(name=column_name, type_=Date, nullable=True))
-            elif column_type == "boolean":
-                table.append_column(Column(name=column_name, type_=String(5), nullable=True))
-            elif column_type == "string":
-                if column_name == "error":
-                    table.append_column(Column(name=column_name, type_=JSON, nullable=True))
-                elif column_name == "uid":
-                    table.append_column(Column(name=column_name.upper(), type_=String(50), quote=True, nullable=True))
-                else:
-                    table.append_column(Column(name=column_name, type_=String(50), nullable=True))
-            elif column_type == "integer":
-                table.append_column(Column(name=column_name, type_=Integer, nullable=True))
-            elif column_type == "array":
-                table.append_column(Column(name=column_name, type_=JSON, nullable=True))
-            else:
-                raise Exception(column_name + "not support type")
-        table.create(engine)
-
-    def raw_pipeline_monitor_insert_one(self, one, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        one_dict: dict = convert_to_dict(one)
-        one_lower_dict = self.capital_to_lower(one_dict)
-        value = {}
-        for key in table.c.keys():
-            if key == "id_":
-                value[key] = get_surrogate_key()
-            elif key == "data_":
-                value[key] = one_dict
-            else:
-                if isinstance(table.c[key].type, JSON):
-                    if one_lower_dict.get(key) is not None:
-                        value[key] = one_lower_dict.get(key)
-                    else:
-                        value[key] = None
-                else:
-                    value[key] = one_lower_dict.get(key)
-        stmt = insert(table)
-        with engine.connect() as conn:
-            with conn.begin():
-                conn.execute(stmt, value)
-
-    def __raw_topic_load_all(self, topic_name):
-        # count = count_topic_data_table(topic_name)
-        table = get_topic_table_by_name(topic_name)
         stmt = select(table)
         with engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             res = cursor.fetchall()
-        results = []
-        for row in res:
-            result = {}
-            for index, name in enumerate(columns):
-                if isinstance(table.c[name].type, JSON):
-                    result[name] = json.loads(row[index])
-                else:
-                    result[name] = row[index]
+            if res is None:
+                return None
+            else:
+                results = []
+                for row in res:
+                    result = {}
+                    for index, name in enumerate(columns):
+                        if isinstance(table.c[name.lower()].type, JSON):
+                            if row[index] is not None:
+                                result[name] = json.loads(row[index])
+                            else:
+                                result[name] = None
+                        else:
+                            result[name] = row[index]
+                    results.append(result)
+                return self._convert_list_elements_key(results, topic_name)
 
-            results.append(result['data_'])
-        return results
-        # orders = build_mysql_order(table, sort)
-
-    def raw_pipeline_monitor_page_(self, where, sort, pageable, model, name) -> DataPage:
-        count = count_topic_data_table(name)
-        table = get_topic_table_by_name(name)
+    def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
+        table_name = build_collection_name(name)
+        count = count_topic_data_table(table_name)
+        table = get_topic_table_by_name(table_name)
         stmt = select(table).where(self.build_mysql_where_expression(table, where))
         orders = self.build_mysql_order(table, sort)
         for order in orders:
             stmt = stmt.order_by(order)
         offset = pageable.pageSize * (pageable.pageNumber - 1)
         stmt = stmt.offset(offset).limit(pageable.pageSize)
+        results = []
         with engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             res = cursor.fetchall()
-        results = []
-        for row in res:
-            result = {}
-            for index, name in enumerate(columns):
-                if isinstance(table.c[name].type, JSON):
-                    result[name] = json.loads(row[index])
+        if self._check_topic_type(name) == "raw":
+            for row in res:
+                result = {}
+                for index, name in enumerate(columns):
+                    if name == "data_":
+                        result.update(json.loads(row[index]))
+                    results.append(result)
+        else:
+            for row in res:
+                result = {}
+                for index, name in enumerate(columns):
+                    if isinstance(table.c[name.lower()].type, JSON):
+                        if row[index] is not None:
+                            result[name] = json.loads(row[index])
+                        else:
+                            result[name] = None
+                    else:
+                        result[name] = row[index]
+                if model is not None:
+                    results.append(parse_obj(model, result, table))
                 else:
-                    result[name] = row[index]
-            if model is not None:
-                results.append(parse_obj(model, result, table))
-            else:
-                results.append(result['data_'])
+                    results.append(result)
         return build_data_pages(pageable, results, count)
 
-    def clear_metadata(self):
-        metadata.clear()
+    '''
+        internal method
+    '''
+
+    def _get_table_column_default_value(self, table_name, column_name):
+        columns = self._get_table_columns(table_name)
+        for column in columns:
+            if column["name"] == column_name:
+                return column["default"]
+
+    def _get_table_columns(self, table_name):
+        key = table_name
+        if key in cache_column and settings.ENVIRONMENT == PROD:
+            return cache_column.get(key)
+        columns = insp.get_columns(table_name)
+        if columns is not None:
+            cache_column.set(key, columns)
+        return columns
+
+    def _check_topic_type(self, topic_name):
+        topic = self._get_topic(topic_name)
+        return topic['type']
+
+    def _get_topic_factors(self, topic_name):
+        topic = self._get_topic(topic_name)
+        factors = topic['factors']
+        return factors
+
+    def _get_topic(self, topic_name) -> any:
+        if topic_name in cache and settings.ENVIRONMENT == PROD:
+            return cache.get(topic_name)
+        table = get_table_by_name("topics")
+        select_stmt = select(table).where(
+            self.build_mysql_where_expression(table, {"name": topic_name}))
+        with engine.connect() as conn:
+            cursor = conn.execute(select_stmt).cursor
+            columns = [col[0] for col in cursor.description]
+            row = cursor.fetchone()
+            if row is None:
+                raise
+            else:
+                result = {}
+                for index, name in enumerate(columns):
+                    if isinstance(table.c[name.lower()].type, JSON):
+                        if row[index] is not None:
+                            result[name] = json.loads(row[index])
+                        else:
+                            result[name] = None
+                    else:
+                        result[name] = row[index]
+                cache.set(topic_name, result)
+                return result
+
+    def _convert_list_elements_key(self, list_info, topic_name):
+        if list_info is None:
+            return None
+        new_dict = {}
+        new_list = []
+        factors = self._get_topic_factors(topic_name)
+        for item in list_info:
+            for factor in factors:
+                new_dict[factor['name']] = item[factor['name'].lower()]
+                new_dict['id_'] = item['id_']
+                if 'tenant_id_' in item:
+                    new_dict['tenant_id_'] = item.get("tenant_id_", 1)
+                if "insert_time_" in item:
+                    new_dict['insert_time_'] = item.get("insert_time_", datetime.now().replace(tzinfo=None))
+                if "update_time_" in item:
+                    new_dict['update_time_'] = item.get("update_time_", datetime.now().replace(tzinfo=None))
+                if "version_" in item:
+                    new_dict['version_'] = item.get("version_", 0)
+                if "aggregate_assist_" in item:
+                    new_dict['aggregate_assist_'] = item.get("aggregate_assist_")
+            new_list.append(new_dict)
+        return new_list
+
+    def _convert_dict_key(self, dict_info, topic_name):
+        if dict_info is None:
+            return None
+        new_dict = {}
+        factors = self._get_topic_factors(topic_name)
+        for factor in factors:
+            new_dict[factor['name']] = dict_info[factor['name'].lower()]
+        new_dict['id_'] = dict_info['id_']
+        if 'tenant_id_' in dict_info:
+            new_dict['tenant_id_'] = dict_info.get("tenant_id_", 1)
+        if "insert_time_" in dict_info:
+            new_dict['insert_time_'] = dict_info.get("insert_time_", datetime.now().replace(tzinfo=None))
+        if "update_time_" in dict_info:
+            new_dict['update_time_'] = dict_info.get("update_time_", datetime.now().replace(tzinfo=None))
+        if "version_" in dict_info:
+            new_dict['version_'] = dict_info.get("version_", None)
+        if "aggregate_assist_" in dict_info:
+            new_dict['aggregate_assist_'] = dict_info.get("aggregate_assist_")
+        return new_dict

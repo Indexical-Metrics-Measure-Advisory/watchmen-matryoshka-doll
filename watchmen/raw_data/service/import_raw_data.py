@@ -1,7 +1,11 @@
+from typing import List
+
 from watchmen.common.constants import pipeline_constants
+from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.utils.units_func import INSERT, add_audit_columns
+from watchmen.topic.factor.factor import Factor
 from watchmen.topic.storage.topic_data_storage import save_topic_instance
 from watchmen.topic.storage.topic_schema_storage import get_topic
 
@@ -15,16 +19,24 @@ async def import_raw_topic_data(topic_event, current_user):
     if not isinstance(topic_event.data, dict):
         raise ValueError("topic_event data should be dict, now it is {0}".format(topic_event.data))
     '''
-    add_audit_columns(topic_event.data, INSERT)
-    save_topic_instance(topic_event.code, topic_event.data)
-
-    # client = get_dask_client()
-    # task = client.submit(__trigger_pipeline, topic_event)
-    # # import_raw_topic_data(topic_event)
-    # fire_and_forget(task)
+    raw_data = {"data_": topic_event.data}
+    add_audit_columns(raw_data, INSERT)
+    flatten_fields = get_flatten_field(topic_event.data, topic.factors)
+    raw_data.update(flatten_fields)
+    save_topic_instance(topic_event.code, raw_data)
     __trigger_pipeline(topic_event, current_user)
 
 
 def __trigger_pipeline(topic_event, current_user):
     trigger_pipeline(topic_event.code, {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
                      TriggerType.insert, current_user)
+
+
+def get_flatten_field(data: dict, factors: List[Factor]):
+    flatten_fields = {}
+    for factor in factors:
+        if factor.flatten:
+            key = factor.name
+            value = check_and_convert_value_by_factor(factor, data.get(key, None))
+            flatten_fields[key.lower()] = value
+    return flatten_fields

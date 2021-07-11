@@ -4,6 +4,7 @@ from datetime import date
 import arrow
 import pymongo
 from bson import regex, ObjectId
+from pymongo import ReturnDocument
 
 from watchmen.common.data_page import DataPage
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
@@ -114,7 +115,6 @@ class MongoStorage(StorageInterface):
     def build_mongo_updates_expression_for_update(self, updates):
         new_updates = {}
         new_updates["$set"] = {}
-        # print("updates", updates)
         for key, value in updates.items():
             if isinstance(value, dict):
                 for k, v in value.items():
@@ -160,13 +160,6 @@ class MongoStorage(StorageInterface):
         collection = client.get_collection(name)
         query_dict = self.build_mongo_where_expression(where)
         collection.update_one(query_dict, {"$set": self.__convert_to_dict(updates)})
-        return model.parse_obj(updates)
-
-    # equal create_or_update, To avoid multiple upserts, ensure that the filter fields are uniquely indexed.
-    def upsert_(self, where, updates, model, name):
-        collections = client.get_collection(name)
-        collections.update_one(self.build_mongo_where_expression(where), {"$set": self.__convert_to_dict(updates)},
-                               upsert=True)
         return model.parse_obj(updates)
 
     def update_one_with_condition(self, where, one, model, name):
@@ -278,21 +271,9 @@ class MongoStorage(StorageInterface):
         else:
             return instance
 
-    # def find_one_and_update(self, where: dict, updates: dict, name: str):
-    #     codec_options = build_code_options()
-    #     collection = client.get_collection(name, codec_options=codec_options)
-    #     return collection.find_one_and_update(filter=self.build_mongo_where_expression(where), update=updates,
-    #                                           upsert=True)
-
     '''
     for topic data impl
     '''
-
-    def create_topic_data_table(self, topic):
-        pass
-
-    def alter_topic_data_table(self, topic):
-        pass
 
     def drop_topic_data_table(self, name):
         topic_name = build_collection_name(name)
@@ -326,16 +307,20 @@ class MongoStorage(StorageInterface):
             self.encode_dict(d)
         topic_data_col.insert_many(data)
 
-    def raw_topic_data_insert_one(self, one, topic_name):
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        topic_data_col.insert(one)
-
     def topic_data_update_one(self, id_, one, topic_name):
         codec_options = build_code_options()
         topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
         self.encode_dict(one)
         topic_data_col.update_one({"_id": ObjectId(id_)}, self.build_mongo_updates_expression_for_update(one))
+
+    def topic_data_update_one_with_version(self, id_, version_, one, topic_name):
+        codec_options = build_code_options()
+        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
+        self.encode_dict(one)
+        return topic_data_col.find_one_and_update(filter=self.build_mongo_where_expression({"_id": ObjectId(id_), "version_": version_}),
+                                                  update=self.build_mongo_updates_expression_for_update(one),
+                                                  upsert=False,
+                                                  return_document=ReturnDocument.AFTER)
 
     def topic_data_update_(self, where, updates, name):
         codec_options = build_code_options()
@@ -365,24 +350,8 @@ class MongoStorage(StorageInterface):
         result = topic_data_col.find()
         return list(result)
 
-    def topic_find_one_and_update(self, where: dict, updates: dict, name: str):
-        codec_options = build_code_options()
-        collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
-        return collection.find_one_and_update(filter=self.build_mongo_where_expression(where), update=updates,
-                                              upsert=True,
-                                              return_document=ReturnDocument.AFTER)
-
     def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
         return self.page_(self.build_mongo_where_expression(where), sort, pageable, model, name)
 
-    '''
-    special for raw_pipeline_monitor, need refactor for raw topic schema structure, ToDo
-    '''
-
-    def create_raw_pipeline_monitor(self):
-        pass
-
     def clear_metadata(self):
         pass
-
-    # def create_topic_data_table_index(self):

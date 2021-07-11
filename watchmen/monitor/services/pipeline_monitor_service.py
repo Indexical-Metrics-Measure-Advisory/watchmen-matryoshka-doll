@@ -3,7 +3,7 @@ import watchmen.pipeline.index
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.database.storage.storage_template import raw_topic_data_insert_one
+from watchmen.database.storage.storage_template import topic_data_insert_one
 
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.pipeline.model.trigger_type import TriggerType
@@ -14,14 +14,14 @@ from watchmen.topic.topic import Topic
 
 def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):
     topic_event = TopicEvent(code="raw_pipeline_monitor", data=pipeline_monitor.dict())
-    # asyncio.ensure_future(import_raw_topic_data(topic_event))
 
     topic = get_topic(topic_event.code)
     if topic is None:
         raise Exception("topic name does not exist")
 
     add_audit_columns(topic_event.data, INSERT)
-    raw_topic_data_insert_one(topic_event.data, topic_event.code)
+    raw_monitor_data = {"data_": topic_event.data, **topic_event.data}
+    topic_data_insert_one(raw_monitor_data, topic_event.code)
     watchmen.pipeline.index.trigger_pipeline(topic_event.code,
                                              {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
                                              TriggerType.insert)

@@ -12,13 +12,6 @@ class OrderType(Enum):
     DESCENDING = -1
 
 
-'''
-class SqlOperator(Enum):
-    AND = "and"
-    OR = "or"
-'''
-
-
 class Pageable(BaseModel):
     pageSize: int = None
     pageNumber: int = None
@@ -53,10 +46,6 @@ class StorageInterface(abc.ABC):
 
     @abc.abstractmethod
     def update_one_first(self, where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
-        pass
-
-    @abc.abstractmethod
-    def upsert_(self, where: dict, updates: dict, model: BaseModel, name: str) -> BaseModel:
         pass
 
     @abc.abstractmethod
@@ -127,24 +116,16 @@ class StorageInterface(abc.ABC):
     def page_(self, where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
         pass
 
-    # @abc.abstractmethod
-    # def find_one_and_update(self,where: dict, updates: dict, name: str) -> any:
-    #     pass
-
     '''
     for topic data storage interface
     '''
 
     @abc.abstractmethod
-    def create_topic_data_table(self, topic):
+    def topic_data_insert_one(self, one: any, topic_name: str) -> tuple:
         pass
 
-    # @abc.abstractmethod
-    # def create_topic_data_table_index(self,name: str, index_name: list, index_type: str):
-    #     pass
-
     @abc.abstractmethod
-    def alter_topic_data_table(self, topic):
+    def topic_data_insert_(self, data: list, topic_name: str):
         pass
 
     @abc.abstractmethod
@@ -156,15 +137,10 @@ class StorageInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def topic_data_insert_one(self, one: any, topic_name: str) -> tuple:
-        pass
-
-    @abc.abstractmethod
-    def topic_data_insert_(self, data: list, topic_name: str):
-        pass
-
-    @abc.abstractmethod
     def topic_data_update_one(self, id_: str, one: any, topic_name: str):
+        pass
+
+    def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
         pass
 
     @abc.abstractmethod
@@ -184,27 +160,11 @@ class StorageInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def raw_topic_data_insert_one(self, one, topic_name):
-        pass
-
-    @abc.abstractmethod
     def topic_data_list_all(self, topic_name) -> list:
         pass
 
     @abc.abstractmethod
     def topic_data_page_(self, where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
-        pass
-
-    @abc.abstractmethod
-    def topic_find_one_and_update(self, where: dict, updates: dict, name: str) -> any:
-        pass
-
-    '''
-    special for raw_pipeline_monitor, need refactor for raw topic schema structure, ToDo
-    '''
-
-    @abc.abstractmethod
-    def create_raw_pipeline_monitor(self):
         pass
 
     @abc.abstractmethod

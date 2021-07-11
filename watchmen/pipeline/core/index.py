@@ -21,27 +21,9 @@ def __match_trigger_type(trigger_type, pipeline):
 
 
 def trigger_pipeline_2(topic_name, instance, trigger_type: TriggerType, current_user=None):
-    # log.info("trigger_pipeline topic_name :{0}".format(topic_name))
     topic = get_topic(topic_name, current_user)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId, current_user)
-    # client = get_dask_client()
-
-    # import_raw_topic_data(topic_event)
-    run_pipeline_list = []
-    pipeline_contexts = []
     for pipeline in pipeline_list:
         if __match_trigger_type(trigger_type, pipeline):
-            # run_pipeline_list.append(pipeline)
-            # log.info("pipeline run: {0}".format(pipeline.json()))
             pipeline_context = PipelineContext(pipeline, instance)
-            # pipeline_contexts.append(pipeline_context)
-            # task = client.submit(run_pipeline, pipeline_context)
-            # fire_and_forget(task)
-            # task.
             run_pipeline(pipeline_context)
-    # futures = client.map(run_pipeline, pipeline_contexts)
-    #
-    # seq = as_completed(futures)
-    #
-    # for future in seq:
-    #       future.result()
