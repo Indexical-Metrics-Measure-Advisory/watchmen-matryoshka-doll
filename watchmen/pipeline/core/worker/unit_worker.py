@@ -51,7 +51,11 @@ def run_unit(unit_context: UnitContext):
                 unit_context.unitStatus = UnitRunStatus()
                 for action in unit_context.unit.do:
                     action_context = ActionContext(unit_context, action)
-                    run_action(action_context)
+                    action_context, trigger_pipeline_data_list = run_action(action_context)
+                    if trigger_pipeline_data_list:
+                        unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
+                            *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
+                            *trigger_pipeline_data_list]
                     unit_context.unitStatus.actions.append(action_context.actionStatus)
 
 
