@@ -87,6 +87,7 @@ class OracleStorage(StorageInterface):
                 else:
                     return table.c[key.lower()] == value
 
+    '''
     def build_oracle_updates_expression(self, table, updates, stmt_type: str) -> dict:
         new_updates = {}
         for key in table.c.keys():
@@ -137,6 +138,68 @@ class OracleStorage(StorageInterface):
                         else:
                             new_updates[key] = None
         return new_updates
+    '''
+    def build_oracle_updates_expression(self, table, updates, stmt_type: str) -> dict:
+        if stmt_type == "insert":
+            new_updates = {}
+            for key in table.c.keys():
+                if key == "id_":
+                    new_updates[key] = get_surrogate_key()
+                elif key == "version_":
+                    new_updates[key] = 0
+                else:
+                    if isinstance(table.c[key].type, CLOB):
+                        if updates.get(key) is not None:
+                            new_updates[key] = dumps(updates.get(key))
+                        else:
+                            new_updates[key] = None
+                    else:
+                        if updates.get(key) is not None:
+                            value_ = updates.get(key)
+                            if isinstance(value_, dict):
+                                for k, v in value_.items():
+                                    if k == "_sum":
+                                        new_updates[key.lower()] = v
+                                    elif k == "_count":
+                                        new_updates[key.lower()] = v
+                                    elif k == "_avg":
+                                        new_updates[key.lower()] = v
+                            else:
+                                new_updates[key] = value_
+                        else:
+                            default_value = self._get_table_column_default_value(table.name, key)
+                            if default_value is not None:
+                                value_ = default_value.strip("'").strip(" ")
+                                if value_.isdigit():
+                                    new_updates[key] = Decimal(value_)
+                                else:
+                                    new_updates[key] = value_
+                            else:
+                                new_updates[key] = None
+            return new_updates
+        elif stmt_type == "update":
+            new_updates = {}
+            for key in table.c.keys():
+                if key == "version_":
+                    new_updates[key] = updates.get(key) + 1
+                else:
+                    if isinstance(table.c[key].type, CLOB):
+                        if updates.get(key) is not None:
+                            new_updates[key] = dumps(updates.get(key))
+                    else:
+                        if updates.get(key) is not None:
+                            value_ = updates.get(key)
+                            if isinstance(value_, dict):
+                                for k, v in value_.items():
+                                    if k == "_sum":
+                                        new_updates[key.lower()] = text(f'{key.lower()} + {v}')
+                                    elif k == "_count":
+                                        new_updates[key.lower()] = text(f'{key.lower()} + {v}')
+                                    elif k == "_avg":
+                                        pass  # todo
+                            else:
+                                new_updates[key] = value_
+            return new_updates
 
     def build_oracle_order(self, table, order_: list):
         result = []

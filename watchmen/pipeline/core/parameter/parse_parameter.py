@@ -240,10 +240,8 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
         operator_ = joint.operator
         right = parse_parameter(joint.right, instance, variables)
         if operator_ == "equals":
-            # return operator.eq(left, right)
             return do_equals_with_value_type_check(left, right)
         elif operator_ == "not-equals":
-            # return operator.ne(left, right)
             return do_not_equals_with_value_type_check(left, right)
         elif operator_ == 'empty':
             if left == "":
@@ -254,16 +252,12 @@ def parse_parameter_joint(joint: ParameterJoint, instance, variables):
                 return operator.is_not(None, None)
             return operator.is_not(left, None)
         elif operator_ == "more":
-            # return operator.gt(left, right)
             return do_more_with_value_type_check(left, right)
         elif operator_ == "more-equals":
-            # return operator.ge(left, right)
             return do_more_equals_with_value_type_check(left, right)
         elif operator_ == "less":
-            # return operator.lt(left, right)
             return do_less_with_value_type_check(left, right)
         elif operator_ == "less-equals":
-            # return operator.le(left, right)
             return do_less_equals_with_value_type_check(left, right)
         elif operator_ == 'in':
             return do_in_with_value_type_check(left, right)
