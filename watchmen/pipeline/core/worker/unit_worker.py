@@ -60,7 +60,11 @@ def run_loop_actions(loop_variable_name, unit_context):
                     action_context = ActionContext(unit_context, action)
                     action_context.delegateVariableName = loop_variable_name
                     action_context.delegateValue = value
-                    action_context = run_action(action_context)
+                    action_context, trigger_pipeline_data_list = run_action(action_context)
+                    if trigger_pipeline_data_list:
+                        unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
+                            *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
+                            *trigger_pipeline_data_list]
                     unit_context.unitStatus.actions.append(action_context.actionStatus)
 
 
@@ -76,5 +80,9 @@ def run_loop_with_dask(loop_variable_name, unit_context):
                     action_context.delegateValue = value
                     futures.append(get_dask_client().submit(run_action, action_context))
     for future in as_completed(futures):
-        result = future.result()
-        unit_context.unitStatus.actions.append(result.actionStatus)
+        action_context, trigger_pipeline_data_list = future.result()
+        if trigger_pipeline_data_list:
+            unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
+                *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
+                *trigger_pipeline_data_list]
+        unit_context.unitStatus.actions.append(action_context.actionStatus)
