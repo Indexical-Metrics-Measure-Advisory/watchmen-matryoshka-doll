@@ -56,7 +56,6 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list):
     after_merge_list = __merge_pipeline_data(pipeline_trigger_merge_list)
 
     for topic_name, item in after_merge_list.items():
-        # log.info("merge_topic:{0}".format(topic_name))
         merge_data = {}
         if TriggerType.update.value in item:
             for update_data in item[TriggerType.update.value]:
@@ -119,7 +118,7 @@ def run_pipeline(pipeline_context: PipelineContext):
                     __trigger_all_pipeline(pipeline_context.pipeline_trigger_merge_list)
 
             except Exception as e:
-                log.exception(e)
+                log.error(e)
                 pipeline_status.error = traceback.format_exc()
                 pipeline_status.status = ERROR
             finally:

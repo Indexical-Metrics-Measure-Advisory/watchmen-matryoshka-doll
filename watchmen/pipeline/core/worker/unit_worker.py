@@ -39,7 +39,11 @@ def run_unit(unit_context: UnitContext):
                         action_context = ActionContext(unit_context, action)
                         action_context.delegateVariableName = loop_variable_name
                         action_context.delegateValue = loop_variable
-                        action_context = run_action(action_context)
+                        action_context, trigger_pipeline_data_list = run_action(action_context)
+                        if trigger_pipeline_data_list:
+                            unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
+                                *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
+                                *trigger_pipeline_data_list]
                         unit_context.unitStatus.actions.append(action_context.actionStatus)
     else:
         if unit_context.unit.do is not None:
