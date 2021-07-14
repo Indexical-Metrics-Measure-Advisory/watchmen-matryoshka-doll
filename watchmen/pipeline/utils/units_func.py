@@ -230,7 +230,9 @@ def get_value(factor: Factor, data):
 
 def add_audit_columns(dictionary, audit_type):
     if audit_type == INSERT:
-        dictionary[pipeline_constants.INSERT_TIME] = datetime.now().replace(tzinfo=None)
+        insert_time =  datetime.now().replace(tzinfo=None)
+        dictionary[pipeline_constants.INSERT_TIME] = insert_time
+        dictionary[pipeline_constants.UPDATE_TIME] = insert_time
     elif audit_type == UPDATE:
         dictionary[pipeline_constants.UPDATE_TIME] = datetime.now().replace(tzinfo=None)
     else:

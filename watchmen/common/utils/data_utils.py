@@ -4,6 +4,7 @@ from enum import Enum
 
 from pydantic.tools import lru_cache
 
+from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.data_page import DataPage
 from watchmen.config.config import settings
 from watchmen.pipeline.utils.units_func import ADDRESS, CONTINENT, REGION, COUNTRY, PROVINCE, CITY, \
@@ -29,6 +30,10 @@ def get_dict_schema_set(model_schema_set):
     for schema in model_schema_set.schemas.values():
         result[schema.modelId] = schema
     return result
+
+
+def is_raw(topic):
+    return topic.type ==RAW
 
 
 def get_id_name():
