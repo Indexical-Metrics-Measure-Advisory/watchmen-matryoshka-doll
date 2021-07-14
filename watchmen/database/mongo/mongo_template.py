@@ -347,7 +347,10 @@ class MongoStorage(StorageInterface):
     def topic_data_list_all(self, topic_name) -> list:
         codec_options = build_code_options()
         topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
+
         result = topic_data_col.find()
+
+        # print(list(result))
         return list(result)
 
     def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:

@@ -1,6 +1,7 @@
 from typing import List
 
 from watchmen.common.constants import pipeline_constants
+from watchmen.common.utils.data_utils import is_raw
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
@@ -19,12 +20,24 @@ async def import_raw_topic_data(topic_event, current_user):
     if not isinstance(topic_event.data, dict):
         raise ValueError("topic_event data should be dict, now it is {0}".format(topic_event.data))
     '''
-    raw_data = {"data_": topic_event.data}
+
+    # raw_data = {"data_": topic_event.data}
+
+    raw_data = await get_input_data( topic, topic_event)
+
     add_audit_columns(raw_data, INSERT)
     flatten_fields = get_flatten_field(topic_event.data, topic.factors)
     raw_data.update(flatten_fields)
     save_topic_instance(topic_event.code, raw_data)
     __trigger_pipeline(topic_event, current_user)
+
+
+async def get_input_data( topic, topic_event):
+    if is_raw(topic):
+        raw_data = {"data_": topic_event.data}
+    else:
+        raw_data = topic_event.data
+    return raw_data
 
 
 def __trigger_pipeline(topic_event, current_user):
