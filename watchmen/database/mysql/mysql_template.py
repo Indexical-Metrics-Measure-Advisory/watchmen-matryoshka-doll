@@ -587,8 +587,14 @@ class MysqlStorage(StorageInterface):
                                 result[name] = None
                         else:
                             result[name] = row[index]
-                    results.append(result)
-                return self._convert_list_elements_key(results, topic_name)
+                    if self._check_topic_type(topic_name) == "raw":
+                        results.append(result['data_'])
+                    else:
+                        results.append(result)
+                if self._check_topic_type(topic_name) == "raw":
+                    return results
+                else:
+                    return self._convert_list_elements_key(results, topic_name)
 
     def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
         table_name = build_collection_name(name)

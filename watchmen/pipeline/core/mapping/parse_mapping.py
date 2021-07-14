@@ -1,11 +1,7 @@
-from cacheout import Cache
 
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
-# TOPICS = "topics"
 from watchmen.topic.topic import Topic
-
-cache = Cache()
 
 
 def parse_mappings(mappings, target_topic, previous_data, current_data, variables):
@@ -49,8 +45,6 @@ def parse_mappings(mappings, target_topic, previous_data, current_data, variable
 
 
 def get_factor(factor_id, target_topic: Topic):
-
     for factor in target_topic.factors:
         if factor.factorId == factor_id:
-            # cache.set(cache_key,factor)
             return factor
