@@ -36,7 +36,7 @@ def do_equals_with_value_type_check(left, right):
         return operator.eq(str(left), right)
     if (isinstance(left, int) or isinstance(left, Decimal)) and (
             isinstance(right, int) or isinstance(right, Decimal)):
-        return operator.eq(str(left), str(left))
+        return operator.eq(str(left), str(right))
     if (isinstance(left, int) or isinstance(left, Decimal)) and (
             isinstance(right, datetime) or isinstance(right, date)):
         raise ValueError(
