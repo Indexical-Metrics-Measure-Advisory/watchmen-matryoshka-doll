@@ -10,9 +10,7 @@ from watchmen.auth.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
-
 from watchmen.common.pagination import Pagination
-
 from watchmen.common.parameter import Parameter
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
@@ -21,12 +19,11 @@ from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.database.mongo.index import delete_topic_collection
 from watchmen.database.storage.storage_template import clear_metadata, DataPage
-from watchmen.monitor.services.pipeline_monitor_service import insert_monitor_topic
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.dependency.caculate_dependency_new import pipelineExecutionPath
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
-from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
+from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
 from watchmen.report.engine.dataset_engine import get_factor_value_by_subject_and_condition
 from watchmen.report.model.filter import Filter

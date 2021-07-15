@@ -1,4 +1,4 @@
-# from watchmen.pipeline.index import trigger_pipeline
+
 import watchmen.pipeline.index
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.constants import pipeline_constants
