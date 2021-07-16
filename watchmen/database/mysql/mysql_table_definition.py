@@ -210,7 +210,6 @@ pats_table = Table("pats", metadata,
                    )
 
 
-@lru_cache(maxsize=10)
 def get_table_by_name(table_name):
     if table_name in cache and settings.ENVIRONMENT == PROD:
         return cache.get(table_name)
