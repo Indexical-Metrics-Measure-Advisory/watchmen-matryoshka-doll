@@ -105,7 +105,7 @@ class QueryConditions(BaseModel):
 
 class QuerySubjectRequest(BaseModel):
     subjectId: str = None
-    columnName: str = None
+    columnNames: List[str] = []
     conditions: QueryConditions = None
 
 
@@ -128,18 +128,21 @@ def __build_subject_filter(conditions, console_subject: ConsoleSpaceSubject):
     return subject_conditions
 
 
-def __get_factor_name_by_alias(column_name, console_subject):
-    column = __find_column_by_alias(column_name, console_subject.dataset.columns)
-    factor = get_factor(column.parameter.factorId, get_topic_by_id(column.parameter.topicId))
-    return factor.name
+def __get_factor_name_by_alias(column_name_list, console_subject):
+    factor_name_list = []
+    for column_name in column_name_list:
+        column = __find_column_by_alias(column_name, console_subject.dataset.columns)
+        factor = get_factor(column.parameter.factorId, get_topic_by_id(column.parameter.topicId))
+        factor_name_list.append(factor.name)
+    return factor_name_list
 
 
 @router.post("/subject/query", tags=["common"])
-async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubjectRequest):
-    console_subject = load_console_subject_by_id(query_subject.subjectId)
+async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubjectRequest,current_user: User = Depends(deps.get_current_user)):
+    console_subject = load_console_subject_by_id(query_subject.subjectId,current_user)
     subject_filter = __build_subject_filter(query_subject.conditions, console_subject)
-    factor_name = __get_factor_name_by_alias(query_subject.columnName, console_subject)
-    return get_factor_value_by_subject_and_condition(console_subject, factor_name,
+    factor_name_list = __get_factor_name_by_alias(query_subject.columnNames, console_subject)
+    return get_factor_value_by_subject_and_condition(console_subject, factor_name_list,
                                                      subject_filter)
 
 
