@@ -5,8 +5,9 @@ import operator
 from decimal import Decimal
 from operator import eq
 
-from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, CLOB, desc, asc, \
-    text, func, DateTime, BigInteger, Date, Integer, Index
+from cacheout import Cache
+from sqlalchemy import update, and_, or_, delete, CLOB, desc, asc, \
+    text, func
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.engine import Inspector
 from sqlalchemy.exc import NoSuchTableError, IntegrityError
@@ -16,7 +17,6 @@ from sqlalchemy.orm import Session
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
-
 from watchmen.config.config import settings, PROD
 from watchmen.database.oracle.oracle_engine import engine, dumps
 from watchmen.database.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
@@ -25,7 +25,6 @@ from watchmen.database.singleton import singleton
 from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
-from cacheout import Cache
 
 insp = Inspector.from_engine(engine)
 
@@ -142,13 +141,14 @@ class OracleStorage(StorageInterface):
     def build_oracle_updates_expression(self, table, updates, stmt_type: str) -> dict:
         if stmt_type == "insert":
             new_updates = {}
-            for key in table.c.keys():
+            c_dict = table.c
+            for key in c_dict.keys():
                 if key == "id_":
                     new_updates[key] = get_surrogate_key()
                 elif key == "version_":
                     new_updates[key] = 0
                 else:
-                    if isinstance(table.c[key].type, CLOB):
+                    if isinstance(c_dict[key].type, CLOB):
                         if updates.get(key) is not None:
                             new_updates[key] = dumps(updates.get(key))
                         else:
@@ -179,11 +179,12 @@ class OracleStorage(StorageInterface):
             return new_updates
         elif stmt_type == "update":
             new_updates = {}
-            for key in table.c.keys():
+            c_dict =table.c
+            for key in c_dict.keys():
                 if key == "version_":
                     new_updates[key] = updates.get(key) + 1
                 else:
-                    if isinstance(table.c[key].type, CLOB):
+                    if isinstance(c_dict[key].type, CLOB):
                         if updates.get(key) is not None:
                             new_updates[key] = dumps(updates.get(key))
                     else:

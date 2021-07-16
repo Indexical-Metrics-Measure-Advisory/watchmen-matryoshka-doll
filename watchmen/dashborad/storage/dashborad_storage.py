@@ -2,7 +2,7 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.database.storage.storage_template import insert_one, update_one, delete_one, update_, find_, \
-    find_one
+    find_one, delete_by_id
 
 DASHBOARD_ID = "dashboardId"
 
@@ -37,7 +37,7 @@ def load_dashboard_by_user_id(user_id, current_user):
 
 def delete_dashboard_by_id(dashboard_id):
     # return template.delete_one(DASHBOARDS, {DASHBOARD_ID: dashboard_id})
-    delete_one(dashboard_id, DASHBOARDS)
+    delete_by_id(dashboard_id, DASHBOARDS)
 
 
 def rename_dashboard_by_id(dashboard_id, name):

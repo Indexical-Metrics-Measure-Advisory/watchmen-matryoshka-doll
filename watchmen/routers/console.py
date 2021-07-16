@@ -134,7 +134,7 @@ async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body
 
 @router.get("/console_space/delete", tags=["console"])
 async def delete_console_space(connect_id, current_user: User = Depends(deps.get_current_user)):
-    delete_console_space_and_sub_data(connect_id)
+    delete_console_space_and_sub_data(connect_id,current_user)
 
 
 @router.get("/console_space/subject/rename", tags=["console"])
