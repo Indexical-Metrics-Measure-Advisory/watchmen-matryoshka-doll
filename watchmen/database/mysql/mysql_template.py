@@ -5,7 +5,6 @@ import operator
 from decimal import Decimal
 from operator import eq
 
-from cacheout import Cache
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, desc, asc, \
     text, func, DateTime, BigInteger, Date, Integer, JSON
 from sqlalchemy.dialects.mysql import insert
@@ -14,7 +13,7 @@ from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
@@ -28,9 +27,7 @@ from watchmen.database.storage.exception.exception import OptimisticLockError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
-cache = Cache()
 
-cache_column = Cache()
 insp = Inspector.from_engine(engine)
 # import arrow
 
@@ -240,7 +237,7 @@ class MysqlStorage(StorageInterface):
                                 new_updates[key] = value_
             return new_updates
     '''
-    
+
     @staticmethod
     def build_mysql_order(table, order_: list):
         result = []
@@ -735,13 +732,13 @@ class MysqlStorage(StorageInterface):
                 return column["default"]
 
     def _get_table_columns(self, table_name):
-        key = table_name
-        if key in cache_column and settings.ENVIRONMENT == PROD:
-            return cache_column.get(key)
+        cached_columns = cacheman[COLUMNS_BY_TABLE_NAME].get(table_name)
+        if cached_columns is not None:
+            return cached_columns
         columns = insp.get_columns(table_name)
         if columns is not None:
-            cache_column.set(key, columns)
-        return columns
+            cacheman[COLUMNS_BY_TABLE_NAME].set(table_name, columns)
+            return columns
 
     def _check_topic_type(self, topic_name):
         topic = self._get_topic(topic_name)
