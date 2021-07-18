@@ -48,7 +48,12 @@ def load_topic_list_by_name(topic_name: str, current_user) -> List[Topic]:
 
 
 def load_topic_by_name(topic_name: str, current_user) -> Topic:
-    return find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+    cached_topic = cacheman[TOPIC_BY_NAME].get(topic_name)
+    if cached_topic is not None:
+        return cached_topic
+    result = find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+    cacheman[TOPIC_BY_NAME].set(topic_name, result)
+    return result
 
 
 def get_topic_by_id(topic_id: str, current_user=None) -> Topic:

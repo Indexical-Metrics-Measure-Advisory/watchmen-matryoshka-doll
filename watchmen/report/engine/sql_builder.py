@@ -154,8 +154,12 @@ def _filter_criterion(filter: Filter) -> any:
     if filter.operator == "equals":
         if factor is not None and factor.type == "text":
             return operator.eq(left, right)
+        elif factor is not None and factor.type == "date":
+            return "{0}=DATE {1}".format(left, right)
+        elif factor is not None and factor.type == "datetime":
+            return "{0}=TIMESTAMP {1}".format(left, right)
         else:
-            return operator.eq(left, int(right))
+            return operator.eq(left, right)
     elif filter.operator == "not-equals":
         if factor is not None and factor.type == "text":
             return left.__ne__(right)
