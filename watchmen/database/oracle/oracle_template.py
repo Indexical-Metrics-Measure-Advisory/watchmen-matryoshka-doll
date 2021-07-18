@@ -7,9 +7,8 @@ from operator import eq
 
 
 from sqlalchemy import update, and_, or_, delete, CLOB, desc, asc, \
-    text, func
+    text, func, inspect
 from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.engine import Inspector
 from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
@@ -28,7 +27,8 @@ from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
 
-insp = Inspector.from_engine(engine)
+insp = inspect(engine)
+
 
 log = logging.getLogger("app." + __name__)
 

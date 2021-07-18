@@ -6,9 +6,8 @@ from decimal import Decimal
 from operator import eq
 
 from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, desc, asc, \
-    text, func, DateTime, BigInteger, Date, Integer, JSON
+    text, func, DateTime, BigInteger, Date, Integer, JSON, inspect
 from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.engine import Inspector
 from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
@@ -18,7 +17,6 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
-from watchmen.config.config import settings, PROD
 from watchmen.database.mysql.mysql_engine import engine
 from watchmen.database.mysql.mysql_table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.database.mysql.mysql_utils import parse_obj, count_table, count_topic_data_table
@@ -28,8 +26,8 @@ from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
 
-insp = Inspector.from_engine(engine)
-# import arrow
+insp = inspect(engine)
+
 
 log = logging.getLogger("app." + __name__)
 
