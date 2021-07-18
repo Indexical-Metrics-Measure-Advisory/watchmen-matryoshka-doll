@@ -5,7 +5,7 @@ import operator
 from decimal import Decimal
 from operator import eq
 
-from cacheout import Cache
+
 from sqlalchemy import update, and_, or_, delete, CLOB, desc, asc, \
     text, func
 from sqlalchemy.dialects.mysql import insert
@@ -18,7 +18,7 @@ from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_NAME, COLUMNS_
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
-from watchmen.config.config import settings, PROD
+
 from watchmen.database.oracle.oracle_engine import engine, dumps
 from watchmen.database.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
 from watchmen.database.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
@@ -107,7 +107,6 @@ class OracleStorage(StorageInterface):
                 else:
                     return table.c[key.lower()] == value
 
-    '''
     def build_oracle_updates_expression(self, table, updates, stmt_type: str) -> dict:
         new_updates = {}
         for key in table.c.keys():
@@ -158,8 +157,8 @@ class OracleStorage(StorageInterface):
                         else:
                             new_updates[key] = None
         return new_updates
-    '''
 
+    '''
     def build_oracle_updates_expression(self, table, updates, stmt_type: str) -> dict:
         if stmt_type == "insert":
             new_updates = {}
@@ -223,6 +222,7 @@ class OracleStorage(StorageInterface):
                             else:
                                 new_updates[key] = value_
             return new_updates
+    '''
 
     def build_oracle_order(self, table, order_: list):
         result = []
@@ -702,7 +702,7 @@ class OracleStorage(StorageInterface):
             columns = cached_columns
         else:
             columns = insp.get_columns(table_name)
-            cacheman[COLUMNS_BY_TABLE_NAME].set(table_name)
+            cacheman[COLUMNS_BY_TABLE_NAME].set(table_name, columns)
         for column in columns:
             if column["name"] == column_name:
                 return column["default"]

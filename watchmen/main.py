@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from watchmen.config.config import settings
 from watchmen.connector.kafka import kafka_connector
 from watchmen.connector.rabbitmq import rabbit_connector
-from watchmen.routers import admin, console, common, auth, metadata
+from watchmen.routers import admin, console, common, auth, metadata, cache
 
 log = logging.getLogger("app." + __name__)
 
@@ -39,3 +39,4 @@ app.include_router(console.router)
 app.include_router(common.router)
 app.include_router(auth.router)
 app.include_router(metadata.router)
+app.include_router(cache.router)

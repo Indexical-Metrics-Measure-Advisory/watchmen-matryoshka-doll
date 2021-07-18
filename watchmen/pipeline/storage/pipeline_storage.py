@@ -51,7 +51,7 @@ def load_pipeline_by_id(pipeline_id, current_user):
         return cached_pipeline
     result = find_one({"and": [{"pipelineId": pipeline_id}, {"tenantId": current_user.tenantId}]}, Pipeline, PIPELINES)
     if result is not None:
-        cacheman[PIPELINE_BY_ID].set(pipeline_id)
+        cacheman[PIPELINE_BY_ID].set(pipeline_id, result)
     return result
 
 
@@ -89,3 +89,5 @@ def load_pipeline_graph(user_id, current_user):
 
 def import_pipeline_to_db(pipeline):
     insert_one(pipeline, Pipeline, PIPELINES)
+    cacheman[PIPELINE_BY_ID].clear()
+    cacheman[PIPELINES_BY_TOPIC_ID].clear()

@@ -1,19 +1,14 @@
 from typing import List
-
-from cacheout import Cache
-
-from watchmen.common.cache.cache_manage import cacheman
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_ID, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
-from watchmen.config.config import settings, PROD
+from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.database.storage.storage_interface import OrderType
 from watchmen.database.storage.storage_template import insert_one, update_one, find_one, \
     page_, find_
 from watchmen.topic.topic import Topic
 
 TOPICS = "topics"
-
-cache = Cache()
 
 
 def save_topic(topic: Topic) -> Topic:
@@ -26,21 +21,24 @@ def load_all_topic(current_user) -> List[Topic]:
 
 
 def load_all_topic_list(pagination: Pagination, current_user) -> DataPage:
-    # return template.query_with_pagination(TOPICS, pagination, Topic, sort_dict={"last_modified": pymongo.DESCENDING})
     sort_dict = [{"last_modified": OrderType.DESCENDING}]
     return page_({"tenantId": current_user}, sort_dict, pagination, Topic, TOPICS)
 
 
 def get_topic_by_name(topic_name: str, current_user) -> Topic:
-    # return template.find_one(TOPICS, {"name": topic_name}, Topic)
-    return find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+    cached_topic = cacheman[TOPIC_BY_NAME].get(topic_name)
+    if cached_topic is not None:
+        return cached_topic
+    if current_user is None:
+        result = find_one({"name": topic_name}, Topic, TOPICS)
+    else:
+        result = find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+    cacheman[TOPIC_BY_NAME].set(topic_name, result)
+    return result
 
 
 def get_topic(topic_name: str, current_user=None) -> Topic:
-    if current_user is None:
-        return find_one({"name": topic_name}, Topic, TOPICS)
-    else:
-        return find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+    return get_topic_by_name(topic_name, current_user)
 
 
 def load_topic_list_by_name(topic_name: str, current_user) -> List[Topic]:
@@ -53,20 +51,20 @@ def load_topic_by_name(topic_name: str, current_user) -> Topic:
 
 
 def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
-    cached_topic = cacheman["topics"].get(topic_id)
+    cached_topic = cacheman[TOPIC_BY_ID].get(topic_id)
     if cached_topic is not None:
         return cached_topic
 
     if current_user is None:
         result = find_one({"topicId": topic_id}, Topic, TOPICS)
         if result is not None:
-            cacheman["topics"].set(topic_id, result)
+            cacheman[TOPIC_BY_ID].set(topic_id, result)
         return result
 
     else:
         result = find_one({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
         if result is not None:
-            cacheman["topics"].set(topic_id, result)
+            cacheman[TOPIC_BY_ID].set(topic_id, result)
         return result
 
 
@@ -89,8 +87,15 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination, cu
 
 
 def update_topic(topic_id: str, topic: Topic) -> Topic:
-    return update_one(topic, Topic, TOPICS)
+    result = update_one(topic, Topic, TOPICS)
+    cacheman[TOPIC_BY_NAME].delete(topic.name)
+    cacheman[TOPIC_BY_ID].delete(topic_id)
+    cacheman[COLUMNS_BY_TABLE_NAME].delete(build_collection_name(topic.name))
+    return result
 
 
 def import_topic_to_db(topic: Topic) -> Topic:
-    return insert_one(topic, Topic, TOPICS)
+    insert_one(topic, Topic, TOPICS)
+    cacheman[TOPIC_BY_NAME].delete(topic.name)
+    cacheman[TOPIC_BY_ID].delete(topic.topicId)
+    cacheman[COLUMNS_BY_TABLE_NAME].delete(build_collection_name(topic.name))

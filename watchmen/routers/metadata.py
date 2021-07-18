@@ -72,7 +72,6 @@ async def import_topic(topic: Topic, current_user: User = Depends(deps.get_curre
     result = get_topic_by_id(topic.topicId, current_user)
     topic = add_tenant_id_to_model(topic, current_user)
     if result is None:
-        # import_topic_to_db(topic)
         create_topic_schema(topic)
     else:
         update_topic_schema(topic.topicId, topic)

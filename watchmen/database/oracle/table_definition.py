@@ -244,5 +244,5 @@ def get_table_by_name(table_name):
 
 
 def get_topic_table_by_name(table_name):
-    table = Table(table_name, metadata, extend_existing=True, autoload=True, autoload_with=engine)
+    table = Table(table_name, metadata, extend_existing=False, autoload=True, autoload_with=engine)
     return table

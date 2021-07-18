@@ -1,6 +1,5 @@
 import logging
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_ID, TOPIC_BY_NAME
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.database.storage.storage_template import find_template
@@ -30,8 +29,6 @@ def update_topic_schema(
     if type(topic) is not dict:
         topic = topic.dict()
     update_topic(topic_id, topic)
-    cacheman[TOPIC_BY_NAME].delete(topic.name)
-    cacheman[TOPIC_BY_ID].delete(topic_id)
     return Topic.parse_obj(topic)
 
 
