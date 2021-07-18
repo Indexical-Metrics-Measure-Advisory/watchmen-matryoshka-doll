@@ -240,8 +240,7 @@ class MysqlStorage(StorageInterface):
                                 new_updates[key] = value_
             return new_updates
     '''
-
-
+    
     @staticmethod
     def build_mysql_order(table, order_: list):
         result = []
