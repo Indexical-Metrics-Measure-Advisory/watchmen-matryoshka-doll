@@ -9,6 +9,7 @@ from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.config.config import settings, PROD
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, StageRunStatus
+from watchmen.monitor.services import pipeline_monitor_service
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.context.stage_context import StageContext
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joint
@@ -132,4 +133,4 @@ def sync_pipeline_monitor_log(pipeline_status):
     if settings.ENVIRONMENT == PROD and pipeline_status.status != ERROR:
         log.debug("pipeline_status is {0}".format(pipeline_status))
     else:
-        watchmen.monitor.services.pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
+        pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)

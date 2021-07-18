@@ -29,6 +29,8 @@ def init(actionContext):
 
         target_topic = get_topic_by_id(action.topicId)
         variables = get_variables(actionContext)
+
+        log.info("target_topic name: {0}".format(target_topic.name))
         mappings_results, having_aggregate_functions = parse_mappings(action.mapping,
                                                                       target_topic,
                                                                       previous_data,

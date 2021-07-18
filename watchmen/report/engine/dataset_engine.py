@@ -24,15 +24,17 @@ def build_pagination(pagination):
     return "OFFSET {0} LIMIT {1}".format(offset_num, pagination.pageSize)
 
 
-def __find_factor_index(field_list, factor_name):
-    for i in range(len(field_list)):
-        field = field_list[i]
-        if field[0] == factor_name:
-            return i
-    return None
+def __find_factor_index(field_list, factor_name_list):
+    index_list = []
+    for factor_name in factor_name_list:
+        for i in range(len(field_list)):
+            field = field_list[i]
+            if field[0] == factor_name:
+                index_list.append(i)
+    return index_list
 
 
-def get_factor_value_by_subject_and_condition(console_subject, factor_name, filter_list):
+def get_factor_value_by_subject_and_condition(console_subject, factor_name_list, filter_list):
     query = build_query_for_subject(console_subject)
     if filter_list:
         query = _filter(query, filter_list)
@@ -43,15 +45,17 @@ def get_factor_value_by_subject_and_condition(console_subject, factor_name, filt
     cur.execute(sql)
     rows = cur.fetchall()
 
-    index = __find_factor_index(cur.description, factor_name)
-
-    if index is not None:
-        results = []
+    index_list = __find_factor_index(cur.description, factor_name_list)
+    results = []
+    if index_list:
         for rw in rows:
-            results.append(rw[index])
+            row_data = []
+            for index in index_list:
+                row_data.append(rw[index])
+            results.append(row_data)
         return results
     else:
-        raise KeyError("factor_name :{0} can't find in subject {1}".format(factor_name, console_subject.name))
+        raise KeyError("factor_name :{0} can't find in subject {1}".format(factor_name_list, console_subject.name))
 
 
 async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current_user):

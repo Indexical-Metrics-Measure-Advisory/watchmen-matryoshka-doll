@@ -1,6 +1,7 @@
 import importlib
 import logging
 import time
+import traceback
 from functools import lru_cache
 
 PIPELINE_CORE_ACTION_ = "watchmen.pipeline.core.action."
@@ -22,6 +23,13 @@ def run_action(action_context):
     action = action_context.action
     stage_method = get_action_func(action)
     func = stage_method.init(action_context)
-    action_run_status, trigger_pipeline_data_list = func()
-    action_context.actionStatus = action_run_status
-    return action_context, trigger_pipeline_data_list
+    try:
+        action_run_status, trigger_pipeline_data_list = func()
+        action_context.actionStatus = action_run_status
+        return action_context, trigger_pipeline_data_list
+    except Exception as e :
+        log.error(traceback.format_exc())
+        raise e
+
+
+

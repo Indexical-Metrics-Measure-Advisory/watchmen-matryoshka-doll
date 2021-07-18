@@ -116,13 +116,15 @@ class MysqlStorage(StorageInterface):
     def build_mysql_updates_expression(self, table, updates, stmt_type: str) -> dict:
         if stmt_type == "insert":
             new_updates = {}
-            for key in table.c.keys():
+            # print(table.c.keys())
+            c_dict = table.c
+            for key in c_dict.keys():
                 if key == "id_":
                     new_updates[key] = get_surrogate_key()
                 elif key == "version_":
                     new_updates[key] = 0
                 else:
-                    if isinstance(table.c[key].type, JSON):
+                    if isinstance(c_dict[key].type, JSON):
                         if updates.get(key) is not None:
                             new_updates[key] = updates.get(key)
                         else:
@@ -153,11 +155,12 @@ class MysqlStorage(StorageInterface):
             return new_updates
         elif stmt_type == "update":
             new_updates = {}
-            for key in table.c.keys():
+            c_dict= table.c
+            for key in c_dict.keys():
                 if key == "version_":
                     new_updates[key] = updates.get(key) + 1
                 else:
-                    if isinstance(table.c[key].type, JSON):
+                    if isinstance(c_dict[key].type, JSON):
                         if updates.get(key) is not None:
                             new_updates[key] = updates.get(key)
                     else:

@@ -10,7 +10,6 @@ def init():
 
     # Add stdout handler, with level INFO
     console = logging.StreamHandler(sys.stdout)
-
     if settings.ENVIRONMENT == PROD:
         console.setLevel(logging.ERROR)
     else:
