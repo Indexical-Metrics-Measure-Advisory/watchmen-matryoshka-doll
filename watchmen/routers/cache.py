@@ -3,7 +3,7 @@ from fastapi import APIRouter, Body, Depends
 from watchmen.auth.user import User
 from watchmen.common import deps
 from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_NAME, TOPIC_BY_ID, PIPELINE_BY_ID, \
-    PIPELINES_BY_TOPIC_ID, COLUMNS_BY_TABLE_NAME
+    PIPELINES_BY_TOPIC_ID, COLUMNS_BY_TABLE_NAME, TOPIC_DICT_BY_NAME
 
 router = APIRouter()
 
@@ -25,6 +25,7 @@ def delete_topic_cache(topic_name, current_user: User = Depends(deps.get_current
 @router.get("/cache/clear/topics", tags=["admin"])
 def clear_topics_cache(current_user: User = Depends(deps.get_current_user)):
     cacheman[TOPIC_BY_NAME].clear()
+    cacheman[TOPIC_DICT_BY_NAME].clear()
     cacheman[TOPIC_BY_ID].clear()
     cacheman[COLUMNS_BY_TABLE_NAME].clear()
 

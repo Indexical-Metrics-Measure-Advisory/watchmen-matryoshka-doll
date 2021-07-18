@@ -14,7 +14,7 @@ from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME
+from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
@@ -769,8 +769,8 @@ class OracleStorage(StorageInterface):
         return factors
 
     def _get_topic(self, topic_name) -> any:
-        if cacheman[TOPIC_BY_NAME].get(topic_name) is not None:
-            return cacheman[TOPIC_BY_NAME].get(topic_name)
+        if cacheman[TOPIC_DICT_BY_NAME].get(topic_name) is not None:
+            return cacheman[TOPIC_DICT_BY_NAME].get(topic_name)
         table = get_table_by_name("topics")
         select_stmt = select(table).where(
             self.build_oracle_where_expression(table, {"name": topic_name}))
@@ -782,5 +782,5 @@ class OracleStorage(StorageInterface):
             if result is None:
                 raise
             else:
-                cacheman[TOPIC_BY_NAME].set(topic_name, result)
+                cacheman[TOPIC_DICT_BY_NAME].set(topic_name, result)
                 return result

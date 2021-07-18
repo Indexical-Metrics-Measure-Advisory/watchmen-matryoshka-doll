@@ -1,5 +1,6 @@
 from typing import List
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_ID, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_ID, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME, \
+    TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.common.utils.data_utils import build_collection_name
@@ -89,6 +90,7 @@ def query_topic_list_with_pagination(query_name: str, pagination: Pagination, cu
 def update_topic(topic_id: str, topic: Topic) -> Topic:
     result = update_one(topic, Topic, TOPICS)
     cacheman[TOPIC_BY_NAME].delete(topic.name)
+    cacheman[TOPIC_DICT_BY_NAME].delete(topic.name)
     cacheman[TOPIC_BY_ID].delete(topic_id)
     cacheman[COLUMNS_BY_TABLE_NAME].delete(build_collection_name(topic.name))
     return result
@@ -97,5 +99,6 @@ def update_topic(topic_id: str, topic: Topic) -> Topic:
 def import_topic_to_db(topic: Topic) -> Topic:
     insert_one(topic, Topic, TOPICS)
     cacheman[TOPIC_BY_NAME].delete(topic.name)
+    cacheman[TOPIC_DICT_BY_NAME].delete(topic.name)
     cacheman[TOPIC_BY_ID].delete(topic.topicId)
     cacheman[COLUMNS_BY_TABLE_NAME].delete(build_collection_name(topic.name))

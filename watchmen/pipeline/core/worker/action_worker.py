@@ -27,9 +27,6 @@ def run_action(action_context):
         action_run_status, trigger_pipeline_data_list = func()
         action_context.actionStatus = action_run_status
         return action_context, trigger_pipeline_data_list
-    except Exception as e :
+    except Exception as e:
         log.error(traceback.format_exc())
         raise e
-
-
-
