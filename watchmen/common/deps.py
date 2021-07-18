@@ -44,10 +44,6 @@ def get_current_user(token: str = Depends(reusable_oauth2)
     return user
 '''
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
-)
-
 
 def get_current_user(request: Request) -> User:
     authorization: str = request.headers.get("Authorization")

@@ -20,12 +20,11 @@ from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
 from watchmen.common.security.pat.pat_service import createPAT, queryPAT, deletePAT
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import check_fake_id, build_collection_name, add_tenant_id_to_model, \
+from watchmen.common.utils.data_utils import check_fake_id, add_tenant_id_to_model, \
     compare_tenant, clean_password
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
-from watchmen.database.storage.storage_template import drop_topic_data_table
 from watchmen.enum.model.enum import Enum
 from watchmen.enum.storage.enum_storage import save_enum_to_storage, query_enum_list_with_pagination, load_enum_by_id, \
     load_enum_list
@@ -330,7 +329,6 @@ async def save_pipeline(pipeline: Pipeline, current_user: User = Depends(deps.ge
 
 @router.get("/pipeline", tags=["admin"], response_model=PipelineFlow)
 async def load_pipeline(topic_id, current_user: User = Depends(deps.get_current_user)):
-    # pipeline_list_produce = []
     result = load_pipeline_by_topic_id(topic_id, current_user)
     pipeline_list_produce = [*result]
     for pipeline in result:

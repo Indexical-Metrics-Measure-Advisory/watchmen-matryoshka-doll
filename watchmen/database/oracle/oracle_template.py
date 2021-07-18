@@ -13,6 +13,7 @@ from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
@@ -25,11 +26,9 @@ from watchmen.database.singleton import singleton
 from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
-from cacheout import Cache
+
 
 insp = Inspector.from_engine(engine)
-
-cache = Cache()
 
 log = logging.getLogger("app." + __name__)
 
@@ -70,8 +69,29 @@ class OracleStorage(StorageInterface):
                                 return text('json_exists(' + key.lower() + ', \'$?(@ in (\"' + value_ + '\"))\')')
                             else:
                                 if isinstance(v, list):
-                                    if len(v) != 0:
-                                        return table.c[key.lower()].in_(v)
+                                    value_ = ",".join(v)
+                                else:
+                                    value_ = v
+                                return table.c[key.lower()].in_(value_)
+                        if k == "not-in":
+                            if isinstance(table.c[key.lower()].type, CLOB):
+                                if isinstance(v, list):
+                                    new_list = []
+                                    for it_ in v:
+                                        new_list.append(str(it_))
+                                    value_ = ",".join(new_list)
+                                else:
+                                    value_ = v
+                                return text('json_exists(' + key.lower() + ', \'$?(@ not in (\"' + value_ + '\"))\')')
+                            else:
+                                if isinstance(v, list):
+                                    new_list = []
+                                    for it_ in v:
+                                        new_list.append(str(it_))
+                                    value_ = ",".join(new_list)
+                                else:
+                                    value_ = v
+                                return table.c[key.lower()].notin_(value_)
                         if k == ">":
                             return table.c[key.lower()] > v
                         if k == ">=":
@@ -139,6 +159,7 @@ class OracleStorage(StorageInterface):
                             new_updates[key] = None
         return new_updates
     '''
+
     def build_oracle_updates_expression(self, table, updates, stmt_type: str) -> dict:
         if stmt_type == "insert":
             new_updates = {}
@@ -672,8 +693,14 @@ class OracleStorage(StorageInterface):
     '''
     protected method, used by class own method
     '''
+
     def _get_table_column_default_value(self, table_name, column_name):
-        columns = insp.get_columns(table_name)
+        cached_columns = cacheman[COLUMNS_BY_TABLE_NAME].get(table_name)
+        if cached_columns is not None:
+            columns = cached_columns
+        else:
+            columns = insp.get_columns(table_name)
+            cacheman[COLUMNS_BY_TABLE_NAME].set(table_name)
         for column in columns:
             if column["name"] == column_name:
                 return column["default"]
@@ -740,8 +767,8 @@ class OracleStorage(StorageInterface):
         return factors
 
     def _get_topic(self, topic_name) -> any:
-        if topic_name in cache and settings.ENVIRONMENT == PROD:
-            return cache.get(topic_name)
+        if cacheman[TOPIC_BY_NAME].get(topic_name) is not None:
+            return cacheman[TOPIC_BY_NAME].get(topic_name)
         table = get_table_by_name("topics")
         select_stmt = select(table).where(
             self.build_oracle_where_expression(table, {"name": topic_name}))
@@ -753,5 +780,5 @@ class OracleStorage(StorageInterface):
             if result is None:
                 raise
             else:
-                cache.set(topic_name, result)
+                cacheman[TOPIC_BY_NAME].set(topic_name, result)
                 return result

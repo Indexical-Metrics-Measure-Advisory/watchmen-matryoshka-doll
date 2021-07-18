@@ -71,6 +71,8 @@ class MongoStorage(StorageInterface):
                             return {key: regex.Regex(v)}
                         if k == "in":
                             return {key: {"$in": v}}
+                        if k == "not-in":
+                            return {key: {"$nin": v}}
                         if k == ">":
                             return {key: {"$gt": v}}
                         if k == ">=":

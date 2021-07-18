@@ -33,7 +33,7 @@ def get_dict_schema_set(model_schema_set):
 
 
 def is_raw(topic):
-    return topic.type ==RAW
+    return topic.type == RAW
 
 
 def get_id_name():

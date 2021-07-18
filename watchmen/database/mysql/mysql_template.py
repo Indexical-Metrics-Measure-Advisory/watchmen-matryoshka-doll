@@ -14,6 +14,7 @@ from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
@@ -73,8 +74,30 @@ class MysqlStorage(StorageInterface):
                                 return text(stmt)
                             else:
                                 if isinstance(v, list):
-                                    if len(v) != 0:
-                                        return table.c[key.lower()].in_(v)
+                                    new_list = []
+                                    for it_ in v:
+                                        new_list.append(str(it_))
+                                    value_ = ",".join(new_list)
+                                else:
+                                    value_ = v
+                                return table.c[key.lower()].in_(value_)
+                        if k == "not-in":
+                            if isinstance(table.c[key.lower()].type, JSON):
+                                if isinstance(v, list):
+                                    value_ = ",".join(v)
+                                else:
+                                    value_ = v
+                                stmt = "JSON_CONTAINS(" + key.lower() + ", '[\"" + value_ + "\"]', '$') = 0"
+                                return text(stmt)
+                            else:
+                                if isinstance(v, list):
+                                    new_list = []
+                                    for it_ in v:
+                                        new_list.append(str(it_))
+                                    value_ = ",".join(new_list)
+                                else:
+                                    value_ = v
+                                return table.c[key.lower()].notin_(value_)
                         if k == ">":
                             return table.c[key.lower()] > v
                         if k == ">=":
@@ -664,8 +687,8 @@ class MysqlStorage(StorageInterface):
         return factors
 
     def _get_topic(self, topic_name) -> any:
-        if topic_name in cache and settings.ENVIRONMENT == PROD:
-            return cache.get(topic_name)
+        if cacheman[TOPIC_BY_NAME].get(topic_name) is not None:
+            return cacheman[TOPIC_BY_NAME].get(topic_name)
         table = get_table_by_name("topics")
         select_stmt = select(table).where(
             self.build_mysql_where_expression(table, {"name": topic_name}))
@@ -685,7 +708,7 @@ class MysqlStorage(StorageInterface):
                             result[name] = None
                     else:
                         result[name] = row[index]
-                cache.set(topic_name, result)
+                cacheman[TOPIC_BY_NAME].set(topic_name, result)
                 return result
 
     def _convert_list_elements_key(self, list_info, topic_name):

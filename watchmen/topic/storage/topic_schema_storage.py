@@ -2,6 +2,7 @@ from typing import List
 
 from cacheout import Cache
 
+from watchmen.common.cache.cache_manage import cacheman
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.config.config import settings, PROD
@@ -52,24 +53,20 @@ def load_topic_by_name(topic_name: str, current_user) -> Topic:
 
 
 def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
-    if cache.has(topic_id) and settings.ENVIRONMENT == PROD:
-        result = cache.get(topic_id)
-        if result is None:
-            raise Exception("result is None in cache {}")
-        return result
+    cached_topic = cacheman["topics"].get(topic_id)
+    if cached_topic is not None:
+        return cached_topic
 
     if current_user is None:
         result = find_one({"topicId": topic_id}, Topic, TOPICS)
         if result is not None:
-            cache.set(topic_id, result)
+            cacheman["topics"].set(topic_id, result)
         return result
 
     else:
         result = find_one({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
-        # if result is None:
-        #     raise Exception("result is None in load ")
         if result is not None:
-            cache.set(topic_id, result)
+            cacheman["topics"].set(topic_id, result)
         return result
 
 

@@ -28,9 +28,6 @@ def parse_parameter(parameter: Parameter, factor=None):
         factor = get_factor(parameter.factorId, topic)
         return Table(topic_col_name)[factor.name]
     elif parameter.kind == 'constant':
-        # if factor.type =="text":
-        #     return "\'"+parameter.value+"\'"
-        # else:
         return parameter.value
     elif parameter.kind == 'computed':
         if parameter.type == Operator.add:

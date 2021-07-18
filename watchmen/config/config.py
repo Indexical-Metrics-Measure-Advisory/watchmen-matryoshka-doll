@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
-    DASK_ON: bool = True
+    DASK_ON: bool = False
     DASK_PROCESSES: bool = False
 
     ENVIRONMENT: str = DEV
