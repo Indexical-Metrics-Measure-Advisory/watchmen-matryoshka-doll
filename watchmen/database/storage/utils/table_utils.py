@@ -1,19 +1,8 @@
 ## TODO  factor it
 
-from cacheout import Cache
-
-from watchmen.config.config import settings, PROD
-
-cache = Cache()
-
 
 def get_primary_key(table_name):
-    if table_name in cache and settings.ENVIRONMENT == PROD:
-        return cache.get(table_name)
-
     pid = get_pid(table_name)
-    if pid is not None:
-        cache.set(table_name, pid)
     return pid
 
 

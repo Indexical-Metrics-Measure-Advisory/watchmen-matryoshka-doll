@@ -1,10 +1,5 @@
-from cacheout import Cache
 from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer
-
-from watchmen.config.config import settings, PROD
 from watchmen.database.oracle.oracle_engine import engine
-
-cache = Cache()
 
 metadata = MetaData()
 

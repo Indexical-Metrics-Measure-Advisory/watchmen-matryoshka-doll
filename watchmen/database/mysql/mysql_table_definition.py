@@ -1,13 +1,6 @@
-from cacheout import Cache
-
-from functools import lru_cache
-
 from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON
-
-from watchmen.config.config import PROD, settings
 from watchmen.database.mysql.mysql_engine import engine
 
-cache = Cache()
 
 metadata = MetaData()
 
@@ -210,13 +203,7 @@ pats_table = Table("pats", metadata,
 
 
 def get_table_by_name(table_name):
-    if table_name in cache and settings.ENVIRONMENT == PROD:
-        return cache.get(table_name)
-
-    table = get_meta_table(table_name)
-    if table is not None:
-        cache.set(table_name, table)
-    return table
+    return get_meta_table(table_name)
 
 
 def get_meta_table(table_name):
