@@ -154,7 +154,6 @@ async def update_topic(topic_id, topic: Topic = Body(...), current_user: User = 
     topic = Topic.parse_obj(topic)
     topic = add_tenant_id_to_model(topic, current_user)
     data = update_topic_schema(topic_id, topic)
-    # remove_presto_schema_by_name(topic.name)
     create_or_update_presto_schema_fields(data)
     return data
 
