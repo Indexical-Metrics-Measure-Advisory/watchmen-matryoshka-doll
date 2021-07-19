@@ -20,11 +20,7 @@ async def import_raw_topic_data(topic_event, current_user):
     if not isinstance(topic_event.data, dict):
         raise ValueError("topic_event data should be dict, now it is {0}".format(topic_event.data))
     '''
-
-    # raw_data = {"data_": topic_event.data}
-
-    raw_data = await get_input_data( topic, topic_event)
-
+    raw_data = await get_input_data(topic, topic_event)
     add_audit_columns(raw_data, INSERT)
     flatten_fields = get_flatten_field(topic_event.data, topic.factors)
     raw_data.update(flatten_fields)

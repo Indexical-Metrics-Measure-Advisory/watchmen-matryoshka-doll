@@ -69,29 +69,31 @@ class OracleStorage(StorageInterface):
                                 return text('json_exists(' + key.lower() + ', \'$?(@ in (\"' + value_ + '\"))\')')
                             else:
                                 if isinstance(v, list):
-                                    value_ = ",".join(v)
+                                    if len(v) != 0:
+                                        return table.c[key.lower()].in_(v)
+                                elif isinstance(v, str):
+                                    v_list = v.split(",")
+                                    return table.c[key.lower()].in_(v_list)
                                 else:
-                                    value_ = v
-                                return table.c[key.lower()].in_(value_)
+                                    raise TypeError(
+                                        "operator in, the value \"{0}\" is not list or str".format(v))
                         if k == "not-in":
                             if isinstance(table.c[key.lower()].type, CLOB):
                                 if isinstance(v, list):
-                                    new_list = []
-                                    for it_ in v:
-                                        new_list.append(str(it_))
-                                    value_ = ",".join(new_list)
+                                    value_ = ",".join(v)
                                 else:
                                     value_ = v
                                 return text('json_exists(' + key.lower() + ', \'$?(@ not in (\"' + value_ + '\"))\')')
                             else:
                                 if isinstance(v, list):
-                                    new_list = []
-                                    for it_ in v:
-                                        new_list.append(str(it_))
-                                    value_ = ",".join(new_list)
+                                    if len(v) != 0:
+                                        return table.c[key.lower()].notin_(v)
+                                elif isinstance(v, str):
+                                    v_list = v.split(",")
+                                    return table.c[key.lower()].notin_(v_list)
                                 else:
-                                    value_ = v
-                                return table.c[key.lower()].notin_(value_)
+                                    raise TypeError(
+                                        "operator not_in, the value \"{0}\" is not list or str".format(v))
                         if k == ">":
                             return table.c[key.lower()] > v
                         if k == ">=":
