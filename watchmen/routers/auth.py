@@ -4,12 +4,15 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from starlette import status
 
 from watchmen.auth.service import security
 from watchmen.auth.service.user import authenticate
+from watchmen.auth.storage.user import get_user, load_user_by_name
 from watchmen.auth.token import Token
 from watchmen.auth.user import User
 from watchmen.common import deps
+from watchmen.common.security.index import validate_jwt
 from watchmen.config.config import settings
 
 router = APIRouter()
@@ -37,6 +40,16 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()
         "token_type": "bearer",
         "role": user.role
     }
+
+
+@router.get("/login/validate_token", response_model=User, tags=["authenticate"])
+async def validate_token(token: str) -> User:
+    security_payload = validate_jwt(token)
+    user = load_user_by_name(security_payload["sub"])
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    return user
 
 
 @router.post("/login/test-token", response_model=User, tags=["authenticate"])

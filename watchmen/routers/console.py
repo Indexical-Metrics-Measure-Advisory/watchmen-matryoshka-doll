@@ -277,6 +277,8 @@ async def share_subject(subject_id: str, token: str):
     return {"subject": subject}
 
 
+
+
 ## FAVORITE
 
 @router.get('/favorites/me', tags=["console"], response_model=Favorite)
