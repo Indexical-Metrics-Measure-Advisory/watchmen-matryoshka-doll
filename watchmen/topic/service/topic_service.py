@@ -14,11 +14,13 @@ log = logging.getLogger("app." + __name__)
 template = find_template()
 
 
-def create_topic_schema(topic):
+def create_topic_schema(topic: Topic) -> Topic:
     if topic.topicId is None or check_fake_id(topic.topicId):
         topic.topicId = get_surrogate_key()
+    '''   
     if type(topic) is not dict:
         topic = topic.dict()
+    '''
     save_topic(topic)
     return Topic.parse_obj(topic)
 
@@ -26,8 +28,10 @@ def create_topic_schema(topic):
 def update_topic_schema(
         topic_id,
         topic: Topic):
+    '''
     if type(topic) is not dict:
         topic = topic.dict()
+    '''
     update_topic(topic_id, topic)
     return Topic.parse_obj(topic)
 

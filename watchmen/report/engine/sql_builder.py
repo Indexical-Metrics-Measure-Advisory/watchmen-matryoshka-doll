@@ -109,7 +109,6 @@ def _join(q: QueryBuilder, join: Join) -> QueryBuilder:
 def _filter(q: QueryBuilder, filter: Filter) -> QueryBuilder:
     if len(filter.filters) > 0:
         where = _connective_filter(filter)
-        # print(where)
         return q.where(where)
     else:
         return q
@@ -125,7 +124,6 @@ def _connective_filter(filter: Filter):
         if item.jointType:
             criterion_list.append(_connective_filter(item))
         else:
-            # print(item)
             criterion_list.append(_filter_criterion(item))
 
     if filter.jointType == ConnectiveType.and_type:

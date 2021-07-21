@@ -86,8 +86,6 @@ def should_run(pipeline_context: PipelineContext) -> bool:
 
 def run_pipeline(pipeline_context: PipelineContext):
     pipeline = pipeline_context.pipeline
-
-    # print(pipeline.json())
     data = pipeline_context.data
     pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),
                                         startTime=datetime.now().replace(tzinfo=None), topicId=pipeline.pipelineId)
@@ -96,7 +94,6 @@ def run_pipeline(pipeline_context: PipelineContext):
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
-        # log.info("start run pipeline {0}".format(pipeline.name))
         pipeline_context = PipelineContext(pipeline, data)
         pipeline_context.variables[PIPELINE_UID] = pipeline_status.uid
         pipeline_context.pipelineTopic = pipeline_topic

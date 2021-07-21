@@ -69,29 +69,31 @@ class OracleStorage(StorageInterface):
                                 return text('json_exists(' + key.lower() + ', \'$?(@ in (\"' + value_ + '\"))\')')
                             else:
                                 if isinstance(v, list):
-                                    value_ = ",".join(v)
+                                    if len(v) != 0:
+                                        return table.c[key.lower()].in_(v)
+                                elif isinstance(v, str):
+                                    v_list = v.split(",")
+                                    return table.c[key.lower()].in_(v_list)
                                 else:
-                                    value_ = v
-                                return table.c[key.lower()].in_(value_)
+                                    raise TypeError(
+                                        "operator in, the value \"{0}\" is not list or str".format(v))
                         if k == "not-in":
                             if isinstance(table.c[key.lower()].type, CLOB):
                                 if isinstance(v, list):
-                                    new_list = []
-                                    for it_ in v:
-                                        new_list.append(str(it_))
-                                    value_ = ",".join(new_list)
+                                    value_ = ",".join(v)
                                 else:
                                     value_ = v
                                 return text('json_exists(' + key.lower() + ', \'$?(@ not in (\"' + value_ + '\"))\')')
                             else:
                                 if isinstance(v, list):
-                                    new_list = []
-                                    for it_ in v:
-                                        new_list.append(str(it_))
-                                    value_ = ",".join(new_list)
+                                    if len(v) != 0:
+                                        return table.c[key.lower()].notin_(v)
+                                elif isinstance(v, str):
+                                    v_list = v.split(",")
+                                    return table.c[key.lower()].notin_(v_list)
                                 else:
-                                    value_ = v
-                                return table.c[key.lower()].notin_(value_)
+                                    raise TypeError(
+                                        "operator not_in, the value \"{0}\" is not list or str".format(v))
                         if k == ">":
                             return table.c[key.lower()] > v
                         if k == ">=":
@@ -108,68 +110,15 @@ class OracleStorage(StorageInterface):
                     return table.c[key.lower()] == value
 
     def build_oracle_updates_expression(self, table, updates, stmt_type: str) -> dict:
-        new_updates = {}
-        for key in table.c.keys():
-            if key == "id_":
-                if stmt_type == "insert":
-                    new_updates[key] = get_surrogate_key()
-            elif key == "version_":
-                if stmt_type == "insert":
-                    new_updates[key] = 0
-                elif stmt_type == "update":
-                    new_updates[key] = updates.get(key) + 1
-            else:
-                if isinstance(table.c[key].type, CLOB):
-                    if updates.get(key) is not None:
-                        new_updates[key] = dumps(updates.get(key))
-                    else:
-                        new_updates[key] = None
-                else:
-                    if updates.get(key) is not None:
-                        value_ = updates.get(key)
-                        if isinstance(value_, dict):
-                            for k, v in value_.items():
-                                if k == "_sum":
-                                    if stmt_type == "insert":
-                                        new_updates[key.lower()] = v
-                                    elif stmt_type == "update":
-                                        new_updates[key.lower()] = text(f'{key.lower()} + {v}')
-                                elif k == "_count":
-                                    if stmt_type == "insert":
-                                        new_updates[key.lower()] = v
-                                    elif stmt_type == "update":
-                                        new_updates[key.lower()] = text(f'{key.lower()} + {v}')
-                                elif k == "_avg":
-                                    if stmt_type == "insert":
-                                        new_updates[key.lower()] = v
-                                    elif stmt_type == "update":
-                                        pass  # todo
-                        else:
-                            new_updates[key] = value_
-                    else:
-                        default_value = self._get_table_column_default_value(table.name, key)
-                        if default_value is not None:
-                            value_ = default_value.strip("'").strip(" ")
-                            if value_.isdigit():
-                                new_updates[key] = Decimal(value_)
-                            else:
-                                new_updates[key] = value_
-                        else:
-                            new_updates[key] = None
-        return new_updates
-
-    '''
-    def build_oracle_updates_expression(self, table, updates, stmt_type: str) -> dict:
         if stmt_type == "insert":
             new_updates = {}
-            c_dict = table.c
-            for key in c_dict.keys():
+            for key in table.c.keys():
                 if key == "id_":
                     new_updates[key] = get_surrogate_key()
                 elif key == "version_":
                     new_updates[key] = 0
                 else:
-                    if isinstance(c_dict[key].type, CLOB):
+                    if isinstance(table.c[key].type, CLOB):
                         if updates.get(key) is not None:
                             new_updates[key] = dumps(updates.get(key))
                         else:
@@ -200,12 +149,11 @@ class OracleStorage(StorageInterface):
             return new_updates
         elif stmt_type == "update":
             new_updates = {}
-            c_dict =table.c
-            for key in c_dict.keys():
+            for key in table.c.keys():
                 if key == "version_":
                     new_updates[key] = updates.get(key) + 1
                 else:
-                    if isinstance(c_dict[key].type, CLOB):
+                    if isinstance(table.c[key].type, CLOB):
                         if updates.get(key) is not None:
                             new_updates[key] = dumps(updates.get(key))
                     else:
@@ -222,7 +170,6 @@ class OracleStorage(StorageInterface):
                             else:
                                 new_updates[key] = value_
             return new_updates
-    '''
 
     def build_oracle_order(self, table, order_: list):
         result = []
