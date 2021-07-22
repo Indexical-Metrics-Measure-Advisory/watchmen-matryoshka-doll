@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import json
 import logging
 import operator
@@ -582,12 +582,14 @@ class OracleStorage(StorageInterface):
         with engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
-            res = cursor.fetchall()
-            if res is None:
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            rows = cursor.fetchall()
+
+            if rows is None:
                 return None
             else:
                 results = []
-                for row in res:
+                for row in rows:
                     result = {}
                     for index, name in enumerate(columns):
                         if isinstance(table.c[name.lower()].type, CLOB):
@@ -596,6 +598,8 @@ class OracleStorage(StorageInterface):
                             else:
                                 result[name] = None
                         else:
+                            print(name)
+                            print(row)
                             result[name] = row[name]
                     if self._check_topic_type(topic_name) == "raw":
                         results.append(result['DATA_'])

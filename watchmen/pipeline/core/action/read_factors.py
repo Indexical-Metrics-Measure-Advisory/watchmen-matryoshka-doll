@@ -18,7 +18,7 @@ def __check_factors_result(target_data_list):
         log.warning("result is not a list {0}".format(target_data_list))
 
 
-def init(actionContext: ActionContext):
+def init(action_context: ActionContext):
     def read_factors():
         # begin time
         start = time.time()
@@ -26,15 +26,15 @@ def init(actionContext: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "ReadFactors"
-        status.uid = actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
-        previous_data = actionContext.previousOfTriggerData
-        current_data = actionContext.currentOfTriggerData
-        action = actionContext.action
+        previous_data = action_context.previousOfTriggerData
+        current_data = action_context.currentOfTriggerData
+        action = action_context.action
 
-        pipeline_topic = actionContext.unitContext.stageContext.pipelineContext.pipelineTopic
+        pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic
         target_topic = get_topic_by_id(action.topicId)
-        variables = get_variables(actionContext)
+        variables = get_variables(action_context)
 
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
         status.whereConditions = where_
@@ -50,11 +50,11 @@ def init(actionContext: ActionContext):
                 for item_ in target_data:
                     read_value = item_[target_factor.name]
                     factor_value_list.append(read_value)
-                set_variable(actionContext, action.variableName, factor_value_list)
+                set_variable(action_context, action.variableName, factor_value_list)
                 status.value = factor_value_list
             else:
                 read_value = target_data[target_factor.name]
-                set_variable(actionContext, action.variableName, [read_value])
+                set_variable(action_context, action.variableName, [read_value])
                 status.value = read_value
 
         status.complete_time = time.time() - start

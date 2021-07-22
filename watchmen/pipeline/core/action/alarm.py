@@ -7,7 +7,7 @@ from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
 log = logging.getLogger("app." + __name__)
 
 
-def init(actionContext: ActionContext):
+def init(action_context: ActionContext):
     def alarm():
         # begin time
         start = time.time()
@@ -15,7 +15,7 @@ def init(actionContext: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "Alarm"
-        status.uid = actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
         # todo
         log.info("need to do, alarm action")

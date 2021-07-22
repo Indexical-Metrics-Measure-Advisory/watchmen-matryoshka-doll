@@ -7,7 +7,7 @@ from watchmen.pipeline.storage.read_topic_data import query_topic_data
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
-def init(actionContext: ActionContext):
+def init(action_context: ActionContext):
     def exists():
         # begin time
         start = time.time()
@@ -15,14 +15,14 @@ def init(actionContext: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "Exists"
-        status.uid = actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
-        previous_data = actionContext.previousOfTriggerData
-        current_data = actionContext.currentOfTriggerData
-        action = actionContext.action
-        pipeline_topic = actionContext.unitContext.stageContext.pipelineContext.pipelineTopic
+        previous_data = action_context.previousOfTriggerData
+        current_data = action_context.currentOfTriggerData
+        action = action_context.action
+        pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic
         target_topic = get_topic_by_id(action.topicId)
-        variables = get_variables(actionContext)
+        variables = get_variables(action_context)
 
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
         status.whereConditions = where_
@@ -31,9 +31,9 @@ def init(actionContext: ActionContext):
                                        target_topic.name)
 
         if target_data is not None:
-            set_variable(actionContext, action.variableName, 'true')
+            set_variable(action_context, action.variableName, 'true')
         else:
-            set_variable(actionContext, action.variableName, 'false')
+            set_variable(action_context, action.variableName, 'false')
 
         elapsed_time = time.time() - start
         status.complete_time = elapsed_time
