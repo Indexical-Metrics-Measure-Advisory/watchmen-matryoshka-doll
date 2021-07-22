@@ -27,13 +27,15 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()
     """
     user = authenticate(form_data.username, form_data.password)
     log.info("login username {0}".format(user.name))
+    # print(user)
 
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    return {
+
+    result = {
         "access_token": security.create_access_token(
             user.name, expires_delta=access_token_expires
         ),
@@ -41,6 +43,10 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()
         "role": user.role,
         "tenantId": user.tenantId
     }
+
+    print("result",result)
+    return result
+
 
 
 @router.get("/login/validate_token", response_model=User, tags=["authenticate"])
