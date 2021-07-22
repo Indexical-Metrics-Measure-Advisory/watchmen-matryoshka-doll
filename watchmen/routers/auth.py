@@ -8,7 +8,7 @@ from starlette import status
 
 from watchmen.auth.service import security
 from watchmen.auth.service.user import authenticate
-from watchmen.auth.storage.user import get_user, load_user_by_name
+from watchmen.auth.storage.user import load_user_by_name
 from watchmen.auth.token import Token
 from watchmen.auth.user import User
 from watchmen.common import deps
@@ -38,7 +38,8 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()
             user.name, expires_delta=access_token_expires
         ),
         "token_type": "bearer",
-        "role": user.role
+        "role": user.role,
+        "tenantId": user.tenantId
     }
 
 
