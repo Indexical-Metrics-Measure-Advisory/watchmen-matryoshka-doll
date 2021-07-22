@@ -4,7 +4,7 @@ from typing import List
 
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
-from watchmen.pipeline.utils import get_factor
+from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.report.model.column import Operator
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
@@ -12,7 +12,7 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 def _parse_parameter(parameter_: Parameter):
     if parameter_.kind == "topic":
         topic = get_topic_by_id(parameter_.topicId)
-        topic_name = build_collection_name(topic.name)
+        # topic_name = build_collection_name(topic.name)
         factor = get_factor(parameter_.factorId, topic)
         return f'${factor.name}'
     elif parameter_.kind == 'constant':

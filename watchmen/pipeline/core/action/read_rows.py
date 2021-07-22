@@ -7,7 +7,7 @@ from watchmen.pipeline.storage.read_topic_data import query_topic_data
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
-def init(actionContext: ActionContext):
+def init(action_context: ActionContext):
     def read_rows():
         # begin time
         start = time.time()
@@ -15,11 +15,11 @@ def init(actionContext: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "ReadRows"
-        status.uid = actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
-        previous_data = actionContext.previousOfTriggerData
-        current_data = actionContext.currentOfTriggerData
-        action = actionContext.action
+        previous_data = action_context.previousOfTriggerData
+        current_data = action_context.currentOfTriggerData
+        action = action_context.action
 
         target_topic = get_topic_by_id(action.topicId)
 
@@ -30,10 +30,10 @@ def init(actionContext: ActionContext):
 
         if target_data is not None:
             if isinstance(target_data, list):
-                set_variable(actionContext, action.variableName, target_data)
+                set_variable(action_context, action.variableName, target_data)
                 status.value = target_data
             else:
-                set_variable(actionContext, action.variableName, [target_data])
+                set_variable(action_context, action.variableName, [target_data])
                 status.value = target_data
 
         elapsed_time = time.time() - start

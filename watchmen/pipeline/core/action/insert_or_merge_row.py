@@ -43,9 +43,9 @@ def update_retry_callback(mappings_results, where_, target_topic):
         raise RuntimeError("insert or merge action failed")
 
 
-def init(actionContext: ActionContext):
+def init(action_context: ActionContext):
     def merge_or_insert_topic():
-        action = actionContext.action
+        action = action_context.action
         if action.topicId is None:
             raise ValueError("action.topicId is empty {0}".format(action.name))
         target_topic = get_topic_by_id(action.topicId)
@@ -61,17 +61,17 @@ def init(actionContext: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "InsertAndMergeRow"
-        status.uid = actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
-        previous_data = actionContext.previousOfTriggerData
-        current_data = actionContext.currentOfTriggerData
-        action = actionContext.action
+        previous_data = action_context.previousOfTriggerData
+        current_data = action_context.currentOfTriggerData
+        action = action_context.action
         if action.topicId is None:
             raise ValueError("action.topicId is empty {0}".format(action.name))
 
-        pipeline_topic = actionContext.unitContext.stageContext.pipelineContext.pipelineTopic
+        pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic
         target_topic = get_topic_by_id(action.topicId)
-        variables = get_variables(actionContext)
+        variables = get_variables(action_context)
 
         # todo
         # if there are aggregate functions, need lock the record to update
@@ -97,7 +97,7 @@ def init(actionContext: ActionContext):
         if target_data is None:
             try:
                 result = insert_topic_data(target_topic.name, mappings_results,
-                                           actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId)
+                                           action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId)
                 trigger_pipeline_data_list.append(result)
                 status.insertCount = status.insertCount + 1
                 elapsed_time = time.time() - start
@@ -124,18 +124,18 @@ def init(actionContext: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "InsertAndMergeRow"
-        status.uid = actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
-        previous_data = actionContext.previousOfTriggerData
-        current_data = actionContext.currentOfTriggerData
-        action = actionContext.action
+        previous_data = action_context.previousOfTriggerData
+        current_data = action_context.currentOfTriggerData
+        action = action_context.action
         if action.topicId is None:
             raise ValueError("action.topicId is empty {0}".format(action.name))
 
-        pipeline_topic = actionContext.unitContext.stageContext.pipelineContext.pipelineTopic
+        pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic
         target_topic = get_topic_by_id(action.topicId)
 
-        variables = get_variables(actionContext)
+        variables = get_variables(action_context)
 
         # todo
         # if there are aggregate functions, need lock the record to update
@@ -161,13 +161,13 @@ def init(actionContext: ActionContext):
         if target_data is None:
             trigger_pipeline_data_list.append(
                 insert_topic_data(target_topic.name, mappings_results,
-                                  actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId))
+                                  action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId))
             status.insertCount = status.insertCount + 1
 
         else:
             trigger_pipeline_data_list.append(
                 update_topic_data_one(target_topic.name, mappings_results, target_data,
-                                      actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
+                                      action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
                                       target_data[get_id_name()]))
             status.updateCount = status.updateCount + 1
 

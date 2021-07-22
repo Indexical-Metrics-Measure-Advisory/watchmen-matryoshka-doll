@@ -7,7 +7,7 @@ from watchmen.pipeline.storage.read_topic_data import query_topic_data
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
-def init(actionContext: ActionContext):
+def init(action_context: ActionContext):
     def read_row():
         # begin time
         start = time.time()
@@ -15,16 +15,16 @@ def init(actionContext: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "ReadRow"
-        status.uid = actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
-        previous_data = actionContext.previousOfTriggerData
-        current_data = actionContext.currentOfTriggerData
-        action = actionContext.action
+        previous_data = action_context.previousOfTriggerData
+        current_data = action_context.currentOfTriggerData
+        action = action_context.action
 
         target_topic = get_topic_by_id(action.topicId)
-        pipeline_topic = actionContext.unitContext.stageContext.pipelineContext.pipelineTopic
+        pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic
 
-        variables = get_variables(actionContext)
+        variables = get_variables(action_context)
 
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
         status.whereConditions = where_
@@ -35,7 +35,7 @@ def init(actionContext: ActionContext):
             if isinstance(target_data, list):
                 raise ValueError("read row action should just get one row record")
             else:
-                set_variable(actionContext, action.variableName, target_data)
+                set_variable(action_context, action.variableName, target_data)
                 status.value = target_data
 
         elapsed_time = time.time() - start

@@ -15,25 +15,25 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 log = logging.getLogger("app." + __name__)
 
 
-def init(actionContext: ActionContext):
+def init(action_context: ActionContext):
     def write_factor():
 
         start = time.time()
         # create action status monitor
         status = ActionStatus()
         status.type = "WriteFactor"
-        status.uid = actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
-        previous_data = actionContext.previousOfTriggerData
-        current_data = actionContext.currentOfTriggerData
+        previous_data = action_context.previousOfTriggerData
+        current_data = action_context.currentOfTriggerData
 
-        action = actionContext.action
+        action = action_context.action
 
         if action.topicId is not None:
 
-            pipeline_topic = actionContext.unitContext.stageContext.pipelineContext.pipelineTopic
+            pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic
             target_topic = get_topic_by_id(action.topicId)
-            variables = get_variables(actionContext)
+            variables = get_variables(action_context)
 
             where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
             status.whereConditions = where_
@@ -70,7 +70,7 @@ def init(actionContext: ActionContext):
             if target_data is not None:
                 trigger_pipeline_data_list.append(update_topic_data_one(
                     target_topic.name, updates_, target_data,
-                    actionContext.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
+                    action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
                     target_data['id_']))
 
         elapsed_time = time.time() - start
