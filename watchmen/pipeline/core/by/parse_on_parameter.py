@@ -193,7 +193,7 @@ def parse_parameter_joint(joint: ParameterJoint, current_data, variables, pipeli
 
         if right_expr_item["position"] == "left":
             name = right_expr_item["value"]
-            factor = left_expr_item.get("factor", None)
+            factor = right_expr_item.get("factor", None)
         else:
             value = right_expr_item["value"]
 

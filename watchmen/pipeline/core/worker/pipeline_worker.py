@@ -117,7 +117,7 @@ def run_pipeline(pipeline_context: PipelineContext):
 
             except Exception as e:
                 log.error(e)
-                raise e
+                # raise e
                 pipeline_status.error = traceback.format_exc()
                 pipeline_status.status = ERROR
             finally:
