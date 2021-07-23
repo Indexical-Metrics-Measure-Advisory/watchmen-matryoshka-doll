@@ -598,8 +598,6 @@ class OracleStorage(StorageInterface):
                             else:
                                 result[name] = None
                         else:
-                            print(name)
-                            print(row)
                             result[name] = row[name]
                     if self._check_topic_type(topic_name) == "raw":
                         results.append(result['DATA_'])
