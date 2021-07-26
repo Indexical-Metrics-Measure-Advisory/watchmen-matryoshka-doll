@@ -5,7 +5,7 @@
     <b>watchmen is a lighter platform for data analytics.</b>
 </p>
 <p align="center">
-    See the <a href="https://www.watchmen.com/docs/current/">User Manual</a> for deployment instructions and end user documentation.
+    See the <a href="https://imma-watchmen.com">User Manual</a> for deployment instructions and end user documentation.
 </p>
 
 [![GitHub license](https://img.shields.io/github/license/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll?style=flat-square)](https://github.com/Indexical-Metrics-Measure-Advisory/watchmen-matryoshka-doll/blob/master/LICENSE)
