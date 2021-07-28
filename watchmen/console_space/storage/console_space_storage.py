@@ -8,18 +8,15 @@ from watchmen.console_space.model.console_space import ConsoleSpace
 from watchmen.database.storage.storage_template import insert_one, update_one_first, find_one, list_, find_, \
     delete_by_id
 
-
-# template = find_template()
+CONSOLE_SPACES = "console_spaces"
 
 
 def create_console_space(console_space: ConsoleSpace):
-    # return template.create("console_spaces", console_space, ConsoleSpace)
-    return insert_one(console_space, ConsoleSpace, "console_spaces")
+    return insert_one(console_space, ConsoleSpace, CONSOLE_SPACES)
 
 
 def update_console_space(console_space: ConsoleSpace):
-    # return template.update_one("console_spaces", {"connectId": console_space.connectId}, console_space, ConsoleSpace)
-    return update_one_first({"connectId": console_space.connectId}, console_space, ConsoleSpace, "console_spaces")
+    return update_one_first({"connectId": console_space.connectId}, console_space, ConsoleSpace, CONSOLE_SPACES)
 
 
 def save_console_space(console_space: ConsoleSpace) -> ConsoleSpace:
@@ -32,7 +29,12 @@ def save_console_space(console_space: ConsoleSpace) -> ConsoleSpace:
 
 def load_console_space_by_id(connect_id: str, current_user) -> ConsoleSpace:
     return find_one({"and": [{"connectId": connect_id}, {"tenantId": current_user.tenantId}]}, ConsoleSpace,
-                    "console_spaces")
+                    CONSOLE_SPACES)
+
+
+def load_template_space_list_by_space_id(space_id)-> List[ConsoleSpace]:
+    return find_({"and": [{"spaceId": space_id}, {"isTemplate": True}]}, ConsoleSpace,
+                 CONSOLE_SPACES)
 
 
 def delete_console_space_storage(connect_id: str):
@@ -42,18 +44,18 @@ def delete_console_space_storage(connect_id: str):
 
 def load_console_space_list_by_user(user_id: str, current_user: User) -> ConsoleSpace:
     # return template.find("console_spaces", {"userId": user_id}, ConsoleSpace)
-    return find_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}]}, ConsoleSpace, "console_spaces")
+    return find_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}]}, ConsoleSpace, CONSOLE_SPACES)
 
 
 def load_console_space_by_subject_id(subject_id: str, current_user) -> ConsoleSpace:
     # return template.find_one("console_spaces", {"subjectIds": subject_id}, ConsoleSpace)
     return find_one({"subjectIds": {"in": [subject_id]}}, ConsoleSpace,
-                    "console_spaces")
+                    CONSOLE_SPACES)
 
 
 def rename_console_space_by_id(connect_id: str, name: str) -> ConsoleSpace:
     # return template.update_one("console_spaces", {"connectId": connect_id}, {"name": name}, ConsoleSpace)
-    return update_one_first({"connectId": connect_id}, {"name": name}, ConsoleSpace, "console_spaces")
+    return update_one_first({"connectId": connect_id}, {"name": name}, ConsoleSpace, CONSOLE_SPACES)
 
 
 def create_console_space_graph(console_space_graph: ConnectedSpaceGraphics) -> ConnectedSpaceGraphics:

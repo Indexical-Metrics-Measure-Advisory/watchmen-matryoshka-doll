@@ -1,5 +1,6 @@
 from watchmen.auth.user import User
 from watchmen.common.pagination import Pagination
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.console_space.model.console_space import Report
 from watchmen.database.storage.storage_template import insert_one, update_one, find_, page_, \
     delete_by_id, find_one
@@ -7,13 +8,12 @@ from watchmen.database.storage.storage_template import insert_one, update_one, f
 CONSOLE_REPORTS = "console_reports"
 
 
-def create_report(report):
-    # return template.create(CONSOLE_REPORTS, report, Report)
+def create_report(report:Report):
+    report.reportId=get_surrogate_key()
     return insert_one(report, Report, CONSOLE_REPORTS)
 
 
 def save_subject_report(report):
-    # return template.update_one(CONSOLE_REPORTS, {"reportId": report.reportId}, report, Report)
     return update_one(report, Report, CONSOLE_REPORTS)
 
 

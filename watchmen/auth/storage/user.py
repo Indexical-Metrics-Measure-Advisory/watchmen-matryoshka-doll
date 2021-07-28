@@ -23,7 +23,7 @@ def __clean_password(user):
         return user
 
 
-def get_user(user_id):
+def get_user(user_id)->User:
     user = find_one({"userId": user_id}, User, USERS)
     return __clean_password(user)
 

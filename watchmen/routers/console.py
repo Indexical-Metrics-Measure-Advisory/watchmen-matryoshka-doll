@@ -15,14 +15,14 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, check_fake_id, add_tenant_id_to_model
 from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceSubject, \
-    ConsoleSpaceSubjectChartDataSet
+    ConsoleSpaceSubjectChartDataSet, ConnectedSpaceTemplate
 from watchmen.console_space.model.favorite import Favorite
 from watchmen.console_space.model.last_snapshot import LastSnapshot
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
-    delete_console_space_and_sub_data
+    delete_console_space_and_sub_data, copy_template_to_console_space
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
     load_console_space_by_id, rename_console_space_by_id, create_console_space_graph, update_console_space_graph, \
-    load_console_space_graph_by_user_id, load_console_space_graph
+    load_console_space_graph_by_user_id, load_console_space_graph, load_template_space_list_by_space_id
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
     load_console_subject_list_by_ids, update_console_subject, rename_console_subject_by_id, load_console_subject_by_id, \
     load_console_subject_by_report_id
@@ -76,16 +76,37 @@ async def load_space_list_by_user(current_user: User = Depends(deps.get_current_
     return available_space_list
 
 
+@router.get("/console_space/template/list", tags=["console"], response_model=List[ConnectedSpaceTemplate])
+async def load_template_space_list(space_id: str, current_user: User = Depends(deps.get_current_user)):
+    results: List[ConsoleSpace] = load_template_space_list_by_space_id(space_id)
+    template_list = []
+    for console_space in results:
+        print("user",console_space.userId)
+        user = get_user(console_space.userId)
+        template_list.append(
+            ConnectedSpaceTemplate(connectId=console_space.connectId, name=console_space.name, createBy=user.name))
+    return template_list
+
+
 @router.get("/space/connect", tags=["console"], response_model=ConsoleSpace)
-async def connect_to_space(space_id, name, current_user: User = Depends(deps.get_current_user)):
-    topic_list = load_topic_list_by_space_id(space_id, current_user)
+async def connect_to_space(space_id, name, template_ids=None, current_user: User = Depends(deps.get_current_user)):
     console_space = ConsoleSpace()
     console_space = add_tenant_id_to_model(console_space, current_user)
-    console_space.topics = topic_list
+    console_space.topics = load_topic_list_by_space_id(space_id, current_user)
     console_space.spaceId = space_id
     console_space.name = name
     console_space.userId = current_user.userId
     console_space.lastVisitTime = datetime.now().replace(tzinfo=None)
+    if template_ids:
+        console_space = copy_template_to_console_space(template_ids,console_space,current_user)
+    console_space = save_console_space(console_space)
+    return console_space
+
+
+@router.post("/console_space/save", tags=["console"], response_model=ConsoleSpace)
+async def update_console_space(console_space: ConsoleSpace, current_user: User = Depends(deps.get_current_user)):
+    console_space = add_tenant_id_to_model(console_space, current_user)
+    console_space.userId = current_user.userId
     return save_console_space(console_space)
 
 
@@ -134,7 +155,7 @@ async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body
 
 @router.get("/console_space/delete", tags=["console"])
 async def delete_console_space(connect_id, current_user: User = Depends(deps.get_current_user)):
-    delete_console_space_and_sub_data(connect_id,current_user)
+    delete_console_space_and_sub_data(connect_id, current_user)
 
 
 @router.get("/console_space/subject/rename", tags=["console"])
@@ -144,7 +165,7 @@ async def rename_console_space_subject(subject_id: str, name: str, current_user:
 
 @router.get("/console_space/subject/delete", tags=["console"])
 async def delete_subject(subject_id, current_user: User = Depends(deps.get_current_user)):
-    delete_console_subject(subject_id,current_user)
+    delete_console_subject(subject_id, current_user)
 
 
 @router.post("/console_space/subject/save", tags=["console"], response_model=ConsoleSpaceSubject)
@@ -275,8 +296,6 @@ async def share_subject(subject_id: str, token: str):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     subject = load_console_subject_by_id(subject_id, user)
     return {"subject": subject}
-
-
 
 
 ## FAVORITE

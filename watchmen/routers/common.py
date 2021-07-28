@@ -45,7 +45,6 @@ async def health():
     return {"health": True}
 
 
-## TODO pass user pat when system integration
 @router.post("/topic/data", tags=["common"])
 async def save_topic_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
     # TODO user check URP

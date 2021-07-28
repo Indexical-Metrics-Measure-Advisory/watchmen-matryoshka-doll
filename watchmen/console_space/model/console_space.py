@@ -3,8 +3,6 @@ from typing import List
 
 from pydantic import BaseModel
 
-from watchmen.common.watchmen_model import WatchmenModel
-
 from watchmen.common.parameter import ParameterJoint, Parameter
 from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.report.model.report import Report
@@ -65,17 +63,22 @@ class ConsoleSpaceGroup(WatchmenModel):
     tenantId: str = None
 
 
+class ConnectedSpaceTemplate(BaseModel):
+    connectId: str = None
+    name: str = None
+    createBy: str = None
+
+
 class ConsoleSpace(WatchmenModel):
     spaceId: str = None
     name: str = None
     connectId: str = None
     type: str = None
     lastVisitTime: datetime = None
-    # groups: List[ConsoleSpaceGroup] = []
     subjects: List[ConsoleSpaceSubject] = []
     groupIds: list = []
     subjectIds: list = []
     userId: str = None
     topics: List[Topic] = []
     tenantId: str = None
-    # topicRelations: List[TopicRelationship] = []
+    isTemplate: bool = False
