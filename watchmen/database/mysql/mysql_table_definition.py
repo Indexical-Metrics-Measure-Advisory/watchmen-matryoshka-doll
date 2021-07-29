@@ -245,4 +245,5 @@ def get_meta_table(table_name):
 
 def get_topic_table_by_name(table_name):
     table = Table(table_name, metadata, extend_existing=False, autoload=True, autoload_with=engine)
+
     return table

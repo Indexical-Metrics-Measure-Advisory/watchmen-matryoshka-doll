@@ -1,18 +1,18 @@
-from datetime import datetime
 import json
 import logging
 import operator
+from datetime import datetime
 from decimal import Decimal
 from operator import eq
 
-from sqlalchemy import update, Table, and_, or_, delete, Column, DECIMAL, String, desc, asc, \
-    text, func, DateTime, BigInteger, Date, Integer, JSON, inspect
+from sqlalchemy import update, and_, or_, delete, desc, asc, \
+    text, JSON, inspect
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME, COLUMNS_BY_TABLE_NAME
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME, COLUMNS_BY_TABLE_NAME, STMT
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
@@ -25,9 +25,7 @@ from watchmen.database.storage.exception.exception import OptimisticLockError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
-
 insp = inspect(engine)
-
 
 log = logging.getLogger("app." + __name__)
 
@@ -468,12 +466,34 @@ class MysqlStorage(StorageInterface):
             with conn.begin():
                 conn.execute(stmt)
 
+    def build_stmt(self, stmt_type, table_name,table):
+        key = stmt_type + "-" + table_name
+        result = cacheman[STMT].get(key)
+        if result is not None:
+            return result
+        else:
+            if stmt_type =="insert":
+                stmt= insert(table)
+                cacheman[STMT].set(key,stmt)
+                return stmt
+            elif stmt_type =="update":
+                stmt = update(table)
+                cacheman[STMT].set(key, stmt)
+                return stmt
+            elif stmt_type =="select":
+                stmt = select(table)
+                cacheman[STMT].set(key, stmt)
+                return stmt
+
+
+
+
     def topic_data_insert_one(self, one, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
+        stmt = self.build_stmt("insert",table_name,table)
         one_dict: dict = capital_to_lower(convert_to_dict(one))
         value = self.build_mysql_updates_expression(table, one_dict, "insert")
-        stmt = insert(table)
         with engine.connect() as conn:
             with conn.begin():
                 conn.execute(stmt, value)
@@ -489,7 +509,7 @@ class MysqlStorage(StorageInterface):
             for key in table.c.keys():
                 value[key] = instance_dict.get(key)
             values.append(value)
-        stmt = insert(table)
+        stmt = self.build_stmt("insert",table_name,table)
         with engine.connect() as conn:
             with conn.begin():
                 conn.execute(stmt, values)
@@ -497,7 +517,9 @@ class MysqlStorage(StorageInterface):
     def topic_data_update_one(self, id_: str, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        stmt = update(table).where(eq(table.c['id_'], id_))
+        stmt = self.build_stmt("update", table_name, table)
+
+        stmt = stmt.where(eq(table.c['id_'], id_))
         one_dict = convert_to_dict(one)
         values = self.build_mysql_updates_expression(table, capital_to_lower(one_dict), "update")
         stmt = stmt.values(values)
@@ -507,7 +529,8 @@ class MysqlStorage(StorageInterface):
     def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
+        stmt = self.build_stmt("update", table_name, table)
+        stmt = stmt.where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
         one_dict = convert_to_dict(one)
         one_dict['version_'] = version_
         values = self.build_mysql_updates_expression(table, capital_to_lower(one_dict), "update")
@@ -520,7 +543,8 @@ class MysqlStorage(StorageInterface):
     def topic_data_update_(self, query_dict, instance, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        stmt = (update(table).
+        stmt = self.build_stmt("update", table_name, table)
+        stmt = (stmt.
                 where(self.build_mysql_where_expression(table, query_dict)))
         instance_dict: dict = convert_to_dict(instance)
         values = {}
@@ -539,7 +563,8 @@ class MysqlStorage(StorageInterface):
     def topic_data_find_one(self, where, topic_name) -> any:
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        stmt = select(table).where(self.build_mysql_where_expression(table, where))
+        stmt = self.build_stmt("select", table_name, table)
+        stmt = stmt.where(self.build_mysql_where_expression(table, where))
         with engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
@@ -561,7 +586,8 @@ class MysqlStorage(StorageInterface):
     def topic_data_find_(self, where, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        stmt = select(table).where(self.build_mysql_where_expression(table, where))
+        stmt = self.build_stmt("select", table_name, table)
+        stmt = stmt.where(self.build_mysql_where_expression(table, where))
         with engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
@@ -586,7 +612,8 @@ class MysqlStorage(StorageInterface):
     def topic_data_list_all(self, topic_name) -> list:
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        stmt = select(table)
+        # stmt = select(table)
+        stmt = self.build_stmt("select", table_name, table)
         with engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
@@ -618,7 +645,8 @@ class MysqlStorage(StorageInterface):
         table_name = build_collection_name(name)
         count = count_topic_data_table(table_name)
         table = get_topic_table_by_name(table_name)
-        stmt = select(table).where(self.build_mysql_where_expression(table, where))
+        stmt = self.build_stmt("select", table_name, table)
+        stmt = stmt.where(self.build_mysql_where_expression(table, where))
         orders = self.build_mysql_order(table, sort)
         for order in orders:
             stmt = stmt.order_by(order)
