@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON
+from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON, Boolean
 from watchmen.database.mysql.mysql_engine import engine
 
 
@@ -127,6 +127,7 @@ console_spaces_table = Table("console_spaces", metadata,
                              Column("userid", String(60), nullable=True),
                              Column("subjectids", JSON, nullable=True),
                              Column("subjects", JSON, nullable=True),
+                             Column("istemplate",Boolean,default=False),
                              Column('createtime', String(50), nullable=True),
                              Column('tenantid', String(60), nullable=False),
                              # Column('last_modified', DateTime, nullable=True),
@@ -244,4 +245,5 @@ def get_meta_table(table_name):
 
 def get_topic_table_by_name(table_name):
     table = Table(table_name, metadata, extend_existing=False, autoload=True, autoload_with=engine)
+
     return table

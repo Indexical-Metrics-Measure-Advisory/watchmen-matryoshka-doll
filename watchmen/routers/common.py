@@ -45,7 +45,6 @@ async def health():
     return {"health": True}
 
 
-## TODO pass user pat when system integration
 @router.post("/topic/data", tags=["common"])
 async def save_topic_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
     # TODO user check URP
@@ -148,18 +147,11 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
 
 @router.get("/pipeline/graph/show", tags=["common"])
 def show_pipeline_graph(topic_id):
-    # pipelines = load_pipeline_by_topic_id(topic_id)
-    # buildPipelineGraph(pipelines)
-    # buildPipelinesGraph()
     topic = get_topic_by_id(topic_id)
-    # pipelineExecutionPath(topic)
     result = pipelineExecutionPath(topic)
     return {"show": result}
 
 
-# @router.get("/topic/data", tags=["common"])
-# def load_topic_instance_data(topic_name,current_user: User = Depends(deps.get_current_user)):
-#     return topic_data_list_all(topic_name)
 
 
 @router.get("/table/metadata/clear", tags=["common"])
@@ -167,6 +159,7 @@ def clear_table_metadata():
     clear_metadata()
 
 
+#TODO current_user
 @router.post("/tenant", tags=["common"], response_model=Tenant)
 def save_tenant(tenant: Tenant) -> Tenant:
     if check_fake_id(tenant.tenantId):
