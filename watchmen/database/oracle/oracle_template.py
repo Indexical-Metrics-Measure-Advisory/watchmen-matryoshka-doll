@@ -575,6 +575,33 @@ class OracleStorage(StorageInterface):
                         result[name] = rows[index]
                 return result
 
+    def topic_data_find_with_aggregate(self, where, topic_name, aggregate):
+        table_name = 'topic_' + topic_name
+        table = get_topic_table_by_name(table_name)
+        return_column_name = None
+        for key, value in aggregate.items():
+            if value == "sum":
+                stmt = select(text(f'sum({key.lower()}) as sum_{key.lower()}'))
+                return_column_name = f'SUM_{key.upper()}'
+            elif value == "count":
+                stmt = select(f'count(*) as count')
+                return_column_name = 'COUNT'
+            elif value == "avg":
+                stmt = select(text(f'avg({key.lower()}) as avg_{key.lower()}'))
+                return_column_name = f'AVG_{key.upper()}'
+        stmt = stmt.select_from(table)
+        stmt = stmt.where(self.build_oracle_where_expression(table, where))
+        with engine.connect() as conn:
+            cursor = conn.execute(stmt).cursor
+            columns = [col[0] for col in cursor.description]
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            res = cursor.fetchone()
+        if res is None:
+            return None
+        else:
+
+            return res[return_column_name]
+
     def topic_data_list_all(self, topic_name) -> list:
         table_name = build_collection_name(topic_name)
         table = get_topic_table_by_name(table_name)

@@ -160,6 +160,10 @@ class StorageInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def topic_data_find_with_aggregate(self, where, topic_name, aggregate):
+        pass
+
+    @abc.abstractmethod
     def topic_data_list_all(self, topic_name) -> list:
         pass
 

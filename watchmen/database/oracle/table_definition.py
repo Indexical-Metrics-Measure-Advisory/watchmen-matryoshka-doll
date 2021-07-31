@@ -117,11 +117,10 @@ console_spaces_table = Table("console_spaces", metadata,
                              Column('lastvisittime', DateTime, nullable=True),
                              Column("userid", String(60), nullable=True),
                              Column("subjectids", CLOB, nullable=True),
-                             Column("istemplate",Boolean,default=False),
+                             Column("istemplate", String(5), default=False),
                              Column("subjects", CLOB, nullable=True),
                              Column('tenantid', String(60), nullable=False),
                              Column('createtime', String(50), nullable=True),
-                             # Column('last_modified', DateTime, nullable=True),
                              Column('lastmodified', DateTime, nullable=True)
                              )
 
@@ -161,7 +160,6 @@ console_space_subjects_table = Table("console_space_subjects", metadata,
                                      Column('tenantid', String(60), nullable=False),
                                      Column("lastvisittime", DateTime, nullable=True),
                                      Column("createdat", String(50), nullable=True),
-                                     # Column('last_modified', DateTime, nullable=True),
                                      Column('lastmodifytime', DateTime, nullable=True),
                                      Column('lastmodified', DateTime, nullable=True),
                                      Column('createtime', String(50), nullable=True)

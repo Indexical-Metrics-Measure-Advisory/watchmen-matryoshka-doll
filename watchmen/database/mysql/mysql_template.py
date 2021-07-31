@@ -6,9 +6,9 @@ from decimal import Decimal
 from operator import eq
 
 from sqlalchemy import update, and_, or_, delete, desc, asc, \
-    text, JSON, inspect
+    text, JSON, inspect, func
 from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.exc import NoSuchTableError
+from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
@@ -21,7 +21,7 @@ from watchmen.database.mysql.mysql_engine import engine
 from watchmen.database.mysql.mysql_table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.database.mysql.mysql_utils import parse_obj, count_table, count_topic_data_table
 from watchmen.database.singleton import singleton
-from watchmen.database.storage.exception.exception import OptimisticLockError
+from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
@@ -466,37 +466,38 @@ class MysqlStorage(StorageInterface):
             with conn.begin():
                 conn.execute(stmt)
 
-    def build_stmt(self, stmt_type, table_name,table):
+    def build_stmt(self, stmt_type, table_name, table):
         key = stmt_type + "-" + table_name
         result = cacheman[STMT].get(key)
         if result is not None:
             return result
         else:
-            if stmt_type =="insert":
-                stmt= insert(table)
-                cacheman[STMT].set(key,stmt)
+            if stmt_type == "insert":
+                stmt = insert(table)
+                cacheman[STMT].set(key, stmt)
                 return stmt
-            elif stmt_type =="update":
+            elif stmt_type == "update":
                 stmt = update(table)
                 cacheman[STMT].set(key, stmt)
                 return stmt
-            elif stmt_type =="select":
+            elif stmt_type == "select":
                 stmt = select(table)
                 cacheman[STMT].set(key, stmt)
                 return stmt
 
-
-
-
     def topic_data_insert_one(self, one, topic_name):
         table_name = 'topic_' + topic_name
         table = get_topic_table_by_name(table_name)
-        stmt = self.build_stmt("insert",table_name,table)
+        stmt = self.build_stmt("insert", table_name, table)
         one_dict: dict = capital_to_lower(convert_to_dict(one))
         value = self.build_mysql_updates_expression(table, one_dict, "insert")
         with engine.connect() as conn:
             with conn.begin():
-                conn.execute(stmt, value)
+                try:
+                    result = conn.execute(stmt, value)
+                except IntegrityError as e:
+                    raise InsertConflictError("InsertConflict")
+        return result.rowcount
 
     def topic_data_insert_(self, data, topic_name):
         table_name = 'topic_' + topic_name
@@ -509,7 +510,7 @@ class MysqlStorage(StorageInterface):
             for key in table.c.keys():
                 value[key] = instance_dict.get(key)
             values.append(value)
-        stmt = self.build_stmt("insert",table_name,table)
+        stmt = self.build_stmt("insert", table_name, table)
         with engine.connect() as conn:
             with conn.begin():
                 conn.execute(stmt, values)
@@ -608,6 +609,26 @@ class MysqlStorage(StorageInterface):
                         result[name] = row[index]
                 results.append(result)
             return self._convert_list_elements_key(results, topic_name)
+
+    def topic_data_find_with_aggregate(self, where, topic_name, aggregate):
+        table_name = 'topic_' + topic_name
+        table = get_topic_table_by_name(table_name)
+        for key, value in aggregate.items():
+            if value == "sum":
+                stmt = select(text(f'sum({key.lower()})'))
+            elif value == "count":
+                stmt = select(func.count())
+            elif value == "avg":
+                stmt = select(text(f'avg({key.lower()})'))
+        stmt = stmt.select_from(table)
+        stmt = stmt.where(self.build_mysql_where_expression(table, where))
+        with engine.connect() as conn:
+            cursor = conn.execute(stmt).cursor
+            res = cursor.fetchone()
+        if res is None:
+            return None
+        else:
+            return res[0]
 
     def topic_data_list_all(self, topic_name) -> list:
         table_name = 'topic_' + topic_name

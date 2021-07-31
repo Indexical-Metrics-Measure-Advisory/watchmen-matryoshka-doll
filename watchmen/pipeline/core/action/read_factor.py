@@ -1,10 +1,11 @@
 import logging
 import time
-
+import pandas as pd
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, set_variable, ActionContext
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
-from watchmen.pipeline.storage.read_topic_data import query_topic_data
+from watchmen.pipeline.storage.read_topic_data import query_topic_data, query_multiple_topic_data, \
+    query_topic_data_aggregate
 from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
@@ -34,14 +35,26 @@ def init(action_context: ActionContext):
 
         target_factor = get_factor(action.factorId, target_topic)
 
-        target_data = query_topic_data(where_, target_topic.name)
-        if target_data is not None:
-            if isinstance(target_data, list):
-                raise ValueError("read factor action should just get one factor record")
-            else:
-                read_value = target_data[target_factor.name]
+        if action.arithmetic == "none":
+            target_data = query_topic_data(where_, target_topic.name)
+            if target_data is not None:
+                if isinstance(target_data, list):
+                    raise ValueError("read factor action should just get one factor record")
+                else:
+                    read_value = target_data[target_factor.name]
+                    set_variable(action_context, action.variableName, read_value)
+                    status.value = read_value
+        else:
+            if action.arithmetic == "sum":
+                read_value = query_topic_data_aggregate(where_, target_topic.name, {target_factor.name: "sum"})
                 set_variable(action_context, action.variableName, read_value)
-                status.value = read_value
+            elif action.arithmetic == "count":
+                read_value = query_topic_data_aggregate(where_, target_topic.name, {target_factor.name: "count"})
+                set_variable(action_context, action.variableName, read_value)
+            elif action.arithmetic == "avg":
+                read_value = query_topic_data_aggregate(where_, target_topic.name, {target_factor.name: "avg"})
+                set_variable(action_context, action.variableName, read_value)
+            status.value = read_value
 
         elapsed_time = time.time() - start
         status.complete_time = elapsed_time

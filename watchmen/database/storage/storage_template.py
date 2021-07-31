@@ -162,6 +162,10 @@ def topic_data_find_(where, topic_name):
     return template.topic_data_find_(where, topic_name)
 
 
+def topic_data_find_with_aggregate(where, topic_name, aggregate):
+    return template.topic_data_find_with_aggregate(where, topic_name, aggregate)
+
+
 def topic_data_list_all(topic_name) -> list:
     return template.topic_data_list_all(topic_name)
 
