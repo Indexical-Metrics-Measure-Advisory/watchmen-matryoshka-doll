@@ -44,7 +44,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()
         "tenantId": user.tenantId
     }
 
-    # print("result",result)
+
     return result
 
 
