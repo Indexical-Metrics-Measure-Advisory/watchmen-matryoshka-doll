@@ -1,2 +1,0 @@
-class Trace(object):
-    pass

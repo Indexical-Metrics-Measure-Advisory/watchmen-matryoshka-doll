@@ -482,7 +482,7 @@ async def query_log_by_critical(query: MonitorLogQuery):
     if query.criteria.pipelineId is not None:
         query_list.append({"pipelineId": query.criteria.pipelineId})
     if query.criteria.startDate is not None and query.criteria.endDate is not None:
-        query_list.append({"sys_insertTime": {
+        query_list.append({"insert_time_": {
             "between": (
                 arrow.get(query.criteria.startDate).datetime.replace(tzinfo=None),
                 arrow.get(query.criteria.endDate).datetime.replace(tzinfo=None)

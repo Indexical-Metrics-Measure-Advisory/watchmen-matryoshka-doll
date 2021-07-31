@@ -1,3 +1,4 @@
+import datetime
 import logging
 from datetime import date
 
@@ -6,6 +7,7 @@ import pymongo
 from bson import regex, ObjectId
 from pymongo import ReturnDocument
 
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
 from watchmen.database.mongo.index import build_code_options, get_client
@@ -100,16 +102,15 @@ class MongoStorage(StorageInterface):
     def build_mongo_updates_expression_for_insert(self, updates):
         new_updates = {}
         for key, value in updates.items():
-            if key == "$inc":
-                pass
-            elif key == "$set":
-                pass
             if isinstance(value, dict):
-                for k, v in value.items():
-                    if k == "_sum":
-                        new_updates[key] = v
-                    elif k == "_count":
-                        new_updates[key] = v
+                if "_sum" in value:
+                    new_updates[key] = value["_sum"]
+                elif "_count" in value:
+                    new_updates[key] = value["_count"]
+                elif "_avg" in value:
+                    new_updates[key] = value["_avg"]
+                else:
+                    new_updates[key] = value
             else:
                 new_updates[key] = value
         return new_updates
@@ -119,11 +120,14 @@ class MongoStorage(StorageInterface):
         new_updates["$set"] = {}
         for key, value in updates.items():
             if isinstance(value, dict):
-                for k, v in value.items():
-                    if k == "_sum":
-                        new_updates['$inc'] = {key: v}
-                    elif k == "_count":
-                        new_updates['$inc'][key] = v
+                if "_sum" in value:
+                    new_updates['$inc'] = {key: value["_sum"]}
+                elif "_count" in value:
+                    new_updates['$inc'][key] = value["_count"]
+                elif "_avg" in value:
+                    pass
+                else:
+                    new_updates["$set"][key] = value["_avg"]
             else:
                 new_updates["$set"][key] = value
         return new_updates
@@ -251,7 +255,11 @@ class MongoStorage(StorageInterface):
         if model is not None:
             return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
         else:
-            return build_data_pages(pageable, list(cursor), total)
+            results = []
+            for doc in cursor:
+                del doc['_id']
+                results.append(doc)
+            return build_data_pages(pageable, results, total)
 
     def __convert_list_to_dict(self, items: list):
         result = []
@@ -280,7 +288,6 @@ class MongoStorage(StorageInterface):
         else:
             collection.delete_many(self.build_mongo_where_expression(where))
 
-    # save_topic_instance, insert one
     def topic_data_insert_one(self, one, topic_name):
         codec_options = build_code_options()
         topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
@@ -293,7 +300,6 @@ class MongoStorage(StorageInterface):
             if isinstance(v, date):
                 one[k] = arrow.get(v).datetime
 
-    # save_topic_instances, insert many
     def topic_data_insert_(self, data, topic_name):
         codec_options = build_code_options()
         topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
@@ -351,14 +357,7 @@ class MongoStorage(StorageInterface):
                 return topic_data_col.count_documents(self.build_mongo_where_expression(where))
             elif value == "avg":
                 aggregate_ = {key:  {"$avg": f'${key}'}}
-        pipeline = [
-            {
-                "$match": self.build_mongo_where_expression(where)
-            },
-            {
-                "$project": aggregate_
-            },
-        ]
+        pipeline = [{"$match": self.build_mongo_where_expression(where)},{"$project": aggregate_}]
         result = topic_data_col.aggregate(pipeline)
         return result
 
@@ -369,7 +368,46 @@ class MongoStorage(StorageInterface):
         return list(result)
 
     def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
-        return self.page_(self.build_mongo_where_expression(where), sort, pageable, model, name)
+        topic_collection_name = build_collection_name(name)
+        codec_options = build_code_options()
+        collection = client.get_collection(topic_collection_name, codec_options=codec_options)
+
+        mongo_where = self.build_mongo_where_expression(where)
+        total = collection.find(mongo_where).count()
+        skips = pageable.pageSize * (pageable.pageNumber - 1)
+        if sort is not None:
+            cursor = collection.find(mongo_where).skip(skips).limit(pageable.pageSize).sort(
+                self.build_mongo_order(sort))
+        else:
+            cursor = collection.find(mongo_where).skip(skips).limit(pageable.pageSize)
+        if model is not None:
+            return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
+        else:
+            results = []
+            if self._check_topic_type(name) == "raw":
+                for doc in cursor:
+                    results.append(doc['data_'])
+            else:
+                for doc in cursor:
+                    del doc['_id']
+                    results.append(doc)
+            return build_data_pages(pageable, results, total)
+
+    def _check_topic_type(self, topic_name):
+        topic = self._get_topic(topic_name)
+        return topic['type']
+
+    def _get_topic(self, topic_name) -> any:
+        if cacheman[TOPIC_DICT_BY_NAME].get(topic_name) is not None:
+            return cacheman[TOPIC_DICT_BY_NAME].get(topic_name)
+        codec_options = build_code_options()
+        topic_collection = client.get_collection("topics", codec_options=codec_options)
+        result = topic_collection.find_one({"name": topic_name})
+        if result is None:
+            raise Exception("not find topic {0}".format(topic_name))
+        else:
+            cacheman[TOPIC_DICT_BY_NAME].set(topic_name, result)
+            return result
 
     def clear_metadata(self):
         pass
