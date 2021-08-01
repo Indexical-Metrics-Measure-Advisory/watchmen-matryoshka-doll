@@ -360,14 +360,26 @@ class MongoStorage(StorageInterface):
         for key, value in aggregate.items():
             aggregate_ = {}
             if value == "sum":
-                aggregate_ = {key: {"$sum": f'${key}'}}
+                aggregate_ = {"$group":
+                    {
+                        "_id": "null",
+                        "value": {"$sum": f'${key}'}
+                    }
+                }
             elif value == "count":
                 return topic_data_col.count_documents(self.build_mongo_where_expression(where))
             elif value == "avg":
-                aggregate_ = {key: {"$avg": f'${key}'}}
-        pipeline = [{"$match": self.build_mongo_where_expression(where)}, {"$project": aggregate_}]
-        result = topic_data_col.aggregate(pipeline)
-        return result
+                aggregate_ = {"$group":
+                    {
+                        "_id": "null",
+                        "value": {"$avg": f'${key}'}
+                    }
+                }
+        pipeline = [{"$match": self.build_mongo_where_expression(where)}, aggregate_]
+        cursor = topic_data_col.aggregate(pipeline)
+        for doc in cursor:
+            result = doc["value"]
+            return result
 
     def topic_data_list_all(self, topic_name) -> list:
         codec_options = build_code_options()
