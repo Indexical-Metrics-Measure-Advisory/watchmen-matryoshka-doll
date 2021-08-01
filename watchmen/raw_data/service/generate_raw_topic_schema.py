@@ -14,7 +14,7 @@ class ValueType(str, Enum):
     DATE = "date"
     DATETIME = "datetime"
     LIST = "array"
-    DICT = "dict"
+    DICT = "object"
     REF = "ref"
     ANY = "any"
 
@@ -39,11 +39,15 @@ def check_value_type(value):
     return ValueType.ANY
 
 
-def check_factor_in_topic(factor_name, topic):
+def check_factor_in_topic(prefix, factor_name, topic):
+    if prefix != "root":
+        name_ = prefix + "." + factor_name
+    else:
+        name_ = factor_name
     for factor in topic.factors:
-        if factor_name == factor.name:
-            return True
-    return False
+        if name_ == factor.name:
+            return True, factor
+    return False, None
 
 
 def check_list_element_type_is_object(value_list):
@@ -81,8 +85,25 @@ def create_factors(queue, topic):
             raise TypeError("create factors need the dict type value, \'{0}\' is not dict".format(value))
         else:
             for factor_name, factor_value in value.items():
-                if check_factor_in_topic(factor_name, topic):
-                    pass
+                result_tup = check_factor_in_topic(key, factor_name, topic)
+                if result_tup[0]:
+                    factor = result_tup[1]
+                    factor_value_type = check_value_type(factor_value)
+
+                    if factor_value_type != ValueType.ANY and factor.type == ValueType.ANY:
+                        factor.type = factor_value_type
+                    elif factor_value_type != ValueType.ANY and factor.type != ValueType.ANY and \
+                            factor_value_type != factor.type:
+                        raise Exception("factor {0} has different value type: {1} and {2}".format(factor.name,
+                                                                                                  factor_value_type,
+                                                                                                  factor.type))
+
+                    if (factor_value_type == ValueType.LIST and check_list_element_type_is_object(
+                            value)) or factor_value_type == ValueType.DICT:
+                        if key == "root":
+                            queue.append({factor_name: factor_value})
+                        else:
+                            queue.append({key + "." + factor_name: factor_value})
                 else:
                     factor_value_type = check_value_type(factor_value)
                     factor = Factor()
@@ -91,11 +112,11 @@ def create_factors(queue, topic):
                     factor.type = factor_value_type
                     factor.factorId = get_surrogate_key()
                     topic.factors.append(factor)
-                    if (factor_value_type == ValueType.LIST and check_list_element_type_is_object(value)) or factor_value_type == ValueType.DICT:
+                    if (factor_value_type == ValueType.LIST and check_list_element_type_is_object(value)) or \
+                            factor_value_type == ValueType.DICT:
                         if key == "root":
                             queue.append({factor_name: factor_value})
                         else:
                             queue.append({key + "." + factor_name: factor_value})
     if len(queue) != 0:
         create_factors(queue, topic)
-

@@ -599,7 +599,6 @@ class OracleStorage(StorageInterface):
         if res is None:
             return None
         else:
-
             return res[return_column_name]
 
     def topic_data_list_all(self, topic_name) -> list:
