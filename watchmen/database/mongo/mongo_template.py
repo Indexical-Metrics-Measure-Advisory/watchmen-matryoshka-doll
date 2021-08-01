@@ -6,12 +6,14 @@ import arrow
 import pymongo
 from bson import regex, ObjectId
 from pymongo import ReturnDocument
+from pymongo.errors import WriteError
 
 from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
 from watchmen.database.mongo.index import build_code_options, get_client
 from watchmen.database.singleton import singleton
+from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
@@ -127,9 +129,12 @@ class MongoStorage(StorageInterface):
                 elif "_avg" in value:
                     pass
                 else:
-                    new_updates["$set"][key] = value["_avg"]
+                    new_updates["$set"][key] = value
             else:
-                new_updates["$set"][key] = value
+                if key == "version_":
+                    new_updates["$set"][key] = updates.get(key) + 1
+                else:
+                    new_updates["$set"][key] = value
         return new_updates
 
     def build_mongo_order(self, order_: list):
@@ -292,8 +297,12 @@ class MongoStorage(StorageInterface):
         codec_options = build_code_options()
         topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
         self.encode_dict(one)
-        topic_data_col.insert(self.build_mongo_updates_expression_for_insert(one))
-        return topic_name, one
+        try:
+            result = topic_data_col.insert_one(self.build_mongo_updates_expression_for_insert(one))
+        except WriteError as we:
+            if we.code == 11000:  # E11000 duplicate key error
+                raise InsertConflictError("InsertConflict")
+        return result.inserted_id
 
     def encode_dict(self, one):
         for k, v in one.items():
@@ -317,12 +326,11 @@ class MongoStorage(StorageInterface):
         codec_options = build_code_options()
         topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
         self.encode_dict(one)
-        return topic_data_col.find_one_and_update(
-            # filter=self.build_mongo_where_expression({"_id": ObjectId(id_), "version_": version_}),
-            filter=self.build_mongo_where_expression({"_id": ObjectId(id_)}),
-            update=self.build_mongo_updates_expression_for_update(one),
-            upsert=False,
-            return_document=ReturnDocument.AFTER)
+        result = topic_data_col.update_one(
+            self.build_mongo_where_expression({"_id": ObjectId(id_), "version_": version_}),
+            self.build_mongo_updates_expression_for_update(one))
+        if result.modified_count == 0:
+            raise OptimisticLockError("Optimistic lock error")
 
     def topic_data_update_(self, where, updates, name):
         codec_options = build_code_options()
@@ -356,8 +364,8 @@ class MongoStorage(StorageInterface):
             elif value == "count":
                 return topic_data_col.count_documents(self.build_mongo_where_expression(where))
             elif value == "avg":
-                aggregate_ = {key:  {"$avg": f'${key}'}}
-        pipeline = [{"$match": self.build_mongo_where_expression(where)},{"$project": aggregate_}]
+                aggregate_ = {key: {"$avg": f'${key}'}}
+        pipeline = [{"$match": self.build_mongo_where_expression(where)}, {"$project": aggregate_}]
         result = topic_data_col.aggregate(pipeline)
         return result
 

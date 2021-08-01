@@ -49,7 +49,7 @@ def init(action_context: ActionContext):
         if action.topicId is None:
             raise ValueError("action.topicId is empty {0}".format(action.name))
         target_topic = get_topic_by_id(action.topicId)
-        if target_topic.type == "aggregate" and settings.STORAGE_ENGINE != MONGO:  ## TODO aggregation_topic_merge_or_insert_topic
+        if target_topic.type == "aggregate":
             return aggregation_topic_merge_or_insert_topic()
         else:
             return not_aggregation_topic_merge_or_insert_topic()
@@ -96,6 +96,9 @@ def init(action_context: ActionContext):
 
         if target_data is None:
             try:
+                if settings.STORAGE_ENGINE == MONGO:
+                    mappings_results["version_"] = 0
+                    mappings_results["aggregate_assist_"] = {}
                 result = insert_topic_data(target_topic.name, mappings_results,
                                            action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId)
                 trigger_pipeline_data_list.append(result)
