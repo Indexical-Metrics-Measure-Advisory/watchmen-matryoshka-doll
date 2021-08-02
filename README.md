@@ -78,4 +78,8 @@ If you have questions on getting started, we'd love to hear from you:
 
 send email to tech-support@matrdata.com
 
+# License & Distribution
 
+Under MIT License.
+
+When you use our product, for internal use or build copies for your clients,  include a license file contains the following statement and copy it into your presentation materials.
