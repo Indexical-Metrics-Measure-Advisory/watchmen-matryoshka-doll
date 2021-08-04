@@ -29,6 +29,9 @@ def sync_user_to_user_groups(user: User):
     pull_update({"userIds": {"in": [user.userId]}}, {"userIds": {"in": [user.userId]}}, UserGroup, USER_GROUPS)
     user_groups = get_user_group_list_by_ids(user.groupIds, user)
     for user_group in user_groups:
-        if user_group.userIds is None or user.userId not in user_group.userIds:
+        if user_group.userIds is None:
+            user_group.userIds = []
             user_group.userIds.append(user.userId)
-            update_user_group_storage(user_group)
+        elif user.userId not in user_group.userIds:
+            user_group.userIds.append(user.userId)
+        update_user_group_storage(user_group)

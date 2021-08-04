@@ -59,11 +59,17 @@ class MysqlStorage(StorageInterface):
                                 return table.c[key.lower()].like("%" + v + "%")
                         if k == "in":
                             if isinstance(table.c[key.lower()].type, JSON):
+                                stmt = ""
                                 if isinstance(v, list):
-                                    value_ = ",".join(v)
+                                    #value_ = ",".join(v)
+                                    for item in v:
+                                        if stmt == "":
+                                            stmt = "JSON_CONTAINS(" + key.lower() + ", '[\"" + item + "\"]', '$') = 1"
+                                        else:
+                                            stmt = stmt + " or JSON_CONTAINS(" + key.lower() + ", '[\"" + item + "\"]', '$') = 1 "
                                 else:
                                     value_ = v
-                                stmt = "JSON_CONTAINS(" + key.lower() + ", '[\"" + value_ + "\"]', '$') = 1"
+                                    stmt = "JSON_CONTAINS(" + key.lower() + ", '[\"" + value_ + "\"]', '$') = 1"
                                 return text(stmt)
                             else:
                                 if isinstance(v, list):
