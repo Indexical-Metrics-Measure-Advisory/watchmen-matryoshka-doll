@@ -43,7 +43,8 @@ from watchmen.space.service.admin import create_space, update_space_by_id, sync_
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
     load_space_list_by_name, load_space_by_name
-from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic
+from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic, \
+    merge_summary_data_for_topic
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name
 from watchmen.topic.topic import Topic
@@ -51,6 +52,9 @@ from watchmen.topic.topic import Topic
 router = APIRouter()
 
 log = logging.getLogger("app." + __name__)
+
+
+
 
 
 class AdminDashboard(BaseModel):
@@ -163,6 +167,7 @@ async def update_topic(topic_id, topic: Topic = Body(...), current_user: User = 
 async def query_topic_list_by_name(query_name: str, pagination: Pagination = Body(...),
                                    current_user: User = Depends(deps.get_current_user)):
     result = query_topic_list_with_pagination(query_name, pagination, current_user)
+    # merge_summary_data_for_topic(result,current_user)
     return result
 
 
