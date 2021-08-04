@@ -35,7 +35,7 @@ def init(action_context: ActionContext):
 
         target_factor = get_factor(action.factorId, target_topic)
 
-        if action.arithmetic == "none":
+        if action.arithmetic == "none" or action.arithmetic is None:
             target_data = query_topic_data(where_, target_topic.name)
             if target_data is not None:
                 if isinstance(target_data, list):
