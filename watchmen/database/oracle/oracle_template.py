@@ -693,9 +693,9 @@ class OracleStorage(StorageInterface):
         if 'TENANT_ID_' in dict_info:
             new_dict['tenant_id_'] = dict_info.get("TENANT_ID_", 1)
         if "INSERT_TIME_" in dict_info:
-            new_dict['insert_time_'] = dict_info.get("INSERT_TIME_", datetime.now().replace(tzinfo=None))
+            new_dict['insert_time_'] = dict_info.get("INSERT_TIME_", datetime.datetime.now().replace(tzinfo=None))
         if "UPDATE_TIME_" in dict_info:
-            new_dict['update_time_'] = dict_info.get("UPDATE_TIME_", datetime.now().replace(tzinfo=None))
+            new_dict['update_time_'] = dict_info.get("UPDATE_TIME_", datetime.datetime.now().replace(tzinfo=None))
         if "VERSION_" in dict_info:
             new_dict['version_'] = dict_info.get("VERSION_", 0)
         if "AGGREGATE_ASSIST_" in dict_info:
@@ -715,9 +715,9 @@ class OracleStorage(StorageInterface):
                 if 'TENANT_ID_' in item:
                     new_dict['tenant_id_'] = item.get("TENANT_ID_", 1)
                 if "INSERT_TIME_":
-                    new_dict['insert_time_'] = item.get("INSERT_TIME_", datetime.now().replace(tzinfo=None))
+                    new_dict['insert_time_'] = item.get("INSERT_TIME_", datetime.datetime.now().replace(tzinfo=None))
                 if "UPDATE_TIME_":
-                    new_dict['update_time_'] = item.get("UPDATE_TIME_", datetime.now().replace(tzinfo=None))
+                    new_dict['update_time_'] = item.get("UPDATE_TIME_", datetime.datetime.now().replace(tzinfo=None))
                 if "VERSION_" in item:
                     new_dict['version_'] = item.get("VERSION_", 0)
                 if "AGGREGATE_ASSIST_" in item:
