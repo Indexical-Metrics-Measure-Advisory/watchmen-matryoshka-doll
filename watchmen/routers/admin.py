@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import List
 
 import arrow
@@ -137,6 +138,7 @@ async def load_topic(topic_id, current_user: User = Depends(deps.get_current_use
 @router.post("/topic", tags=["admin"], response_model=Topic)
 async def create_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
     topic = add_tenant_id_to_model(topic, current_user)
+    topic.createTime = datetime.now().replace(tzinfo=None)
     return create_topic_schema(topic)
 
 
