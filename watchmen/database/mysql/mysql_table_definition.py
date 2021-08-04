@@ -67,7 +67,6 @@ topics_table = Table("topics", metadata,
                      Column("factors", JSON, nullable=True),
                      Column('createtime', String(50), nullable=True),
                      Column('tenantid', String(60), nullable=False),
-                     # Column('last_modified', DateTime, nullable=True),
                      Column('lastmodified', DateTime, nullable=True)
                      )
 
