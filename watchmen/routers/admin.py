@@ -231,7 +231,9 @@ async def save_user(user: User, current_user: User = Depends(deps.get_current_us
             if _user.tenantId != current_user.tenantId:
                 raise Exception("forbidden 403. the modify user's tenant {0} is not match the current operator user {1}".format(_user.tenantId, current_user.tenantId))
             else:
-                user.tenantId= _user.tenantId
+                user.tenantId = _user.tenantId
+                user.password = _user.password
+                user.createTime = _user.createTime
         sync_user_to_user_groups(user)
         return update_user_storage(user)
 
