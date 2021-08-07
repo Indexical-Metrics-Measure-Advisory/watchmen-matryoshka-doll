@@ -1,5 +1,9 @@
 # IMPORT data
+from datetime import datetime
+from typing import List
+
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 
 from watchmen.auth.storage.user_group import import_user_group_to_db, get_user_group, update_user_group_storage
 from watchmen.auth.user_group import UserGroup
@@ -28,6 +32,23 @@ router = APIRouter()
 
 from watchmen.auth.storage.user import import_user_to_db, get_user, update_user_storage
 from watchmen.auth.user import User
+
+
+class ImportCheckResult(BaseModel):
+    topicId: str = None
+    reason: str = None
+    pipelineId: str = None
+
+
+class ImportDataResponse(BaseModel):
+    passed: bool = None
+    topics: List[ImportCheckResult] = []
+    pipelines: List[ImportCheckResult] = []
+
+
+class ImportDataRequest(BaseModel):
+    topics: List[Topic] = []
+    pipelines: List[Pipeline] = []
 
 
 ### import space
@@ -72,9 +93,9 @@ async def import_topic(topic: Topic, current_user: User = Depends(deps.get_curre
     result = get_topic_by_id(topic.topicId, current_user)
     topic = add_tenant_id_to_model(topic, current_user)
     if result is None:
-        create_topic_schema(topic)
+        return create_topic_schema(topic)
     else:
-        update_topic_schema(topic.topicId, topic)
+        return update_topic_schema(topic.topicId, topic)
 
 
 ## import pipeline data
@@ -84,9 +105,9 @@ async def import_pipeline(pipeline: Pipeline, current_user: User = Depends(deps.
     result = load_pipeline_by_id(pipeline.pipelineId, current_user)
     pipeline = add_tenant_id_to_model(pipeline, current_user)
     if result is None:
-        import_pipeline_to_db(pipeline)
+        return import_pipeline_to_db(pipeline)
     else:
-        update_pipeline(pipeline)
+        return update_pipeline(pipeline)
 
 
 ## import connect space
@@ -132,6 +153,25 @@ async def import_dashboard(dashboard: ConsoleDashboard, current_user: User = Dep
         import_dashboard_to_db(dashboard)
     else:
         update_dashboard_to_storage(dashboard)
+
+
+@router.post("/import", tags=["import"])
+async def import_assert(import_request: ImportDataRequest,
+                        current_user: User = Depends(deps.get_current_user)) -> ImportDataResponse:
+    import_response = ImportDataResponse()
+    for topic in import_request.topics:
+        topic.lastModified = datetime.now().replace(tzinfo=None)
+        result_topic = await import_topic(topic,current_user)
+        if result_topic:
+            import_response.topics.append(ImportCheckResult(topicId=result_topic.topicId))
+
+    for pipeline in import_request.pipelines:
+        pipeline.lastModified = datetime.now().replace(tzinfo=None)
+        result_pipeline = await import_pipeline(pipeline,current_user)
+        if result_pipeline:
+            import_response.pipelines.append(ImportCheckResult(pipelineId=result_pipeline.pipelineId))
+    import_response.passed = True
+    return import_response
 
 ### search
 

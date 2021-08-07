@@ -91,3 +91,4 @@ def import_pipeline_to_db(pipeline):
     insert_one(pipeline, Pipeline, PIPELINES)
     cacheman[PIPELINE_BY_ID].clear()
     cacheman[PIPELINES_BY_TOPIC_ID].clear()
+    return pipeline
