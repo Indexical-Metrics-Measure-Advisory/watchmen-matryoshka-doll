@@ -18,16 +18,13 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
 
-from watchmen.database.oracle.oracle_engine import engine, dumps
+from watchmen.database.oracle.oracle_engine import  dumps
 from watchmen.database.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
 from watchmen.database.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.database.singleton import singleton
 from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
-
-
-insp = inspect(engine)
 
 
 log = logging.getLogger("app." + __name__)
@@ -37,6 +34,14 @@ log.info("oracle template initialized")
 
 @singleton
 class OracleStorage(StorageInterface):
+    engine = None
+    insp = None
+
+    def __init__(self, client):
+        self.engine = client
+        self.insp = inspect(client)
+
+
 
     def build_oracle_where_expression(self, table, where):
         for key, value in where.items():
@@ -199,7 +204,7 @@ class OracleStorage(StorageInterface):
             else:
                 values[key.lower()] = value
         stmt = insert(table).values(values)
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             conn.execute(stmt)
         return model.parse_obj(one)
 
@@ -213,7 +218,7 @@ class OracleStorage(StorageInterface):
             for key in table.c.keys():
                 values[key] = instance_dict.get(key)
             value_list.append(values)
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             conn.execute(stmt, value_list)
 
     def update_one(self, one, model, name) -> any:
@@ -233,7 +238,7 @@ class OracleStorage(StorageInterface):
             else:
                 values[key.lower()] = value
         stmt = stmt.values(values)
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             with conn.begin():
                 conn.execute(stmt)
         return model.parse_obj(one)
@@ -254,7 +259,7 @@ class OracleStorage(StorageInterface):
             else:
                 values[key.lower()] = value
         stmt = stmt.values(values)
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             with conn.begin():
                 conn.execute(stmt)
         return model.parse_obj(updates)
@@ -269,7 +274,7 @@ class OracleStorage(StorageInterface):
             if key != get_primary_key(name):
                 values[key] = value
         stmt = stmt.values(values)
-        session = Session(engine, future=True)
+        session = Session(self.engine, future=True)
         try:
             session.execute(stmt)
             session.commit()
@@ -294,14 +299,14 @@ class OracleStorage(StorageInterface):
         table = get_table_by_name(name)
         key = get_primary_key(name)
         stmt = delete(table).where(eq(table.c[key.lower()], id_))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             conn.execute(stmt)
             # conn.commit()
 
     def delete_one(self, where: dict, name: str):
         table = get_table_by_name(name)
         stmt = delete(table).where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             conn.execute(stmt)
 
     def delete_(self, where, model, name):
@@ -310,14 +315,14 @@ class OracleStorage(StorageInterface):
             stmt = delete(table)
         else:
             stmt = delete(table).where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             conn.execute(stmt)
 
     def find_by_id(self, id_, model, name):
         table = get_table_by_name(name)
         primary_key = get_primary_key(name)
         stmt = select(table).where(eq(table.c[primary_key.lower()], id_))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -331,7 +336,7 @@ class OracleStorage(StorageInterface):
         table = get_table_by_name(name)
         stmt = select(table)
         stmt = stmt.where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -347,7 +352,7 @@ class OracleStorage(StorageInterface):
         where_expression = self.build_oracle_where_expression(table, where)
         if where_expression is not None:
             stmt = stmt.where(where_expression)
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -360,7 +365,7 @@ class OracleStorage(StorageInterface):
     def list_all(self, model, name):
         table = get_table_by_name(name)
         stmt = select(table)
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -373,7 +378,7 @@ class OracleStorage(StorageInterface):
     def list_(self, where, model, name) -> list:
         table = get_table_by_name(name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -395,7 +400,7 @@ class OracleStorage(StorageInterface):
             stmt.compile(
                 compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
         result = []
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -416,7 +421,7 @@ class OracleStorage(StorageInterface):
             stmt.compile(
                 compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
         result = []
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -436,7 +441,7 @@ class OracleStorage(StorageInterface):
         try:
             table_name = build_collection_name(topic_name)
             table = get_topic_table_by_name(table_name)
-            table.drop(engine)
+            table.drop(self.engine)
             self.clear_metadata()
         except NoSuchTableError as err:
             log.info("NoSuchTableError: {0}".format(table_name))
@@ -448,7 +453,7 @@ class OracleStorage(StorageInterface):
             stmt = delete(table)
         else:
             stmt = delete(table).where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             conn.execute(stmt)
 
     def topic_data_insert_one(self, one, topic_name):
@@ -457,7 +462,7 @@ class OracleStorage(StorageInterface):
         one_dict: dict = capital_to_lower(convert_to_dict(one))
         value = self.build_oracle_updates_expression(table, one_dict, "insert")
         stmt = insert(table)
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             with conn.begin():
                 try:
                     result = conn.execute(stmt, value)
@@ -474,7 +479,7 @@ class OracleStorage(StorageInterface):
             value = self.build_oracle_updates_expression(table, one_dict, "insert")
             values.append(value)
         stmt = insert(table)
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             result = conn.execute(stmt, values)
 
     def topic_data_update_one(self, id_: str, one: any, topic_name: str):
@@ -484,7 +489,7 @@ class OracleStorage(StorageInterface):
         one_dict = capital_to_lower(convert_to_dict(one))
         value = self.build_oracle_updates_expression(table, one_dict, "update")
         stmt = stmt.values(value)
-        with engine.begin() as conn:
+        with self.engine.begin() as conn:
             result = conn.execute(stmt)
         return result.rowcount
 
@@ -495,7 +500,7 @@ class OracleStorage(StorageInterface):
         one_dict = capital_to_lower(convert_to_dict(one))
         value = self.build_oracle_updates_expression(table, one_dict, "update")
         stmt = stmt.values(value)
-        with engine.begin() as conn:
+        with self.engine.begin() as conn:
             result = conn.execute(stmt)
         if result.rowcount == 0:
             raise OptimisticLockError("Optimistic lock error")
@@ -511,7 +516,7 @@ class OracleStorage(StorageInterface):
             value = self.build_oracle_updates_expression(table, one_dict)
             values.append(value)
         stmt = stmt.values(values)
-        with engine.begin() as conn:
+        with self.engine.begin() as conn:
             result = conn.execute(stmt)
 
     def topic_data_find_by_id(self, id_: str, topic_name: str) -> any:
@@ -521,7 +526,7 @@ class OracleStorage(StorageInterface):
         table_name = build_collection_name(topic_name)
         table = get_topic_table_by_name(table_name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -544,7 +549,7 @@ class OracleStorage(StorageInterface):
         table_name = build_collection_name(topic_name)
         table = get_topic_table_by_name(table_name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -591,7 +596,7 @@ class OracleStorage(StorageInterface):
                 return_column_name = f'AVG_{key.upper()}'
         stmt = stmt.select_from(table)
         stmt = stmt.where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -605,7 +610,7 @@ class OracleStorage(StorageInterface):
         table_name = build_collection_name(topic_name)
         table = get_topic_table_by_name(table_name)
         stmt = select(table)
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -647,7 +652,7 @@ class OracleStorage(StorageInterface):
             stmt.compile(
                 compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
         result = []
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
@@ -676,7 +681,7 @@ class OracleStorage(StorageInterface):
         if cached_columns is not None:
             columns = cached_columns
         else:
-            columns = insp.get_columns(table_name)
+            columns = self.insp.get_columns(table_name)
             cacheman[COLUMNS_BY_TABLE_NAME].set(table_name, columns)
         for column in columns:
             if column["name"] == column_name:
@@ -749,7 +754,7 @@ class OracleStorage(StorageInterface):
         table = get_table_by_name("topics")
         select_stmt = select(table).where(
             self.build_oracle_where_expression(table, {"name": topic_name}))
-        with engine.connect() as conn:
+        with self.engine.connect() as conn:
             cursor = conn.execute(select_stmt).cursor
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))

@@ -29,7 +29,7 @@ def init(action_context: ActionContext):
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
         status.whereConditions = where_
 
-        target_data = query_topic_data(where_, target_topic.name)
+        target_data = query_topic_data(where_, target_topic)
 
         if target_data is not None:
             if isinstance(target_data, list):

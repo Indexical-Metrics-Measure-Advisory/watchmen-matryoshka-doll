@@ -7,7 +7,9 @@ from functools import lru_cache
 import watchmen
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.utils.data_utils import get_id_name_by_datasource
 from watchmen.config.config import settings, PROD
+from watchmen.database.datasource.container import data_source_container
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, StageRunStatus
 from watchmen.monitor.services import pipeline_monitor_service
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
@@ -16,7 +18,7 @@ from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joi
 from watchmen.pipeline.core.worker.stage_worker import run_stage
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.utils.constants import PIPELINE_UID, FINISHED, ERROR
-from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
+from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, get_topic_by_name
 
 log = logging.getLogger("app." + __name__)
 
@@ -46,11 +48,11 @@ def __build_merge_key(topic_name, trigger_type):
     return topic_name + "_" + trigger_type.value
 
 
-def __get_unique_key_name() -> str:
-    if settings.STORAGE_ENGINE == "mongo":
-        return "_id"
-    else:
-        return "id_"
+# def __get_unique_key_name() -> str:
+#     if settings.STORAGE_ENGINE == "mongo":
+#         return "_id"
+#     else:
+#         return "id_"
 
 
 def __trigger_all_pipeline(pipeline_trigger_merge_list):
@@ -58,10 +60,11 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list):
 
     for topic_name, item in after_merge_list.items():
         merge_data = {}
+        topic = get_topic_by_name(topic_name)
         if TriggerType.update.value in item:
             for update_data in item[TriggerType.update.value]:
                 old_value = update_data[pipeline_constants.OLD]
-                pk = old_value[__get_unique_key_name()]
+                pk = old_value[get_id_name_by_datasource(data_source_container.get_data_source_by_id(topic.dataSourceId))]
                 if pk in merge_data:
                     merge_data[pk][pipeline_constants.NEW].update(update_data[pipeline_constants.NEW])
                 else:
@@ -116,9 +119,11 @@ def run_pipeline(pipeline_context: PipelineContext):
                     __trigger_all_pipeline(pipeline_context.pipeline_trigger_merge_list)
 
             except Exception as e:
-                log.error(e)
+                trace =  traceback.format_exc()
+                log.error(trace)
                 # raise e
-                pipeline_status.error = traceback.format_exc()
+
+                pipeline_status.error = trace
                 pipeline_status.status = ERROR
             finally:
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:

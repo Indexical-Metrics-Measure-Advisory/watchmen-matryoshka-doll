@@ -36,11 +36,11 @@ def init(action_context: ActionContext):
                                                                       previous_data,
                                                                       current_data,
                                                                       variables)
+
         status.mapping = mappings_results
-        trigger_pipeline_data_list = [insert_topic_data(target_topic.name,
-                                                        mappings_results,
+        trigger_pipeline_data_list = [insert_topic_data(mappings_results,
                                                         action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
-                                                        )]
+                                                        ,target_topic)]
 
         status.insertCount = status.insertCount + 1
 

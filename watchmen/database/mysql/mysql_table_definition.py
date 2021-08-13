@@ -1,6 +1,6 @@
 from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON, Boolean
-from watchmen.database.mysql.mysql_engine import engine
 
+from watchmen.database.mysql.mysql_engine import engine
 
 metadata = MetaData()
 
@@ -64,6 +64,7 @@ topics_table = Table("topics", metadata,
                      Column("kind", String(10), nullable=True),
                      Column("type", String(10), nullable=True),
                      Column("description", String(50), nullable=True),
+                     Column("datasourceid", String(50), nullable=True),
                      Column("factors", JSON, nullable=True),
                      Column('createtime', String(50), nullable=True),
                      Column('tenantid', String(60), nullable=False),
@@ -126,7 +127,7 @@ console_spaces_table = Table("console_spaces", metadata,
                              Column("userid", String(60), nullable=True),
                              Column("subjectids", JSON, nullable=True),
                              Column("subjects", JSON, nullable=True),
-                             Column("istemplate",Boolean,default=False),
+                             Column("istemplate", Boolean, default=False),
                              Column('createtime', String(50), nullable=True),
                              Column('tenantid', String(60), nullable=False),
                              # Column('last_modified', DateTime, nullable=True),
@@ -201,6 +202,22 @@ pats_table = Table("pats", metadata,
                    Column('createtime', String(50), nullable=True)
                    )
 
+data_sources_table = Table("data_sources", metadata,
+                           Column("datasourceid", String(60), primary_key=True),
+                           Column("datasourcecode", String(50), nullable=False),
+                           Column("datasourcetype", String(50), nullable=False),
+                           Column("host", String(50), nullable=True),
+                           Column("port", String(50), nullable=True),
+                           Column("username", String(60), nullable=True),
+                           Column("password", String(50), nullable=True),
+                           Column("name", String(50), nullable=True),
+                           Column("url", String(60), nullable=True),
+                           Column("tenantid", String(50), nullable=False),
+                           Column("params", JSON, nullable=True),
+                           Column('lastmodified', DateTime, nullable=True),
+                           Column('createtime', String(50), nullable=True)
+                           )
+
 
 def get_table_by_name(table_name):
     return get_meta_table(table_name)
@@ -239,6 +256,8 @@ def get_meta_table(table_name):
         table = tenants_table
     elif table_name == "pats":
         table = pats_table
+    elif table_name == "data_sources":
+        table = data_sources_table
     return table
 
 

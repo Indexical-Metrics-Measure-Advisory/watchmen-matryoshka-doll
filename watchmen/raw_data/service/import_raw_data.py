@@ -2,6 +2,7 @@ from typing import List
 
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.utils.data_utils import is_raw
+from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
@@ -24,7 +25,8 @@ async def import_raw_topic_data(topic_event, current_user):
     add_audit_columns(raw_data, INSERT)
     flatten_fields = get_flatten_field(topic_event.data, topic.factors)
     raw_data.update(flatten_fields)
-    save_topic_instance(topic_event.code, raw_data)
+
+    save_topic_instance(topic, raw_data)
     __trigger_pipeline(topic_event, current_user)
 
 

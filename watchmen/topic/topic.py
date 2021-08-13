@@ -25,6 +25,7 @@ class Topic(WatchmenModel):
     factors: List[Factor] = []
     description: str = None
     tenantId: str = None
+    dataSourceId:str = None
 
     # factorIds: list = []
 
