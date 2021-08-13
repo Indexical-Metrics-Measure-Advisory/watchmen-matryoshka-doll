@@ -1,4 +1,4 @@
-import logging
+
 import logging
 import operator
 from decimal import Decimal

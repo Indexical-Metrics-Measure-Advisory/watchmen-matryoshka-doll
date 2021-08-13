@@ -1,6 +1,5 @@
 from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON, Boolean
 
-from watchmen.database.mysql.mysql_engine import engine
 
 metadata = MetaData()
 
@@ -260,8 +259,3 @@ def get_meta_table(table_name):
         table = data_sources_table
     return table
 
-
-def get_topic_table_by_name(table_name):
-    table = Table(table_name, metadata, extend_existing=False, autoload=True, autoload_with=engine)
-
-    return table

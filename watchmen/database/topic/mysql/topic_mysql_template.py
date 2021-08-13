@@ -5,6 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from operator import eq
 
+from sqlalchemy import Table, MetaData
 from sqlalchemy import update, and_, or_, delete, desc, asc, \
     text, JSON, inspect, func
 from sqlalchemy.dialects.mysql import insert
@@ -16,10 +17,12 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
-from watchmen.database.mysql.mysql_table_definition import get_table_by_name, metadata, get_topic_table_by_name
+from watchmen.database.mysql.mysql_table_definition import get_table_by_name
 from watchmen.database.mysql.mysql_utils import parse_obj, count_topic_data_table
 from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
+
+
 
 log = logging.getLogger("app." + __name__)
 
@@ -28,12 +31,17 @@ log.info("mysql template initialized")
 
 # @singleton
 class MysqlTopicStorage(TopicStorageInterface):
+    metadata = MetaData()
     engine = None
     insp = None
 
     def __init__(self, client):
         self.engine = client
         self.insp = inspect(client)
+
+    def get_topic_table_by_name(self,table_name):
+        table = Table(table_name, self.metadata, extend_existing=False, autoload=True, autoload_with=self.engine)
+        return table
 
     def build_mysql_where_expression(self, table, where):
         for key, value in where.items():
@@ -203,14 +211,14 @@ class MysqlTopicStorage(TopicStorageInterface):
     def drop_topic_data_table(self, topic_name):
         table_name = 'topic_' + topic_name
         try:
-            table = get_topic_table_by_name(table_name)
+            table = self.get_topic_table_by_name(table_name)
             table.drop(self.engine)
         except NoSuchTableError:
             log.warning("drop table \"{0}\" not existed".format(table_name))
 
     def topic_data_delete_(self, where, topic_name):
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         if where is None:
             stmt = delete(table)
         else:
@@ -240,7 +248,7 @@ class MysqlTopicStorage(TopicStorageInterface):
 
     def topic_data_insert_one(self, one, topic_name):
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("insert", table_name, table)
         one_dict: dict = capital_to_lower(convert_to_dict(one))
         value = self.build_mysql_updates_expression(table, one_dict, "insert")
@@ -254,7 +262,7 @@ class MysqlTopicStorage(TopicStorageInterface):
 
     def topic_data_insert_(self, data, topic_name):
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         values = []
         for instance in data:
             instance_dict: dict = convert_to_dict(instance)
@@ -270,7 +278,7 @@ class MysqlTopicStorage(TopicStorageInterface):
 
     def topic_data_update_one(self, id_: str, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("update", table_name, table)
 
         stmt = stmt.where(eq(table.c['id_'], id_))
@@ -282,7 +290,7 @@ class MysqlTopicStorage(TopicStorageInterface):
 
     def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("update", table_name, table)
         stmt = stmt.where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
         one_dict = convert_to_dict(one)
@@ -296,7 +304,7 @@ class MysqlTopicStorage(TopicStorageInterface):
 
     def topic_data_update_(self, query_dict, instance, topic_name):
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("update", table_name, table)
         stmt = (stmt.
                 where(self.build_mysql_where_expression(table, query_dict)))
@@ -316,7 +324,7 @@ class MysqlTopicStorage(TopicStorageInterface):
 
     def topic_data_find_one(self, where, topic_name) -> any:
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("select", table_name, table)
         stmt = stmt.where(self.build_mysql_where_expression(table, where))
         with self.engine.connect() as conn:
@@ -339,7 +347,7 @@ class MysqlTopicStorage(TopicStorageInterface):
 
     def topic_data_find_(self, where, topic_name):
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("select", table_name, table)
         stmt = stmt.where(self.build_mysql_where_expression(table, where))
         with self.engine.connect() as conn:
@@ -365,7 +373,7 @@ class MysqlTopicStorage(TopicStorageInterface):
 
     def topic_data_find_with_aggregate(self, where, topic_name, aggregate):
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         for key, value in aggregate.items():
             if value == "sum":
                 stmt = select(text(f'sum({key.lower()})'))
@@ -385,7 +393,7 @@ class MysqlTopicStorage(TopicStorageInterface):
 
     def topic_data_list_all(self, topic_name) -> list:
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         # stmt = select(table)
         stmt = self.build_stmt("select", table_name, table)
         with self.engine.connect() as conn:
@@ -418,7 +426,7 @@ class MysqlTopicStorage(TopicStorageInterface):
     def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
         table_name = build_collection_name(name)
         count = count_topic_data_table(table_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("select", table_name, table)
         stmt = stmt.where(self.build_mysql_where_expression(table, where))
         orders = self.build_mysql_order(table, sort)
