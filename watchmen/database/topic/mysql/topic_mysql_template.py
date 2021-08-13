@@ -19,7 +19,6 @@ from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.database.mysql.mysql_table_definition import get_table_by_name, metadata, get_topic_table_by_name
 from watchmen.database.mysql.mysql_utils import parse_obj, count_topic_data_table
 from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
-from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
