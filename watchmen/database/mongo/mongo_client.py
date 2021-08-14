@@ -7,10 +7,9 @@ class MongoEngine(object):
     engine = None
 
     def __init__(self, datasource: DataSource):
-        client = MongoClient(datasource.host, datasource.port, username=datasource.username,
+        client = MongoClient(datasource.host, int(datasource.port), username=datasource.username,
                              password=datasource.password)
         self.engine = client[datasource.name]
-
 
     def get_engine(self):
         return self.engine

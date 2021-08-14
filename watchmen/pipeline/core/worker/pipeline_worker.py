@@ -64,7 +64,8 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list):
         if TriggerType.update.value in item:
             for update_data in item[TriggerType.update.value]:
                 old_value = update_data[pipeline_constants.OLD]
-                pk = old_value[get_id_name_by_datasource(data_source_container.get_data_source_by_id(topic.dataSourceId))]
+                pk = old_value[
+                    get_id_name_by_datasource(data_source_container.get_data_source_by_id(topic.dataSourceId))]
                 if pk in merge_data:
                     merge_data[pk][pipeline_constants.NEW].update(update_data[pipeline_constants.NEW])
                 else:
@@ -119,7 +120,7 @@ def run_pipeline(pipeline_context: PipelineContext):
                     __trigger_all_pipeline(pipeline_context.pipeline_trigger_merge_list)
 
             except Exception as e:
-                trace =  traceback.format_exc()
+                trace = traceback.format_exc()
                 log.error(trace)
                 # raise e
 

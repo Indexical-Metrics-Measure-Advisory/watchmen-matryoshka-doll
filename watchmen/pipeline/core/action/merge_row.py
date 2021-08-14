@@ -53,7 +53,7 @@ def init(action_context: ActionContext):
             trigger_pipeline_data_list.append(
                 update_topic_data(mappings_results, target_data,
                                   action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
-                                  where_,target_topic))
+                                  where_, target_topic))
             status.updateCount = status.updateCount + 1
 
         elapsed_time = time.time() - start

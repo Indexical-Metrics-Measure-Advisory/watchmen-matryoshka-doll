@@ -1,5 +1,4 @@
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException
 from jose import jwt
 from jsonschema import ValidationError
 from starlette import status

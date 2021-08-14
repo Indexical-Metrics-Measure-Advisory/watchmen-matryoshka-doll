@@ -3,7 +3,7 @@ from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.database.datasource.data_source import DataSource
-from watchmen.database.storage.storage_template import page_, find_one, insert_one, update_one, find_, page_all, \
+from watchmen.database.storage.storage_template import page_, find_one, insert_one, update_one, page_all, \
     list_all
 
 DATA_SOURCES = "data_sources"
@@ -33,4 +33,4 @@ def load_data_source_list_with_pagination(query_name: str, pagination: Paginatio
         return page_(query_dict, sort_dict, pagination, DataSource, DATA_SOURCES)
     else:
         sort_dict = [("lastModified", "desc")]
-        return page_all( sort_dict, pagination, DataSource, DATA_SOURCES)
+        return page_all(sort_dict, pagination, DataSource, DATA_SOURCES)

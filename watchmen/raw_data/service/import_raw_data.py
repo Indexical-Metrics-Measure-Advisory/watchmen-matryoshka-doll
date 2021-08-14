@@ -2,7 +2,6 @@ from typing import List
 
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.utils.data_utils import is_raw
-from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
@@ -30,7 +29,7 @@ async def import_raw_topic_data(topic_event, current_user):
     __trigger_pipeline(topic_event, current_user)
 
 
-async def get_input_data( topic, topic_event):
+async def get_input_data(topic, topic_event):
     if is_raw(topic):
         raw_data = {"data_": topic_event.data}
     else:

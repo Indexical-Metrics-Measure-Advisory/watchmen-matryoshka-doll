@@ -8,7 +8,7 @@ from watchmen.database.mysql.mysql_client import MysqlEngine
 from watchmen.database.oracle.oracle_client import OracleEngine
 from watchmen.database.singleton import singleton
 # contains all datasource definition
-from watchmen.database.storage.engine_adaptor import find_template, get_default_datasource
+from watchmen.database.storage.engine_adaptor import get_default_datasource
 from watchmen.database.topic.mongo.topic_mongo_template import MongoTopicStorage
 from watchmen.database.topic.mysql.topic_mysql_template import MysqlTopicStorage
 

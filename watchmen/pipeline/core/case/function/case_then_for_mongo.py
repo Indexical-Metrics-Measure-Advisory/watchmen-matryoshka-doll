@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import List
 
-from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.report.model.column import Operator

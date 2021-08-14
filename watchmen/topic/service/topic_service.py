@@ -7,15 +7,13 @@ from watchmen.auth.user_group import UserGroup
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
-from watchmen.database.storage.storage_template import  find_
+from watchmen.database.storage.storage_template import find_
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
-from watchmen.report.model.report import Report
-from watchmen.report.storage.report_storage import CONSOLE_REPORTS
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import SPACES
 from watchmen.topic.factor.factor import Factor
-from watchmen.topic.storage.topic_schema_storage import save_topic, update_topic, TOPICS
+from watchmen.topic.storage.topic_schema_storage import save_topic, update_topic
 from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
@@ -90,21 +88,21 @@ def build_factors(factors: list, parent: str, model_schema: ModelSchema, model_s
             factors.append(factor)
 
 
-def merge_summary_data_for_topic(data_page: DataPage,current_user:User):
+def merge_summary_data_for_topic(data_page: DataPage, current_user: User):
     topic_list: List[Topic] = data_page.data
     if topic_list:
         query_topic_list = []
         for topic in topic_list:
             query_topic = QueryTopic.parse_obj(topic)
             query_topic.factorCount = len(topic.factors)
-            query_topic.spaceCount= len(__find_spaces_in_topic_id(topic.topicId,current_user))
+            query_topic.spaceCount = len(__find_spaces_in_topic_id(topic.topicId, current_user))
             query_topic_list.append(query_topic)
         data_page.data = query_topic_list
 
 
-def __find_spaces_in_topic_id(topic_id,current_user):
+def __find_spaces_in_topic_id(topic_id, current_user):
     where = {"and": [{"topicIds": {"in": [topic_id]}}, {"tenantId": current_user.tenantId}], }
-    return find_(where,Space,SPACES)
+    return find_(where, Space, SPACES)
 
 
 # def __find_reports_in_topic_id(topic_id,current_user):
@@ -112,6 +110,6 @@ def __find_spaces_in_topic_id(topic_id,current_user):
 #     return find_(where, Report, CONSOLE_REPORTS)
 
 
-def __find_groups_in_topic_id(topic_id,current_user):
+def __find_groups_in_topic_id(topic_id, current_user):
     where = {"and": [{"topicIds": {"in": [topic_id]}}, {"tenantId": current_user.tenantId}], }
     return find_(where, UserGroup, USER_GROUPS)

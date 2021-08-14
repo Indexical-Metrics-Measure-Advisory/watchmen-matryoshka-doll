@@ -115,5 +115,3 @@ class StorageInterface(abc.ABC):
     @abc.abstractmethod
     def page_(self, where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
         pass
-
-

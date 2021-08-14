@@ -81,7 +81,7 @@ async def load_template_space_list(space_id: str, current_user: User = Depends(d
     results: List[ConsoleSpace] = load_template_space_list_by_space_id(space_id)
     template_list = []
     for console_space in results:
-        print("user",console_space.userId)
+        print("user", console_space.userId)
         user = get_user(console_space.userId)
         template_list.append(
             ConnectedSpaceTemplate(connectId=console_space.connectId, name=console_space.name, createBy=user.name))
@@ -98,13 +98,13 @@ async def connect_to_space(space_id, name, template_ids=None, current_user: User
     console_space.userId = current_user.userId
     console_space.lastVisitTime = datetime.now().replace(tzinfo=None)
     if template_ids:
-        console_space = copy_template_to_console_space(template_ids,console_space,current_user)
+        console_space = copy_template_to_console_space(template_ids, console_space, current_user)
     console_space = save_console_space(console_space)
     return console_space
 
 
 @router.post("/console_space/save", tags=["console"], response_model=ConsoleSpace)
-async def update_console_space  (console_space: ConsoleSpace, current_user: User = Depends(deps.get_current_user)):
+async def update_console_space(console_space: ConsoleSpace, current_user: User = Depends(deps.get_current_user)):
     console_space = add_tenant_id_to_model(console_space, current_user)
     console_space.userId = current_user.userId
     return save_console_space(console_space)

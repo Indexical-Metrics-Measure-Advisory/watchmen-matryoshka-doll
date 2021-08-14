@@ -40,7 +40,7 @@ def init(action_context: ActionContext):
         status.mapping = mappings_results
         trigger_pipeline_data_list = [insert_topic_data(mappings_results,
                                                         action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
-                                                        ,target_topic)]
+                                                        , target_topic)]
 
         status.insertCount = status.insertCount + 1
 

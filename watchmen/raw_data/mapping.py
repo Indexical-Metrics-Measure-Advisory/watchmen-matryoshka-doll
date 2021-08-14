@@ -8,4 +8,3 @@ class Mapping(WatchmenModel):
     target_topic_id: int
     target_topic_name: str
     mapping_detail_list: list
-

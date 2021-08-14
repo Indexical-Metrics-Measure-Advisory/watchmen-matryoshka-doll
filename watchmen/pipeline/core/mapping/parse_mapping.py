@@ -1,4 +1,3 @@
-
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 from watchmen.topic.topic import Topic

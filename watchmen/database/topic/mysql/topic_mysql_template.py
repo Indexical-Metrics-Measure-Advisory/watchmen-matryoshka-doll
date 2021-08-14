@@ -22,8 +22,6 @@ from watchmen.database.mysql.mysql_utils import parse_obj, count_topic_data_tabl
 from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
-
-
 log = logging.getLogger("app." + __name__)
 
 log.info("mysql template initialized")
@@ -39,7 +37,7 @@ class MysqlTopicStorage(TopicStorageInterface):
         self.engine = client
         self.insp = inspect(client)
 
-    def get_topic_table_by_name(self,table_name):
+    def get_topic_table_by_name(self, table_name):
         table = Table(table_name, self.metadata, extend_existing=False, autoload=True, autoload_with=self.engine)
         return table
 

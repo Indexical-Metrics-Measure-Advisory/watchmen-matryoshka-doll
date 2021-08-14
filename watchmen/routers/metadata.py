@@ -161,13 +161,13 @@ async def import_assert(import_request: ImportDataRequest,
     import_response = ImportDataResponse()
     for topic in import_request.topics:
         topic.lastModified = datetime.now().replace(tzinfo=None)
-        result_topic = await import_topic(topic,current_user)
+        result_topic = await import_topic(topic, current_user)
         if result_topic:
             import_response.topics.append(ImportCheckResult(topicId=result_topic.topicId))
 
     for pipeline in import_request.pipelines:
         pipeline.lastModified = datetime.now().replace(tzinfo=None)
-        result_pipeline = await import_pipeline(pipeline,current_user)
+        result_pipeline = await import_pipeline(pipeline, current_user)
         if result_pipeline:
             import_response.pipelines.append(ImportCheckResult(pipelineId=result_pipeline.pipelineId))
     import_response.passed = True

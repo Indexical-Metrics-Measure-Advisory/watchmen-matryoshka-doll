@@ -20,7 +20,6 @@ class Settings(BaseSettings):
 
     SUPER_USER: str = None
 
-
     # HOST_URL = "http://localhost:8000"
     ALGORITHM = "HS256"
     STORAGE_ENGINE = "mongo"
@@ -48,7 +47,7 @@ class Settings(BaseSettings):
     MYSQL_POOL_MAXCONNECTIONS: int = 6
     MYSQL_POOL_MINCACHED = 2
     MYSQL_POOL_MAXCACHED = 5
-    MYSQL_ECHO=False
+    MYSQL_ECHO = False
 
     ORACLE_LIB_DIR: str = ""
     ORACLE_HOST: str = ""

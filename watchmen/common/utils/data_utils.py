@@ -46,7 +46,7 @@ def get_id_name():
         return "id_"
 
 
-def get_id_name_by_datasource(datasource:DataSource):
+def get_id_name_by_datasource(datasource: DataSource):
     if datasource is None:
         return get_id_name()
     else:
@@ -56,8 +56,6 @@ def get_id_name_by_datasource(datasource:DataSource):
             return "id_"
         elif datasource.dataSourceType == "mysql":
             return "id_"
-
-
 
 
 def get_dict_relationship(model_schema_set):

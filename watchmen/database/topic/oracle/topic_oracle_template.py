@@ -6,19 +6,18 @@ from decimal import Decimal
 from operator import eq
 
 from sqlalchemy import update, and_, or_, delete, CLOB, desc, asc, \
-    text, func, inspect
+    text, func, inspect, Table, MetaData
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 
-from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME, TOPIC_DICT_BY_NAME
+from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
 from watchmen.database.oracle.oracle_engine import dumps
 from watchmen.database.oracle.oracle_utils import parse_obj, count_topic_data_table
-from watchmen.database.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
-from watchmen.database.singleton import singleton
+from watchmen.database.storage import storage_template
 from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
@@ -27,14 +26,18 @@ log = logging.getLogger("app." + __name__)
 log.info("oracle template initialized")
 
 
-@singleton
 class OracleTopicStorage(TopicStorageInterface):
     engine = None
     insp = None
+    metadata = MetaData()
 
-    def __init__(self, client):
+    def __init__(self, client, ):
         self.engine = client
         self.insp = inspect(client)
+
+    def get_topic_table_by_name(self, table_name):
+        table = Table(table_name, self.metadata, extend_existing=False, autoload=True, autoload_with=self.engine)
+        return table
 
     def build_oracle_where_expression(self, table, where):
         for key, value in where.items():
@@ -194,7 +197,7 @@ class OracleTopicStorage(TopicStorageInterface):
     def drop_topic_data_table(self, topic_name):
         try:
             table_name = build_collection_name(topic_name)
-            table = get_topic_table_by_name(table_name)
+            table = self.get_topic_table_by_name(table_name)
             table.drop(self.engine)
             self.clear_metadata()
         except NoSuchTableError as err:
@@ -202,7 +205,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_delete_(self, where, topic_name):
         table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         if where is None:
             stmt = delete(table)
         else:
@@ -212,7 +215,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_insert_one(self, one, topic_name):
         table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         one_dict: dict = capital_to_lower(convert_to_dict(one))
         value = self.build_oracle_updates_expression(table, one_dict, "insert")
         stmt = insert(table)
@@ -226,7 +229,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_insert_(self, data, topic_name):
         table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         values = []
         for instance in data:
             one_dict: dict = capital_to_lower(convert_to_dict(instance))
@@ -238,7 +241,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_update_one(self, id_: str, one: any, topic_name: str):
         table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = update(table).where(eq(table.c['id_'], id_))
         one_dict = capital_to_lower(convert_to_dict(one))
         value = self.build_oracle_updates_expression(table, one_dict, "update")
@@ -249,7 +252,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
         table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
         one_dict = capital_to_lower(convert_to_dict(one))
         value = self.build_oracle_updates_expression(table, one_dict, "update")
@@ -261,7 +264,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_update_(self, query_dict, instances: list, topic_name):
         table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = (update(table).
                 where(self.build_oracle_where_expression(table, query_dict)))
         values = []
@@ -278,7 +281,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_find_one(self, where, topic_name) -> any:
         table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
         with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
@@ -301,7 +304,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_find_(self, where, topic_name):
         table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
         with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
@@ -336,7 +339,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_find_with_aggregate(self, where, topic_name, aggregate):
         table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         return_column_name = None
         for key, value in aggregate.items():
             if value == "sum":
@@ -362,7 +365,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_list_all(self, topic_name) -> list:
         table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = select(table)
         with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
@@ -384,11 +387,11 @@ class OracleTopicStorage(TopicStorageInterface):
                                 result[name] = None
                         else:
                             result[name] = row[name]
-                    if self._check_topic_type(topic_name) == "raw":
+                    if storage_template.check_topic_type(name) == "raw":
                         results.append(result['DATA_'])
                     else:
                         results.append(result)
-                if self._check_topic_type(topic_name) == "raw":
+                if storage_template.check_topic_type(name) == "raw":
                     return results
                 else:
                     return self._convert_list_elements_key(results, topic_name)
@@ -396,7 +399,7 @@ class OracleTopicStorage(TopicStorageInterface):
     def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
         table_name = build_collection_name(name)
         count = count_topic_data_table(table_name)
-        table = get_topic_table_by_name(table_name)
+        table = self.get_topic_table_by_name(table_name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
         orders = self.build_oracle_order(table, sort)
         for order in orders:
@@ -411,7 +414,7 @@ class OracleTopicStorage(TopicStorageInterface):
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
             res = cursor.fetchall()
-        if self._check_topic_type(name) == "raw":
+        if storage_template.check_topic_type(name) == "raw":
             for row in res:
                 result.append(json.loads(row['DATA_']))
         else:
@@ -422,9 +425,8 @@ class OracleTopicStorage(TopicStorageInterface):
                     result.append(row)
         return build_data_pages(pageable, result, count)
 
-    @staticmethod
-    def clear_metadata():
-        metadata.clear()
+    def clear_metadata(self):
+        self.metadata.clear()
 
     '''
     protected method, used by class own method
@@ -445,7 +447,7 @@ class OracleTopicStorage(TopicStorageInterface):
         if dict_info is None:
             return None
         new_dict = {}
-        factors = self._get_topic_factors(topic_name)
+        factors = storage_template.get_topic_factors(topic_name)
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].upper()]
         new_dict['id_'] = dict_info['ID_']
@@ -466,7 +468,7 @@ class OracleTopicStorage(TopicStorageInterface):
             return None
         new_dict = {}
         new_list = []
-        factors = self._get_topic_factors(topic_name)
+        factors = storage_template.get_topic_factors(topic_name)
         for item in list_info:
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].upper()]
@@ -492,29 +494,3 @@ class OracleTopicStorage(TopicStorageInterface):
             return func.to_date(value, "yyyy-mm-dd")
         else:
             return value
-
-    def _check_topic_type(self, topic_name):
-        topic = self._get_topic(topic_name)
-        return topic['TYPE']
-
-    def _get_topic_factors(self, topic_name):
-        topic = self._get_topic(topic_name)
-        factors = json.loads(topic['FACTORS'])
-        return factors
-
-    def _get_topic(self, topic_name) -> any:
-        if cacheman[TOPIC_DICT_BY_NAME].get(topic_name) is not None:
-            return cacheman[TOPIC_DICT_BY_NAME].get(topic_name)
-        table = get_table_by_name("topics")
-        select_stmt = select(table).where(
-            self.build_oracle_where_expression(table, {"name": topic_name}))
-        with self.engine.connect() as conn:
-            cursor = conn.execute(select_stmt).cursor
-            columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
-            result = cursor.fetchone()
-            if result is None:
-                raise
-            else:
-                cacheman[TOPIC_DICT_BY_NAME].set(topic_name, result)
-                return result

@@ -1,20 +1,11 @@
 import logging
-from datetime import date
 
-import logging
-from datetime import date
-
-import arrow
 import pymongo
-from bson import regex, ObjectId
-from pymongo.errors import WriteError
+from bson import regex
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
-from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
+from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.database.mongo.index import build_code_options
-from watchmen.database.singleton import singleton
-from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
@@ -280,7 +271,6 @@ class MongoStorage(StorageInterface):
             return instance.dict(by_alias=True)
         else:
             return instance
-
 
     def clear_metadata(self):
         pass

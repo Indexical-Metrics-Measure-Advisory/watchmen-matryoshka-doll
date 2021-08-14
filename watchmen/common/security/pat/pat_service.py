@@ -3,7 +3,7 @@ from typing import List
 from watchmen.common.security.pat.pat_model import PersonAccessToken
 from watchmen.common.security.pat.token_utils import create_token
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.database.storage.storage_template import insert_one, find_one, list_all, delete_by_id, list_
+from watchmen.database.storage.storage_template import insert_one, find_one, delete_by_id, list_
 
 
 def createPAT(note: str, user_id: str, username: str, tenant_id: str):

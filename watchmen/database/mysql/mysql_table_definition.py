@@ -1,6 +1,5 @@
 from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON, Boolean
 
-
 metadata = MetaData()
 
 users_table = Table("users", metadata,
@@ -258,4 +257,3 @@ def get_meta_table(table_name):
     elif table_name == "data_sources":
         table = data_sources_table
     return table
-

@@ -17,6 +17,7 @@ from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
+from watchmen.database.datasource.container import data_source_container
 from watchmen.database.datasource.data_source import DataSource
 from watchmen.database.datasource.storage import data_source_storage
 from watchmen.database.mongo.index import delete_topic_collection
@@ -58,8 +59,7 @@ async def save_topic_data(topic_event: TopicEvent, current_user: User = Depends(
 
 @router.get("/topic/data/all", tags=["common"], response_model=List[TopicInstance])
 async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_current_user)):
-
-    topic:Topic = get_topic_by_name(topic_name, current_user)
+    topic: Topic = get_topic_by_name(topic_name, current_user)
     results = get_topic_instances_all(topic)
     instances = []
     for result in results:
@@ -194,7 +194,11 @@ def load_all_data_sources(current_user: User = Depends(deps.get_current_user)):
 
 @router.post("/datasource", tags=["common"], response_model=DataSource)
 def save_data_source(data_source: DataSource, current_user: User = Depends(deps.get_current_user)):
-    return data_source_storage.save_data_source(data_source)
+
+    data_source = data_source_storage.save_data_source(data_source)
+    data_source_container.init()
+    return data_source
+
 
 
 @router.get("/datasource/id", tags=["common"], response_model=DataSource)

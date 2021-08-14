@@ -5,27 +5,22 @@ import operator
 from decimal import Decimal
 from operator import eq
 
-
 from sqlalchemy import update, and_, or_, delete, CLOB, desc, asc, \
     text, func, inspect
 from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
 from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
-
-from watchmen.database.oracle.oracle_engine import  dumps
-from watchmen.database.oracle.oracle_utils import parse_obj, count_table, count_topic_data_table
-from watchmen.database.oracle.table_definition import get_table_by_name, metadata, get_topic_table_by_name
+from watchmen.common.utils.data_utils import build_data_pages, convert_to_dict
+from watchmen.database.oracle.oracle_engine import dumps
+from watchmen.database.oracle.oracle_utils import parse_obj, count_table
+from watchmen.database.oracle.table_definition import get_table_by_name, metadata
 from watchmen.database.singleton import singleton
-from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
-
 
 log = logging.getLogger("app." + __name__)
 
@@ -40,8 +35,6 @@ class OracleStorage(StorageInterface):
     def __init__(self, client):
         self.engine = client
         self.insp = inspect(client)
-
-
 
     def build_oracle_where_expression(self, table, where):
         for key, value in where.items():
@@ -430,244 +423,6 @@ class OracleStorage(StorageInterface):
             result.append(parse_obj(model, row, table))
         return build_data_pages(pageable, result, count)
 
-    '''
-    topic data interface
-    '''
-
-    def drop_(self, topic_name):
-        return self.drop_topic_data_table(topic_name)
-
-    def drop_topic_data_table(self, topic_name):
-        try:
-            table_name = build_collection_name(topic_name)
-            table = get_topic_table_by_name(table_name)
-            table.drop(self.engine)
-            self.clear_metadata()
-        except NoSuchTableError as err:
-            log.info("NoSuchTableError: {0}".format(table_name))
-
-    def topic_data_delete_(self, where, topic_name):
-        table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
-        if where is None:
-            stmt = delete(table)
-        else:
-            stmt = delete(table).where(self.build_oracle_where_expression(table, where))
-        with self.engine.connect() as conn:
-            conn.execute(stmt)
-
-    def topic_data_insert_one(self, one, topic_name):
-        table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
-        one_dict: dict = capital_to_lower(convert_to_dict(one))
-        value = self.build_oracle_updates_expression(table, one_dict, "insert")
-        stmt = insert(table)
-        with self.engine.connect() as conn:
-            with conn.begin():
-                try:
-                    result = conn.execute(stmt, value)
-                except IntegrityError as e:
-                    raise InsertConflictError("InsertConflict")
-        return result.rowcount
-
-    def topic_data_insert_(self, data, topic_name):
-        table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
-        values = []
-        for instance in data:
-            one_dict: dict = capital_to_lower(convert_to_dict(instance))
-            value = self.build_oracle_updates_expression(table, one_dict, "insert")
-            values.append(value)
-        stmt = insert(table)
-        with self.engine.connect() as conn:
-            result = conn.execute(stmt, values)
-
-    def topic_data_update_one(self, id_: str, one: any, topic_name: str):
-        table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
-        stmt = update(table).where(eq(table.c['id_'], id_))
-        one_dict = capital_to_lower(convert_to_dict(one))
-        value = self.build_oracle_updates_expression(table, one_dict, "update")
-        stmt = stmt.values(value)
-        with self.engine.begin() as conn:
-            result = conn.execute(stmt)
-        return result.rowcount
-
-    def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
-        table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
-        stmt = update(table).where(and_(eq(table.c['id_'], id_), eq(table.c['version_'], version_)))
-        one_dict = capital_to_lower(convert_to_dict(one))
-        value = self.build_oracle_updates_expression(table, one_dict, "update")
-        stmt = stmt.values(value)
-        with self.engine.begin() as conn:
-            result = conn.execute(stmt)
-        if result.rowcount == 0:
-            raise OptimisticLockError("Optimistic lock error")
-
-    def topic_data_update_(self, query_dict, instances: list, topic_name):
-        table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
-        stmt = (update(table).
-                where(self.build_oracle_where_expression(table, query_dict)))
-        values = []
-        for instance in instances:
-            one_dict = capital_to_lower(convert_to_dict(instance))
-            value = self.build_oracle_updates_expression(table, one_dict)
-            values.append(value)
-        stmt = stmt.values(values)
-        with self.engine.begin() as conn:
-            result = conn.execute(stmt)
-
-    def topic_data_find_by_id(self, id_: str, topic_name: str) -> any:
-        return self.topic_data_find_one({"id_": id_}, topic_name)
-
-    def topic_data_find_one(self, where, topic_name) -> any:
-        table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
-        stmt = select(table).where(self.build_oracle_where_expression(table, where))
-        with self.engine.connect() as conn:
-            cursor = conn.execute(stmt).cursor
-            columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
-            row = cursor.fetchone()
-        if row is None:
-            return None
-        else:
-            result = {}
-            for index, name in enumerate(columns):
-                if isinstance(table.c[name.lower()].type, CLOB):
-                    if row[name] is not None:
-                        result[name] = json.loads(row[name])
-                    else:
-                        result[name] = None
-                else:
-                    result[name] = row[name]
-            return self._convert_dict_key(result, topic_name)
-
-    def topic_data_find_(self, where, topic_name):
-        table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
-        stmt = select(table).where(self.build_oracle_where_expression(table, where))
-        with self.engine.connect() as conn:
-            cursor = conn.execute(stmt).cursor
-            columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
-            rows = cursor.fetchall()
-        if rows is None:
-            return None
-        else:
-            if isinstance(rows, list):
-                results = []
-                for row in rows:
-                    result = {}
-                    for index, name in enumerate(columns):
-                        if isinstance(table.c[name.lower()].type, CLOB):
-                            if row[name] is not None:
-                                result[name] = json.loads(row[name])
-                            else:
-                                result[name] = None
-                        else:
-                            result[name] = row[name]
-                    results.append(self._convert_dict_key(result, topic_name))
-                return results
-            else:
-                result = {}
-                for index, name in enumerate(columns):
-                    if isinstance(table.c[name.lower()].type, CLOB):
-                        result[name] = dumps(rows[index])
-                    else:
-                        result[name] = rows[index]
-                return result
-
-    def topic_data_find_with_aggregate(self, where, topic_name, aggregate):
-        table_name = 'topic_' + topic_name
-        table = get_topic_table_by_name(table_name)
-        return_column_name = None
-        for key, value in aggregate.items():
-            if value == "sum":
-                stmt = select(text(f'sum({key.lower()}) as sum_{key.lower()}'))
-                return_column_name = f'SUM_{key.upper()}'
-            elif value == "count":
-                stmt = select(f'count(*) as count')
-                return_column_name = 'COUNT'
-            elif value == "avg":
-                stmt = select(text(f'avg({key.lower()}) as avg_{key.lower()}'))
-                return_column_name = f'AVG_{key.upper()}'
-        stmt = stmt.select_from(table)
-        stmt = stmt.where(self.build_oracle_where_expression(table, where))
-        with self.engine.connect() as conn:
-            cursor = conn.execute(stmt).cursor
-            columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
-            res = cursor.fetchone()
-        if res is None:
-            return None
-        else:
-            return res[return_column_name]
-
-    def topic_data_list_all(self, topic_name) -> list:
-        table_name = build_collection_name(topic_name)
-        table = get_topic_table_by_name(table_name)
-        stmt = select(table)
-        with self.engine.connect() as conn:
-            cursor = conn.execute(stmt).cursor
-            columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
-            rows = cursor.fetchall()
-
-            if rows is None:
-                return None
-            else:
-                results = []
-                for row in rows:
-                    result = {}
-                    for index, name in enumerate(columns):
-                        if isinstance(table.c[name.lower()].type, CLOB):
-                            if row[name] is not None:
-                                result[name] = json.loads(row[name])
-                            else:
-                                result[name] = None
-                        else:
-                            result[name] = row[name]
-                    if self._check_topic_type(topic_name) == "raw":
-                        results.append(result['DATA_'])
-                    else:
-                        results.append(result)
-                if self._check_topic_type(topic_name) == "raw":
-                    return results
-                else:
-                    return self._convert_list_elements_key(results, topic_name)
-
-    def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
-        table_name = build_collection_name(name)
-        count = count_topic_data_table(table_name)
-        table = get_topic_table_by_name(table_name)
-        stmt = select(table).where(self.build_oracle_where_expression(table, where))
-        orders = self.build_oracle_order(table, sort)
-        for order in orders:
-            stmt = stmt.order_by(order)
-        offset = pageable.pageSize * (pageable.pageNumber - 1)
-        stmt = text(str(
-            stmt.compile(
-                compile_kwargs={"literal_binds": True})) + " OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY")
-        result = []
-        with self.engine.connect() as conn:
-            cursor = conn.execute(stmt, {"offset": offset, "maxnumrows": pageable.pageSize}).cursor
-            columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
-            res = cursor.fetchall()
-        if self._check_topic_type(name) == "raw":
-            for row in res:
-                result.append(json.loads(row['DATA_']))
-        else:
-            for row in res:
-                if model is not None:
-                    result.append(parse_obj(model, row, table))
-                else:
-                    result.append(row)
-        return build_data_pages(pageable, result, count)
-
     @staticmethod
     def clear_metadata():
         metadata.clear()
@@ -691,7 +446,7 @@ class OracleStorage(StorageInterface):
         if dict_info is None:
             return None
         new_dict = {}
-        factors = self._get_topic_factors(topic_name)
+        factors = self.get_topic_factors(topic_name)
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].upper()]
         new_dict['id_'] = dict_info['ID_']
@@ -739,11 +494,11 @@ class OracleStorage(StorageInterface):
         else:
             return value
 
-    def _check_topic_type(self, topic_name):
+    def check_topic_type(self, topic_name):
         topic = self._get_topic(topic_name)
         return topic['TYPE']
 
-    def _get_topic_factors(self, topic_name):
+    def get_topic_factors(self, topic_name):
         topic = self._get_topic(topic_name)
         factors = json.loads(topic['FACTORS'])
         return factors

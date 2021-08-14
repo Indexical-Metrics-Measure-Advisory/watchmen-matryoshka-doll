@@ -1,4 +1,3 @@
-
 import logging
 import operator
 from decimal import Decimal
@@ -14,7 +13,6 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
-from watchmen.database.mysql.mysql_table_definition import get_table_by_name, metadata
 from watchmen.database.mysql.mysql_utils import parse_obj, count_table
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
@@ -28,10 +26,12 @@ log.info("mysql template initialized")
 class MysqlStorage(StorageInterface):
     engine = None
     insp = None
+    table = None
 
-    def __init__(self, client):
+    def __init__(self, client, table_provider):
         self.engine = client
         self.insp = inspect(client)
+        self.table = table_provider
 
     def build_mysql_where_expression(self, table, where):
         for key, value in where.items():
@@ -189,7 +189,7 @@ class MysqlStorage(StorageInterface):
             return result
 
     def insert_one(self, one, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         one_dict: dict = convert_to_dict(one)
         values = {}
         for key, value in one_dict.items():
@@ -207,7 +207,7 @@ class MysqlStorage(StorageInterface):
         return model.parse_obj(one)
 
     def insert_all(self, data, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = insert(table)
         value_list = []
         for item in data:
@@ -221,7 +221,7 @@ class MysqlStorage(StorageInterface):
                 conn.execute(stmt, value_list)
 
     def update_one(self, one, model, name) -> any:
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = update(table)
         one_dict: dict = convert_to_dict(one)
         primary_key = get_primary_key(name)
@@ -243,7 +243,7 @@ class MysqlStorage(StorageInterface):
         return model.parse_obj(one)
 
     def update_one_first(self, where, updates, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = update(table)
         stmt = stmt.where(self.build_mysql_where_expression(table, where))
         instance_dict: dict = convert_to_dict(updates)
@@ -263,7 +263,7 @@ class MysqlStorage(StorageInterface):
         return model.parse_obj(updates)
 
     def update_(self, where, updates, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = update(table)
         stmt = stmt.where(self.build_mysql_where_expression(table, where))
         instance_dict: dict = convert_to_dict(updates)
@@ -292,7 +292,7 @@ class MysqlStorage(StorageInterface):
                     self.update_one(res, model, name)
 
     def delete_by_id(self, id_, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         key = get_primary_key(name)
         stmt = delete(table).where(eq(table.c[key.lower()], id_))
         with self.engine.connect() as conn:
@@ -300,14 +300,14 @@ class MysqlStorage(StorageInterface):
                 conn.execute(stmt)
 
     def delete_one(self, where: dict, name: str):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = delete(table).where(self.build_mysql_where_expression(table, where))
         with self.engine.connect() as conn:
             with conn.begin():
                 conn.execute(stmt)
 
     def delete_(self, where, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         if where is None:
             stmt = delete(table)
         else:
@@ -317,7 +317,7 @@ class MysqlStorage(StorageInterface):
                 conn.execute(stmt)
 
     def find_by_id(self, id_, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         primary_key = get_primary_key(name)
         stmt = select(table).where(eq(table.c[primary_key.lower()], id_))
         with self.engine.connect() as conn:
@@ -333,7 +333,7 @@ class MysqlStorage(StorageInterface):
                 return parse_obj(model, result, table)
 
     def find_one(self, where, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table)
         stmt = stmt.where(self.build_mysql_where_expression(table, where))
         with self.engine.connect() as conn:
@@ -349,7 +349,7 @@ class MysqlStorage(StorageInterface):
                 return parse_obj(model, result, table)
 
     def find_(self, where: dict, model, name: str) -> list:
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table)
         where_expression = self.build_mysql_where_expression(table, where)
         if where_expression is not None:
@@ -370,7 +370,7 @@ class MysqlStorage(StorageInterface):
                 return [parse_obj(model, row, table) for row in results]
 
     def list_all(self, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table)
         with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
@@ -385,7 +385,7 @@ class MysqlStorage(StorageInterface):
         return results
 
     def list_(self, where, model, name) -> list:
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table).where(self.build_mysql_where_expression(table, where))
         with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
@@ -401,7 +401,7 @@ class MysqlStorage(StorageInterface):
 
     def page_all(self, sort, pageable, model, name) -> DataPage:
         count = count_table(name)
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table)
         orders = self.build_mysql_order(table, sort)
         for order in orders:
@@ -422,7 +422,7 @@ class MysqlStorage(StorageInterface):
 
     def page_(self, where, sort, pageable, model, name) -> DataPage:
         count = count_table(name)
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table).where(self.build_mysql_where_expression(table, where))
         orders = self.build_mysql_order(table, sort)
         for order in orders:
@@ -442,4 +442,4 @@ class MysqlStorage(StorageInterface):
         return build_data_pages(pageable, results, count)
 
     def clear_metadata(self):
-        metadata.clear()
+        self.table.metadata.clear()

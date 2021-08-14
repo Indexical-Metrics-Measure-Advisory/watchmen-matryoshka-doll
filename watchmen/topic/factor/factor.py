@@ -27,7 +27,6 @@ class Factor(WatchmenModel):
     tenantId: str = None
 
 
-
 '''
     factor_id: int = None
 

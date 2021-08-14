@@ -1,4 +1,3 @@
-from datetime import datetime
 from enum import Enum
 from typing import List
 
@@ -25,7 +24,7 @@ class Topic(WatchmenModel):
     factors: List[Factor] = []
     description: str = None
     tenantId: str = None
-    dataSourceId:str = None
+    dataSourceId: str = None
 
     # factorIds: list = []
 

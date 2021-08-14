@@ -32,7 +32,7 @@ def load_console_space_by_id(connect_id: str, current_user) -> ConsoleSpace:
                     CONSOLE_SPACES)
 
 
-def load_template_space_list_by_space_id(space_id)-> List[ConsoleSpace]:
+def load_template_space_list_by_space_id(space_id) -> List[ConsoleSpace]:
     return find_({"and": [{"spaceId": space_id}, {"isTemplate": True}]}, ConsoleSpace,
                  CONSOLE_SPACES)
 

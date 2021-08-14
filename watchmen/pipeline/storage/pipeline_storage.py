@@ -4,7 +4,6 @@ from watchmen.database.storage.storage_template import insert_one, update_one, f
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.pipeline.model.pipeline_graph import PipelinesGraphics
 
-
 USER_ID = "userId"
 
 PIPELINES = "pipelines"
