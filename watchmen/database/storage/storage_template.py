@@ -94,5 +94,9 @@ def check_topic_type(topic_name):
     return template.check_topic_type(topic_name)
 
 
+def get_table_column_default_value(table_name, column_name):
+    return template.get_table_column_default_value(table_name,column_name)
+
+
 def clear_metadata():
     template.clear_metadata()

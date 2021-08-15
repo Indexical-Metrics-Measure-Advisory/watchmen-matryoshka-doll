@@ -7,10 +7,11 @@ from watchmen.database.mongo.mongo_client import MongoEngine
 from watchmen.database.mysql.mysql_client import MysqlEngine
 from watchmen.database.oracle.oracle_client import OracleEngine
 from watchmen.database.singleton import singleton
-# contains all datasource definition
+
 from watchmen.database.storage.engine_adaptor import get_default_datasource
 from watchmen.database.topic.mongo.topic_mongo_template import MongoTopicStorage
 from watchmen.database.topic.mysql.topic_mysql_template import MysqlTopicStorage
+from watchmen.database.topic.oracle.topic_oracle_template import OracleTopicStorage
 
 DEFAULT_STORAGE = "DEFAULT_STORAGE"
 
@@ -46,13 +47,14 @@ class DataSourceContainer(object):
     def build_storage(datasource: DataSource):
         if datasource.dataSourceType == "mongodb":
             engine = MongoEngine(datasource)
+            print(engine.get_engine())
             return MongoTopicStorage(client=engine.get_engine())
         elif datasource.dataSourceType == "mysql":
             engine = MysqlEngine(datasource)
             return MysqlTopicStorage(client=engine.get_engine())
         elif datasource.dataSourceType == "oracle":
             engine = OracleEngine(datasource)
-            pass
+            return OracleTopicStorage(client=engine.get_engine())
 
     def get_storage(self, datasource_id):
         if datasource_id is None:

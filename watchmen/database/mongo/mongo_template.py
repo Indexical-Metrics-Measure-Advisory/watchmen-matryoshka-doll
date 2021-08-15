@@ -3,6 +3,7 @@ import logging
 import pymongo
 from bson import regex
 
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.database.mongo.index import build_code_options
@@ -271,6 +272,27 @@ class MongoStorage(StorageInterface):
             return instance.dict(by_alias=True)
         else:
             return instance
+
+    def get_topic_factors(self, topic_name):
+        topic = self._get_topic(topic_name)
+        factors = topic['factors']
+        return factors
+
+    def check_topic_type(self, topic_name):
+        topic = self._get_topic(topic_name)
+        return topic['type']
+
+    def _get_topic(self, topic_name) -> any:
+        if cacheman[TOPIC_DICT_BY_NAME].get(topic_name) is not None:
+            return cacheman[TOPIC_DICT_BY_NAME].get(topic_name)
+        codec_options = build_code_options()
+        topic_collection = self.client.get_collection("topics", codec_options=codec_options)
+        result = topic_collection.find_one({"name": topic_name})
+        if result is None:
+            raise Exception("not find topic {0}".format(topic_name))
+        else:
+            cacheman[TOPIC_DICT_BY_NAME].set(topic_name, result)
+            return result
 
     def clear_metadata(self):
         pass

@@ -1,3 +1,4 @@
+import json
 import logging
 import operator
 from decimal import Decimal
@@ -9,11 +10,13 @@ from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.common.utils.data_utils import convert_to_dict
-from watchmen.database.mysql.mysql_utils import parse_obj, count_table
+from watchmen.database.mysql.mysql_utils import parse_obj
+from watchmen.database.storage import storage_template
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
@@ -138,7 +141,7 @@ class MysqlStorage(StorageInterface):
                             else:
                                 new_updates[key] = value_
                         else:
-                            default_value = self._get_table_column_default_value(table.name, key)
+                            default_value = storage_template.get_table_column_default_value(table.name, key)
                             if default_value is not None:
                                 value_ = default_value.strip("'").strip(" ")
                                 if value_.isdigit():
@@ -400,7 +403,7 @@ class MysqlStorage(StorageInterface):
         return results
 
     def page_all(self, sort, pageable, model, name) -> DataPage:
-        count = count_table(name)
+        count = self.count_table(name)
         table = self.table.get_table_by_name(name)
         stmt = select(table)
         orders = self.build_mysql_order(table, sort)
@@ -421,7 +424,7 @@ class MysqlStorage(StorageInterface):
         return build_data_pages(pageable, results, count)
 
     def page_(self, where, sort, pageable, model, name) -> DataPage:
-        count = count_table(name)
+        count = self.count_table(name)
         table = self.table.get_table_by_name(name)
         stmt = select(table).where(self.build_mysql_where_expression(table, where))
         orders = self.build_mysql_order(table, sort)
@@ -443,3 +446,67 @@ class MysqlStorage(StorageInterface):
 
     def clear_metadata(self):
         self.table.metadata.clear()
+
+    def get_table_column_default_value(self, table_name, column_name):
+        columns = self._get_table_columns(table_name)
+        for column in columns:
+            if column["name"] == column_name:
+                return column["default"]
+
+    def _get_table_columns(self, table_name):
+        cached_columns = cacheman[COLUMNS_BY_TABLE_NAME].get(table_name)
+        if cached_columns is not None:
+            return cached_columns
+        columns = self.insp.get_columns(table_name)
+        if columns is not None:
+            cacheman[COLUMNS_BY_TABLE_NAME].set(table_name, columns)
+            return columns
+
+    def check_topic_type(self, topic_name):
+        topic = self._get_topic(topic_name)
+        return topic['type']
+
+    def get_topic_factors(self, topic_name):
+        topic = self._get_topic(topic_name)
+        factors = topic['factors']
+        return factors
+
+    def count_table(self,table_name):
+        primary_key = self.table.get_primary_key(table_name)
+        stmt = 'SELECT count(%s) AS count FROM %s' % (primary_key, table_name)
+        with self.engine.connect() as conn:
+            cursor = conn.execute(text(stmt)).cursor
+            result = cursor.fetchone()
+        return result[0]
+
+    def count_topic_data_table(self,table_name):
+        stmt = 'SELECT count(%s) AS count FROM %s' % ('id_', table_name)
+        with self.engine.connect() as conn:
+            cursor = conn.execute(text(stmt)).cursor
+            result = cursor.fetchone()
+        return result[0]
+
+    def _get_topic(self, topic_name) -> any:
+        if cacheman[TOPIC_DICT_BY_NAME].get(topic_name) is not None:
+            return cacheman[TOPIC_DICT_BY_NAME].get(topic_name)
+        table = self.table.get_table_by_name("topics")
+        select_stmt = select(table).where(
+            self.build_mysql_where_expression(table, {"name": topic_name}))
+        with self.engine.connect() as conn:
+            cursor = conn.execute(select_stmt).cursor
+            columns = [col[0] for col in cursor.description]
+            row = cursor.fetchone()
+            if row is None:
+                raise
+            else:
+                result = {}
+                for index, name in enumerate(columns):
+                    if isinstance(table.c[name.lower()].type, JSON):
+                        if row[index] is not None:
+                            result[name] = json.loads(row[index])
+                        else:
+                            result[name] = None
+                    else:
+                        result[name] = row[index]
+                cacheman[TOPIC_DICT_BY_NAME].set(topic_name, result)
+                return result

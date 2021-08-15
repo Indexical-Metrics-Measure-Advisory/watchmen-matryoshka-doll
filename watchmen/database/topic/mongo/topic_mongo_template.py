@@ -10,6 +10,7 @@ from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
 from watchmen.database.mongo.index import build_code_options
+from watchmen.database.storage import storage_template
 from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
@@ -273,7 +274,7 @@ class MongoTopicStorage(TopicStorageInterface):
             return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
         else:
             results = []
-            if self._check_topic_type(name) == "raw":
+            if storage_template.check_topic_type(name) == "raw":
                 for doc in cursor:
                     results.append(doc['data_'])
             else:
@@ -281,22 +282,6 @@ class MongoTopicStorage(TopicStorageInterface):
                     del doc['_id']
                     results.append(doc)
             return build_data_pages(pageable, results, total)
-
-    def _check_topic_type(self, topic_name):
-        topic = self._get_topic(topic_name)
-        return topic['type']
-
-    def _get_topic(self, topic_name) -> any:
-        if cacheman[TOPIC_DICT_BY_NAME].get(topic_name) is not None:
-            return cacheman[TOPIC_DICT_BY_NAME].get(topic_name)
-        codec_options = build_code_options()
-        topic_collection = self.client.get_collection("topics", codec_options=codec_options)
-        result = topic_collection.find_one({"name": topic_name})
-        if result is None:
-            raise Exception("not find topic {0}".format(topic_name))
-        else:
-            cacheman[TOPIC_DICT_BY_NAME].set(topic_name, result)
-            return result
 
     def clear_metadata(self):
         pass

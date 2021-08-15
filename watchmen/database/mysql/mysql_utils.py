@@ -2,9 +2,6 @@ import json
 
 from sqlalchemy import text, JSON
 
-from watchmen.database.mysql.mysql_engine import engine
-from watchmen.database.storage.utils.table_utils import get_primary_key
-
 
 def parse_obj(base_model, result, table):
     model = base_model()
@@ -28,18 +25,3 @@ def parse_obj(base_model, result, table):
     return base_model.parse_obj(model)
 
 
-def count_table(table_name):
-    primary_key = get_primary_key(table_name)
-    stmt = 'SELECT count(%s) AS count FROM %s' % (primary_key, table_name)
-    with engine.connect() as conn:
-        cursor = conn.execute(text(stmt)).cursor
-        result = cursor.fetchone()
-    return result[0]
-
-
-def count_topic_data_table(table_name):
-    stmt = 'SELECT count(%s) AS count FROM %s' % ('id_', table_name)
-    with engine.connect() as conn:
-        cursor = conn.execute(text(stmt)).cursor
-        result = cursor.fetchone()
-    return result[0]

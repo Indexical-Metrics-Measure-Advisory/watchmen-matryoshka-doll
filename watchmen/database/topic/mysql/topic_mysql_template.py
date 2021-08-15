@@ -12,13 +12,13 @@ from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME, COLUMNS_BY_TABLE_NAME, STMT
+from watchmen.common.cache.cache_manage import cacheman, STMT
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
-from watchmen.database.mysql.mysql_table_definition import get_table_by_name
-from watchmen.database.mysql.mysql_utils import parse_obj, count_topic_data_table
+from watchmen.database.mysql.mysql_utils import parse_obj
+from watchmen.database.storage import storage_template
 from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
@@ -44,11 +44,7 @@ class MysqlTopicStorage(TopicStorageInterface):
     def build_mysql_where_expression(self, table, where):
         for key, value in where.items():
             if key == "and" or key == "or":
-                if isinstance(value, list):
-                    result_filters = []
-                    for express in value:
-                        result = self.build_mysql_where_expression(table, express)
-                        result_filters.append(result)
+                result_filters = self.get_result_filters(table, value)
                 if key == "and":
                     return and_(*result_filters)
                 if key == "or":
@@ -118,7 +114,18 @@ class MysqlTopicStorage(TopicStorageInterface):
                 else:
                     return table.c[key.lower()] == value
 
-    def build_mysql_updates_expression(self, table, updates, stmt_type: str) -> dict:
+    def get_result_filters(self, table, value):
+        if isinstance(value, list):
+            result_filters = []
+            for express in value:
+                result = self.build_mysql_where_expression(table, express)
+                result_filters.append(result)
+            return result_filters
+        else:
+            return []
+
+    @staticmethod
+    def build_mysql_updates_expression(table, updates, stmt_type: str) -> dict:
         if stmt_type == "insert":
             new_updates = {}
             for key in table.c.keys():
@@ -146,7 +153,7 @@ class MysqlTopicStorage(TopicStorageInterface):
                             else:
                                 new_updates[key] = value_
                         else:
-                            default_value = self._get_table_column_default_value(table.name, key)
+                            default_value = storage_template.get_table_column_default_value(table.name, key)
                             if default_value is not None:
                                 value_ = default_value.strip("'").strip(" ")
                                 if value_.isdigit():
@@ -197,7 +204,7 @@ class MysqlTopicStorage(TopicStorageInterface):
             return result
 
     def clear_metadata(self):
-        metadata.clear()
+        self.metadata.clear()
 
     '''
     topic data interface
@@ -225,7 +232,8 @@ class MysqlTopicStorage(TopicStorageInterface):
             with conn.begin():
                 conn.execute(stmt)
 
-    def build_stmt(self, stmt_type, table_name, table):
+    @staticmethod
+    def build_stmt(stmt_type, table_name, table):
         key = stmt_type + "-" + table_name
         result = cacheman[STMT].get(key)
         if result is not None:
@@ -412,18 +420,18 @@ class MysqlTopicStorage(TopicStorageInterface):
                                 result[name] = None
                         else:
                             result[name] = row[index]
-                    if self._check_topic_type(topic_name) == "raw":
+                    if storage_template.check_topic_type(topic_name) == "raw":
                         results.append(result['data_'])
                     else:
                         results.append(result)
-                if self._check_topic_type(topic_name) == "raw":
+                if storage_template.check_topic_type(topic_name) == "raw":
                     return results
                 else:
                     return self._convert_list_elements_key(results, topic_name)
 
     def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
         table_name = build_collection_name(name)
-        count = count_topic_data_table(table_name)
+        count = self.count_topic_data_table(table_name)
         table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("select", table_name, table)
         stmt = stmt.where(self.build_mysql_where_expression(table, where))
@@ -437,7 +445,7 @@ class MysqlTopicStorage(TopicStorageInterface):
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             res = cursor.fetchall()
-        if self._check_topic_type(name) == "raw":
+        if storage_template.check_topic_type(name) == "raw":
             for row in res:
                 result = {}
                 for index, name in enumerate(columns):
@@ -465,61 +473,13 @@ class MysqlTopicStorage(TopicStorageInterface):
         internal method
     '''
 
-    def _get_table_column_default_value(self, table_name, column_name):
-        columns = self._get_table_columns(table_name)
-        for column in columns:
-            if column["name"] == column_name:
-                return column["default"]
-
-    def _get_table_columns(self, table_name):
-        cached_columns = cacheman[COLUMNS_BY_TABLE_NAME].get(table_name)
-        if cached_columns is not None:
-            return cached_columns
-        columns = self.insp.get_columns(table_name)
-        if columns is not None:
-            cacheman[COLUMNS_BY_TABLE_NAME].set(table_name, columns)
-            return columns
-
-    def _check_topic_type(self, topic_name):
-        topic = self._get_topic(topic_name)
-        return topic['type']
-
-    def _get_topic_factors(self, topic_name):
-        topic = self._get_topic(topic_name)
-        factors = topic['factors']
-        return factors
-
-    def _get_topic(self, topic_name) -> any:
-        if cacheman[TOPIC_DICT_BY_NAME].get(topic_name) is not None:
-            return cacheman[TOPIC_DICT_BY_NAME].get(topic_name)
-        table = get_table_by_name("topics")
-        select_stmt = select(table).where(
-            self.build_mysql_where_expression(table, {"name": topic_name}))
-        with self.engine.connect() as conn:
-            cursor = conn.execute(select_stmt).cursor
-            columns = [col[0] for col in cursor.description]
-            row = cursor.fetchone()
-            if row is None:
-                raise
-            else:
-                result = {}
-                for index, name in enumerate(columns):
-                    if isinstance(table.c[name.lower()].type, JSON):
-                        if row[index] is not None:
-                            result[name] = json.loads(row[index])
-                        else:
-                            result[name] = None
-                    else:
-                        result[name] = row[index]
-                cacheman[TOPIC_DICT_BY_NAME].set(topic_name, result)
-                return result
-
-    def _convert_list_elements_key(self, list_info, topic_name):
+    @staticmethod
+    def _convert_list_elements_key(list_info, topic_name):
         if list_info is None:
             return None
         new_dict = {}
         new_list = []
-        factors = self._get_topic_factors(topic_name)
+        factors = storage_template.get_topic_factors(topic_name)
         for item in list_info:
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].lower()]
@@ -537,11 +497,12 @@ class MysqlTopicStorage(TopicStorageInterface):
             new_list.append(new_dict)
         return new_list
 
-    def _convert_dict_key(self, dict_info, topic_name):
+    @staticmethod
+    def _convert_dict_key(dict_info, topic_name):
         if dict_info is None:
             return None
         new_dict = {}
-        factors = self._get_topic_factors(topic_name)
+        factors = storage_template.get_topic_factors(topic_name)
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].lower()]
         new_dict['id_'] = dict_info['id_']
@@ -556,3 +517,14 @@ class MysqlTopicStorage(TopicStorageInterface):
         if "aggregate_assist_" in dict_info:
             new_dict['aggregate_assist_'] = dict_info.get("aggregate_assist_")
         return new_dict
+
+    def count_topic_data_table(self, table_name):
+        stmt = 'SELECT count(%s) AS count FROM %s' % ('id_', table_name)
+        with self.engine.connect() as conn:
+            cursor = conn.execute(text(stmt)).cursor
+            columns = [col[0] for col in cursor.description]
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            result = cursor.fetchone()
+        return result['COUNT']
+
+

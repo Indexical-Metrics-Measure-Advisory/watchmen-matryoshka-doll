@@ -68,14 +68,6 @@ class StorageInterface(abc.ABC):
     def delete_(self, where: dict, model: BaseModel, name: str):
         pass
 
-    # @abc.abstractmethod
-    # def delete_all(self,model: BaseModel, name: str) -> licreate_topic_data_table_indexst:
-    #     pass
-    #
-    # @abc.abstractmethod
-    # def drop_(self, name: str):
-    #     pass
-
     @abc.abstractmethod
     def find_by_id(self, id_: str, model: BaseModel, name: str) -> BaseModel:
         pass
@@ -88,25 +80,13 @@ class StorageInterface(abc.ABC):
     def find_(self, where: dict, model: BaseModel, name: str) -> list:
         pass
 
-    # @abc.abstractmethod
-    # def exists(self,where: dict, model: BaseModel, name: str):
-    #     pass
-
     @abc.abstractmethod
     def list_all(self, model: BaseModel, name: str) -> list:
         pass
 
-    # @abc.abstractmethod
-    # def list_all_select(self,select: dict, model: BaseModel, name: str) -> list:
-    #     pass  # need to do
-
     @abc.abstractmethod
     def list_(self, where: dict, model: BaseModel, name: str) -> list:
         pass
-
-    # @abc.abstractmethod
-    # def list_select(self,select: dict, where: dict, model: BaseModel, name: str) -> list:
-    #     pass  # need to do
 
     @abc.abstractmethod
     def page_all(self, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:

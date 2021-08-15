@@ -16,8 +16,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, convert_to_dict
 from watchmen.database.oracle.oracle_engine import dumps
-from watchmen.database.oracle.oracle_utils import parse_obj, count_table
-from watchmen.database.oracle.table_definition import get_table_by_name, metadata
+from watchmen.database.oracle.oracle_utils import parse_obj
 from watchmen.database.singleton import singleton
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
@@ -31,10 +30,12 @@ log.info("oracle template initialized")
 class OracleStorage(StorageInterface):
     engine = None
     insp = None
+    table = None
 
-    def __init__(self, client):
+    def __init__(self, client, table_provider):
         self.engine = client
         self.insp = inspect(client)
+        self.table = table_provider
 
     def build_oracle_where_expression(self, table, where):
         for key, value in where.items():
@@ -185,7 +186,7 @@ class OracleStorage(StorageInterface):
             return result
 
     def insert_one(self, one, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         one_dict: dict = convert_to_dict(one)
         values = {}
         for key, value in one_dict.items():
@@ -202,7 +203,7 @@ class OracleStorage(StorageInterface):
         return model.parse_obj(one)
 
     def insert_all(self, data, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = insert(table)
         value_list = []
         for item in data:
@@ -215,7 +216,7 @@ class OracleStorage(StorageInterface):
             conn.execute(stmt, value_list)
 
     def update_one(self, one, model, name) -> any:
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = update(table)
         one_dict: dict = convert_to_dict(one)
         primary_key = get_primary_key(name)
@@ -237,7 +238,7 @@ class OracleStorage(StorageInterface):
         return model.parse_obj(one)
 
     def update_one_first(self, where, updates, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = update(table)
         stmt = stmt.where(self.build_oracle_where_expression(table, where))
         stmt = stmt.where(text("ROWNUM=1"))
@@ -258,7 +259,7 @@ class OracleStorage(StorageInterface):
         return model.parse_obj(updates)
 
     def update_(self, where, updates, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = update(table)
         stmt = stmt.where(self.build_oracle_where_expression(table, where))
         instance_dict: dict = convert_to_dict(updates)
@@ -289,7 +290,7 @@ class OracleStorage(StorageInterface):
         # update_(where, results, model, name)
 
     def delete_by_id(self, id_, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         key = get_primary_key(name)
         stmt = delete(table).where(eq(table.c[key.lower()], id_))
         with self.engine.connect() as conn:
@@ -297,13 +298,13 @@ class OracleStorage(StorageInterface):
             # conn.commit()
 
     def delete_one(self, where: dict, name: str):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = delete(table).where(self.build_oracle_where_expression(table, where))
         with self.engine.connect() as conn:
             conn.execute(stmt)
 
     def delete_(self, where, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         if where is None:
             stmt = delete(table)
         else:
@@ -312,7 +313,7 @@ class OracleStorage(StorageInterface):
             conn.execute(stmt)
 
     def find_by_id(self, id_, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         primary_key = get_primary_key(name)
         stmt = select(table).where(eq(table.c[primary_key.lower()], id_))
         with self.engine.connect() as conn:
@@ -326,7 +327,7 @@ class OracleStorage(StorageInterface):
             return parse_obj(model, result, table)
 
     def find_one(self, where, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table)
         stmt = stmt.where(self.build_oracle_where_expression(table, where))
         with self.engine.connect() as conn:
@@ -340,7 +341,7 @@ class OracleStorage(StorageInterface):
             return parse_obj(model, result, table)
 
     def find_(self, where: dict, model, name: str) -> list:
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table)
         where_expression = self.build_oracle_where_expression(table, where)
         if where_expression is not None:
@@ -356,7 +357,7 @@ class OracleStorage(StorageInterface):
             return None
 
     def list_all(self, model, name):
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table)
         with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
@@ -369,7 +370,7 @@ class OracleStorage(StorageInterface):
         return result
 
     def list_(self, where, model, name) -> list:
-        table = get_table_by_name(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
         with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
@@ -382,8 +383,8 @@ class OracleStorage(StorageInterface):
         return result
 
     def page_all(self, sort, pageable, model, name) -> DataPage:
-        count = count_table(name)
-        table = get_table_by_name(name)
+        count = self.count_table(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table)
         orders = self.build_oracle_order(table, sort)
         for order in orders:
@@ -403,8 +404,8 @@ class OracleStorage(StorageInterface):
         return build_data_pages(pageable, result, count)
 
     def page_(self, where, sort, pageable, model, name) -> DataPage:
-        count = count_table(name)
-        table = get_table_by_name(name)
+        count = self.count_table(name)
+        table = self.table.get_table_by_name(name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
         orders = self.build_oracle_order(table, sort)
         for order in orders:
@@ -423,9 +424,8 @@ class OracleStorage(StorageInterface):
             result.append(parse_obj(model, row, table))
         return build_data_pages(pageable, result, count)
 
-    @staticmethod
-    def clear_metadata():
-        metadata.clear()
+    def clear_metadata(self):
+        self.table.metadata.clear()
 
     '''
     protected method, used by class own method
@@ -494,6 +494,25 @@ class OracleStorage(StorageInterface):
         else:
             return value
 
+    def count_table(self, table_name):
+        primary_key = get_primary_key(table_name)
+        stmt = 'SELECT count(%s) AS count FROM %s' % (primary_key, table_name)
+        with self.engine.connect() as conn:
+            cursor = conn.execute(text(stmt)).cursor
+            columns = [col[0] for col in cursor.description]
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            result = cursor.fetchone()
+        return result['COUNT']
+
+    def count_topic_data_table(self, table_name):
+        stmt = 'SELECT count(%s) AS count FROM %s' % ('id_', table_name)
+        with self.engine.connect() as conn:
+            cursor = conn.execute(text(stmt)).cursor
+            columns = [col[0] for col in cursor.description]
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            result = cursor.fetchone()
+        return result['COUNT']
+
     def check_topic_type(self, topic_name):
         topic = self._get_topic(topic_name)
         return topic['TYPE']
@@ -506,7 +525,7 @@ class OracleStorage(StorageInterface):
     def _get_topic(self, topic_name) -> any:
         if cacheman[TOPIC_DICT_BY_NAME].get(topic_name) is not None:
             return cacheman[TOPIC_DICT_BY_NAME].get(topic_name)
-        table = get_table_by_name("topics")
+        table = self.table.get_table_by_name("topics")
         select_stmt = select(table).where(
             self.build_oracle_where_expression(table, {"name": topic_name}))
         with self.engine.connect() as conn:

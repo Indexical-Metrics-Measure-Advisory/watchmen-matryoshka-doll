@@ -15,8 +15,7 @@ from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
-from watchmen.database.oracle.oracle_engine import dumps
-from watchmen.database.oracle.oracle_utils import parse_obj, count_topic_data_table
+from watchmen.database.oracle.oracle_utils import parse_obj
 from watchmen.database.storage import storage_template
 from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
@@ -121,7 +120,7 @@ class OracleTopicStorage(TopicStorageInterface):
                 else:
                     if isinstance(table.c[key].type, CLOB):
                         if updates.get(key) is not None:
-                            new_updates[key] = dumps(updates.get(key))
+                            new_updates[key] = self.engine.dumps(updates.get(key))
                         else:
                             new_updates[key] = None
                     else:
@@ -156,7 +155,7 @@ class OracleTopicStorage(TopicStorageInterface):
                 else:
                     if isinstance(table.c[key].type, CLOB):
                         if updates.get(key) is not None:
-                            new_updates[key] = dumps(updates.get(key))
+                            new_updates[key] = self.engine.dumps(updates.get(key))
                     else:
                         if updates.get(key) is not None:
                             value_ = updates.get(key)
@@ -332,7 +331,7 @@ class OracleTopicStorage(TopicStorageInterface):
                 result = {}
                 for index, name in enumerate(columns):
                     if isinstance(table.c[name.lower()].type, CLOB):
-                        result[name] = dumps(rows[index])
+                        result[name] = self.engine.dumps(rows[index])
                     else:
                         result[name] = rows[index]
                 return result
@@ -398,7 +397,7 @@ class OracleTopicStorage(TopicStorageInterface):
 
     def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
         table_name = build_collection_name(name)
-        count = count_topic_data_table(table_name)
+        count = self.count_topic_data_table(table_name)
         table = self.get_topic_table_by_name(table_name)
         stmt = select(table).where(self.build_oracle_where_expression(table, where))
         orders = self.build_oracle_order(table, sort)
@@ -494,3 +493,12 @@ class OracleTopicStorage(TopicStorageInterface):
             return func.to_date(value, "yyyy-mm-dd")
         else:
             return value
+
+    def count_topic_data_table(self, table_name):
+        stmt = 'SELECT count(%s) AS count FROM %s' % ('id_', table_name)
+        with self.engine.connect() as conn:
+            cursor = conn.execute(text(stmt)).cursor
+            columns = [col[0] for col in cursor.description]
+            cursor.rowfactory = lambda *args: dict(zip(columns, args))
+            result = cursor.fetchone()
+        return result['COUNT']
