@@ -47,7 +47,6 @@ class DataSourceContainer(object):
     def build_storage(datasource: DataSource):
         if datasource.dataSourceType == "mongodb":
             engine = MongoEngine(datasource)
-            print(engine.get_engine())
             return MongoTopicStorage(client=engine.get_engine())
         elif datasource.dataSourceType == "mysql":
             engine = MysqlEngine(datasource)

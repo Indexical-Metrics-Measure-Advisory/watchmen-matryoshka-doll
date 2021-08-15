@@ -4,9 +4,6 @@ from watchmen.topic.topic import Topic
 
 def save_topic_instance(topic: Topic, instance):
     template = get_template_by_datasource_id(topic.dataSourceId)
-
-    print("datasource id ",topic.dataSourceId)
-    print(template)
     return template.topic_data_insert_one(instance, topic.name)
 
 
