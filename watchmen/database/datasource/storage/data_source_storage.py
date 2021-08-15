@@ -2,9 +2,10 @@ from watchmen.auth.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
+from watchmen.config.config import settings
 from watchmen.database.datasource.data_source import DataSource
 from watchmen.database.storage.storage_template import page_, find_one, insert_one, update_one, page_all, \
-    list_all
+    list_all, find_
 
 DATA_SOURCES = "data_sources"
 
@@ -18,11 +19,20 @@ def save_data_source(data_source: DataSource, current_user: User = None):
 
 
 def load_data_source_by_id(data_source_id: str, current_user: User = None):
-    # print(data_source_id)
-    return find_one({"dataSourceId": data_source_id}, DataSource, DATA_SOURCES)
+    if settings.MULTIPLE_DATA_SOURCE:
+        return find_one({"and": [{"dataSourceId": data_source_id}, {"tenantId": current_user.tenantId}]})
+    else:
+        return find_one({"dataSourceId": data_source_id}, DataSource, DATA_SOURCES)
 
 
-def load_data_source_list(current_user: object = None):
+def load_data_source_list(current_user: User):
+    if settings.MULTIPLE_DATA_SOURCE:
+        return find_({"tenantId": current_user.tenantId}, DataSource, DATA_SOURCES)
+    else:
+        return list_all(DataSource, DATA_SOURCES)
+
+
+def list_all_data_source_list():
     return list_all(DataSource, DATA_SOURCES)
 
 

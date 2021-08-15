@@ -87,6 +87,8 @@ class Settings(BaseSettings):
 
     MOCK_USER = "demo_user"
 
+    MULTIPLE_DATA_SOURCE = False
+
     @validator("STORAGE_ENGINE", pre=True)
     def get_emails_enabled(cls, v: str, values: Dict[str, Any]) -> bool:
         # print(v)
