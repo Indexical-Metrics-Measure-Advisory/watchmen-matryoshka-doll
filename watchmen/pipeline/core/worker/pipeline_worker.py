@@ -116,8 +116,7 @@ def run_pipeline(pipeline_context: PipelineContext):
                     __trigger_all_pipeline(pipeline_context.pipeline_trigger_merge_list)
 
             except Exception as e:
-                log.error(e)
-                # raise e
+                # log.error(e)
                 pipeline_status.error = traceback.format_exc()
                 pipeline_status.status = ERROR
             finally:
