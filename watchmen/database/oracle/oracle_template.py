@@ -117,6 +117,8 @@ class OracleStorage(StorageInterface):
                     new_updates[key] = get_surrogate_key()
                 elif key == "version_":
                     new_updates[key] = 0
+                elif key == "insert_time_" or key == "update_time_":
+                    new_updates[key] = datetime.datetime.now().replace(tzinfo=None)
                 else:
                     if isinstance(table.c[key].type, CLOB):
                         if updates.get(key) is not None:
@@ -152,6 +154,8 @@ class OracleStorage(StorageInterface):
             for key in table.c.keys():
                 if key == "version_":
                     new_updates[key] = updates.get(key) + 1
+                elif key == "update_time_":
+                    new_updates[key] = datetime.datetime.now().replace(tzinfo=None)
                 else:
                     if isinstance(table.c[key].type, CLOB):
                         if updates.get(key) is not None:
