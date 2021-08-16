@@ -194,11 +194,9 @@ def load_all_data_sources(current_user: User = Depends(deps.get_current_user)):
 
 @router.post("/datasource", tags=["common"], response_model=DataSource)
 def save_data_source(data_source: DataSource, current_user: User = Depends(deps.get_current_user)):
-
     data_source = data_source_storage.save_data_source(data_source)
     data_source_container.init()
     return data_source
-
 
 
 @router.get("/datasource/id", tags=["common"], response_model=DataSource)

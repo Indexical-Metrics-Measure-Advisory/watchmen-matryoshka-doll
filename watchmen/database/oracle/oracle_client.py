@@ -18,7 +18,7 @@ SID = "SID"
 class OracleEngine(object):
     engine = None
 
-    def dumps(o):
+    def dumps(self,o):
         return json.dumps(o, cls=DateTimeEncoder)
 
     def find_sid(self, params: List[DataSourceParam]):

@@ -27,5 +27,5 @@ class MysqlEngine(object):
     def get_engine(self):
         return self.engine
 
-    def dumps(o):
+    def dumps(self,o):
         return json.dumps(o, cls=DateTimeEncoder)

@@ -17,7 +17,7 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, convert_to_dict
 from watchmen.database.oracle.oracle_engine import dumps
 from watchmen.database.oracle.oracle_utils import parse_obj
-from watchmen.database.singleton import singleton
+# from watchmen.database.singleton import singleton
 from watchmen.database.storage.storage_interface import StorageInterface
 from watchmen.database.storage.utils.table_utils import get_primary_key
 
@@ -26,7 +26,7 @@ log = logging.getLogger("app." + __name__)
 log.info("oracle template initialized")
 
 
-@singleton
+# @singleton
 class OracleStorage(StorageInterface):
     engine = None
     insp = None
