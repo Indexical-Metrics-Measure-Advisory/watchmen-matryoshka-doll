@@ -8,7 +8,6 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.utils.data_utils import build_data_pages
 from watchmen.database.mongo.index import build_code_options
 from watchmen.database.storage.storage_interface import StorageInterface
-from watchmen.database.storage.utils.table_utils import get_primary_key
 
 log = logging.getLogger("app." + __name__)
 
@@ -19,8 +18,9 @@ log.info("mongo template initialized")
 class MongoStorage(StorageInterface):
     client = None
 
-    def __init__(self, client):
+    def __init__(self, client,table_provider):
         self.client = client
+        self.table = table_provider
 
     def build_mongo_where_expression(self, where: dict):
         """
@@ -156,7 +156,7 @@ class MongoStorage(StorageInterface):
 
     def update_one(self, one, model, name) -> any:
         collection = self.client.get_collection(name)
-        primary_key = get_primary_key(name)
+        primary_key = self.table.get_primary_key(name)
         one_dict = self.__convert_to_dict(one)
         query_dict = {primary_key: one_dict.get(primary_key)}
         collection.update_one(query_dict, {"$set": one_dict})
@@ -183,7 +183,7 @@ class MongoStorage(StorageInterface):
 
     def delete_by_id(self, id_, name):
         collection = self.client.get_collection(name)
-        key = get_primary_key(name)
+        key = self.table.get_primary_key(name)
         collection.delete_one({key: id_})
 
     def delete_one(self, where, name):
@@ -196,7 +196,7 @@ class MongoStorage(StorageInterface):
 
     def find_by_id(self, id_, model, name):
         collections = self.client.get_collection(name)
-        primary_key = get_primary_key(name)
+        primary_key = self.table.get_primary_key(name)
         result = collections.find_one({primary_key: id_})
         if result is None:
             return

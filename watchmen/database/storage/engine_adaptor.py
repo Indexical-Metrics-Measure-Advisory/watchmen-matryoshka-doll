@@ -6,6 +6,7 @@ from watchmen.database.mysql.mysql_client import MysqlEngine
 
 from watchmen.database.oracle.oracle_client import OracleEngine
 from watchmen.database.table import mysql_table_definition, oracle_table_definition
+from watchmen.database.table.base_table_definition import TableDefinition
 from watchmen.database.table.mysql_table_definition import MysqlTableDefinition
 
 MYSQL = "mysql"
@@ -48,7 +49,7 @@ def find_template():
     if settings.STORAGE_ENGINE == MONGO:
         from watchmen.database.mongo.mongo_template import MongoStorage
         engine = MongoEngine(default_datasource)
-        return MongoStorage(engine.get_engine())
+        return MongoStorage(engine.get_engine(),TableDefinition)
     elif settings.STORAGE_ENGINE == MYSQL:
         from watchmen.database.mysql.mysql_template import MysqlStorage
         engine = MysqlEngine(default_datasource)
