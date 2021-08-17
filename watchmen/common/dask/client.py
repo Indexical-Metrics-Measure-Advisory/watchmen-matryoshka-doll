@@ -1,4 +1,3 @@
-
 from distributed import Client
 
 from watchmen.config.config import settings

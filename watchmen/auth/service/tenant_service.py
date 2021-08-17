@@ -15,10 +15,10 @@ def update(tenant: Tenant) -> Tenant:
 def query_by_name(tenant_name: str, pagination) -> Tenant:
     if tenant_name != '':
         query_dict = {"name": {"like": tenant_name}}
-        sort_dict = [("lastmodified", "desc")]
+        sort_dict = [("lastModified", "desc")]
         return storage_template.page_(query_dict, sort_dict, pagination, Tenant, TENANTS)
     else:
-        sort_dict = [("lastmodified", "desc")]
+        sort_dict = [("lastModified", "desc")]
     return storage_template.page_all(sort_dict, pagination, Tenant, TENANTS)
 
 

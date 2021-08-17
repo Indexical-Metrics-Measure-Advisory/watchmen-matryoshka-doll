@@ -1,4 +1,5 @@
 from typing import List
+
 from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_ID, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME, \
     TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
@@ -26,7 +27,7 @@ def load_all_topic_list(pagination: Pagination, current_user) -> DataPage:
     return page_({"tenantId": current_user}, sort_dict, pagination, Topic, TOPICS)
 
 
-def get_topic_by_name(topic_name: str, current_user) -> Topic:
+def get_topic_by_name(topic_name: str, current_user=None) -> Topic:
     cached_topic = cacheman[TOPIC_BY_NAME].get(topic_name)
     if cached_topic is not None:
         return cached_topic

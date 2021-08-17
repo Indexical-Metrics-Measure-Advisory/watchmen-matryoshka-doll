@@ -22,7 +22,7 @@ from watchmen.common.presto.presto_utils import create_or_update_presto_schema_f
 from watchmen.common.security.pat.pat_service import createPAT, queryPAT, deletePAT
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id, add_tenant_id_to_model, \
-    compare_tenant, clean_password
+    compare_tenant, clean_password, is_super_admin
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
@@ -44,8 +44,7 @@ from watchmen.space.service.admin import create_space, update_space_by_id, sync_
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
     load_space_list_by_name, load_space_by_name
-from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic, \
-    merge_summary_data_for_topic
+from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name
 from watchmen.topic.topic import Topic
@@ -53,9 +52,6 @@ from watchmen.topic.topic import Topic
 router = APIRouter()
 
 log = logging.getLogger("app." + __name__)
-
-
-
 
 
 class AdminDashboard(BaseModel):
@@ -138,7 +134,7 @@ async def load_topic(topic_id, current_user: User = Depends(deps.get_current_use
 @router.post("/topic", tags=["admin"], response_model=Topic)
 async def create_topic(topic: Topic, current_user: User = Depends(deps.get_current_user)):
     topic = add_tenant_id_to_model(topic, current_user)
-    topic.createTime = datetime.now().replace(tzinfo=None)
+    topic.createTime = datetime.now().replace(tzinfo=None).isoformat()
     return create_topic_schema(topic)
 
 
@@ -228,8 +224,10 @@ async def save_user(user: User, current_user: User = Depends(deps.get_current_us
     else:
         if user.userId is not None:
             _user = get_user(user.userId)
-            if _user.tenantId != current_user.tenantId:
-                raise Exception("forbidden 403. the modify user's tenant {0} is not match the current operator user {1}".format(_user.tenantId, current_user.tenantId))
+            if _user.tenantId != current_user.tenantId and not is_super_admin(current_user):
+                raise Exception(
+                    "forbidden 403. the modify user's tenant {0} is not match the current operator user {1}".format(
+                        _user.tenantId, current_user.tenantId))
         sync_user_to_user_groups(user)
         user_dict = user.dict(by_alias=True)
         del user_dict["password"]

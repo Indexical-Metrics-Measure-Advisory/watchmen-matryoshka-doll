@@ -1,4 +1,3 @@
-
 PIPELINE_UID = "pipelineUid"
 NOT_EMPTY = "not-empty"
 ERROR = "ERROR"

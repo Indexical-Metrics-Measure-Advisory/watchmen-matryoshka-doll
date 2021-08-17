@@ -41,4 +41,6 @@ def get_pid(table_name):
         pid = "tenantId"
     elif table_name == "pats":
         pid = "patId"
+    elif table_name == "data_sources":
+        pid = "dataSourceId"
     return pid

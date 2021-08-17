@@ -7,6 +7,7 @@ from pydantic.tools import lru_cache
 from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.data_page import DataPage
 from watchmen.config.config import settings
+from watchmen.database.datasource.data_source import DataSource
 from watchmen.pipeline.utils.units_func import ADDRESS, CONTINENT, REGION, COUNTRY, PROVINCE, CITY, \
     DISTRICT, ROAD, COMMUNITY, FLOOR, RESIDENCE_TYPE, RESIDENTIAL_AREA, TEXT, EMAIL, PHONE, MOBILE, FAX, GENDER, \
     HALF_YEAR, QUARTER, SEASON, MONTH, HALF_MONTH, TEN_DAYS, WEEK_OF_YEAR, WEEK_OF_MONTH, HALF_WEEK, DAY_OF_MONTH, \
@@ -43,6 +44,18 @@ def get_id_name():
         return "id_"
     elif settings.STORAGE_ENGINE == "mysql":
         return "id_"
+
+
+def get_id_name_by_datasource(datasource: DataSource):
+    if datasource is None:
+        return get_id_name()
+    else:
+        if datasource.dataSourceType == "mongodb":
+            return "_id"
+        elif datasource.dataSourceType == "oracle":
+            return "id_"
+        elif datasource.dataSourceType == "mysql":
+            return "id_"
 
 
 def get_dict_relationship(model_schema_set):
@@ -138,6 +151,10 @@ def is_superuser(username):
         return True
     else:
         return False
+
+
+def is_super_admin(user):
+    return user.role == "superadmin"
 
 
 def clean_password(user_list):

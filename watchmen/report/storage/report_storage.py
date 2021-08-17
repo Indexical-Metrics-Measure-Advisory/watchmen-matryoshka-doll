@@ -8,8 +8,8 @@ from watchmen.database.storage.storage_template import insert_one, update_one, f
 CONSOLE_REPORTS = "console_reports"
 
 
-def create_report(report:Report):
-    report.reportId=get_surrogate_key()
+def create_report(report: Report):
+    report.reportId = get_surrogate_key()
     return insert_one(report, Report, CONSOLE_REPORTS)
 
 

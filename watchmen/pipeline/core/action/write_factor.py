@@ -39,7 +39,7 @@ def init(action_context: ActionContext):
             status.whereConditions = where_
 
             target_data = query_topic_data(where_,
-                                           target_topic.name)
+                                           target_topic)
 
             target_factor = get_factor(action.factorId, target_topic)
             source_ = action.source
@@ -69,9 +69,9 @@ def init(action_context: ActionContext):
             trigger_pipeline_data_list = []
             if target_data is not None:
                 trigger_pipeline_data_list.append(update_topic_data_one(
-                    target_topic.name, updates_, target_data,
+                    updates_, target_data,
                     action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
-                    target_data['id_']))
+                    target_data['id_']), target_topic)
 
         elapsed_time = time.time() - start
         status.complete_time = elapsed_time

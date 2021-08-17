@@ -4,8 +4,6 @@ from typing import Any, List
 
 from pydantic import BaseModel
 
-from watchmen.common.watchmen_model import WatchmenModel
-
 
 class UnitActionStatus(BaseModel):
     type: str = None

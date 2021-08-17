@@ -1,34 +1,26 @@
-import datetime
 import logging
-from datetime import date
 
-import arrow
 import pymongo
-from bson import regex, ObjectId
-from pymongo import ReturnDocument
-from pymongo.errors import WriteError
+from bson import regex
 
 from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
-from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
-from watchmen.database.mongo.index import build_code_options, get_client
-from watchmen.database.singleton import singleton
-from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
+from watchmen.common.utils.data_utils import build_data_pages
+from watchmen.database.mongo.index import build_code_options
 from watchmen.database.storage.storage_interface import StorageInterface
-from watchmen.database.storage.utils.table_utils import get_primary_key
-
-client = get_client()
 
 log = logging.getLogger("app." + __name__)
 
 log.info("mongo template initialized")
 
 
-@singleton
+# @singleton
 class MongoStorage(StorageInterface):
+    client = None
 
-
-
+    def __init__(self, client,table_provider):
+        self.client = client
+        self.table = table_provider
 
     def build_mongo_where_expression(self, where: dict):
         """
@@ -153,58 +145,58 @@ class MongoStorage(StorageInterface):
         return result
 
     def insert_one(self, one, model, name):
-        collection = client.get_collection(name)
+        collection = self.client.get_collection(name)
         collection.insert_one(self.__convert_to_dict(one))
         return model.parse_obj(one)
 
     def insert_all(self, data, model, name):
-        collection = client.get_collection(name)
+        collection = self.client.get_collection(name)
         collection.insert_many(self.__convert_list_to_dict(data))
         return data
 
     def update_one(self, one, model, name) -> any:
-        collection = client.get_collection(name)
-        primary_key = get_primary_key(name)
+        collection = self.client.get_collection(name)
+        primary_key = self.table.get_primary_key(name)
         one_dict = self.__convert_to_dict(one)
         query_dict = {primary_key: one_dict.get(primary_key)}
         collection.update_one(query_dict, {"$set": one_dict})
         return model.parse_obj(one)
 
     def update_one_first(self, where, updates, model, name):
-        collection = client.get_collection(name)
+        collection = self.client.get_collection(name)
         query_dict = self.build_mongo_where_expression(where)
         collection.update_one(query_dict, {"$set": self.__convert_to_dict(updates)})
         return model.parse_obj(updates)
 
     def update_one_with_condition(self, where, one, model, name):
-        collections = client.get_collection(name)
+        collections = self.client.get_collection(name)
         collections.update_one(self.build_mongo_where_expression(where), {"$set": self.__convert_to_dict(one)})
 
     def update_(self, where, updates, model, name):
-        collections = client.get_collection(name)
+        collections = self.client.get_collection(name)
         collections.update_many(self.build_mongo_where_expression(where), {"$set": self.__convert_to_dict(updates)})
 
     def pull_update(self, where, updates, model, name):
-        collections = client.get_collection(name)
+        collections = self.client.get_collection(name)
         collections.update_many(self.build_mongo_where_expression(where),
                                 {"$pull": self.build_mongo_update_expression(self.__convert_to_dict(updates))})
 
     def delete_by_id(self, id_, name):
-        collection = client.get_collection(name)
-        key = get_primary_key(name)
+        collection = self.client.get_collection(name)
+        key = self.table.get_primary_key(name)
         collection.delete_one({key: id_})
 
     def delete_one(self, where, name):
-        collection = client.get_collection(name)
+        collection = self.client.get_collection(name)
         collection.delete_one(self.build_mongo_where_expression(where))
 
     def delete_(self, where, model, name):
-        collection = client.get_collection(name)
+        collection = self.client.get_collection(name)
         collection.delete_many(self.build_mongo_where_expression(where))
 
     def find_by_id(self, id_, model, name):
-        collections = client.get_collection(name)
-        primary_key = get_primary_key(name)
+        collections = self.client.get_collection(name)
+        primary_key = self.table.get_primary_key(name)
         result = collections.find_one({primary_key: id_})
         if result is None:
             return
@@ -212,7 +204,7 @@ class MongoStorage(StorageInterface):
             return model.parse_obj(result)
 
     def find_one(self, where: dict, model, name: str):
-        collection = client.get_collection(name)
+        collection = self.client.get_collection(name)
         result = collection.find_one(self.build_mongo_where_expression(where))
         if result is None:
             return
@@ -220,29 +212,29 @@ class MongoStorage(StorageInterface):
             return model.parse_obj(result)
 
     def drop_(self, name: str):
-        return client.get_collection(name).drop()
+        return self.client.get_collection(name).drop()
 
     def find_(self, where: dict, model, name: str) -> list:
-        collection = client.get_collection(name)
+        collection = self.client.get_collection(name)
         cursor = collection.find(self.build_mongo_where_expression(where))
         result_list = list(cursor)
         return [model.parse_obj(result) for result in result_list]
 
     def list_all(self, model, name: str):
-        collection = client.get_collection(name)
+        collection = self.client.get_collection(name)
         cursor = collection.find()
         result_list = list(cursor)
         return [model.parse_obj(result) for result in result_list]
 
     def list_(self, where, model, name: str) -> list:
-        collection = client.get_collection(name)
+        collection = self.client.get_collection(name)
         cursor = collection.find(self.build_mongo_where_expression(where))
         result_list = list(cursor)
         return [model.parse_obj(result) for result in result_list]
 
     def page_all(self, sort, pageable, model, name) -> DataPage:
         codec_options = build_code_options()
-        collection = client.get_collection(name, codec_options=codec_options)
+        collection = self.client.get_collection(name, codec_options=codec_options)
         total = collection.find().count()
         skips = pageable.pageSize * (pageable.pageNumber - 1)
         cursor = collection.find().skip(skips).limit(pageable.pageSize).sort(self.build_mongo_order(sort))
@@ -250,7 +242,7 @@ class MongoStorage(StorageInterface):
 
     def page_(self, where, sort, pageable, model, name) -> DataPage:
         codec_options = build_code_options()
-        collection = client.get_collection(name, codec_options=codec_options)
+        collection = self.client.get_collection(name, codec_options=codec_options)
 
         mongo_where = self.build_mongo_where_expression(where)
         total = collection.find(mongo_where).count()
@@ -281,142 +273,12 @@ class MongoStorage(StorageInterface):
         else:
             return instance
 
-    '''
-    for topic data impl
-    '''
+    def get_topic_factors(self, topic_name):
+        topic = self._get_topic(topic_name)
+        factors = topic['factors']
+        return factors
 
-    def drop_topic_data_table(self, name):
-        topic_name = build_collection_name(name)
-        client.get_collection(topic_name).drop()
-
-    def topic_data_delete_(self, where, name):
-        collection = client.get_collection(build_collection_name(name))
-        if where is None:
-            collection.drop()
-        else:
-            collection.delete_many(self.build_mongo_where_expression(where))
-
-    def topic_data_insert_one(self, one, topic_name):
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        self.encode_dict(one)
-        try:
-            result = topic_data_col.insert_one(self.build_mongo_updates_expression_for_insert(one))
-        except WriteError as we:
-            if we.code == 11000:  # E11000 duplicate key error
-                raise InsertConflictError("InsertConflict")
-        return result.inserted_id
-
-    def encode_dict(self, one):
-        for k, v in one.items():
-            if isinstance(v, date):
-                one[k] = arrow.get(v).datetime
-
-    def topic_data_insert_(self, data, topic_name):
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        for d in data:
-            self.encode_dict(d)
-        topic_data_col.insert_many(data)
-
-    def topic_data_update_one(self, id_, one, topic_name):
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        self.encode_dict(one)
-        topic_data_col.update_one({"_id": ObjectId(id_)}, self.build_mongo_updates_expression_for_update(one))
-
-    def topic_data_update_one_with_version(self, id_, version_, one, topic_name):
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        self.encode_dict(one)
-        result = topic_data_col.update_one(
-            self.build_mongo_where_expression({"_id": ObjectId(id_), "version_": version_}),
-            self.build_mongo_updates_expression_for_update(one))
-        if result.modified_count == 0:
-            raise OptimisticLockError("Optimistic lock error")
-
-    def topic_data_update_(self, where, updates, name):
-        codec_options = build_code_options()
-        self.encode_dict(updates)
-        collection = client.get_collection(build_collection_name(name), codec_options=codec_options)
-        collection.update_many(self.build_mongo_where_expression(where), {"$set": self.__convert_to_dict(updates)})
-
-    def topic_data_find_by_id(self, id_, topic_name):
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        result = topic_data_col.find_one({"_id": ObjectId(id_)})
-        return result
-
-    def topic_data_find_one(self, where, topic_name):
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        return topic_data_col.find_one(self.build_mongo_where_expression(where))
-
-    def topic_data_find_(self, where, topic_name):
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        return topic_data_col.find(self.build_mongo_where_expression(where))
-
-    def topic_data_find_with_aggregate(self, where, topic_name, aggregate):
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        for key, value in aggregate.items():
-            aggregate_ = {}
-            if value == "sum":
-                aggregate_ = {"$group":
-                    {
-                        "_id": "null",
-                        "value": {"$sum": f'${key}'}
-                    }
-                }
-            elif value == "count":
-                return topic_data_col.count_documents(self.build_mongo_where_expression(where))
-            elif value == "avg":
-                aggregate_ = {"$group":
-                    {
-                        "_id": "null",
-                        "value": {"$avg": f'${key}'}
-                    }
-                }
-        pipeline = [{"$match": self.build_mongo_where_expression(where)}, aggregate_]
-        cursor = topic_data_col.aggregate(pipeline)
-        for doc in cursor:
-            result = doc["value"]
-            return result
-
-    def topic_data_list_all(self, topic_name) -> list:
-        codec_options = build_code_options()
-        topic_data_col = client.get_collection(build_collection_name(topic_name), codec_options=codec_options)
-        result = topic_data_col.find()
-        return list(result)
-
-    def topic_data_page_(self, where, sort, pageable, model, name) -> DataPage:
-        topic_collection_name = build_collection_name(name)
-        codec_options = build_code_options()
-        collection = client.get_collection(topic_collection_name, codec_options=codec_options)
-
-        mongo_where = self.build_mongo_where_expression(where)
-        total = collection.find(mongo_where).count()
-        skips = pageable.pageSize * (pageable.pageNumber - 1)
-        if sort is not None:
-            cursor = collection.find(mongo_where).skip(skips).limit(pageable.pageSize).sort(
-                self.build_mongo_order(sort))
-        else:
-            cursor = collection.find(mongo_where).skip(skips).limit(pageable.pageSize)
-        if model is not None:
-            return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
-        else:
-            results = []
-            if self._check_topic_type(name) == "raw":
-                for doc in cursor:
-                    results.append(doc['data_'])
-            else:
-                for doc in cursor:
-                    del doc['_id']
-                    results.append(doc)
-            return build_data_pages(pageable, results, total)
-
-    def _check_topic_type(self, topic_name):
+    def check_topic_type(self, topic_name):
         topic = self._get_topic(topic_name)
         return topic['type']
 
@@ -424,7 +286,7 @@ class MongoStorage(StorageInterface):
         if cacheman[TOPIC_DICT_BY_NAME].get(topic_name) is not None:
             return cacheman[TOPIC_DICT_BY_NAME].get(topic_name)
         codec_options = build_code_options()
-        topic_collection = client.get_collection("topics", codec_options=codec_options)
+        topic_collection = self.client.get_collection("topics", codec_options=codec_options)
         result = topic_collection.find_one({"name": topic_name})
         if result is None:
             raise Exception("not find topic {0}".format(topic_name))

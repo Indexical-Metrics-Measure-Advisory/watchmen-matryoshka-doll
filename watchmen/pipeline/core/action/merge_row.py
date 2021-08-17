@@ -46,14 +46,14 @@ def init(action_context: ActionContext):
 
         trigger_pipeline_data_list = []
 
-        target_data = query_topic_data(where_, target_topic.name)
+        target_data = query_topic_data(where_, target_topic)
         if target_data is None:
             raise Exception("can't insert data in merge row action ")
         else:
             trigger_pipeline_data_list.append(
-                update_topic_data(target_topic.name, mappings_results, target_data,
+                update_topic_data(mappings_results, target_data,
                                   action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
-                                  where_))
+                                  where_, target_topic))
             status.updateCount = status.updateCount + 1
 
         elapsed_time = time.time() - start

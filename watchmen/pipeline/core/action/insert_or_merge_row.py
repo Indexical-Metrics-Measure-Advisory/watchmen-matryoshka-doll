@@ -1,11 +1,12 @@
 import logging
 import time
 
-from watchmen.common.utils.data_utils import get_id_name
+from watchmen.common.utils.data_utils import get_id_name_by_datasource
 from watchmen.config.config import settings
+from watchmen.database.datasource.container import data_source_container
 from watchmen.database.storage.engine_adaptor import MONGO
 from watchmen.database.storage.exception.exception import InsertConflictError
-from watchmen.database.storage.storage_template import topic_data_update_one_with_version
+from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, ActionContext
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
@@ -25,14 +26,16 @@ def update_recovery_callback():
 
 def update_retry_callback(mappings_results, where_, target_topic):
     target_data = query_topic_data(where_,
-                                   target_topic.name)
+                                   target_topic)
 
     if target_data is not None:
-        id_ = target_data.get(get_id_name(), None)
+        id_ = target_data.get(
+            get_id_name_by_datasource(data_source_container.get_data_source_by_id(target_topic.dataSourceId)), None)
         version_ = target_data.get("version_", None)
         if id_ is not None and version_ is not None:
             mappings_results['version_'] = version_
-            topic_data_update_one_with_version(id_, version_, mappings_results, target_topic.name)
+            template = get_template_by_datasource_id(target_topic.dataSourceId)
+            template.topic_data_update_one_with_version(id_, version_, mappings_results, target_topic.name)
             data = {**target_data, **mappings_results}
             return TriggerData(topicName=target_topic.name,
                                triggerType="Update",
@@ -90,7 +93,7 @@ def init(action_context: ActionContext):
         # todo
         # should not use find_one,use find_ and check the number of record
         target_data = query_topic_data(where_,
-                                       target_topic.name)
+                                       target_topic)
 
         trigger_pipeline_data_list = []
 
@@ -99,8 +102,9 @@ def init(action_context: ActionContext):
                 if settings.STORAGE_ENGINE == MONGO:
                     mappings_results["version_"] = 0
                     mappings_results["aggregate_assist_"] = {}
-                result = insert_topic_data(target_topic.name, mappings_results,
-                                           action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId)
+                result = insert_topic_data(mappings_results,
+                                           action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
+                                           target_topic)
                 trigger_pipeline_data_list.append(result)
                 status.insertCount = status.insertCount + 1
                 elapsed_time = time.time() - start
@@ -157,21 +161,24 @@ def init(action_context: ActionContext):
         # todo
         # should not use find_one,use find_ and check the number of record
         target_data = query_topic_data(where_,
-                                       target_topic.name)
+                                       target_topic)
 
         trigger_pipeline_data_list = []
 
         if target_data is None:
             trigger_pipeline_data_list.append(
-                insert_topic_data(target_topic.name, mappings_results,
-                                  action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId))
+                insert_topic_data(mappings_results,
+                                  action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
+                                  target_topic))
             status.insertCount = status.insertCount + 1
 
         else:
             trigger_pipeline_data_list.append(
-                update_topic_data_one(target_topic.name, mappings_results, target_data,
+                update_topic_data_one(mappings_results, target_data,
                                       action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
-                                      target_data[get_id_name()]))
+                                      target_data[get_id_name_by_datasource(
+                                          data_source_container.get_data_source_by_id(target_topic.dataSourceId))],
+                                      target_topic))
             status.updateCount = status.updateCount + 1
 
         elapsed_time = time.time() - start

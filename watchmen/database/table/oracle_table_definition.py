@@ -1,5 +1,4 @@
 from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer
-from watchmen.database.oracle.oracle_engine import engine
 
 metadata = MetaData()
 
@@ -194,11 +193,11 @@ pats_table = Table("pats", metadata,
                    )
 
 tenants_table = Table("tenants", metadata,
-                   Column("tenantid", String(60), primary_key=True),
-                   Column("name", String(50), nullable=True),
-                   Column('lastmodified', DateTime, nullable=True),
-                   Column('createtime', String(50), nullable=True)
-                   )
+                      Column("tenantid", String(60), primary_key=True),
+                      Column("name", String(50), nullable=True),
+                      Column('lastmodified', DateTime, nullable=True),
+                      Column('createtime', String(50), nullable=True)
+                      )
 
 
 def get_table_by_name(table_name):
@@ -234,9 +233,4 @@ def get_table_by_name(table_name):
         table = pats_table
     elif table_name == "tenants":
         table = tenants_table
-    return table
-
-
-def get_topic_table_by_name(table_name):
-    table = Table(table_name, metadata, extend_existing=False, autoload=True, autoload_with=engine)
     return table

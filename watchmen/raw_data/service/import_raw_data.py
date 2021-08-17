@@ -24,11 +24,12 @@ async def import_raw_topic_data(topic_event, current_user):
     add_audit_columns(raw_data, INSERT)
     flatten_fields = get_flatten_field(topic_event.data, topic.factors)
     raw_data.update(flatten_fields)
-    save_topic_instance(topic_event.code, raw_data)
+
+    save_topic_instance(topic, raw_data)
     __trigger_pipeline(topic_event, current_user)
 
 
-async def get_input_data( topic, topic_event):
+async def get_input_data(topic, topic_event):
     if is_raw(topic):
         raw_data = {"data_": topic_event.data}
     else:

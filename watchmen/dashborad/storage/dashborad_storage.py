@@ -1,7 +1,7 @@
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
-from watchmen.database.storage.storage_template import insert_one, update_one, delete_one, update_, find_, \
+from watchmen.database.storage.storage_template import insert_one, update_one, update_, find_, \
     find_one, delete_by_id
 
 DASHBOARD_ID = "dashboardId"

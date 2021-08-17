@@ -1,10 +1,11 @@
+import datetime
+from collections import deque
+from enum import Enum
+
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.service.topic_service import create_topic_schema
 from watchmen.topic.topic import Topic
-from collections import deque
-import datetime
-from enum import Enum
 
 
 class ValueType(str, Enum):

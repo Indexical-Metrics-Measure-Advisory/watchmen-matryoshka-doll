@@ -44,9 +44,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()
         "tenantId": user.tenantId
     }
 
-
     return result
-
 
 
 @router.get("/login/validate_token", response_model=User, tags=["authenticate"])
