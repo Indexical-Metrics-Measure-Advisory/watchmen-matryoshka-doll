@@ -105,22 +105,16 @@ async def save_query_monitor_data(query_monitor):
 
 
 async def load_chart_dataset(report_id, current_user):
-    # assert report_id is None
     report = load_report_by_id(report_id, current_user)
-
-    # print("report", report)
-    # query_monitor = build_query_monitor_report(report, query_type="report")
     try:
         query = build_query_for_subject_chart(report_id, report, current_user)
-        # query_count_summary = build_query_summary(count_sql)
-        rows = __load_chart_dataset(query, query_monitor=None)
-        return rows
+        if query is None:
+            return []
+        else:
+            rows = __load_chart_dataset(query, query_monitor=None)
+            return rows
     except Exception as e:
         log.exception(e)
-        # query_monitor.error = traceback.format_exc()
-        # query_monitor.success = False
-    # finally:
-    #     await save_query_monitor_data(query_monitor)
 
 
 def __load_chart_dataset(query, query_monitor=None):
@@ -200,13 +194,16 @@ def build_query_for_subject_chart(chart_id, report=None, current_user=None):
         q = build_count_query_for_subject_chart(console_subject, columns_dict, report)
     else:
         dataset = console_subject.dataset
+        if len(dataset.columns) == 0:
+            return None
         q = _from(dataset.columns[0])
         for join in dataset.joins:
             q = _join(q, join)
         if dataset.filters:
             q = _filter(q, dataset.filters)
         for indicator in report.indicators:
-            q = _indicator(q, indicator, columns_dict.get(indicator.columnId))
+            if indicator.columnId != '':
+                q = _indicator(q, indicator, columns_dict.get(indicator.columnId))
 
         truncation = report.chart.settings.get('truncation', None)
         if truncation is not None:
@@ -214,17 +211,18 @@ def build_query_for_subject_chart(chart_id, report=None, current_user=None):
             count = truncation['count']
 
         for dimension in report.dimensions:
-            q = _dimension(q, dimension, columns_dict.get(dimension.columnId))
-            q = _groupby(q, columns_dict.get(dimension.columnId))
-            if truncation is not None:
-                if truncation_type == "top":
-                    q = _orderby(q, columns_dict.get(dimension.columnId), "asc")
-                if truncation_type == "bottom":
-                    q = _orderby(q, columns_dict.get(dimension.columnId), "desc")
-                if truncation_type == "none":
+            if dimension.columnId != '':
+                q = _dimension(q, dimension, columns_dict.get(dimension.columnId))
+                q = _groupby(q, columns_dict.get(dimension.columnId))
+                if truncation is not None:
+                    if truncation_type == "top":
+                        q = _orderby(q, columns_dict.get(dimension.columnId), "asc")
+                    if truncation_type == "bottom":
+                        q = _orderby(q, columns_dict.get(dimension.columnId), "desc")
+                    if truncation_type == "none":
+                        q = _orderby(q, columns_dict.get(dimension.columnId), "none")
+                else:
                     q = _orderby(q, columns_dict.get(dimension.columnId), "none")
-            else:
-                q = _orderby(q, columns_dict.get(dimension.columnId), "none")
 
         if truncation is not None:
             q = _limit(q, count)
