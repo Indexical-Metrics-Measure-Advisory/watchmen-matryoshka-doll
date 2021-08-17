@@ -49,7 +49,7 @@ def find_template():
     if settings.STORAGE_ENGINE == MONGO:
         from watchmen.database.mongo.mongo_template import MongoStorage
         engine = MongoEngine(default_datasource)
-        return MongoStorage(engine.get_engine(),TableDefinition)
+        return MongoStorage(engine.get_engine(),TableDefinition())
     elif settings.STORAGE_ENGINE == MYSQL:
         from watchmen.database.mysql.mysql_template import MysqlStorage
         engine = MysqlEngine(default_datasource)

@@ -1,3 +1,5 @@
+from watchmen.database.singleton import singleton
+
 
 
 class TableDefinition(object):

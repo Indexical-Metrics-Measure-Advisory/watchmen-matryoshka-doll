@@ -10,7 +10,7 @@ from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME, COLUMNS_BY_TABLE_NAME
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages
@@ -447,20 +447,20 @@ class MysqlStorage(StorageInterface):
     def clear_metadata(self):
         self.table.metadata.clear()
 
-    def get_table_column_default_value(self, table_name, column_name):
-        columns = self._get_table_columns(table_name)
-        for column in columns:
-            if column["name"] == column_name:
-                return column["default"]
-
-    def _get_table_columns(self, table_name):
-        cached_columns = cacheman[COLUMNS_BY_TABLE_NAME].get(table_name)
-        if cached_columns is not None:
-            return cached_columns
-        columns = self.insp.get_columns(table_name)
-        if columns is not None:
-            cacheman[COLUMNS_BY_TABLE_NAME].set(table_name, columns)
-            return columns
+    # def get_table_column_default_value(self, table_name, column_name):
+    #     columns = self._get_table_columns(table_name)
+    #     for column in columns:
+    #         if column["name"] == column_name:
+    #             return column["default"]
+    #
+    # def _get_table_columns(self, table_name):
+    #     cached_columns = cacheman[COLUMNS_BY_TABLE_NAME].get(table_name)
+    #     if cached_columns is not None:
+    #         return cached_columns
+    #     columns = self.insp.get_columns(table_name)
+    #     if columns is not None:
+    #         cacheman[COLUMNS_BY_TABLE_NAME].set(table_name, columns)
+    #         return columns
 
     def check_topic_type(self, topic_name):
         topic = self._get_topic(topic_name)

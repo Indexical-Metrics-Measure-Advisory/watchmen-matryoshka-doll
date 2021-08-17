@@ -21,7 +21,6 @@ class DataSourceContainer(object):
     data_source_dict: Dict = {}
 
     def __init__(self):
-        # self.data_source_dict: Dict = {}
         self.init()
 
     def init(self):
@@ -39,7 +38,7 @@ class DataSourceContainer(object):
         self.data_source_dict.clear()
 
     def reload_data_source_list(self):
-        data_source_list: List[DataSource] = load_data_source_list()
+        data_source_list: List[DataSource] = self.load_data_source_list()
         for data_source in data_source_list:
             self.data_source_dict[data_source.dataSourceId] = data_source
 

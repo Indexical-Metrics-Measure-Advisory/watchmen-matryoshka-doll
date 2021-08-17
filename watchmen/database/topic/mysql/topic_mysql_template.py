@@ -12,7 +12,7 @@ from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 
-from watchmen.common.cache.cache_manage import cacheman, STMT
+from watchmen.common.cache.cache_manage import cacheman, STMT, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
@@ -124,8 +124,8 @@ class MysqlTopicStorage(TopicStorageInterface):
         else:
             return []
 
-    @staticmethod
-    def build_mysql_updates_expression(table, updates, stmt_type: str) -> dict:
+    # @staticmethod
+    def build_mysql_updates_expression(self,table, updates, stmt_type: str) -> dict:
         if stmt_type == "insert":
             new_updates = {}
             for key in table.c.keys():
@@ -153,7 +153,7 @@ class MysqlTopicStorage(TopicStorageInterface):
                             else:
                                 new_updates[key] = value_
                         else:
-                            default_value = storage_template.get_table_column_default_value(table.name, key)
+                            default_value = self.get_table_column_default_value(table.name, key)
                             if default_value is not None:
                                 value_ = default_value.strip("'").strip(" ")
                                 if value_.isdigit():
@@ -472,6 +472,21 @@ class MysqlTopicStorage(TopicStorageInterface):
     '''
         internal method
     '''
+
+    def get_table_column_default_value(self, table_name, column_name):
+        columns = self._get_table_columns(table_name)
+        for column in columns:
+            if column["name"] == column_name:
+                return column["default"]
+
+    def _get_table_columns(self, table_name):
+        cached_columns = cacheman[COLUMNS_BY_TABLE_NAME].get(table_name)
+        if cached_columns is not None:
+            return cached_columns
+        columns = self.insp.get_columns(table_name)
+        if columns is not None:
+            cacheman[COLUMNS_BY_TABLE_NAME].set(table_name, columns)
+            return columns
 
     @staticmethod
     def _convert_list_elements_key(list_info, topic_name):
