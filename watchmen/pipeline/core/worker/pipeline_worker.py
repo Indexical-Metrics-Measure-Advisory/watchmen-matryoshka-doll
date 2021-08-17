@@ -120,11 +120,14 @@ def run_pipeline(pipeline_context: PipelineContext):
                     __trigger_all_pipeline(pipeline_context.pipeline_trigger_merge_list)
 
             except Exception as e:
+
                 trace = traceback.format_exc()
                 log.error(trace)
                 # raise e
 
                 pipeline_status.error = trace
+
+     
                 pipeline_status.status = ERROR
             finally:
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:

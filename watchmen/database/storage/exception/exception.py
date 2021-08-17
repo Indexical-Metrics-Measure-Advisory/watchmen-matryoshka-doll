@@ -1,6 +1,6 @@
-class InsertConflictError(BaseException):
+class InsertConflictError(Exception):
     pass
 
 
-class OptimisticLockError(BaseException):
+class OptimisticLockError(Exception):
     pass
