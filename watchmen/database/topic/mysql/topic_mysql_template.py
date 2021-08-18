@@ -322,8 +322,8 @@ class MysqlTopicStorage(TopicStorageInterface):
                     values[key.lower()] = value
         stmt = stmt.values(values)
         with self.engine.begin() as conn:
-            with conn.begin():
-                conn.execute(stmt)
+            # with conn.begin():
+            conn.execute(stmt)
 
     def topic_data_find_by_id(self, id_: str, topic_name: str) -> any:
         return self.topic_data_find_one({"id_": id_}, topic_name)

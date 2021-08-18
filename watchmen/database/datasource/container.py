@@ -26,6 +26,7 @@ class DataSourceContainer(object):
     def init(self):
         data_source_list: List[DataSource] = list_all_data_source_list()
         for data_source in data_source_list:
+
             self.data_source_dict[data_source.dataSourceId] = data_source
 
     def get_data_source_by_id(self, datasource_id):
@@ -63,6 +64,7 @@ class DataSourceContainer(object):
     def get_topic_storage(self, datasource_id):
         storage = cacheman[DATA_SOURCE_LIST].get(datasource_id)
         if storage is not None:
+            # print("load from cache: {}".format(storage))
             return storage
         else:
             storage = self.build_storage(self.get_data_source_by_id(datasource_id))
