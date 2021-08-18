@@ -4,25 +4,22 @@ from starlette import status
 from watchmen.auth.service.security import verify_password
 from watchmen.auth.storage.user import load_user_by_name
 from watchmen.auth.storage.user_group import USER_GROUPS, get_user_group_list_by_ids, update_user_group_storage
-from watchmen.auth.user import User, SUPER_ADMIN
+from watchmen.auth.user import User
 from watchmen.auth.user_group import UserGroup
-from watchmen.common.utils.data_utils import is_superuser
 from watchmen.database.storage.storage_template import pull_update
 
 
 def authenticate(username, password):
-    if is_superuser(username):
-        return User(name=username, role=SUPER_ADMIN)
+
+    user = load_user_by_name(username)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     else:
-        user = load_user_by_name(username)
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        user = User.parse_obj(user)
+        if verify_password(password, user.password):
+            return User.parse_obj(user)
         else:
-            user = User.parse_obj(user)
-            if verify_password(password, user.password):
-                return User.parse_obj(user)
-            else:
-                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
 
 def sync_user_to_user_groups(user: User):

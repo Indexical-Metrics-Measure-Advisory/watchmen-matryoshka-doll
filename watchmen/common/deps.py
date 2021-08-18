@@ -12,7 +12,7 @@ from watchmen.auth.user import User, SUPER_ADMIN
 from watchmen.common.security.index import validate_jwt
 from watchmen.common.security.pat.pat_model import PersonAccessToken
 from watchmen.common.security.pat.pat_service import verifyPAT
-from watchmen.common.utils.data_utils import is_superuser
+# from watchmen.common.utils.data_utils import is_superuser
 from watchmen.config.config import settings
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 

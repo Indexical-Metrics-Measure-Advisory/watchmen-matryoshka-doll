@@ -4,6 +4,7 @@ from enum import Enum
 
 from pydantic.tools import lru_cache
 
+from watchmen.auth.user import SUPER_ADMIN, User
 from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.data_page import DataPage
 from watchmen.config.config import settings
@@ -146,8 +147,8 @@ def compare_tenant(instance, user):
         return False
 
 
-def is_superuser(username):
-    if username == settings.SUPER_USER:
+def is_superuser(user:User):
+    if user.role == SUPER_ADMIN:
         return True
     else:
         return False

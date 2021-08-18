@@ -51,7 +51,7 @@ def update_user_storage(user: User):
 
 
 def query_users_by_name_with_pagination(query_name: str, pagination: Pagination, current_user=None):
-    if is_superuser(current_user.name):
+    if is_superuser(current_user):
         where_ = {"name": {"like": query_name}}
     else:
         where_ = {"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]}
