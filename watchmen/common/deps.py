@@ -26,29 +26,11 @@ reusable_oauth2 = OAuth2(
 def get_current_user(authorization=Depends(reusable_oauth2)
                      ) -> User:
     scheme, token = get_authorization_scheme_param(authorization)
-
-    if scheme.lower() == "bearer":
-        try:
-            payload = validate_jwt(token)
-        except (jwt.JWTError, ValidationError):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
-            )
-        username = payload["sub"]
-    elif scheme.lower() == "pat":
-        pat: PersonAccessToken = verifyPAT(token)
-        if pat is not None:
-            username = pat.username
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
-            )
-    if is_superuser(username):
-        user = User(name=username, role=SUPER_ADMIN)
-    else:
-        user = load_user_by_name(username)
+    username = get_username(scheme, token)
+    # if is_superuser(username):
+    #     user = User(name=username, role=SUPER_ADMIN)
+    # else:
+    user = load_user_by_name(username)
 
     if settings.DEFAULT_DATA_ZONE_ON:
         user.tenantId = "1"
@@ -57,3 +39,24 @@ def get_current_user(authorization=Depends(reusable_oauth2)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 
     return user
+
+
+def get_username(scheme, token):
+    if scheme.lower() == "bearer":
+        try:
+            payload = validate_jwt(token)
+        except (jwt.JWTError, ValidationError):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+            )
+        return payload["sub"]
+    elif scheme.lower() == "pat":
+        pat: PersonAccessToken = verifyPAT(token)
+        if pat is not None:
+            return pat.username
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+            )
