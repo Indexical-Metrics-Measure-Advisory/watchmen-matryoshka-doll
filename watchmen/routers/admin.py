@@ -216,7 +216,7 @@ async def query_topic_list_by_ids(topic_ids: List[str], current_user: User = Dep
 @router.post("/user", tags=["admin"], response_model=User)
 async def save_user(user: User, current_user: User = Depends(deps.get_current_user)) -> User:
     if user.userId is None or check_fake_id(user.userId):
-        if current_user.tenantId is not None:
+        if current_user.tenantId is not None and user.tenantId is None:
             user.tenantId = current_user.tenantId
         result = create_user_storage(user)
         sync_user_to_user_groups(result)
@@ -231,7 +231,7 @@ async def save_user(user: User, current_user: User = Depends(deps.get_current_us
         sync_user_to_user_groups(user)
         user_dict = user.dict(by_alias=True)
         del user_dict["password"]
-        del user_dict["tenantId"]
+        # del user_dict["tenantId"]
         return update_user_storage(user_dict)
 
 

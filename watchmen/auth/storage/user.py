@@ -60,5 +60,4 @@ def query_users_by_name_with_pagination(query_name: str, pagination: Pagination,
 
 
 def import_user_to_db(user):
-    # template.create(USERS, user, User)
     return insert_one(user, User, USERS)

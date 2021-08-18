@@ -5,3 +5,6 @@ venv/
 venv-1/
 venv-2/
 temp/
+presto/
+test/
+dask-worker-space/
