@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: str = DEV
 
-    SUPER_USER: str = None
+    # SUPER_USER: str = None
 
     # HOST_URL = "http://localhost:8000"
     ALGORITHM = "HS256"
