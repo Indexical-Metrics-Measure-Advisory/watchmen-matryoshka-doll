@@ -10,7 +10,6 @@ from watchmen.database.storage.storage_template import pull_update
 
 
 def authenticate(username, password):
-
     user = load_user_by_name(username)
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)

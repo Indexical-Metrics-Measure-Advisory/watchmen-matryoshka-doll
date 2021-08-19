@@ -25,7 +25,7 @@ def load_data_source_by_id(data_source_id: str, current_user: User = None):
 
 def load_data_source_list(current_user: User):
     if settings.MULTIPLE_DATA_SOURCE:
-        print("tenant id",current_user.tenantId)
+        print("tenant id", current_user.tenantId)
         return find_({"tenantId": current_user.tenantId}, DataSource, DATA_SOURCES)
     else:
         return list_all(DataSource, DATA_SOURCES)

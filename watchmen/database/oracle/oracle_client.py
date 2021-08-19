@@ -12,13 +12,10 @@ from watchmen.database.datasource.data_source import DataSource, DataSourceParam
 SID = "SID"
 
 
-
-
-
 class OracleEngine(object):
     engine = None
 
-    def dumps(self,o):
+    def dumps(self, o):
         return json.dumps(o, cls=DateTimeEncoder)
 
     def find_sid(self, params: List[DataSourceParam]):
@@ -29,7 +26,6 @@ class OracleEngine(object):
     def __init__(self, database: DataSource):
 
         cx_Oracle.init_oracle_client(lib_dir=settings.ORACLE_LIB_DIR)
-
 
         sid = self.find_sid(database.params)
         if sid:

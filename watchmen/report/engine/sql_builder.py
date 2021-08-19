@@ -1,9 +1,12 @@
+import datetime
 import operator
 from typing import List
 
-from pypika import Query, Table, JoinType, Order
+from pypika import Query, Table, JoinType, Order, CustomFunction
 from pypika import functions as fn
 from pypika.queries import QueryBuilder
+from pypika.terms import PseudoColumn
+
 
 from watchmen.common.parameter import Parameter
 from watchmen.common.utils.data_utils import build_collection_name
@@ -18,7 +21,7 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 def _from(column: Column) -> QueryBuilder:
     topic = get_topic_by_id(column.parameter.topicId)
     topic_col_name = build_collection_name(topic.name)
-    return Query.from_(Table(topic_col_name))
+    return Query.from_(Table(topic_col_name).as_(topic.name))
 
 
 def parse_parameter(parameter: Parameter, factor=None):
@@ -26,9 +29,44 @@ def parse_parameter(parameter: Parameter, factor=None):
         topic = get_topic_by_id(parameter.topicId)
         topic_col_name = build_collection_name(topic.name)
         factor = get_factor(parameter.factorId, topic)
-        return Table(topic_col_name)[factor.name]
+        return Table(topic_col_name).as_(topic.name)[factor.name]
     elif parameter.kind == 'constant':
-        return parameter.value
+        if parameter.value.strip().startswith("{monthDiff"):
+            value_ = parameter.value.strip()
+            args_str = value_.replace("{monthDiff(", "").replace(")}", "")
+            args_list = args_str.split(",")
+
+            month_diff = CustomFunction("DATE_DIFF", ["col1", "col2", "col3"])
+            date_fnc = CustomFunction("date", ["col1"])
+
+            arg1 = args_list[0].strip()
+            arg2 = args_list[1].strip()
+
+            if arg1 == "now":
+                date1 = PseudoColumn('current_date')
+            else:
+                if "." in arg1:
+                    arg1_list = arg1.split(".")
+                    topic_name = arg1_list[0].strip()
+                    factor_name = arg1_list[1].strip()
+                    date1 = Table("topic_" + topic_name).as_(topic_name)[factor_name]
+                else:
+                    date1 = date_fnc(arg1)
+
+            if arg2 == "now":
+                date2 = PseudoColumn('current_date')
+            else:
+                if "." in arg2:
+                    arg2_list = arg2.split(".")
+                    topic_name = arg2_list[0].strip()
+                    factor_name = arg2_list[1].strip()
+                    date2 = Table("topic_" + topic_name).as_(topic_name)[factor_name]
+                else:
+                    date2 = date_fnc(arg2)
+
+            return month_diff('month', date1, date2)
+        else:
+            return parameter.value
     elif parameter.kind == 'computed':
         if parameter.type == Operator.add:
             result = None
@@ -50,17 +88,19 @@ def parse_parameter(parameter: Parameter, factor=None):
             result = None
             for item in parameter.parameters:
                 if result:
-                    result = operator.mul(result, parse_parameter(item))
+                    result = operator.mul(result, (parse_parameter(item)))
                 else:
                     result = parse_parameter(item)
             return result
         elif parameter.type == Operator.divide:
             result = None
+            left = None
             for item in parameter.parameters:
-                if result:
-                    result = operator.truediv(result, parse_parameter(item))
+                if left:
+                    right = parse_parameter(item)
+                    result = left / right
                 else:
-                    result = parse_parameter(item)
+                    left = parse_parameter(item)
             return result
         elif parameter.type == Operator.modulus:
             result = None
@@ -84,13 +124,13 @@ def _join(q: QueryBuilder, join: Join) -> QueryBuilder:
     topic = get_topic_by_id(join.topicId)
     topic_col_name = build_collection_name(topic.name)
     factor = get_factor(join.factorId, topic)
-    left_table = Table(topic_col_name)
+    left_table = Table(topic_col_name).as_(topic.name)
 
     # right
     sec_topic = get_topic_by_id(join.secondaryTopicId)
     sec_topic_col_name = build_collection_name(sec_topic.name)
     sec_factor = get_factor(join.secondaryFactorId, sec_topic)
-    right_table = Table(sec_topic_col_name)
+    right_table = Table(sec_topic_col_name).as_(sec_topic.name)
 
     if join.type == JoinType.inner:
         return q.join(right_table, JoinType.inner).on(

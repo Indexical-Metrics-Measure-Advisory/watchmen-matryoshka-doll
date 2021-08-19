@@ -1,14 +1,13 @@
 from watchmen.database.singleton import singleton
 
 
-
 class TableDefinition(object):
 
-    def get_primary_key(self,table_name):
+    def get_primary_key(self, table_name):
         pid = self.get_pid(table_name)
         return pid
 
-    def get_pid(self,table_name):
+    def get_pid(self, table_name):
         if table_name == 'topics':
             pid = 'topicId'
         elif table_name == 'console_space_subjects':
