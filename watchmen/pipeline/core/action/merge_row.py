@@ -45,7 +45,7 @@ def init(action_context: ActionContext):
         status.whereConditions = where_
 
         trigger_pipeline_data_list = []
-
+        # print(where_)
         target_data = query_topic_data(where_, target_topic)
         if target_data is None:
             raise Exception("can't insert data in merge row action ")
