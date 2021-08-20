@@ -41,11 +41,14 @@ def init(action_context: ActionContext):
                                                                       variables)
         status.mapping = mappings_results
 
+        # print(mappings_results)
+
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
         status.whereConditions = where_
 
         trigger_pipeline_data_list = []
         # print(where_)
+        # print(target_topic.name)
         target_data = query_topic_data(where_, target_topic)
         if target_data is None:
             raise Exception("can't insert data in merge row action ")

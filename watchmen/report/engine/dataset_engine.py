@@ -82,6 +82,7 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
         query_sql = query.get_sql() + " " + build_pagination(pagination)
         query_summary = build_query_summary(query_sql)
         log.info("sql:{0}".format(query_sql))
+        # print(query_sql)
         cur = conn.cursor()
         cur.execute(query_sql)
         rows = cur.fetchall()
