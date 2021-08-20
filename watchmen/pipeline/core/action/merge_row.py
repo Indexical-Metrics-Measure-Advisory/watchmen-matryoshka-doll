@@ -1,12 +1,13 @@
 import logging
 import time
 
+from watchmen.common.utils.data_utils import get_id_name
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, ActionContext
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
 from watchmen.pipeline.storage.read_topic_data import query_topic_data
-from watchmen.pipeline.storage.write_topic_data import update_topic_data
+from watchmen.pipeline.storage.write_topic_data import update_topic_data, update_topic_data_one
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
@@ -51,9 +52,9 @@ def init(action_context: ActionContext):
             raise Exception("can't insert data in merge row action ")
         else:
             trigger_pipeline_data_list.append(
-                update_topic_data(target_topic.name, mappings_results, target_data,
-                                  action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
-                                  where_))
+                update_topic_data_one(target_topic.name, mappings_results, target_data,
+                                      action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
+                                      target_data[get_id_name()]))
             status.updateCount = status.updateCount + 1
 
         elapsed_time = time.time() - start
