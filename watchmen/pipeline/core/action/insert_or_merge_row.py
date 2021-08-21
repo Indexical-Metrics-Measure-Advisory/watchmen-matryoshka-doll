@@ -5,7 +5,7 @@ from watchmen.common.utils.data_utils import get_id_name
 from watchmen.config.config import settings
 from watchmen.database.storage.engine_adaptor import MONGO
 from watchmen.database.storage.exception.exception import InsertConflictError
-from watchmen.database.storage.storage_template import topic_data_update_one_with_version
+from watchmen.database.storage.storage_template import topic_data_update_one_with_version, topic_data_update_one
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, ActionContext
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
@@ -19,14 +19,28 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 log = logging.getLogger("app." + __name__)
 
 
-def update_recovery_callback():
-    raise RuntimeError("The maximum number of retry times (3) is exceeded, retry failed")
+def update_recovery_callback(mappings_results, where_, target_topic):
+    log.info("The maximum number of retry times (3) is exceeded, retry failed. Do recovery, "
+             "mappings_results: {0}, where: {1}, target_topic: {2}".format(mappings_results, where_, target_topic))
+    target_data = query_topic_data(where_,
+                                   target_topic.name)
+    if target_data is not None:
+        id_ = target_data.get(get_id_name(), None)
+        if id_ is not None:
+            topic_data_update_one(id_, mappings_results, target_topic.name)
+            data = {**target_data, **mappings_results}
+            return TriggerData(topicName=target_topic.name,
+                               triggerType="Update",
+                               data={"new": data, "old": target_data})
+        else:
+            raise RuntimeError("when do update, the id_ {0} should not be None".format(id_))
+    else:
+        raise RuntimeError("target topic {0} recovery failed. where: {1}".format(target_topic, where_))
 
 
 def update_retry_callback(mappings_results, where_, target_topic):
     target_data = query_topic_data(where_,
                                    target_topic.name)
-
     if target_data is not None:
         id_ = target_data.get(get_id_name(), None)
         version_ = target_data.get("version_", None)
@@ -111,7 +125,7 @@ def init(action_context: ActionContext):
 
         args = [mappings_results, where_, target_topic]
         retry_callback = (update_retry_callback, args)
-        recovery_callback = (update_recovery_callback, [])
+        recovery_callback = (update_recovery_callback, args)
         execute_ = retry_template(retry_callback, recovery_callback, RetryPolicy())
         execute_()
 

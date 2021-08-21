@@ -13,7 +13,7 @@ class RetryPolicy(BaseModel):
 
 
 class BackoffPolicy(BaseModel):
-    sleep: int = 1
+    sleep: int = 0.1
 
 
 def backoff(backoffpolicy: BackoffPolicy):
