@@ -105,11 +105,6 @@ def __find_spaces_in_topic_id(topic_id, current_user):
     return find_(where, Space, SPACES)
 
 
-# def __find_reports_in_topic_id(topic_id,current_user):
-#     where = {"and": [{"topicIds": {"in": [topic_id]}}, {"tenantId": current_user.tenantId}], }
-#     return find_(where, Report, CONSOLE_REPORTS)
-
-
 def __find_groups_in_topic_id(topic_id, current_user):
     where = {"and": [{"topicIds": {"in": [topic_id]}}, {"tenantId": current_user.tenantId}], }
     return find_(where, UserGroup, USER_GROUPS)
