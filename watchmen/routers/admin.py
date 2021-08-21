@@ -77,7 +77,6 @@ class MonitorLogQuery(BaseModel):
 async def save_space(space: Space, current_user: User = Depends(deps.get_current_user)):
     space = add_tenant_id_to_model(space, current_user)
     if space.spaceId is None or check_fake_id(space.spaceId):
-        # sync space group id
         result = create_space(space)
         sync_space_to_user_group(result, current_user)
         return result
@@ -484,7 +483,6 @@ async def create_raw_topic_schema_v2(event: RawTopicGenerateEvent, current_user:
 
 
 ### LOG
-## TODO tenantId for log
 @router.post("/pipeline/log/query", tags=["admin"])
 async def query_log_by_critical(query: MonitorLogQuery, current_user: User = Depends(deps.get_current_user)):
     query_dict = {}
