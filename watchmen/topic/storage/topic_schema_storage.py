@@ -85,7 +85,6 @@ def get_topic_list_by_ids(topic_ids: List[str], current_user) -> List[Topic]:
 
 def query_topic_list_with_pagination(query_name: str, pagination: Pagination, current_user) -> DataPage:
     if query_name != '':
-        print(current_user.tenantId)
         query_dict = {"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]}
         sort_dict = [("lastmodified", "desc")]
         return page_(query_dict, sort_dict, pagination, Topic, TOPICS)
