@@ -23,9 +23,9 @@ def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):
     add_audit_columns(raw_data, INSERT)
     flatten_fields = get_flatten_field(data, topic.factors)
     raw_data.update(flatten_fields)
-    print(topic.dataSourceId is None)
+    # print(topic.dataSourceId is None)
     storage_template = get_template_by_datasource_id(topic.dataSourceId)
-    print("storage_template ",storage_template)
+    # print("storage_template ",storage_template)
     storage_template.topic_data_insert_one(raw_data, code)
     watchmen.pipeline.index.trigger_pipeline(code,
                                              {pipeline_constants.NEW: data, pipeline_constants.OLD: None},

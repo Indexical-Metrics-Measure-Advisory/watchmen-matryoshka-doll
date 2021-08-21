@@ -41,7 +41,8 @@ def init(action_context: ActionContext):
 
         target_factor = get_factor(action.factorId, target_topic)
 
-        target_data = query_multiple_topic_data(where_, target_topic.name, target_topic)
+        target_data = query_multiple_topic_data(where_, target_topic,
+                                                action_context.get_current_user())
 
         if target_data is not None:
             if isinstance(target_data, list):

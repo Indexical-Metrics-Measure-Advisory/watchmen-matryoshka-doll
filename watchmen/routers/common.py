@@ -68,14 +68,14 @@ async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_
 
 
 @router.post("/topic/data/rerun", tags=["common"])  ## TODO  move to pipeline worker
-async def rerun_pipeline(topic_name, instance_id, pipeline_id):
+async def rerun_pipeline(topic_name, instance_id, pipeline_id,current_user: User = Depends(deps.get_current_user)):
     topic = get_topic(topic_name)
     instance = find_topic_data_by_id_and_topic_name(topic, instance_id)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
     for pipeline in pipeline_list:
         if pipeline.pipelineId == pipeline_id:
             log.info("rerun topic {0} and pipeline {1}".format(topic_name, pipeline.pipelineId))
-            pipeline_context = PipelineContext(pipeline, instance)
+            pipeline_context = PipelineContext(pipeline, instance,current_user)
             run_pipeline(pipeline_context)
     return {"received": True}
 

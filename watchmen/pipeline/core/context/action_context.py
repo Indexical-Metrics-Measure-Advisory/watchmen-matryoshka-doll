@@ -18,6 +18,15 @@ class ActionContext:
         self.previousOfTriggerData = unitContext.stageContext.pipelineContext.previousOfTriggerData
         self.currentOfTriggerData = unitContext.stageContext.pipelineContext.currentOfTriggerData
 
+    def get_current_user(self):
+         return self.unitContext.stageContext.pipelineContext.currentUser
+
+    def get_pipeline_id(self):
+        return self.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+
+    def get_pipeline_context(self):
+        return self.unitContext.stageContext.pipelineContext
+
 
 def get_variables(actionContext: ActionContext) -> dict:
     variables = copy.deepcopy(actionContext.unitContext.stageContext.pipelineContext.variables)

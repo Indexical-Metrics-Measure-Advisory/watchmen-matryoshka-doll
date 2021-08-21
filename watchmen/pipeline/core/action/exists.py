@@ -15,12 +15,12 @@ def init(action_context: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "Exists"
-        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.get_pipeline_id()
 
         previous_data = action_context.previousOfTriggerData
         current_data = action_context.currentOfTriggerData
         action = action_context.action
-        pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic
+        pipeline_topic = action_context.get_pipeline_context().pipelineTopic
         target_topic = get_topic_by_id(action.topicId)
         variables = get_variables(action_context)
 
@@ -28,7 +28,7 @@ def init(action_context: ActionContext):
         status.whereConditions = where_
 
         target_data = query_topic_data(where_,
-                                       target_topic)
+                                       target_topic,action_context.get_current_user())
 
         if target_data is not None:
             set_variable(action_context, action.variableName, 'true')

@@ -2,6 +2,8 @@ import logging
 import time
 from decimal import Decimal
 
+from watchmen.common.utils.data_utils import get_id_name_by_datasource
+from watchmen.database.datasource.container import data_source_container
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import ActionContext, get_variables
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
@@ -22,7 +24,7 @@ def init(action_context: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "WriteFactor"
-        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.get_pipeline_id()
 
         previous_data = action_context.previousOfTriggerData
         current_data = action_context.currentOfTriggerData
@@ -31,7 +33,7 @@ def init(action_context: ActionContext):
 
         if action.topicId is not None:
 
-            pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic
+            pipeline_topic = action_context.get_pipeline_context().pipelineTopic
             target_topic = get_topic_by_id(action.topicId)
             variables = get_variables(action_context)
 
@@ -39,7 +41,7 @@ def init(action_context: ActionContext):
             status.whereConditions = where_
 
             target_data = query_topic_data(where_,
-                                           target_topic)
+                                           target_topic,action_context.get_current_user())
 
             target_factor = get_factor(action.factorId, target_topic)
             source_ = action.source
@@ -70,8 +72,9 @@ def init(action_context: ActionContext):
             if target_data is not None:
                 trigger_pipeline_data_list.append(update_topic_data_one(
                     updates_, target_data,
-                    action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId,
-                    target_data['id_']), target_topic)
+                    action_context.get_pipeline_id(),
+                    target_data[get_id_name_by_datasource(data_source_container.get_data_source_by_id(target_topic.dataSourceId))],
+                    target_topic,action_context.get_current_user()))
 
         elapsed_time = time.time() - start
         status.complete_time = elapsed_time

@@ -25,7 +25,7 @@ async def import_raw_topic_data(topic_event, current_user):
     flatten_fields = get_flatten_field(topic_event.data, topic.factors)
     raw_data.update(flatten_fields)
 
-    save_topic_instance(topic, raw_data)
+    save_topic_instance(topic, raw_data,current_user)
     __trigger_pipeline(topic_event, current_user)
 
 

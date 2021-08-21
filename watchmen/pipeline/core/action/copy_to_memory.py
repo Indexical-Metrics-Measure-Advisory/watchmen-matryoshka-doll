@@ -13,7 +13,7 @@ def init(action_context: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "CopyToMemory"
-        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.get_pipeline_id()
 
         current_data = action_context.currentOfTriggerData
         pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic

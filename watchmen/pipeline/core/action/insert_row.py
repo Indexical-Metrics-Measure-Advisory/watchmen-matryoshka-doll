@@ -19,7 +19,7 @@ def init(action_context: ActionContext):
         # create action status monitor
         status = ActionStatus()
         status.type = "InsertRow"
-        status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
+        status.uid = action_context.get_pipeline_id()
 
         previous_data = action_context.previousOfTriggerData
         current_data = action_context.currentOfTriggerData
@@ -38,9 +38,10 @@ def init(action_context: ActionContext):
                                                                       variables)
 
         status.mapping = mappings_results
+
         trigger_pipeline_data_list = [insert_topic_data(mappings_results,
-                                                        action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
-                                                        , target_topic)]
+                                                        action_context.get_pipeline_id()
+                                                        , target_topic,action_context.get_current_user())]
 
         status.insertCount = status.insertCount + 1
 

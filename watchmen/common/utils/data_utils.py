@@ -131,6 +131,13 @@ def capital_to_lower(dict_info):
     return new_dict
 
 
+def add_tenant_id_to_instance(instance,current_user:User=None):
+    if current_user:
+        instance["tenant_id_"]=current_user.tenantId
+    return instance
+
+
+
 def add_tenant_id_to_model(instance, user):
     if settings.DEFAULT_DATA_ZONE_ON:
         instance.tenantId = "1"
