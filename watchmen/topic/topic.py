@@ -28,8 +28,3 @@ class Topic(WatchmenModel):
 
     # factorIds: list = []
 
-    '''
-    indexKey : List[str] = None
-    isUnification:bool = False
-
-    '''
