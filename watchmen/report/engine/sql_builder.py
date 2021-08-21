@@ -104,7 +104,7 @@ def _arithmetic_process(operator_, left: dict, right: dict):
                 return {"type": "number", "value": _build_arithmetic_expression(operator_, left_value,
                                                                                 right_value)}
         else:
-            return {"type": left_type, "value": _build_arithmetic_expression(operator_, left_value,
+            return {"type": "number", "value": _build_arithmetic_expression(operator_, left_value,
                                                                              right_value)}
     else:
         if left_type == "number" and right_type == "text":
@@ -114,7 +114,7 @@ def _arithmetic_process(operator_, left: dict, right: dict):
                     return {"type": "number", "value": _build_arithmetic_expression(operator_, left_value,
                                                                                     right_trans_value)}
         else:
-            return {"type": left_type, "value": _build_arithmetic_expression(operator_, left_value,
+            return {"type": "number", "value": _build_arithmetic_expression(operator_, left_value,
                                                                              right_value)}
 
 
