@@ -24,9 +24,9 @@ def update_recovery_callback():
     raise RuntimeError("The maximum number of retry times (3) is exceeded, retry failed")
 
 
-def update_retry_callback(mappings_results, where_, target_topic,current_user):
+def update_retry_callback(mappings_results, where_, target_topic, current_user):
     target_data = query_topic_data(where_,
-                                   target_topic,current_user)
+                                   target_topic, current_user)
 
     if target_data is not None:
         id_ = target_data.get(
@@ -93,7 +93,7 @@ def init(action_context: ActionContext):
         # todo
         # should not use find_one,use find_ and check the number of record
         target_data = query_topic_data(where_,
-                                       target_topic,action_context.get_current_user())
+                                       target_topic, action_context.get_current_user())
 
         trigger_pipeline_data_list = []
 
@@ -104,7 +104,7 @@ def init(action_context: ActionContext):
                     mappings_results["aggregate_assist_"] = {}
                 result = insert_topic_data(mappings_results,
                                            action_context.get_pipeline_id(),
-                                           target_topic,action_context.get_current_user())
+                                           target_topic, action_context.get_current_user())
                 trigger_pipeline_data_list.append(result)
                 status.insertCount = status.insertCount + 1
                 elapsed_time = time.time() - start
@@ -113,7 +113,7 @@ def init(action_context: ActionContext):
             except InsertConflictError as e:
                 log.info("the insert failed because of conflict, try to update operator")
 
-        args = [mappings_results, where_, target_topic,action_context.get_current_user()]
+        args = [mappings_results, where_, target_topic, action_context.get_current_user()]
         retry_callback = (update_retry_callback, args)
         recovery_callback = (update_recovery_callback, [])
         execute_ = retry_template(retry_callback, recovery_callback, RetryPolicy())
@@ -159,16 +159,15 @@ def init(action_context: ActionContext):
         status.whereConditions = where_
 
         target_data = query_topic_data(where_,
-                                       target_topic,action_context.get_current_user())
+                                       target_topic, action_context.get_current_user())
 
         trigger_pipeline_data_list = []
-
 
         if target_data is None:
             trigger_pipeline_data_list.append(
                 insert_topic_data(mappings_results,
                                   action_context.get_pipeline_id(),
-                                  target_topic,action_context.get_current_user()))
+                                  target_topic, action_context.get_current_user()))
             status.insertCount = status.insertCount + 1
 
         else:
@@ -177,7 +176,7 @@ def init(action_context: ActionContext):
                                       action_context.get_pipeline_id(),
                                       target_data[get_id_name_by_datasource(
                                           data_source_container.get_data_source_by_id(target_topic.dataSourceId))],
-                                      target_topic,action_context.get_current_user()))
+                                      target_topic, action_context.get_current_user()))
             status.updateCount = status.updateCount + 1
 
         elapsed_time = time.time() - start
