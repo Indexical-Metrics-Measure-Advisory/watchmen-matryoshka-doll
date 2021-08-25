@@ -60,16 +60,22 @@ def parse_parameter(parameter: Parameter, factor=None):
         result = {'type': factor.type, 'value': Table(topic_col_name).as_(topic.name)[factor.name]}
         return result
     elif parameter.kind == 'constant':
-        if parameter.value.strip().startswith("{monthDiff"):
+        if parameter.value.strip().startswith("{&monthDiff"):
             value_ = parameter.value.strip()
-            args_str = value_.replace("{monthDiff(", "").replace(")}", "")
+            args_str = value_.replace("{&monthDiff(", "").replace(")}", "")
             expr = _date_diff("month", args_str)
             result = {"type": "number", "value": expr}
             return result
-        elif parameter.value.strip().startswith("{dayDiff"):
+        elif parameter.value.strip().startswith("{&dayDiff"):
             value_ = parameter.value.strip()
-            args_str = value_.replace("{dayDiff(", "").replace(")}", "")
+            args_str = value_.replace("{&dayDiff(", "").replace(")}", "")
             expr = _date_diff("day", args_str)
+            result = {"type": "number", "value": expr}
+            return result
+        elif parameter.value.strip().startswith("{&yearDiff"):
+            value_ = parameter.value.strip()
+            args_str = value_.replace("{&yearDiff(", "").replace(")}", "")
+            expr = _date_diff("year", args_str)
             result = {"type": "number", "value": expr}
             return result
         else:

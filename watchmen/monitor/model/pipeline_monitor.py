@@ -4,6 +4,8 @@ from typing import Any, List
 
 from pydantic import BaseModel
 
+from watchmen.auth.user import User
+
 
 class UnitActionStatus(BaseModel):
     type: str = None
@@ -80,3 +82,4 @@ class PipelineRunStatus(ConditionHolder):
     oldValue: Any = None
     newValue: Any = None
     tenantId: str = None
+    currentUser: User = None

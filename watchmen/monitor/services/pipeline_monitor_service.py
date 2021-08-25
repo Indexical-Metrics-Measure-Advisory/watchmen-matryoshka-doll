@@ -29,7 +29,8 @@ def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):
     storage_template.topic_data_insert_one(raw_data, code)
     watchmen.pipeline.index.trigger_pipeline(code,
                                              {pipeline_constants.NEW: data, pipeline_constants.OLD: None},
-                                             TriggerType.insert)
+                                             TriggerType.insert,
+                                             pipeline_monitor.currentUser)
 
 
 def insert_monitor_topic():

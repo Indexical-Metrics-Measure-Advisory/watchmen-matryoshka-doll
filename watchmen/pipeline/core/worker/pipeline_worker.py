@@ -47,7 +47,7 @@ def __build_merge_key(topic_name, trigger_type):
     return topic_name + "_" + trigger_type.value
 
 
-def __trigger_all_pipeline(pipeline_trigger_merge_list,current_user = None):
+def __trigger_all_pipeline(pipeline_trigger_merge_list, current_user=None):
     after_merge_list = __merge_pipeline_data(pipeline_trigger_merge_list)
 
     for topic_name, item in after_merge_list.items():
@@ -65,10 +65,10 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list,current_user = None):
                                       pipeline_constants.OLD: update_data[pipeline_constants.OLD]}
 
                 for key, data in merge_data.items():
-                    watchmen.pipeline.index.trigger_pipeline(topic_name, data, TriggerType.update,current_user)
+                    watchmen.pipeline.index.trigger_pipeline(topic_name, data, TriggerType.update, current_user)
         if TriggerType.insert.value in item:
             for insert_data in item[TriggerType.insert.value]:
-                watchmen.pipeline.index.trigger_pipeline(topic_name, insert_data, TriggerType.insert,current_user)
+                watchmen.pipeline.index.trigger_pipeline(topic_name, insert_data, TriggerType.insert, current_user)
 
 
 def should_run(pipeline_context: PipelineContext) -> bool:
@@ -92,7 +92,7 @@ def run_pipeline(pipeline_context: PipelineContext):
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
-        pipeline_context = PipelineContext(pipeline, data,pipeline_context.currentUser)
+        pipeline_context = PipelineContext(pipeline, data, pipeline_context.currentUser)
         pipeline_context.variables[PIPELINE_UID] = pipeline_status.uid
         pipeline_context.pipelineTopic = pipeline_topic
         pipeline_context.pipelineStatus = pipeline_status
@@ -108,17 +108,16 @@ def run_pipeline(pipeline_context: PipelineContext):
                 elapsed_time = time.time() - start
                 pipeline_status.completeTime = elapsed_time
                 pipeline_status.status = FINISHED
-
                 log.info("run pipeline \"{0}\" spend time \"{1}\" ".format(pipeline.name, elapsed_time))
                 if pipeline_topic.kind is None or pipeline_topic.kind != pipeline_constants.SYSTEM:
-                    __trigger_all_pipeline(pipeline_context.pipeline_trigger_merge_list,pipeline_context.currentUser)
-
+                    __trigger_all_pipeline(pipeline_context.pipeline_trigger_merge_list, pipeline_context.currentUser)
             except Exception as e:
                 trace = traceback.format_exc()
                 log.error(trace)
                 pipeline_status.error = trace
                 pipeline_status.status = ERROR
             finally:
+                pipeline_status.currentUser = pipeline_context.currentUser
                 if pipeline_topic.kind is not None and pipeline_topic.kind == pipeline_constants.SYSTEM:
                     log.debug("pipeline_status is {0}".format(pipeline_status))
                 else:
