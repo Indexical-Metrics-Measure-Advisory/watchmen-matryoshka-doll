@@ -10,6 +10,8 @@ RUN        apt-get update && apt-get install -y libaio1 wget unzip \
             && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
             && ldconfig
 
+RUN apt-get install python-dev
+
 WORKDIR /app
 ADD . .
 RUN pip install cx_Oracle
