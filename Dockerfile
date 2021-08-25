@@ -1,4 +1,4 @@
-FROM python:3.9.6-alpine
+FROM python:3.9.6-slim-buster
 
 WORKDIR    /opt/oracle
 RUN        apt-get update && apt-get install -y libaio1 wget unzip \
