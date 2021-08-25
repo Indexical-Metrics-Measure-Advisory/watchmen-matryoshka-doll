@@ -12,14 +12,14 @@ class ActionContext:
     delegateVariableName: str = None
     delegateValue: any = None
 
-    def __init__(self, unitContext, action):
-        self.unitContext = unitContext
+    def __init__(self, unit_context, action):
+        self.unitContext = unit_context
         self.action = action
-        self.previousOfTriggerData = unitContext.stageContext.pipelineContext.previousOfTriggerData
-        self.currentOfTriggerData = unitContext.stageContext.pipelineContext.currentOfTriggerData
+        self.previousOfTriggerData = unit_context.stageContext.pipelineContext.previousOfTriggerData
+        self.currentOfTriggerData = unit_context.stageContext.pipelineContext.currentOfTriggerData
 
     def get_current_user(self):
-         return self.unitContext.stageContext.pipelineContext.currentUser
+        return self.unitContext.stageContext.pipelineContext.currentUser
 
     def get_pipeline_id(self):
         return self.unitContext.stageContext.pipelineContext.pipeline.pipelineId
@@ -28,16 +28,16 @@ class ActionContext:
         return self.unitContext.stageContext.pipelineContext
 
 
-def get_variables(actionContext: ActionContext) -> dict:
-    variables = copy.deepcopy(actionContext.unitContext.stageContext.pipelineContext.variables)
-    delegateVariableName = actionContext.delegateVariableName
+def get_variables(action_context: ActionContext) -> dict:
+    variables = copy.deepcopy(action_context.unitContext.stageContext.pipelineContext.variables)
+    delegate_variable_name = action_context.delegateVariableName
 
-    delegateValue = actionContext.delegateValue
-    if delegateVariableName is not None and delegateVariableName != "":
-        variables[delegateVariableName] = delegateValue
+    delegate_value = action_context.delegateValue
+    if delegate_variable_name is not None and delegate_variable_name != "":
+        variables[delegate_variable_name] = delegate_value
     return variables
 
 
-def set_variable(actionContext: ActionContext, variable_name, variable_value):
-    variables = actionContext.unitContext.stageContext.pipelineContext.variables
+def set_variable(action_context: ActionContext, variable_name, variable_value):
+    variables = action_context.unitContext.stageContext.pipelineContext.variables
     variables[variable_name] = variable_value

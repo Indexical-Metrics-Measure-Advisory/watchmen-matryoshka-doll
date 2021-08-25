@@ -137,7 +137,6 @@ def add_tenant_id_to_instance(instance,current_user:User=None):
     return instance
 
 
-
 def add_tenant_id_to_model(instance, user):
     if settings.DEFAULT_DATA_ZONE_ON:
         instance.tenantId = "1"
