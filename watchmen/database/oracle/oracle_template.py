@@ -6,9 +6,9 @@ from decimal import Decimal
 from operator import eq
 
 
-from sqlalchemy import update, and_, or_, delete, CLOB, desc, asc, \
+from sqlalchemy import insert, update, and_, or_, delete, CLOB, desc, asc, \
     text, func, inspect
-from sqlalchemy.dialects.mysql import insert
+
 from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
