@@ -1,4 +1,4 @@
-FROM python:3.9.6-buster
+FROM python:3.9.6-slim-buster
 
 WORKDIR    /opt/oracle
 RUN        apt-get update && apt-get install -y libaio1 wget unzip \
@@ -9,6 +9,8 @@ RUN        apt-get update && apt-get install -y libaio1 wget unzip \
             && rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci \
             && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
             && ldconfig
+
+RUN apt update && apt install -y build-essential default-libmysqlclient-dev git
 
 WORKDIR /app
 ADD . .
