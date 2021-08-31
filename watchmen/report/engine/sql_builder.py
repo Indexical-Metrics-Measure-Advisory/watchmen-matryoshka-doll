@@ -213,6 +213,8 @@ def _process_filter_operator(operator_, left: dict, right: dict):
     left_value = left.get("value")
     right_type = right.get("type")
     right_value = right.get("value")
+    if operator_ == "empty" or operator_ == "not-empty":
+        return _build_filter_expression(operator_, left_value, right_value)
     if left_type == right_type:
         return _build_filter_expression(operator_, left_value, right_value)
     else:
