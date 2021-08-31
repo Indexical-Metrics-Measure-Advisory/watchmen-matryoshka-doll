@@ -66,7 +66,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
@@ -86,7 +86,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
@@ -106,7 +106,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
@@ -126,7 +126,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
@@ -146,7 +146,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
