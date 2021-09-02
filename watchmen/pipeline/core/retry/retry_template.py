@@ -32,10 +32,12 @@ def retry_template(retry_callback: tuple, recovery_callback: tuple, retry_policy
     def execute():
         need_retry = True
         count_ = 0
+        success = False
         while need_retry:
             try:
                 retry_callback[0](*retry_callback[1])
                 need_retry = False
+                success = True
             except OptimisticLockError as err:
                 try:
                     if retry_or_not(count_, retry_policy):
@@ -47,7 +49,7 @@ def retry_template(retry_callback: tuple, recovery_callback: tuple, retry_policy
                         need_retry = False
                 except Exception as e:
                     raise RuntimeError("update retry failed")
-        if count_ == 3:
+        if count_ == 3 and not success:
             return recovery_callback[0](*recovery_callback[1])
 
     return execute

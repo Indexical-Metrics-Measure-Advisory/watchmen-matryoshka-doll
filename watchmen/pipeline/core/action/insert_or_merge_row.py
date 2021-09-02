@@ -20,8 +20,8 @@ log = logging.getLogger("app." + __name__)
 
 
 def update_recovery_callback(mappings_results, where_, target_topic):
-    log.info("The maximum number of retry times (3) is exceeded, retry failed. Do recovery, "
-             "mappings_results: {0}, where: {1}, target_topic: {2}".format(mappings_results, where_, target_topic))
+    log.error("The maximum number of retry times (3) is exceeded, retry failed. Do recovery, "
+              "mappings_results: {0}, where: {1}, target_topic: {2}".format(mappings_results, where_, target_topic))
     target_data = query_topic_data(where_,
                                    target_topic.name)
     if target_data is not None:
