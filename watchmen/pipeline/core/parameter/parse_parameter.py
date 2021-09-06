@@ -212,7 +212,7 @@ def parse_mapper_case_then(parameters: List[Parameter], instance, variables) -> 
                 return parse_parameter(param, instance, variables)
         else:
             default_ = parse_parameter(param, instance, variables)
-    if default_:
+    if default_ is not None:
         return default_
     else:
         return None
