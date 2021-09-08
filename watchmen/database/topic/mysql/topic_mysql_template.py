@@ -24,7 +24,7 @@ from watchmen.database.topic.topic_storage_interface import TopicStorageInterfac
 
 log = logging.getLogger("app." + __name__)
 
-log.info("mysql template initialized")
+
 
 
 # @singleton
@@ -36,6 +36,7 @@ class MysqlTopicStorage(TopicStorageInterface):
     def __init__(self, client):
         self.engine = client
         self.insp = inspect(client)
+        log.info("mysql template initialized")
 
     def get_topic_table_by_name(self, table_name):
         table = Table(table_name, self.metadata, extend_existing=False, autoload=True, autoload_with=self.engine)
