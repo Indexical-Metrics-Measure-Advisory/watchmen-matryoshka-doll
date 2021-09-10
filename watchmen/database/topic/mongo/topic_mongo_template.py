@@ -16,7 +16,7 @@ from watchmen.database.topic.topic_storage_interface import TopicStorageInterfac
 
 log = logging.getLogger("app." + __name__)
 
-log.info("mongo template initialized")
+
 
 
 # @singleton
@@ -25,6 +25,7 @@ class MongoTopicStorage(TopicStorageInterface):
 
     def __init__(self, client):
         self.client = client
+        log.info("mongo template initialized")
 
     def build_mongo_where_expression(self, where: dict):
         """
