@@ -21,7 +21,7 @@ log = logging.getLogger("app." + __name__)
 
 def build_pagination(pagination):
     offset_num = pagination.pageSize * (pagination.pageNumber - 1)
-    return "OFFSET {0} LIMIT {1}".format(offset_num, pagination.pageSize)
+    return ") WHERE rn BETWEEN {0} AND {1}".format(offset_num,offset_num+pagination.pageSize)
 
 
 def __find_factor_index(field_list, factor_name_list):
@@ -65,7 +65,7 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
         # build query condition
         start = time.time()
 
-        query = build_query_for_subject(console_subject)
+
         count_query = build_count_query_for_subject(console_subject)
         count_sql = count_query.get_sql()
 
@@ -79,7 +79,9 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
         query_count_summary.resultSummary = build_result_summary(count_rows, start)
         query_monitor.querySummaryList.append(query_count_summary)
         query_start = time.time()
+        query = build_query_for_subject(console_subject)
         query_sql = query.get_sql() + " " + build_pagination(pagination)
+        query_sql = query_sql.replace("SELECT","SELECT * FROM (select row_number() over() AS rn,")
         query_summary = build_query_summary(query_sql)
         log.info("sql:{0}".format(query_sql))
         # print(query_sql)
@@ -152,6 +154,7 @@ def build_query_for_subject(console_subject):
             query = _join(query, join)
         if dataset.filters:
             query = _filter(query, dataset.filters)
+        # query = query.("row_number() over() AS rn").as_("rn")
     return query
 
 

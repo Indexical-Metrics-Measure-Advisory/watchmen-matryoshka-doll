@@ -64,7 +64,7 @@ def create_or_update_presto_schema_fields(topic: Topic):
 
 def create_or_update_presto_schema_fields_for_mongo(topic: Topic):
     if topic.type == RAW:
-        log.info("raw topic ignore presto update")
+        log.info("raw topic ignore trino update")
     else:
         topic_name = build_collection_name(topic.name)
         presto_schema = find_one({"table": topic_name}, Schema, "_schema")

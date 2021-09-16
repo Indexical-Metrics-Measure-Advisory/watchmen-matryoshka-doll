@@ -1,10 +1,18 @@
-# import prestodb
-import trino
 
 from watchmen.config.config import settings
 
-if settings.PRESTO_ON:
+if settings.PRESTO_ON and settings.PRESTO_LIB=="trino":
+    import trino
     conn = trino.dbapi.connect(
+        host=settings.PRESTO_HOST,
+        port=settings.PRESTO_PORT,
+        user=settings.PRESTO_USER,
+        catalog=settings.PRESTO_CATALOG,
+        schema=settings.PRESTO_SCHEMA,
+    )
+elif settings.PRESTO_ON and settings.PRESTO_LIB=="prestodb":
+    import prestodb
+    conn = prestodb.dbapi.connect(
         host=settings.PRESTO_HOST,
         port=settings.PRESTO_PORT,
         user=settings.PRESTO_USER,
