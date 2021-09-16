@@ -20,8 +20,25 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 log = logging.getLogger("app." + __name__)
 
 
-def update_recovery_callback():
-    raise RuntimeError("The maximum number of retry times (3) is exceeded, retry failed")
+def update_recovery_callback(mappings_results, where_, target_topic):
+    log.error("The maximum number of retry times (3) is exceeded, retry failed. Do recovery, "
+              "mappings_results: {0}, where: {1}, target_topic: {2}".format(mappings_results, where_, target_topic))
+    target_data = query_topic_data(where_,
+                                   target_topic.name)
+    if target_data is not None:
+        id_ = target_data.get(
+            get_id_name_by_datasource(data_source_container.get_data_source_by_id(target_topic.dataSourceId)), None)
+        if id_ is not None:
+            template = get_template_by_datasource_id(target_topic.dataSourceId)
+            template.topic_data_update_one(id_, mappings_results, target_topic.name)
+            data = {**target_data, **mappings_results}
+            return TriggerData(topicName=target_topic.name,
+                               triggerType="Update",
+                               data={"new": data, "old": target_data})
+        else:
+            raise RuntimeError("when do update, the id_ {0} should not be None".format(id_))
+    else:
+        raise RuntimeError("target topic {0} recovery failed. where: {1}".format(target_topic, where_))
 
 
 def update_retry_callback(mappings_results, where_, target_topic, current_user):
@@ -115,7 +132,7 @@ def init(action_context: ActionContext):
 
         args = [mappings_results, where_, target_topic, action_context.get_current_user()]
         retry_callback = (update_retry_callback, args)
-        recovery_callback = (update_recovery_callback, [])
+        recovery_callback = (update_recovery_callback, args)
         execute_ = retry_template(retry_callback, recovery_callback, RetryPolicy())
         execute_()
 

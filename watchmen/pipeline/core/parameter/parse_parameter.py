@@ -66,7 +66,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
@@ -86,7 +86,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
@@ -106,7 +106,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
@@ -126,7 +126,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
@@ -146,7 +146,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             result = None
             left = None
             for item in parameter_.parameters:
-                if left:
+                if left is not None:
                     right = parse_parameter(item, instance, variables)
                     if right is None:
                         right = 0
@@ -212,7 +212,7 @@ def parse_mapper_case_then(parameters: List[Parameter], instance, variables) -> 
                 return parse_parameter(param, instance, variables)
         else:
             default_ = parse_parameter(param, instance, variables)
-    if default_:
+    if default_ is not None:
         return default_
     else:
         return None
