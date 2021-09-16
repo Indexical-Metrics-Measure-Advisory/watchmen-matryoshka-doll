@@ -80,11 +80,9 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
         query_monitor.querySummaryList.append(query_count_summary)
         query_start = time.time()
         query = build_query_for_subject(console_subject)
-        query_sql = query.get_sql() + " " + build_pagination(pagination)
-        query_sql = query_sql.replace("SELECT","SELECT * FROM (select row_number() over() AS rn,")
+        query_sql = build_page_by_row_number(pagination, query)
         query_summary = build_query_summary(query_sql)
         log.info("sql:{0}".format(query_sql))
-        # print(query_sql)
         cur = conn.cursor()
         cur.execute(query_sql)
         rows = cur.fetchall()
@@ -100,6 +98,12 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
     finally:
         await save_query_monitor_data(query_monitor)
         # return [],0
+
+
+def build_page_by_row_number(pagination, query):
+    query_sql = query.get_sql() + " " + build_pagination(pagination)
+    query_sql = query_sql.replace("SELECT", "SELECT * FROM (select row_number() over() AS rn,")
+    return query_sql
 
 
 async def save_query_monitor_data(query_monitor):
