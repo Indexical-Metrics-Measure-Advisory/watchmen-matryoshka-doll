@@ -462,6 +462,25 @@ python-dateutil = ">=2.6,<3.0"
 pytzdata = ">=2020.1"
 
 [[package]]
+name = "presto-python-client"
+version = "0.8.2"
+description = "Client for the Presto distributed SQL Engine"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+click = "*"
+requests = "*"
+six = "*"
+
+[package.extras]
+all = ["requests-kerberos", "google-auth"]
+google_auth = ["google-auth"]
+kerberos = ["requests-kerberos"]
+tests = ["requests-kerberos", "google-auth", "httpretty", "pytest", "pytest-runner"]
+
+[[package]]
 name = "psutil"
 version = "5.8.0"
 description = "Cross-platform lib for process and system monitoring in Python."
@@ -843,7 +862,7 @@ rabbit = ["aio-pika"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9.2"
-content-hash = "1605f8bb8ccaf9edc90719332679a0f2334c9ebdd45034e7e8a622a2da348a47"
+content-hash = "998fb24dbefe2b9ae67e7e0afb0d71776675639d09c1febfb370ba5b5c3c4db4"
 
 [metadata.files]
 aio-pika = [
@@ -1261,6 +1280,10 @@ pendulum = [
     {file = "pendulum-2.1.2-cp39-cp39-manylinux1_i686.whl", hash = "sha256:29c40a6f2942376185728c9a0347d7c0f07905638c83007e1d262781f1e6953a"},
     {file = "pendulum-2.1.2-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:94b1fc947bfe38579b28e1cccb36f7e28a15e841f30384b5ad6c5e31055c85d7"},
     {file = "pendulum-2.1.2.tar.gz", hash = "sha256:b06a0ca1bfe41c990bbf0c029f0b6501a7f2ec4e38bfec730712015e8860f207"},
+]
+presto-python-client = [
+    {file = "presto-python-client-0.8.2.tar.gz", hash = "sha256:15b0c7d23e8838369ad3db493dcd3b5bd6578883a1385b50712720353bba98c1"},
+    {file = "presto_python_client-0.8.2-py3-none-any.whl", hash = "sha256:37a675df709fb194a656c9729f539dcf153dc4d3fb000a5a8502b22c683eb1aa"},
 ]
 psutil = [
     {file = "psutil-5.8.0-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:0066a82f7b1b37d334e68697faba68e5ad5e858279fd6351c8ca6024e8d6ba64"},

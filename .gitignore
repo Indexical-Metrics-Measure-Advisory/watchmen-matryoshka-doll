@@ -2,10 +2,13 @@
 __pycache__/
 *.py[cod]
 *$py.class
-presto
+trino
 distributions
+trino/
+/trino
 presto/
-/presto
+presto
+/presto/
 
 # C extensions
 *.so

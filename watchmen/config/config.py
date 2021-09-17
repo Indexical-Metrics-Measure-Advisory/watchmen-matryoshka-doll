@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     PRESTO_CATALOG = "mongo"
     PRESTO_SCHEMA = "watchmen"
     PRESTO_ON = True
+    PRESTO_LIB = "trino"
 
     DEFAULT_DATA_ZONE_ON = False
 

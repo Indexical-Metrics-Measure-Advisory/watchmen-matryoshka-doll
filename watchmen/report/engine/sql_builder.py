@@ -7,7 +7,7 @@ import arrow
 from pypika import Query, Table, JoinType, Order, CustomFunction
 from pypika import functions as fn
 from pypika.queries import QueryBuilder
-from pypika.terms import PseudoColumn, ValueWrapper, LiteralValue
+from pypika.terms import PseudoColumn, LiteralValue
 
 from watchmen.common.parameter import Parameter
 from watchmen.common.utils.data_utils import build_collection_name
