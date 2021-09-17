@@ -109,7 +109,7 @@ async def load_chart_dataset(report_id, current_user):
     report = load_report_by_id(report_id, current_user)
     try:
         query = build_query_for_subject_chart(report_id, report, current_user)
-        if query is None:
+        if query is None or query.get_sql() == "":
             return []
         else:
             rows = __load_chart_dataset(query, query_monitor=None)
@@ -204,7 +204,9 @@ def build_query_for_subject_chart(chart_id, report=None, current_user=None):
             q = _filter(q, dataset.filters)
         for indicator in report.indicators:
             if indicator.columnId != '':
-                q = _indicator(q, indicator, columns_dict.get(indicator.columnId))
+                column = columns_dict.get(indicator.columnId)
+                if column is not None:
+                    q = _indicator(q, indicator, column)
 
         truncation = report.chart.settings.get('truncation', None)
         if truncation is not None:
@@ -213,17 +215,19 @@ def build_query_for_subject_chart(chart_id, report=None, current_user=None):
 
         for dimension in report.dimensions:
             if dimension.columnId != '':
-                q = _dimension(q, dimension, columns_dict.get(dimension.columnId))
-                q = _groupby(q, columns_dict.get(dimension.columnId))
-                if truncation is not None:
-                    if truncation_type == "top":
-                        q = _orderby(q, columns_dict.get(dimension.columnId), "asc")
-                    if truncation_type == "bottom":
-                        q = _orderby(q, columns_dict.get(dimension.columnId), "desc")
-                    if truncation_type == "none":
-                        q = _orderby(q, columns_dict.get(dimension.columnId), "none")
-                else:
-                    q = _orderby(q, columns_dict.get(dimension.columnId), "none")
+                column_ = columns_dict.get(dimension.columnId)
+                if column_ is not None:
+                    q = _dimension(q, dimension, column_)
+                    q = _groupby(q, column_)
+                    if truncation is not None:
+                        if truncation_type == "top":
+                            q = _orderby(q, column_, "asc")
+                        if truncation_type == "bottom":
+                            q = _orderby(q, column_, "desc")
+                        if truncation_type == "none":
+                            q = _orderby(q, column_, "none")
+                    else:
+                        q = _orderby(q, column_, "none")
 
         if truncation is not None:
             q = _limit(q, count)

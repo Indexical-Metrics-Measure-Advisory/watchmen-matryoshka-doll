@@ -100,7 +100,12 @@ def create_factors(queue, topic):
                                                                                                   factor.type))
 
                     if (factor_value_type == ValueType.LIST and check_list_element_type_is_object(
-                            value)) or factor_value_type == ValueType.DICT:
+                            factor_value)):
+                        if key == "root":
+                            queue.append({factor_name: factor_value[0]})
+                        else:
+                            queue.append({key + "." + factor_name: factor_value[0]})
+                    if factor_value_type == ValueType.DICT:
                         if key == "root":
                             queue.append({factor_name: factor_value})
                         else:
@@ -113,8 +118,12 @@ def create_factors(queue, topic):
                     factor.type = factor_value_type
                     factor.factorId = get_surrogate_key()
                     topic.factors.append(factor)
-                    if (factor_value_type == ValueType.LIST and check_list_element_type_is_object(value)) or \
-                            factor_value_type == ValueType.DICT:
+                    if factor_value_type == ValueType.LIST and check_list_element_type_is_object(factor_value):
+                        if key == "root":
+                            queue.append({factor_name: factor_value[0]})
+                        else:
+                            queue.append({key + "." + factor_name: factor_value[0]})
+                    if factor_value_type == ValueType.DICT:
                         if key == "root":
                             queue.append({factor_name: factor_value})
                         else:
