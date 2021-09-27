@@ -1,4 +1,4 @@
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from watchmen.topic.topic import Topic
 

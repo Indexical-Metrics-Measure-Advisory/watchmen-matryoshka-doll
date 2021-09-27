@@ -1,5 +1,5 @@
 from watchmen.auth.storage.user import USERS, get_user_list_by_ids, update_user_storage
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.auth.user_group import UserGroup
 
 from watchmen.database.storage.storage_template import pull_update

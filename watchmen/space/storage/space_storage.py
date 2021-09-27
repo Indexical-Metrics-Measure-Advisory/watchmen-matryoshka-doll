@@ -1,6 +1,6 @@
 from typing import List
 
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination
 from watchmen.database.storage.storage_template import insert_one, update_one, page_, find_, find_one

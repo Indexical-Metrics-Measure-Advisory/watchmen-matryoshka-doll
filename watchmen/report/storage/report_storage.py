@@ -1,4 +1,4 @@
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.console_space.model.console_space import Report

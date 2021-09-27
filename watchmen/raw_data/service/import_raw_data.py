@@ -15,11 +15,7 @@ async def import_raw_topic_data(topic_event, current_user):
     topic = get_topic(topic_event.code, current_user)
     if topic is None:
         raise Exception(topic_event.code + " topic name does not exist")
-    # todo
-    '''
-    if not isinstance(topic_event.data, dict):
-        raise ValueError("topic_event data should be dict, now it is {0}".format(topic_event.data))
-    '''
+
     raw_data = await get_input_data(topic, topic_event)
     add_audit_columns(raw_data, INSERT)
     flatten_fields = get_flatten_field(topic_event.data, topic.factors)
@@ -27,6 +23,15 @@ async def import_raw_topic_data(topic_event, current_user):
 
     save_topic_instance(topic, raw_data,current_user)
     __trigger_pipeline(topic_event, current_user)
+
+
+async def import_topic_data(topic_event, current_user):
+    topic = get_topic(topic_event.code, current_user)
+    if topic is None:
+        raise Exception(topic_event.code + " topic name does not exist")
+    raw_data = await get_input_data(topic, topic_event)
+
+
 
 
 async def get_input_data(topic, topic_event):

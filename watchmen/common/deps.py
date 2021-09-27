@@ -8,7 +8,7 @@ from jsonschema import ValidationError
 from starlette import status
 
 from watchmen.auth.storage.user import load_user_by_name
-from watchmen.auth.user import User, SUPER_ADMIN
+from watchmen.common.model.user import User, SUPER_ADMIN
 from watchmen.common.security.index import validate_jwt
 from watchmen.common.security.pat.pat_model import PersonAccessToken
 from watchmen.common.security.pat.pat_service import verifyPAT

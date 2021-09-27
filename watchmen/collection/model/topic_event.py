@@ -7,3 +7,4 @@ class TopicEvent(BaseModel):
     type: str = None
     code: str = None
     data: Any = None
+

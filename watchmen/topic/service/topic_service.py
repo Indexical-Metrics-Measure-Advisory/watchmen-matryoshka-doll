@@ -2,7 +2,7 @@ import logging
 from typing import List
 
 from watchmen.auth.storage.user_group import USER_GROUPS
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key

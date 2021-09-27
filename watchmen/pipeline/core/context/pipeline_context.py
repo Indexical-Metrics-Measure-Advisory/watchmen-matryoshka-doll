@@ -1,4 +1,4 @@
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.pipeline.model.pipeline import Pipeline
 from watchmen.topic.topic import Topic
