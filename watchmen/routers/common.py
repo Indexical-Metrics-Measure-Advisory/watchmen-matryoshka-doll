@@ -22,6 +22,8 @@ from watchmen.database.datasource.data_source import DataSource
 from watchmen.database.datasource.storage import data_source_storage
 from watchmen.database.mongo.index import delete_topic_collection
 from watchmen.database.storage.storage_template import clear_metadata, DataPage
+from watchmen.external.storage import external_storage
+from watchmen.external.writer import ExternalWriter
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.dependency.caculate_dependency_new import pipelineExecutionPath
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
@@ -68,14 +70,14 @@ async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_
 
 
 @router.post("/topic/data/rerun", tags=["common"])  ## TODO  move to pipeline worker
-async def rerun_pipeline(topic_name, instance_id, pipeline_id,current_user: User = Depends(deps.get_current_user)):
+async def rerun_pipeline(topic_name, instance_id, pipeline_id, current_user: User = Depends(deps.get_current_user)):
     topic = get_topic(topic_name)
     instance = find_topic_data_by_id_and_topic_name(topic, instance_id)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
     for pipeline in pipeline_list:
         if pipeline.pipelineId == pipeline_id:
             log.info("rerun topic {0} and pipeline {1}".format(topic_name, pipeline.pipelineId))
-            pipeline_context = PipelineContext(pipeline, instance,current_user)
+            pipeline_context = PipelineContext(pipeline, instance, current_user)
             run_pipeline(pipeline_context)
     return {"received": True}
 
@@ -155,20 +157,20 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
 
 
 @router.get("/pipeline/graph/show", tags=["common"])
-def show_pipeline_graph(topic_id):
+async def show_pipeline_graph(topic_id):
     topic = get_topic_by_id(topic_id)
     result = pipelineExecutionPath(topic)
     return {"show": result}
 
 
 @router.get("/table/metadata/clear", tags=["common"])
-def clear_table_metadata():
+async def clear_table_metadata():
     clear_metadata()
 
 
 # TODO current_user
 @router.post("/tenant", tags=["common"], response_model=Tenant)
-def save_tenant(tenant: Tenant) -> Tenant:
+async def save_tenant(tenant: Tenant) -> Tenant:
     if check_fake_id(tenant.tenantId):
         tenant.tenantId = get_surrogate_key()
         return tenant_service.create(tenant)
@@ -177,34 +179,59 @@ def save_tenant(tenant: Tenant) -> Tenant:
 
 
 @router.post("/tenant/id", tags=["common"], response_model=Tenant)
-def load_tenant_by_id(tenant_id: str) -> Tenant:
+async def load_tenant_by_id(tenant_id: str) -> Tenant:
     return tenant_service.load(tenant_id)
 
 
 @router.post("/tenant/name", tags=["common"], response_model=DataPage)
-def load_tenant_by_name(query_name: str, pagination: Pagination = Body(...),
-                        current_user: User = Depends(deps.get_current_user)) -> DataPage:
+async def load_tenant_by_name(query_name: str, pagination: Pagination = Body(...),
+                              current_user: User = Depends(deps.get_current_user)) -> DataPage:
     return tenant_service.query_by_name(query_name, pagination)
 
 
 @router.get("/datasource/all", tags=["common"], response_model=List[DataSource])
-def load_all_data_sources(current_user: User = Depends(deps.get_current_user)):
+async def load_all_data_sources(current_user: User = Depends(deps.get_current_user)):
     return data_source_storage.load_data_source_list(current_user)
 
 
 @router.post("/datasource", tags=["common"], response_model=DataSource)
-def save_data_source(data_source: DataSource, current_user: User = Depends(deps.get_current_user)):
+async def save_data_source(data_source: DataSource, current_user: User = Depends(deps.get_current_user)):
     data_source = data_source_storage.save_data_source(data_source)
     data_source_container.init()
     return data_source
 
 
 @router.get("/datasource/id", tags=["common"], response_model=DataSource)
-def load_data_source(datasource_id: str, current_user: User = Depends(deps.get_current_user)):
+async def load_data_source(datasource_id: str, current_user: User = Depends(deps.get_current_user)):
     return data_source_storage.load_data_source_by_id(datasource_id, current_user)
 
 
 @router.post("/datasource/name", tags=["common"], response_model=DataPage)
-def query_data_source_list_by_name(query_name: str, pagination: Pagination = Body(...),
-                                   current_user: User = Depends(deps.get_current_user)) -> DataPage:
+async def query_data_source_list_by_name(query_name: str, pagination: Pagination = Body(...),
+                                         current_user: User = Depends(deps.get_current_user)) -> DataPage:
     return data_source_storage.load_data_source_list_with_pagination(query_name, pagination, current_user)
+
+
+@router.post("/external_writer", tags=["common"], response_model=ExternalWriter)
+async def save_external_writer(external_writer:ExternalWriter,current_user :User = Depends(deps.get_current_user)):
+    if check_fake_id(external_writer.writerId):
+        external_writer.writerId = get_surrogate_key()
+        return external_storage.create(external_writer)
+    else:
+        return external_storage.update(external_writer)
+
+
+@router.get("/external_writer/id", tags=["common"], response_model=ExternalWriter)
+async def load_external_writer(writer_id:str,current_user :User = Depends(deps.get_current_user)):
+    return external_storage.load_external_writer_by_id(writer_id)
+
+
+@router.post("/external_writer/name", tags=["common"], response_model=DataPage)
+async def query_external_writers_by_name(query_name:str,pagination: Pagination = Body(...),current_user:User = Depends(deps.get_current_user)):
+    return external_storage.load_external_writers_with_page(query_name,pagination)
+
+
+
+@router.get("/external_writer/all", tags=["common"], response_model=List[ExternalWriter])
+async def load_all_external_writers(current_user: User = Depends(deps.get_current_user)):
+    return external_storage.load_external_writer_by_tenant_id(current_user.tenantId)
