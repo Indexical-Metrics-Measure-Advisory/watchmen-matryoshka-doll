@@ -1,10 +1,9 @@
 import time
 
-from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
-from watchmen.pipeline.core.context.action_context import ActionContext, set_variable, get_variables
+from watchmen.config.config import settings
+from watchmen.external.storage import external_storage
+from watchmen.pipeline.core.context.action_context import ActionContext
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
-from watchmen.pipeline.storage.read_topic_data import query_topic_data
-from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
 def init(action_context: ActionContext):
@@ -16,8 +15,11 @@ def init(action_context: ActionContext):
         status = ActionStatus()
         status.type = "WriteToExternal"
         status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
-
-
+        action = action_context.action
+        previous_data = action_context.previousOfTriggerData
+        current_data = action_context.currentOfTriggerData
+        if settings.EXTERNAL_WRITER_ON:
+            external_writer = external_storage.load_external_writer_by_id(action.externalWriterId)
 
         elapsed_time = time.time() - start
         status.complete_time = elapsed_time
