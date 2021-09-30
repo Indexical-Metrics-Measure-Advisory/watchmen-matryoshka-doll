@@ -23,7 +23,7 @@ from watchmen.database.datasource.storage import data_source_storage
 from watchmen.database.mongo.index import delete_topic_collection
 from watchmen.database.storage.storage_template import clear_metadata, DataPage
 from watchmen.external.storage import external_storage
-from watchmen.external.writer import ExternalWriter
+from watchmen.external.model.external_writer import ExternalWriter
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.dependency.caculate_dependency_new import pipelineExecutionPath
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
