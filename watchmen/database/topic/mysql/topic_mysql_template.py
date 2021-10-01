@@ -254,7 +254,7 @@ class MysqlTopicStorage(TopicStorageInterface):
                 return stmt
 
     def topic_data_insert_one(self, one, topic_name):
-        table_name = 'topic_' + topic_name
+        table_name = f"topic_{topic_name}"
         table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("insert", table_name, table)
         one_dict: dict = capital_to_lower(convert_to_dict(one))
@@ -268,7 +268,7 @@ class MysqlTopicStorage(TopicStorageInterface):
         return result.rowcount
 
     def topic_data_insert_(self, data, topic_name):
-        table_name = 'topic_' + topic_name
+        table_name = f"topic_{topic_name}"
         table = self.get_topic_table_by_name(table_name)
         values = []
         for instance in data:

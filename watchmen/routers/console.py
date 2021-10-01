@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from starlette import status
 
 from watchmen.auth.storage.user import get_user
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.common import deps
 from watchmen.common.data_page import DataPage
 from watchmen.common.pagination import Pagination

@@ -13,7 +13,7 @@ from watchmen.auth.storage.user import create_user_storage, query_users_by_name_
 from watchmen.auth.storage.user_group import create_user_group_storage, query_user_groups_by_name_with_paginate, \
     get_user_group_list_by_ids, get_user_group, load_group_list_by_name, update_user_group_storage, \
     get_user_group_by_name
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
 from watchmen.common.data_page import DataPage

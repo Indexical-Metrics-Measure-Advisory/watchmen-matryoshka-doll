@@ -1,6 +1,6 @@
 from typing import List
 
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.model.connect_space_graphics import ConnectedSpaceGraphics

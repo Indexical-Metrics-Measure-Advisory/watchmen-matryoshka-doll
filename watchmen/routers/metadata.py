@@ -31,7 +31,7 @@ from watchmen.topic.topic import Topic
 router = APIRouter()
 
 from watchmen.auth.storage.user import import_user_to_db, get_user, update_user_storage
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 
 
 class ImportCheckResult(BaseModel):

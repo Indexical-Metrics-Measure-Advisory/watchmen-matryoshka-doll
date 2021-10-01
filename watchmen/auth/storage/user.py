@@ -1,6 +1,6 @@
 from watchmen.auth.service.security import get_password_hash
 
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 # db = get_client()

@@ -10,7 +10,7 @@ from watchmen.auth.service import security
 from watchmen.auth.service.user import authenticate
 from watchmen.auth.storage.user import load_user_by_name
 from watchmen.auth.token import Token
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.common import deps
 from watchmen.common.security.index import validate_jwt
 from watchmen.config.config import settings

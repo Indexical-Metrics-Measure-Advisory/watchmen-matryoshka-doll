@@ -4,7 +4,7 @@ from typing import Any, List
 
 from pydantic import BaseModel
 
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 
 
 class UnitActionStatus(BaseModel):

@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from watchmen.auth.service import tenant_service
 from watchmen.auth.tenant import Tenant
-from watchmen.auth.user import User
+from watchmen.common.model.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT

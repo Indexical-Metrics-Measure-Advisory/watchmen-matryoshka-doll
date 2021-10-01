@@ -229,27 +229,18 @@ def get_value(factor: Factor, data):
 
 
 def add_audit_columns(dictionary, audit_type):
+    now = datetime.now().replace(tzinfo=None)
     if audit_type == INSERT:
-        insert_time = datetime.now().replace(tzinfo=None)
-        dictionary[pipeline_constants.INSERT_TIME] = insert_time
-        dictionary[pipeline_constants.UPDATE_TIME] = insert_time
+        dictionary[pipeline_constants.INSERT_TIME] = now
+        dictionary[pipeline_constants.UPDATE_TIME] = now
     elif audit_type == UPDATE:
-        dictionary[pipeline_constants.UPDATE_TIME] = datetime.now().replace(tzinfo=None)
+        dictionary[pipeline_constants.UPDATE_TIME] = now
     else:
         raise Exception("unknown audit_type")
 
 
 def add_trace_columns(dictionary, trace_type, pipeline_uid):
     dictionary[trace_type] = pipeline_uid
-
-
-def process_variable(variable_name):
-    if "{snowflake}" in variable_name:
-        return SNOWFLAKE, get_surrogate_key()
-    elif variable_name.startswith("{"):
-        return MEMORY, variable_name.replace("{", "").replace("}", "")
-    else:
-        return parameter_constants.CONSTANT, variable_name
 
 
 def flatten(d_):
