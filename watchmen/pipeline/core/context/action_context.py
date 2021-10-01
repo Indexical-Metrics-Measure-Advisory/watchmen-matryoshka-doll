@@ -1,11 +1,12 @@
 import copy
 
 from watchmen.pipeline.core.context.unit_context import UnitContext
+from watchmen.pipeline.model.pipeline import UnitAction
 
 
 class ActionContext:
     unitContext: UnitContext
-    action: any
+    action: UnitAction
     previousOfTriggerData: dict = {}
     currentOfTriggerData: dict = {}
     actionStatus: any

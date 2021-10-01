@@ -64,8 +64,6 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
     try:
         # build query condition
         start = time.time()
-
-
         count_query = build_count_query_for_subject(console_subject)
         count_sql = count_query.get_sql()
 
@@ -90,7 +88,7 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
         query_summary.resultSummary = build_result_summary(rows, query_start)
         query_monitor.querySummaryList.append(query_summary)
         query_monitor.executionTime = time.time() - start
-        return rows, count_rows[0]
+        return __remove_index(rows), count_rows[0]
     except Exception as e:
         log.exception(e)
         query_monitor.error = traceback.format_exc()
@@ -98,6 +96,13 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
     finally:
         await save_query_monitor_data(query_monitor)
         # return [],0
+
+
+def __remove_index(rows):
+    # results = []
+    for row in rows:
+        del row[0]
+    return rows
 
 
 def build_page_by_row_number(pagination, query):

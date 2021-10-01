@@ -44,4 +44,6 @@ class TableDefinition(object):
             pid = "patId"
         elif table_name == "data_sources":
             pid = "dataSourceId"
+        elif table_name == "external_writer":
+            pid = "writerId"
         return pid

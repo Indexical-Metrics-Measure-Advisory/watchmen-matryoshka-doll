@@ -33,8 +33,8 @@ class UnitAction(Conditional):
     factorId: str = None
     mapping: List[MappingFactor] = []
     by: ParameterJoint = None
-    # value: str = None
     source: Parameter = None
+    externalWriterId: str = None
 
 
 class ProcessUnit(Conditional):

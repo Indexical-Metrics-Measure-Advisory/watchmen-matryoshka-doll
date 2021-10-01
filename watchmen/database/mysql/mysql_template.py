@@ -227,7 +227,7 @@ class MysqlStorage(StorageInterface):
         table = self.table.get_table_by_name(name)
         stmt = update(table)
         one_dict: dict = convert_to_dict(one)
-        primary_key = get_primary_key(name)
+        primary_key = self.table.get_primary_key(name)
         stmt = stmt.where(
             eq(table.c[primary_key.lower()], one_dict.get(primary_key)))
         values = {}
@@ -272,7 +272,7 @@ class MysqlStorage(StorageInterface):
         instance_dict: dict = convert_to_dict(updates)
         values = {}
         for key, value in instance_dict.items():
-            if key != get_primary_key(name):
+            if key != self.table.get_primary_key(name):
                 values[key] = value
         stmt = stmt.values(values)
         session = Session(self.engine, future=True)
@@ -296,7 +296,7 @@ class MysqlStorage(StorageInterface):
 
     def delete_by_id(self, id_, name):
         table = self.table.get_table_by_name(name)
-        key = get_primary_key(name)
+        key = self.table.get_primary_key(name)
         stmt = delete(table).where(eq(table.c[key.lower()], id_))
         with self.engine.connect() as conn:
             with conn.begin():
@@ -321,7 +321,7 @@ class MysqlStorage(StorageInterface):
 
     def find_by_id(self, id_, model, name):
         table = self.table.get_table_by_name(name)
-        primary_key = get_primary_key(name)
+        primary_key = self.table.get_primary_key(name)
         stmt = select(table).where(eq(table.c[primary_key.lower()], id_))
         with self.engine.connect() as conn:
             cursor = conn.execute(stmt).cursor
