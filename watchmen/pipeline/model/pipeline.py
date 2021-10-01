@@ -35,6 +35,7 @@ class UnitAction(Conditional):
     by: ParameterJoint = None
     source: Parameter = None
     externalWriterId: str = None
+    eventCode: str = None
 
 
 class ProcessUnit(Conditional):

@@ -145,14 +145,5 @@ def check_model_field_in_schema(name, model_schema: ModelSchema):
         return False
 
 
-# def get_model_schema_set_by_code(code):
-#     model_schema_set_dict = load_raw_schema_by_code(code)
-#     if model_schema_set_dict is not None:
-#         model_schema_set = ModelSchemaSet(**model_schema_set_dict)
-#         return model_schema_set
-#     else:
-#         return None
-
-
 def check_value_duplicate(values, value):
     return value in values

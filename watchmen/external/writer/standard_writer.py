@@ -9,6 +9,7 @@ from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 
+
 def build_header(pat):
     headers = {"Content-Type": "application/json"}
     headers["authorization"] = "pat " + pat
@@ -16,9 +17,9 @@ def build_header(pat):
 
 
 def init(external_writer: ExternalWriter, topic: Topic):
-    async def write_to_standard(data):
-        payload = {'code': topic.name, "data": data,"trigger_type":""}
-        response = requests.post(external_writer.url,timeout=1, data=json.dumps(payload, cls=DateTimeEncoder),
+    async def write_to_standard(event_code: str, data):
+        payload = {'code': event_code, "data": data, "trigger_type": ""}
+        response = requests.post(external_writer.url, timeout=1, data=json.dumps(payload, cls=DateTimeEncoder),
                                  headers=build_header(external_writer.pat))
         log.info(response.json())
         if response.status_code == 200:

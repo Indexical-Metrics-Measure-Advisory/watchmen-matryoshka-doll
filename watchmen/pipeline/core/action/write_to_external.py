@@ -27,7 +27,7 @@ def init(action_context: ActionContext):
             external_writer = external_storage.load_external_writer_by_id(action.externalWriterId)
             if external_writer:
                 writer = get_writer_func(external_writer, topic)
-                asyncio.ensure_future(writer(current_data))
+                asyncio.ensure_future(writer(action.eventCode,current_data))
         else:
             log.info(f"EXTERNAL_WRITER_ON  value is {settings.EXTERNAL_WRITER_ON}")
         elapsed_time = time.time() - start
