@@ -17,7 +17,7 @@ def build_header(pat):
 
 def init(external_writer: ExternalWriter, topic: Topic):
     async def write_to_standard(data):
-        payload = {'code': topic.name, "data": data}
+        payload = {'code': topic.name, "data": data,"trigger_type":""}
         response = requests.post(external_writer.url,timeout=1, data=json.dumps(payload, cls=DateTimeEncoder),
                                  headers=build_header(external_writer.pat))
         log.info(response.json())
