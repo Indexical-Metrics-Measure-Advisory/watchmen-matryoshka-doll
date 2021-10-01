@@ -12,7 +12,7 @@ def save_topic_data(topic, data, current_user):
     if is_raw(topic):
         flatten_fields = get_flatten_field(data["data_"], topic.factors)
         data.update(flatten_fields)
-
+        
     save_topic_instance(topic, data, current_user)
 
 
