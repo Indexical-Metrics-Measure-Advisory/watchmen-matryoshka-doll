@@ -11,6 +11,8 @@ from watchmen.topic.storage.topic_data_storage import save_topic_instance
 from watchmen.topic.storage.topic_schema_storage import get_topic
 
 
+
+
 async def import_raw_topic_data(topic_event, current_user):
     topic = get_topic(topic_event.code, current_user)
     if topic is None:
