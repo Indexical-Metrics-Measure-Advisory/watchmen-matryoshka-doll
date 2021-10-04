@@ -2,7 +2,10 @@
 import time
 
 # from multiprocessing.sharedctypes import synchronized
+import random
+
 from watchmen.common.snowflake.simpleflake import get_next_id
+from watchmen.config.config import settings
 
 
 class InvalidSystemClock(Exception):
@@ -71,7 +74,9 @@ class IdWorker(object):
             raise InvalidSystemClock
 
         if timestamp == self.last_timestamp:
-            self.sequence = (self.sequence + 1) & SEQUENCE_MASK
+            randomness = random.SystemRandom().getrandbits(12)
+            # print(randomness)
+            self.sequence =randomness
             if self.sequence == 0:
                 timestamp = self._til_next_millis(self.last_timestamp)
         else:
@@ -93,12 +98,11 @@ class IdWorker(object):
         return timestamp
 
 
-worker = IdWorker(0, 0)
+worker = IdWorker(settings.SNOWFLAKE_DATACENTER, settings.SNOWFLAKE_WORKER)
 
 
-# @synchronized
 def get_surrogate_key():
-    return str(get_next_id())
+    return str(worker.get_id())
 
 
 if __name__ == '__main__':

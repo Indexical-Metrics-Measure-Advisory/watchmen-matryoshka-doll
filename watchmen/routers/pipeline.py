@@ -31,6 +31,7 @@ def __load_topic_definition(topic_name: str, current_user: User) -> Topic:
 
 @router.post("/pipeline/data/async", tags=["pipeline"])
 async def push_pipeline_data_async(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
+    print(topic_event.trigger_type)
     topic = __load_topic_definition(topic_event.code, current_user)
     data = get_input_data(topic, topic_event)
     save_topic_data(topic, data, current_user)
