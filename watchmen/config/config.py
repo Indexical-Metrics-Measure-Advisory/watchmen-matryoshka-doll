@@ -2,7 +2,6 @@ from typing import List, Dict, Any, Optional
 
 from pydantic import AnyHttpUrl, BaseSettings, validator
 
-
 DEV = "dev"
 PROD = "production"
 
@@ -88,8 +87,8 @@ class Settings(BaseSettings):
     DECIMAL = "decimal(32,2)"
 
     MOCK_USER = "demo_user"
-    SNOWFLAKE_DATACENTER=0
-    SNOWFLAKE_WORKER= 0
+    SNOWFLAKE_DATACENTER = 0
+    SNOWFLAKE_WORKER = 0
 
     MULTIPLE_DATA_SOURCE = False
     EXTERNAL_WRITER_ON = True

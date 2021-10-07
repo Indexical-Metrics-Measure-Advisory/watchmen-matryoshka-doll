@@ -23,16 +23,16 @@ class TopicStorageEngine(object):
     def drop_topic_data_table(self, name):
         return self.template.drop_topic_data_table(name)
 
-    def topic_data_update_one(self, id_: str, one: any, topic_name: str):
+    def topic_data_update_one(self, id_: int, one: any, topic_name: str):
         return self.template.topic_data_update_one(id_, one, topic_name)
 
-    def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
+    def topic_data_update_one_with_version(self, id_: int, version_: int, one: any, topic_name: str):
         return self.template.topic_data_update_one_with_version(id_, version_, one, topic_name)
 
     def topic_data_update_(self, where: dict, updates: dict, name: str):
         return self.template.topic_data_update_(where, updates, name)
 
-    def topic_data_find_by_id(self, id_: str, topic_name: str) -> any:
+    def topic_data_find_by_id(self, id_: int, topic_name: str) -> any:
         return self.template.topic_data_find_by_id(id_, topic_name)
 
     def topic_data_find_one(self, where: dict, topic_name: str) -> any:

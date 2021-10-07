@@ -84,7 +84,8 @@ def run_pipeline(pipeline_context: PipelineContext):
     pipeline = pipeline_context.pipeline
     data = pipeline_context.data
     pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),
-                                        startTime=datetime.now().replace(tzinfo=None), topicId=pipeline.pipelineId)
+                                        startTime=datetime.now().replace(tzinfo=None), topicId=pipeline.pipelineId,
+                                        tenantId=pipeline_context.currentUser.tenantId)
     pipeline_status.oldValue = data[pipeline_constants.OLD]
     pipeline_status.newValue = data[pipeline_constants.NEW]
     if pipeline_context.currentUser is None:

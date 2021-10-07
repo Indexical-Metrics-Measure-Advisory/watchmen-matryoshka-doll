@@ -35,7 +35,7 @@ def init(action_context: ActionContext):
         target_factor = get_factor(action.factorId, target_topic)
 
         if action.arithmetic == "none" or action.arithmetic is None:
-            target_data = query_topic_data(where_, target_topic,action_context.get_current_user())
+            target_data = query_topic_data(where_, target_topic, action_context.get_current_user())
             if target_data is not None:
                 if isinstance(target_data, list):
                     raise ValueError("read factor action should just get one factor record")
@@ -45,13 +45,20 @@ def init(action_context: ActionContext):
                     status.value = read_value
         else:
             if action.arithmetic == "sum":
-                read_value = query_topic_data_aggregate(where_, {target_factor.name: "sum"}, target_topic)
+                read_value = query_topic_data_aggregate(where_,
+                                                        {target_factor.name: "sum"},
+                                                        target_topic, action_context.get_current_user())
                 set_variable(action_context, action.variableName, read_value)
             elif action.arithmetic == "count":
-                read_value = query_topic_data_aggregate(where_, {target_factor.name: "count"}, target_topic)
+                read_value = query_topic_data_aggregate(where_,
+                                                        {target_factor.name: "count"},
+                                                        target_topic, action_context.get_current_user())
                 set_variable(action_context, action.variableName, read_value)
             elif action.arithmetic == "avg":
-                read_value = query_topic_data_aggregate(where_, {target_factor.name: "avg"}, target_topic)
+                read_value = query_topic_data_aggregate(where_,
+                                                        {target_factor.name: "avg"},
+                                                        target_topic,
+                                                        action_context.get_current_user())
                 set_variable(action_context, action.variableName, read_value)
             status.value = read_value
 

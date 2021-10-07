@@ -76,7 +76,7 @@ class IdWorker(object):
         if timestamp == self.last_timestamp:
             randomness = random.SystemRandom().getrandbits(12)
             # print(randomness)
-            self.sequence =randomness
+            self.sequence = randomness
             if self.sequence == 0:
                 timestamp = self._til_next_millis(self.last_timestamp)
         else:
@@ -103,6 +103,10 @@ worker = IdWorker(settings.SNOWFLAKE_DATACENTER, settings.SNOWFLAKE_WORKER)
 
 def get_surrogate_key():
     return str(worker.get_id())
+
+
+def get_int_surrogate_key():
+    return worker.get_id()
 
 
 if __name__ == '__main__':

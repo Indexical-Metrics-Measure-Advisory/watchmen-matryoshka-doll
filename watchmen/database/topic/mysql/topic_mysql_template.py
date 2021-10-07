@@ -14,7 +14,7 @@ from sqlalchemy.future import select
 
 from watchmen.common.cache.cache_manage import cacheman, STMT, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.snowflake.snowflake import get_surrogate_key, get_int_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.database.mysql.mysql_utils import parse_obj
@@ -23,8 +23,6 @@ from watchmen.database.storage.exception.exception import OptimisticLockError, I
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
-
-
 
 
 # @singleton
@@ -126,12 +124,12 @@ class MysqlTopicStorage(TopicStorageInterface):
             return []
 
     # @staticmethod
-    def build_mysql_updates_expression(self,table, updates, stmt_type: str) -> dict:
+    def build_mysql_updates_expression(self, table, updates, stmt_type: str) -> dict:
         if stmt_type == "insert":
             new_updates = {}
             for key in table.c.keys():
                 if key == "id_":
-                    new_updates[key] = get_surrogate_key()
+                    new_updates[key] = get_int_surrogate_key()
                 elif key == "version_":
                     new_updates[key] = 0
                 else:
@@ -273,7 +271,7 @@ class MysqlTopicStorage(TopicStorageInterface):
         values = []
         for instance in data:
             instance_dict: dict = convert_to_dict(instance)
-            instance_dict['id_'] = get_surrogate_key()
+            instance_dict['id_'] = get_int_surrogate_key()
             value = {}
             for key in table.c.keys():
                 value[key] = instance_dict.get(key)
@@ -283,7 +281,7 @@ class MysqlTopicStorage(TopicStorageInterface):
             with conn.begin():
                 conn.execute(stmt, values)
 
-    def topic_data_update_one(self, id_: str, one: any, topic_name: str):
+    def topic_data_update_one(self, id_: int, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
         table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("update", table_name, table)
@@ -295,7 +293,7 @@ class MysqlTopicStorage(TopicStorageInterface):
         with self.engine.begin() as conn:
             conn.execute(stmt)
 
-    def topic_data_update_one_with_version(self, id_: str, version_: int, one: any, topic_name: str):
+    def topic_data_update_one_with_version(self, id_: int, version_: int, one: any, topic_name: str):
         table_name = 'topic_' + topic_name
         table = self.get_topic_table_by_name(table_name)
         stmt = self.build_stmt("update", table_name, table)
@@ -326,7 +324,7 @@ class MysqlTopicStorage(TopicStorageInterface):
             # with conn.begin():
             conn.execute(stmt)
 
-    def topic_data_find_by_id(self, id_: str, topic_name: str) -> any:
+    def topic_data_find_by_id(self, id_: int, topic_name: str) -> any:
         return self.topic_data_find_one({"id_": id_}, topic_name)
 
     def topic_data_find_one(self, where, topic_name) -> any:
@@ -452,7 +450,7 @@ class MysqlTopicStorage(TopicStorageInterface):
                 for index, name in enumerate(columns):
                     if name == "data_":
                         result.update(json.loads(row[index]))
-                    results.append(result)
+                results.append(result)
         else:
             for row in res:
                 result = {}
@@ -539,8 +537,5 @@ class MysqlTopicStorage(TopicStorageInterface):
         with self.engine.connect() as conn:
             cursor = conn.execute(text(stmt)).cursor
             columns = [col[0] for col in cursor.description]
-            cursor.rowfactory = lambda *args: dict(zip(columns, args))
             result = cursor.fetchone()
-        return result['COUNT']
-
-
+        return result[0]
