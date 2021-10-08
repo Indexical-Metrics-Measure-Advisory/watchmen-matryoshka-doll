@@ -30,5 +30,3 @@ def load_external_writer_by_id(writer_id) -> ExternalWriter:
 
 def load_external_writer_by_tenant_id(tenant_id: str) -> List[ExternalWriter]:
     return storage_template.find_({"tenantId": tenant_id}, ExternalWriter, EXTERNAL_WRITER)
-
-

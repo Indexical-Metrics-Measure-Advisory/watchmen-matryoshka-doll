@@ -2,12 +2,11 @@ from typing import List, Dict
 
 from watchmen.common.cache.cache_manage import DATA_SOURCE_LIST, cacheman
 from watchmen.database.datasource.data_source import DataSource
-from watchmen.database.datasource.storage.data_source_storage import  list_all_data_source_list
+from watchmen.database.datasource.storage.data_source_storage import list_all_data_source_list
 from watchmen.database.mongo.mongo_client import MongoEngine
 from watchmen.database.mysql.mysql_client import MysqlEngine
 from watchmen.database.oracle.oracle_client import OracleEngine
 from watchmen.database.singleton import singleton
-
 from watchmen.database.storage.engine_adaptor import get_default_datasource
 from watchmen.database.topic.mongo.topic_mongo_template import MongoTopicStorage
 from watchmen.database.topic.mysql.topic_mysql_template import MysqlTopicStorage
@@ -26,7 +25,6 @@ class DataSourceContainer(object):
     def init(self):
         data_source_list: List[DataSource] = list_all_data_source_list()
         for data_source in data_source_list:
-
             self.data_source_dict[data_source.dataSourceId] = data_source
 
     def get_data_source_by_id(self, datasource_id):

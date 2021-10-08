@@ -4,7 +4,6 @@ from fastapi.exceptions import HTTPException
 from fastapi.openapi.models import OAuth2
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security.utils import get_authorization_scheme_param
-
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 

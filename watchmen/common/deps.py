@@ -1,5 +1,5 @@
 from fastapi.exceptions import HTTPException
-
+from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.param_functions import Depends
 from fastapi.security import OAuth2
 from fastapi.security.utils import get_authorization_scheme_param
@@ -8,18 +8,17 @@ from jsonschema import ValidationError
 from starlette import status
 
 from watchmen.auth.storage.user import load_user_by_name
-from watchmen.common.model.user import User, SUPER_ADMIN
+from watchmen.common.model.user import User
 from watchmen.common.security.index import validate_jwt
 from watchmen.common.security.pat.pat_model import PersonAccessToken
 from watchmen.common.security.pat.pat_service import verifyPAT
 # from watchmen.common.utils.data_utils import is_superuser
 from watchmen.config.config import settings
-from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 
-tokenUrl=f"{settings.API_V1_STR}/login/access-token"
+tokenUrl = f"{settings.API_V1_STR}/login/access-token"
 flows = OAuthFlowsModel(password={"tokenUrl": tokenUrl, "scopes": {}})
 reusable_oauth2 = OAuth2(
-    flows = flows
+    flows=flows
 )
 
 

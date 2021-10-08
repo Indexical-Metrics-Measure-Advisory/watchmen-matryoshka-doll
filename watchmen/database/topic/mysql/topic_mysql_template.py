@@ -14,7 +14,7 @@ from sqlalchemy.future import select
 
 from watchmen.common.cache.cache_manage import cacheman, STMT, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
-from watchmen.common.snowflake.snowflake import get_surrogate_key, get_int_surrogate_key
+from watchmen.common.snowflake.snowflake import get_int_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.database.mysql.mysql_utils import parse_obj

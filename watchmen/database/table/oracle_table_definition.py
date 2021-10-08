@@ -27,16 +27,15 @@ user_groups_table = Table("user_groups", metadata,
                           )
 
 external_writer = Table("external_writer", metadata,
-                             Column('writerid', String(50), primary_key=True),
-                             Column('writercode', String(50), nullable=False),
-                             Column('type', String(50), nullable=False),
-                             Column('pat', String(50), nullable=False),
-                             Column('url', String(50), nullable=False),
-                             Column('tenantid', String(60), nullable=True),
-                             Column('createtime', String(50), nullable=True),
-                             Column('lastmodified', Date, nullable=True)
-                             )
-
+                        Column('writerid', String(50), primary_key=True),
+                        Column('writercode', String(50), nullable=False),
+                        Column('type', String(50), nullable=False),
+                        Column('pat', String(50), nullable=False),
+                        Column('url', String(50), nullable=False),
+                        Column('tenantid', String(60), nullable=True),
+                        Column('createtime', String(50), nullable=True),
+                        Column('lastmodified', Date, nullable=True)
+                        )
 
 console_space_last_snapshot_table = Table("console_space_last_snapshot", metadata,
                                           Column('userid', String(60), primary_key=True),

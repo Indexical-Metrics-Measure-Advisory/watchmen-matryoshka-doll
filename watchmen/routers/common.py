@@ -6,10 +6,10 @@ from pydantic import BaseModel
 
 from watchmen.auth.service import tenant_service
 from watchmen.auth.tenant import Tenant
-from watchmen.common.model.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
+from watchmen.common.model.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.common.parameter import Parameter
 from watchmen.common.snowflake.snowflake import get_surrogate_key
@@ -22,8 +22,8 @@ from watchmen.database.datasource.data_source import DataSource
 from watchmen.database.datasource.storage import data_source_storage
 from watchmen.database.mongo.index import delete_topic_collection
 from watchmen.database.storage.storage_template import clear_metadata, DataPage
-from watchmen.external.storage import external_storage
 from watchmen.external.model.external_writer import ExternalWriter
+from watchmen.external.storage import external_storage
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.dependency.caculate_dependency_new import pipelineExecutionPath
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
@@ -213,7 +213,7 @@ async def query_data_source_list_by_name(query_name: str, pagination: Pagination
 
 
 @router.post("/external_writer", tags=["common"], response_model=ExternalWriter)
-async def save_external_writer(external_writer:ExternalWriter,current_user :User = Depends(deps.get_current_user)):
+async def save_external_writer(external_writer: ExternalWriter, current_user: User = Depends(deps.get_current_user)):
     if check_fake_id(external_writer.writerId):
         external_writer.writerId = get_surrogate_key()
         return external_storage.create(external_writer)
@@ -222,14 +222,14 @@ async def save_external_writer(external_writer:ExternalWriter,current_user :User
 
 
 @router.get("/external_writer/id", tags=["common"], response_model=ExternalWriter)
-async def load_external_writer(writer_id:str,current_user :User = Depends(deps.get_current_user)):
+async def load_external_writer(writer_id: str, current_user: User = Depends(deps.get_current_user)):
     return external_storage.load_external_writer_by_id(writer_id)
 
 
 @router.post("/external_writer/name", tags=["common"], response_model=DataPage)
-async def query_external_writers_by_name(query_name:str,pagination: Pagination = Body(...),current_user:User = Depends(deps.get_current_user)):
-    return external_storage.load_external_writers_with_page(query_name,pagination)
-
+async def query_external_writers_by_name(query_name: str, pagination: Pagination = Body(...),
+                                         current_user: User = Depends(deps.get_current_user)):
+    return external_storage.load_external_writers_with_page(query_name, pagination)
 
 
 @router.get("/external_writer/all", tags=["common"], response_model=List[ExternalWriter])

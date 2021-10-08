@@ -6,7 +6,6 @@ from operator import eq
 
 from sqlalchemy import insert, update, and_, or_, delete, desc, asc, \
     text, JSON, inspect
-
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
@@ -18,7 +17,6 @@ from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.database.mysql.mysql_utils import parse_obj
 from watchmen.database.storage import storage_template
 from watchmen.database.storage.storage_interface import StorageInterface
-from watchmen.database.storage.utils.table_utils import get_primary_key
 
 log = logging.getLogger("app." + __name__)
 
@@ -471,7 +469,7 @@ class MysqlStorage(StorageInterface):
         factors = topic['factors']
         return factors
 
-    def count_table(self,table_name):
+    def count_table(self, table_name):
         primary_key = self.table.get_primary_key(table_name)
         stmt = 'SELECT count(%s) AS count FROM %s' % (primary_key, table_name)
         with self.engine.connect() as conn:
@@ -479,7 +477,7 @@ class MysqlStorage(StorageInterface):
             result = cursor.fetchone()
         return result[0]
 
-    def count_topic_data_table(self,table_name):
+    def count_topic_data_table(self, table_name):
         stmt = 'SELECT count(%s) AS count FROM %s' % ('id_', table_name)
         with self.engine.connect() as conn:
             cursor = conn.execute(text(stmt)).cursor

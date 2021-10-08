@@ -1,9 +1,8 @@
-import datetime
 import operator
 from decimal import Decimal
 from typing import List
-import arrow
 
+import arrow
 from pypika import Query, Table, JoinType, Order, CustomFunction
 from pypika import functions as fn
 from pypika.queries import QueryBuilder
@@ -111,7 +110,7 @@ def _arithmetic_process(operator_, left: dict, right: dict):
                                                                                 right_value)}
         else:
             return {"type": "number", "value": _build_arithmetic_expression(operator_, left_value,
-                                                                             right_value)}
+                                                                            right_value)}
     else:
         if left_type == "number" and right_type == "text":
             if isinstance(right_value, str):
@@ -121,7 +120,7 @@ def _arithmetic_process(operator_, left: dict, right: dict):
                                                                                     right_trans_value)}
         else:
             return {"type": "number", "value": _build_arithmetic_expression(operator_, left_value,
-                                                                             right_value)}
+                                                                            right_value)}
 
 
 def _build_arithmetic_expression(operator_, left_value, right_value):
@@ -238,10 +237,12 @@ def _process_filter_operator(operator_, left: dict, right: dict):
                     return _build_filter_expression(operator_, left_value, right_value)
         if left_type == "date" and right_type == "text":
             if isinstance(right_value, str):
-                return _build_filter_expression(operator_, left_value, LiteralValue("DATE \'{0}\'".format(arrow.get(right_value).format('YYYY-MM-DD'))))
+                return _build_filter_expression(operator_, left_value, LiteralValue(
+                    "DATE \'{0}\'".format(arrow.get(right_value).format('YYYY-MM-DD'))))
         elif left_type == "datetime" and right_type == "text":
             return _build_filter_expression(operator_, left_value,
-                                            LiteralValue("timestamp \'{0}\'".format(arrow.get(right_value).format('YYYY-MM-DD HH:mm:ss'))))
+                                            LiteralValue("timestamp \'{0}\'".format(
+                                                arrow.get(right_value).format('YYYY-MM-DD HH:mm:ss'))))
         else:
             return _build_filter_expression(operator_, left_value, right_value)
 

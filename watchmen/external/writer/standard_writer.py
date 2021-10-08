@@ -18,13 +18,13 @@ def build_header(pat):
 
 
 def init(external_writer: ExternalWriter, topic: Topic):
-    async def write_to_standard(event_code: str, current_data, previous_data= None):
+    async def write_to_standard(event_code: str, current_data, previous_data=None):
         payload = {'code': event_code, "data": current_data}
         if previous_data is not None:
-            payload["trigger_type"]=TriggerType.update.value
-            payload["previous_data"]=previous_data
+            payload["trigger_type"] = TriggerType.update.value
+            payload["previous_data"] = previous_data
         else:
-            payload["trigger_type"]=TriggerType.insert.value
+            payload["trigger_type"] = TriggerType.insert.value
 
         response = requests.post(external_writer.url, timeout=2, data=json.dumps(payload, cls=DateTimeEncoder),
                                  headers=build_header(external_writer.pat))

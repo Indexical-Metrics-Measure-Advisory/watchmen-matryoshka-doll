@@ -23,8 +23,6 @@ from watchmen.database.topic.topic_storage_interface import TopicStorageInterfac
 log = logging.getLogger("app." + __name__)
 
 
-
-
 class OracleTopicStorage(TopicStorageInterface):
     engine = None
     insp = None

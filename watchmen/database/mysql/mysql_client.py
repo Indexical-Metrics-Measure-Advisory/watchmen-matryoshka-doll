@@ -6,9 +6,6 @@ from watchmen.common.utils.date_utils import DateTimeEncoder
 from watchmen.database.datasource.data_source import DataSource
 
 
-
-
-
 class MysqlEngine(object):
     engine = None
 
@@ -27,5 +24,5 @@ class MysqlEngine(object):
     def get_engine(self):
         return self.engine
 
-    def dumps(self,o):
+    def dumps(self, o):
         return json.dumps(o, cls=DateTimeEncoder)

@@ -28,7 +28,7 @@ def init(action_context: ActionContext):
         status.whereConditions = where_
 
         target_data = query_topic_data(where_,
-                                       target_topic,action_context.get_current_user())
+                                       target_topic, action_context.get_current_user())
 
         if target_data is not None:
             set_variable(action_context, action.variableName, 'true')

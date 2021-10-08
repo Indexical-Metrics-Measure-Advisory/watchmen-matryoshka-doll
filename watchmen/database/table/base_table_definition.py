@@ -1,6 +1,3 @@
-from watchmen.database.singleton import singleton
-
-
 class TableDefinition(object):
 
     def get_primary_key(self, table_name):

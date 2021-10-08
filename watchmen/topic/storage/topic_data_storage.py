@@ -3,9 +3,9 @@ from watchmen.database.topic.adapter.topic_storage_adapter import get_template_b
 from watchmen.topic.topic import Topic
 
 
-def save_topic_instance(topic: Topic, instance,current_user=None):
+def save_topic_instance(topic: Topic, instance, current_user=None):
     template = get_template_by_datasource_id(topic.dataSourceId)
-    return template.topic_data_insert_one(add_tenant_id_to_instance(instance,current_user), topic.name)
+    return template.topic_data_insert_one(add_tenant_id_to_instance(instance, current_user), topic.name)
 
 
 def save_topic_instances(topic: Topic, instances):

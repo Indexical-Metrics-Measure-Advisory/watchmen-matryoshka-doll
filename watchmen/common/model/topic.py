@@ -27,4 +27,3 @@ class Topic(WatchmenModel):
     dataSourceId: str = None
 
     # factorIds: list = []
-

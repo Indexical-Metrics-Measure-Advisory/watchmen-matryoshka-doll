@@ -4,9 +4,9 @@ from enum import Enum
 
 from pydantic.tools import lru_cache
 
-from watchmen.common.model.user import SUPER_ADMIN, User
 from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.data_page import DataPage
+from watchmen.common.model.user import SUPER_ADMIN, User
 from watchmen.config.config import settings
 from watchmen.database.datasource.data_source import DataSource
 from watchmen.pipeline.utils.units_func import ADDRESS, CONTINENT, REGION, COUNTRY, PROVINCE, CITY, \
@@ -131,9 +131,9 @@ def capital_to_lower(dict_info):
     return new_dict
 
 
-def add_tenant_id_to_instance(instance,current_user:User=None):
+def add_tenant_id_to_instance(instance, current_user: User = None):
     if current_user:
-        instance["tenant_id_"]=current_user.tenantId
+        instance["tenant_id_"] = current_user.tenantId
     return instance
 
 
@@ -153,7 +153,7 @@ def compare_tenant(instance, user):
         return False
 
 
-def is_superuser(user:User):
+def is_superuser(user: User):
     if user.role == SUPER_ADMIN:
         return True
     else:

@@ -1,10 +1,8 @@
 # coding: utf-8
-import time
-
 # from multiprocessing.sharedctypes import synchronized
 import random
+import time
 
-from watchmen.common.snowflake.simpleflake import get_next_id
 from watchmen.config.config import settings
 
 

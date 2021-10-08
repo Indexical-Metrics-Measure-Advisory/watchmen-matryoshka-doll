@@ -18,7 +18,7 @@ log.info("mongo template initialized")
 class MongoStorage(StorageInterface):
     client = None
 
-    def __init__(self, client,table_provider):
+    def __init__(self, client, table_provider):
         self.client = client
         self.table = table_provider
 

@@ -7,7 +7,6 @@ from operator import eq
 
 from sqlalchemy import insert, update, and_, or_, delete, CLOB, desc, asc, \
     text, func, inspect
-
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 

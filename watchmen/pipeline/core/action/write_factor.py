@@ -41,7 +41,7 @@ def init(action_context: ActionContext):
             status.whereConditions = where_
 
             target_data = query_topic_data(where_,
-                                           target_topic,action_context.get_current_user())
+                                           target_topic, action_context.get_current_user())
 
             target_factor = get_factor(action.factorId, target_topic)
             source_ = action.source
@@ -73,8 +73,9 @@ def init(action_context: ActionContext):
                 trigger_pipeline_data_list.append(update_topic_data_one(
                     updates_, target_data,
                     action_context.get_pipeline_id(),
-                    target_data[get_id_name_by_datasource(data_source_container.get_data_source_by_id(target_topic.dataSourceId))],
-                    target_topic,action_context.get_current_user()))
+                    target_data[get_id_name_by_datasource(
+                        data_source_container.get_data_source_by_id(target_topic.dataSourceId))],
+                    target_topic, action_context.get_current_user()))
 
         elapsed_time = time.time() - start
         status.complete_time = elapsed_time

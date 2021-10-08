@@ -4,20 +4,16 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-
 from watchmen.config.config import settings
 from watchmen.connector.kafka import kafka_connector
 from watchmen.connector.rabbitmq import rabbit_connector
 from watchmen.monitor.prometheus.index import init_prometheus_monitor
-
 from watchmen.routers import admin, console, common, auth, metadata, cache, pipeline
-
 
 log = logging.getLogger("app." + __name__)
 
 app = FastAPI(title=settings.PROJECT_NAME, version="0.1.35",
               description="a lighter platform for data analytics")
-
 
 app.add_middleware(
     CORSMiddleware,

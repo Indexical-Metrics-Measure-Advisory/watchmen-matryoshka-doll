@@ -6,7 +6,6 @@ import pymongo
 from bson import regex, ObjectId
 from pymongo.errors import WriteError
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_DICT_BY_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
 from watchmen.database.mongo.index import build_code_options
@@ -15,8 +14,6 @@ from watchmen.database.storage.exception.exception import OptimisticLockError, I
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
-
-
 
 
 # @singleton

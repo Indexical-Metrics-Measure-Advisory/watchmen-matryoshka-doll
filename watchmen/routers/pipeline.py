@@ -1,4 +1,3 @@
-
 import asyncio
 import logging
 
@@ -46,4 +45,3 @@ async def push_pipeline_data(topic_event: TopicEvent, current_user: User = Depen
     save_topic_data(topic, data, current_user)
     await run_pipeline(topic_event, current_user)
     return {"received": True}
-

@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import text, JSON
+from sqlalchemy import JSON
 
 
 def parse_obj(base_model, result, table):
@@ -23,5 +23,3 @@ def parse_obj(base_model, result, table):
 
     # print(model)
     return base_model.parse_obj(model)
-
-

@@ -3,6 +3,7 @@ from typing import List
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 from watchmen.topic.factor.factor import Factor
 
+
 #
 # def get_flatten_field_with_dict(data: dict, factors: dict):
 #     flatten_fields = {}

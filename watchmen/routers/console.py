@@ -6,9 +6,9 @@ from pydantic import BaseModel
 from starlette import status
 
 from watchmen.auth.storage.user import get_user
-from watchmen.common.model.user import User
 from watchmen.common import deps
 from watchmen.common.data_page import DataPage
+from watchmen.common.model.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.common.security.index import validate_jwt
 from watchmen.common.snowflake.snowflake import get_surrogate_key

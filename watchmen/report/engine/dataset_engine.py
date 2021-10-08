@@ -21,7 +21,7 @@ log = logging.getLogger("app." + __name__)
 
 def build_pagination(pagination):
     offset_num = pagination.pageSize * (pagination.pageNumber - 1)
-    return ") WHERE rn BETWEEN {0} AND {1}".format(offset_num,offset_num+pagination.pageSize)
+    return ") WHERE rn BETWEEN {0} AND {1}".format(offset_num, offset_num + pagination.pageSize)
 
 
 def __find_factor_index(field_list, factor_name_list):
