@@ -38,6 +38,7 @@ aiokafka = {version = "^0.7.1", optional = true}
 aio-pika = {version = "^6.8.0", optional = true}
 cacheout = "^0.13.1"
 presto-python-client = "^0.8.2"
+starlette-prometheus = "^0.8.0"
 
 [tool.poetry.extras]
 mysql = ["mysqlclient"]

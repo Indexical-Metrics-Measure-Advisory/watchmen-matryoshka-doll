@@ -481,6 +481,17 @@ kerberos = ["requests-kerberos"]
 tests = ["requests-kerberos", "google-auth", "httpretty", "pytest", "pytest-runner"]
 
 [[package]]
+name = "prometheus-client"
+version = "0.11.0"
+description = "Python client for the Prometheus monitoring system."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[package.extras]
+twisted = ["twisted"]
+
+[[package]]
 name = "psutil"
 version = "5.8.0"
 description = "Cross-platform lib for process and system monitoring in Python."
@@ -742,6 +753,18 @@ python-versions = ">=3.6"
 full = ["aiofiles", "graphene", "itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests", "ujson"]
 
 [[package]]
+name = "starlette-prometheus"
+version = "0.8.0"
+description = "Prometheus integration for Starlette"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+prometheus_client = ">=0.11,<0.12"
+starlette = ">=0.12.2"
+
+[[package]]
 name = "tblib"
 version = "1.7.0"
 description = "Traceback serialization library."
@@ -862,7 +885,7 @@ rabbit = ["aio-pika"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9.2"
-content-hash = "998fb24dbefe2b9ae67e7e0afb0d71776675639d09c1febfb370ba5b5c3c4db4"
+content-hash = "d3e04f1b8fe75d060114397bdccebe1e3b7b50e9437f7848044840b8528ff707"
 
 [metadata.files]
 aio-pika = [
@@ -1285,6 +1308,10 @@ presto-python-client = [
     {file = "presto-python-client-0.8.2.tar.gz", hash = "sha256:15b0c7d23e8838369ad3db493dcd3b5bd6578883a1385b50712720353bba98c1"},
     {file = "presto_python_client-0.8.2-py3-none-any.whl", hash = "sha256:37a675df709fb194a656c9729f539dcf153dc4d3fb000a5a8502b22c683eb1aa"},
 ]
+prometheus-client = [
+    {file = "prometheus_client-0.11.0-py2.py3-none-any.whl", hash = "sha256:b014bc76815eb1399da8ce5fc84b7717a3e63652b0c0f8804092c9363acab1b2"},
+    {file = "prometheus_client-0.11.0.tar.gz", hash = "sha256:3a8baade6cb80bcfe43297e33e7623f3118d660d41387593758e2fb1ea173a86"},
+]
 psutil = [
     {file = "psutil-5.8.0-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:0066a82f7b1b37d334e68697faba68e5ad5e858279fd6351c8ca6024e8d6ba64"},
     {file = "psutil-5.8.0-cp27-cp27m-manylinux2010_i686.whl", hash = "sha256:0ae6f386d8d297177fd288be6e8d1afc05966878704dad9847719650e44fc49c"},
@@ -1589,6 +1616,10 @@ sqlalchemy = [
 starlette = [
     {file = "starlette-0.13.6-py3-none-any.whl", hash = "sha256:bd2ffe5e37fb75d014728511f8e68ebf2c80b0fa3d04ca1479f4dc752ae31ac9"},
     {file = "starlette-0.13.6.tar.gz", hash = "sha256:ebe8ee08d9be96a3c9f31b2cb2a24dbdf845247b745664bd8a3f9bd0c977fdbc"},
+]
+starlette-prometheus = [
+    {file = "starlette-prometheus-0.8.0.tar.gz", hash = "sha256:46b6a7090d0b43e1d5706c147cea3b27bf0e72ac8bb4677ff39f495f2849fa30"},
+    {file = "starlette_prometheus-0.8.0-py3-none-any.whl", hash = "sha256:740ba70a7711d63b10f44f5ea1a041f4c325241e707ed87064408b8b6841c010"},
 ]
 tblib = [
     {file = "tblib-1.7.0-py2.py3-none-any.whl", hash = "sha256:289fa7359e580950e7d9743eab36b0691f0310fce64dee7d9c31065b8f723e23"},

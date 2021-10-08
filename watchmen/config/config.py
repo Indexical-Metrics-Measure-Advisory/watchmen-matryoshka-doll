@@ -93,6 +93,10 @@ class Settings(BaseSettings):
     MULTIPLE_DATA_SOURCE = False
     EXTERNAL_WRITER_ON = True
 
+    PROMETHEUS_ON = False
+
+
+
     @validator("STORAGE_ENGINE", pre=True)
     def get_emails_enabled(cls, v: str, values: Dict[str, Any]) -> bool:
         # print(v)
