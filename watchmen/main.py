@@ -24,7 +24,6 @@ app.add_middleware(
 )
 
 if settings.PROMETHEUS_ON:
-    print("init prometheus")
     init_prometheus_monitor(app)
 
 
