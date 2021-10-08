@@ -28,7 +28,7 @@ async def import_raw_topic_data(topic_event, current_user):
     __trigger_pipeline(topic_event, current_user)
 
 
-async def get_input_data( topic, topic_event):
+async def get_input_data(topic, topic_event):
     if is_raw(topic):
         raw_data = {"data_": topic_event.data}
     else:

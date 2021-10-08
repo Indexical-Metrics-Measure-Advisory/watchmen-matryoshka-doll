@@ -203,7 +203,7 @@ class OracleStorage(StorageInterface):
             else:
                 values[key.lower()] = value
         stmt = insert(table).values(values)
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             conn.execute(stmt)
         return model.parse_obj(one)
 
@@ -217,7 +217,7 @@ class OracleStorage(StorageInterface):
             for key in table.c.keys():
                 values[key] = instance_dict.get(key)
             value_list.append(values)
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             conn.execute(stmt, value_list)
 
     def update_one(self, one, model, name) -> any:
@@ -274,6 +274,7 @@ class OracleStorage(StorageInterface):
                 values[key] = value
         stmt = stmt.values(values)
         session = Session(engine, future=True)
+        session.begin()
         try:
             session.execute(stmt)
             session.commit()
@@ -298,14 +299,14 @@ class OracleStorage(StorageInterface):
         table = get_table_by_name(name)
         key = get_primary_key(name)
         stmt = delete(table).where(eq(table.c[key.lower()], id_))
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             conn.execute(stmt)
             # conn.commit()
 
     def delete_one(self, where: dict, name: str):
         table = get_table_by_name(name)
         stmt = delete(table).where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             conn.execute(stmt)
 
     def delete_(self, where, model, name):
@@ -314,7 +315,7 @@ class OracleStorage(StorageInterface):
             stmt = delete(table)
         else:
             stmt = delete(table).where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             conn.execute(stmt)
 
     def find_by_id(self, id_, model, name):
@@ -452,7 +453,7 @@ class OracleStorage(StorageInterface):
             stmt = delete(table)
         else:
             stmt = delete(table).where(self.build_oracle_where_expression(table, where))
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             conn.execute(stmt)
 
     def topic_data_insert_one(self, one, topic_name):
@@ -461,12 +462,11 @@ class OracleStorage(StorageInterface):
         one_dict: dict = capital_to_lower(convert_to_dict(one))
         value = self.build_oracle_updates_expression(table, one_dict, "insert")
         stmt = insert(table)
-        with engine.connect() as conn:
-            with conn.begin():
-                try:
-                    result = conn.execute(stmt, value)
-                except IntegrityError as e:
-                    raise InsertConflictError("InsertConflict")
+        try:
+            with engine.begin() as conn:
+                result = conn.execute(stmt, value)
+        except IntegrityError as e:
+            raise InsertConflictError("InsertConflict")
         return result.rowcount
 
     def topic_data_insert_(self, data, topic_name):
@@ -478,7 +478,7 @@ class OracleStorage(StorageInterface):
             value = self.build_oracle_updates_expression(table, one_dict, "insert")
             values.append(value)
         stmt = insert(table)
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             result = conn.execute(stmt, values)
 
     def topic_data_update_one(self, id_: str, one: any, topic_name: str):
