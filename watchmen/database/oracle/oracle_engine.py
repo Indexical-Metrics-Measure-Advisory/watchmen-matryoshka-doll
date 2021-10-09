@@ -14,12 +14,12 @@ def dumps(o):
 
 cx_Oracle.init_oracle_client(lib_dir=settings.ORACLE_LIB_DIR)
 
-connection_url = "oracle+cx_oracle://%s:%s@%s:%s/?" \
-                 "service_name=%s&encoding=UTF-8&nencoding=UTF-8" % (settings.ORACLE_USER,
-                                                                     settings.ORACLE_PASSWORD,
-                                                                     settings.ORACLE_HOST,
-                                                                     settings.ORACLE_PORT,
-                                                                     settings.ORACLE_SERVICE)
+# connection_url = "oracle+cx_oracle://%s:%s@%s:%s/?" \
+#                  "service_name=%s&encoding=UTF-8&nencoding=UTF-8" % (settings.ORACLE_USER,
+#                                                                      settings.ORACLE_PASSWORD,
+#                                                                      settings.ORACLE_HOST,
+#                                                                      settings.ORACLE_PORT,
+#                                                                      settings.ORACLE_SERVICE)
 
 if settings.ORACLE_SID != "":
     dsn = cx_Oracle.makedsn(settings.ORACLE_HOST,
