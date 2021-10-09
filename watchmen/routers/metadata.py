@@ -173,6 +173,3 @@ async def import_assert(import_request: ImportDataRequest,
     import_response.passed = True
     return import_response
 
-### search
-
-# async def search_data_import()
