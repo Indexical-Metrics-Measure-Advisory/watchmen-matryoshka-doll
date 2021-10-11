@@ -37,13 +37,18 @@ async def consume(loop):
         # Creating channel
 
         async with queue.iterator() as queue_iter:
-            # Cancel consuming after __aexit__
+
             try:
                 async for message in queue_iter:
                     async with message.process():
                         payload = json.loads(message.body)
                         topic_event = TopicEvent.parse_obj(payload)
-                        user = load_user_by_name(settings.MOCK_USER)
+                        if topic_event.user is None:
+                            user = load_user_by_name(settings.MOCK_USER)
+                            log.warning("user is mock user , pls check user in topic_event")
+                        else:
+                            user = load_user_by_name(topic_event.user)
+
                         await import_raw_topic_data(topic_event, user)
             except:
                 log.error(traceback.format_exc())

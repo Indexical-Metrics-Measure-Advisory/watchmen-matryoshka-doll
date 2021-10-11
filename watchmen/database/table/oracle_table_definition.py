@@ -210,6 +210,22 @@ tenants_table = Table("tenants", metadata,
                       Column('createtime', String(50), nullable=True)
                       )
 
+data_sources_table = Table("data_sources", metadata,
+                                        Column("datasourceid", String(60), primary_key=True),
+                                        Column("datasourcecode", String(50), nullable=False),
+                                        Column("datasourcetype", String(50), nullable=False),
+                                        Column("host", String(50), nullable=True),
+                                        Column("port", String(50), nullable=True),
+                                        Column("username", String(60), nullable=True),
+                                        Column("password", String(50), nullable=True),
+                                        Column("name", String(50), nullable=True),
+                                        Column("url", String(60), nullable=True),
+                                        Column("tenantid", String(50), nullable=False),
+                                        Column("params", CLOB, nullable=True),
+                                        Column('lastmodified', DateTime, nullable=True),
+                                        Column('createtime', String(50), nullable=True)
+                                        )
+
 
 def get_table_by_name(table_name):
     if table_name == "users":
@@ -244,6 +260,8 @@ def get_table_by_name(table_name):
         table = pats_table
     elif table_name == "tenants":
         table = tenants_table
+    elif table_name == "data_sources":
+        table = data_sources_table
     elif table_name == "external_writer":
         table = external_writer
     return table

@@ -18,9 +18,6 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: str = DEV
 
-    # SUPER_USER: str = None
-
-    # HOST_URL = "http://localhost:8000"
     ALGORITHM = "HS256"
     STORAGE_ENGINE = "mongo"
     PROJECT_NAME: str
@@ -29,7 +26,6 @@ class Settings(BaseSettings):
     MONGO_DATABASE: str = "watchmen"
     MONGO_USERNAME: str = None
     MONGO_PASSWORD: str = None
-    # PRESTO_HTTP_URL = "http://localhost:8080"
     PRESTO_HOST: str = None
     PRESTO_PORT: int = None
     PRESTO_USER = "the_user"
@@ -95,8 +91,10 @@ class Settings(BaseSettings):
 
     PROMETHEUS_ON = False
 
+    KEY_MANAGEMENT_TYPE: str = "db"  ## 'aws-kms' 'azure-kms' , 'aliyun-kms'
+
     @validator("STORAGE_ENGINE", pre=True)
-    def get_emails_enabled(cls, v: str, values: Dict[str, Any]) -> bool:
+    def check_storage_configuration(cls, v: str, values: Dict[str, Any]) -> bool:
         # print(v)
         if v and v == "mongo":
             result = bool(

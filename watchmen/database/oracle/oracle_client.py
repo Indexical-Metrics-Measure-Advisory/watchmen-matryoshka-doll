@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import List
 
 import cx_Oracle
@@ -10,7 +11,7 @@ from watchmen.config.config import settings
 from watchmen.database.datasource.data_source import DataSource, DataSourceParam
 
 SID = "SID"
-
+log = logging.getLogger("app." + __name__)
 
 class OracleEngine(object):
     engine = None
@@ -24,8 +25,11 @@ class OracleEngine(object):
                 return param.value
 
     def __init__(self, database: DataSource):
+        try:
+            cx_Oracle.init_oracle_client(lib_dir=settings.ORACLE_LIB_DIR)
+        except Exception as err:
 
-        cx_Oracle.init_oracle_client(lib_dir=settings.ORACLE_LIB_DIR)
+           log.warning("init_oracle_client error")
 
         sid = self.find_sid(database.params)
         if sid:
