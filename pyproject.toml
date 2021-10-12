@@ -28,7 +28,6 @@ langid = "^1.1.6"
 uvicorn = "^0.13.4"
 japanese_address = "^0.1.2"
 pandas = "^1.2.3"
-SQLAlchemy = "^1.4.2"
 notifiers = "^1.2.1"
 arrow = "^1.1.0"
 mysqlclient = {version = "^2.0.3", optional = true}
@@ -40,6 +39,7 @@ cacheout = "^0.13.1"
 presto-python-client = "^0.8.2"
 starlette-prometheus = "^0.8.0"
 phonenumbers = "^8.12.34"
+SQLAlchemy = "^1.4.25"
 
 [tool.poetry.extras]
 mysql = ["mysqlclient"]
