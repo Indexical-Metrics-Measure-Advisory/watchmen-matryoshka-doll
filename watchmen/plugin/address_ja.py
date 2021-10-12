@@ -1,9 +1,11 @@
-from japanese_address import parse
+# from japanese_address import parse
 
 
 def __parse(address):
-    return parse(address)
+    pass
+    # return parse(address)
 
 
 def run(value):
-    return parse(value)
+    pass
+    # return parse(value)
