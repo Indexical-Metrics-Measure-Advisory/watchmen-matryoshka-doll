@@ -462,6 +462,14 @@ python-dateutil = ">=2.6,<3.0"
 pytzdata = ">=2020.1"
 
 [[package]]
+name = "phonenumbers"
+version = "8.12.34"
+description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "presto-python-client"
 version = "0.8.2"
 description = "Client for the Presto distributed SQL Engine"
@@ -885,7 +893,7 @@ rabbit = ["aio-pika"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9.2"
-content-hash = "d3e04f1b8fe75d060114397bdccebe1e3b7b50e9437f7848044840b8528ff707"
+content-hash = "df0fc5af921f891a3e6331b40f7ea9236f3bbb78d85b17794f992efcba0c6754"
 
 [metadata.files]
 aio-pika = [
@@ -1303,6 +1311,10 @@ pendulum = [
     {file = "pendulum-2.1.2-cp39-cp39-manylinux1_i686.whl", hash = "sha256:29c40a6f2942376185728c9a0347d7c0f07905638c83007e1d262781f1e6953a"},
     {file = "pendulum-2.1.2-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:94b1fc947bfe38579b28e1cccb36f7e28a15e841f30384b5ad6c5e31055c85d7"},
     {file = "pendulum-2.1.2.tar.gz", hash = "sha256:b06a0ca1bfe41c990bbf0c029f0b6501a7f2ec4e38bfec730712015e8860f207"},
+]
+phonenumbers = [
+    {file = "phonenumbers-8.12.34-py2.py3-none-any.whl", hash = "sha256:1d9862f19c0eed23f21b9f6246a67ce423875b9a14d05d79df70aab211bc8092"},
+    {file = "phonenumbers-8.12.34.tar.gz", hash = "sha256:2d0f3db2944130f4a842f37a3b252f4a32cc0454a1a2e992c6480c7c17f1b121"},
 ]
 presto-python-client = [
     {file = "presto-python-client-0.8.2.tar.gz", hash = "sha256:15b0c7d23e8838369ad3db493dcd3b5bd6578883a1385b50712720353bba98c1"},

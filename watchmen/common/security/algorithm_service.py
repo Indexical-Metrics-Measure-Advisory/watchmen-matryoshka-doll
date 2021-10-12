@@ -1,4 +1,4 @@
-from watchmen.common.security.algorithm import algorithm_aes, algorithm_md5, algorithm_mask_mail
+from watchmen.common.security.algorithm import algorithm_aes, algorithm_md5, algorithm_mask_mail, algorithm_mask_center
 
 AES256_PKCS5_PADDING = 'AES256-PKCS5-PADDING'
 MD5 = 'MD5'
@@ -22,5 +22,9 @@ def find_algorithm_encryption(factor_type,factor_encrypt):
         return algorithm_md5.encrypt
     elif factor_encrypt == MASK_MAIL:
         return algorithm_mask_mail.encrypt
+    elif factor_encrypt ==MASK_CENTER_3:
+        return algorithm_mask_center.encrypt
+    elif factor_encrypt== MASK_CENTER_5:
+        return algorithm_mask_center.encrypt
     else:
         raise NotImplementedError("not supported now")
