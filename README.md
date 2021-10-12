@@ -76,7 +76,7 @@ navigate to pipeline page and start your first pipeline.
 
 If you have questions on getting started, we'd love to hear from you:
 
-send email to tech-support@matrdata.com
+send email to tech-support@mail.matrdata.com
 
 # License & Distribution
 
