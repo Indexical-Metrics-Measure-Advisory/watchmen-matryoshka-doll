@@ -6,6 +6,7 @@ import arrow
 
 from watchmen.common.constants import parameter_constants, pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.config.config import settings
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
@@ -255,3 +256,7 @@ def flatten(d_):
         else:
             out[key] = val
     return out
+
+#
+# def need_encrypt(factor: Factor):
+#     return settings.DATA_SECURITY_ON and (factor.encrypt is not None or factor.encrypt != "none")

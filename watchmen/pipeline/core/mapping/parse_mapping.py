@@ -1,5 +1,6 @@
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
+from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
 
@@ -43,7 +44,7 @@ def parse_mappings(mappings, target_topic, previous_data, current_data, variable
     return mappings_results, having_aggregate_functions
 
 
-def get_factor(factor_id, target_topic: Topic):
+def get_factor(factor_id, target_topic: Topic) -> Factor:
     for factor in target_topic.factors:
         if factor.factorId == factor_id:
             return factor

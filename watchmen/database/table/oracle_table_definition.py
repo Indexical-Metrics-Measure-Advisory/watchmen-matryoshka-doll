@@ -210,6 +210,15 @@ tenants_table = Table("tenants", metadata,
                       Column('createtime', String(50), nullable=True)
                       )
 
+
+key_store_table = Table("key_stores", metadata,
+                      Column("tenantid", String(50), primary_key=True),
+                      Column("keyType", String(50), nullable=True),
+                      Column("params", CLOB, nullable=True),
+                      Column('lastmodified', DateTime, nullable=True),
+                      Column('createtime', String(50), nullable=True)
+                      )
+
 data_sources_table = Table("data_sources", metadata,
                                         Column("datasourceid", String(60), primary_key=True),
                                         Column("datasourcecode", String(50), nullable=False),
@@ -264,4 +273,6 @@ def get_table_by_name(table_name):
         table = data_sources_table
     elif table_name == "external_writer":
         table = external_writer
+    elif table_name == "key_stores":
+        table = key_store_table
     return table

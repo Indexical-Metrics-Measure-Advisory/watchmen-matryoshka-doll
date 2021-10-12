@@ -410,17 +410,16 @@ async def load_pipeline_by_pipeline_id(enum_id, current_user: User = Depends(dep
 @router.get("/home/dashboard", tags=["admin"], response_model=AdminDashboard)
 async def load_admin_dashboard(current_user: User = Depends(deps.get_current_user)):
     result = load_last_snapshot(current_user.userId, current_user)
-    if result is None:
-        return None
-    else:
+    if result is not None:
         admin_dashboard_id = result.adminDashboardId
         dashboard = load_dashboard_by_id(admin_dashboard_id, current_user)
         if dashboard is not None:
-            # report_ids = list(lambda x: return x.reportId,dashboard.reports)
             reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)), current_user)
             return AdminDashboard(dashboard=dashboard, reports=reports)
-
-
+        else:
+            return AdminDashboard()
+    else:
+        return AdminDashboard()
 ## ENUM
 
 @router.post("/enum", tags=["admin"], response_model=Enum)

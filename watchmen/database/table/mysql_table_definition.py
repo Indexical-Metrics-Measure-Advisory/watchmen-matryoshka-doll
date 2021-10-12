@@ -219,6 +219,14 @@ class MysqlTableDefinition(TableDefinition):
                                 Column('createtime', String(50), nullable=True)
                                 )
 
+        self.key_store_table = Table("key_stores", self.metadata,
+                                Column("tenantid", String(50), primary_key=True),
+                                Column("keyType", String(50), nullable=True),
+                                Column("params", JSON, nullable=True),
+                                Column('lastmodified', DateTime, nullable=True),
+                                Column('createtime', String(50), nullable=True)
+                                )
+
         self.data_sources_table = Table("data_sources", self.metadata,
                                         Column("datasourceid", String(60), primary_key=True),
                                         Column("datasourcecode", String(50), nullable=False),
@@ -276,4 +284,6 @@ class MysqlTableDefinition(TableDefinition):
             table = self.data_sources_table
         elif table_name == "external_writer":
             table = self.external_writer
+        elif table_name == "key_stores":
+            table = self.key_store_table
         return table

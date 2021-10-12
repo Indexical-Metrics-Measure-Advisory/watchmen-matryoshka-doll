@@ -93,6 +93,8 @@ class Settings(BaseSettings):
 
     KEY_MANAGEMENT_TYPE: str = "db"  ## 'aws-kms' 'azure-kms' , 'aliyun-kms'
 
+    DATA_SECURITY_ON = False
+
     @validator("STORAGE_ENGINE", pre=True)
     def check_storage_configuration(cls, v: str, values: Dict[str, Any]) -> bool:
         # print(v)

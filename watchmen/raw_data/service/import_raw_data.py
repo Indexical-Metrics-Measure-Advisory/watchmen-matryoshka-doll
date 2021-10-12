@@ -11,7 +11,6 @@ from watchmen.topic.storage.topic_schema_storage import get_topic
 
 async def import_raw_topic_data(topic_event, current_user):
 
-    print(topic_event.code)
     topic = get_topic(topic_event.code, current_user)
     if topic is None:
         raise Exception(topic_event.code + " topic name does not exist")
@@ -25,11 +24,6 @@ async def import_raw_topic_data(topic_event, current_user):
     __trigger_pipeline(topic_event, current_user)
 
 
-# async def import_topic_data(topic_event, current_user):
-#     topic = get_topic(topic_event.code, current_user)
-#     if topic is None:
-#         raise Exception(topic_event.code + " topic name does not exist")
-#     raw_data = await get_input_data(topic, topic_event)
 
 
 async def get_input_data(topic, topic_event):

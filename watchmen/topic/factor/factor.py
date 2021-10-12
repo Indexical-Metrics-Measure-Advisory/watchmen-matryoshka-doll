@@ -14,6 +14,21 @@ class FactorType(Enum):
     ARRAY = "array"
 
 
+# class FactorEncryptMethod(Enum):
+#     NONE = 'none',
+#     AES256_PKCS5_PADDING = 'AES256-PKCS5-PADDING',
+#     MD5 = 'MD5',
+#     SHA256 = 'SHA256',
+#     MASK_MAIL = 'MASK-MAIL',
+#     MASK_CENTER_3 = 'MASK-CENTER-3',
+#     MASK_CENTER_5 = 'MASK-CENTER-5',
+#     MASK_LAST_3 = 'MASK-LAST-3',
+#     MASK_LAST_6 = 'MASK-LAST-6',
+#     MASK_DAY = 'MASK-DAY',
+#     MASK_MONTH = 'MASK-MONTH',
+#     MASK_MONTH_DAY = 'MASK-MONTH-DAY'
+
+
 class Factor(WatchmenModel):
     type: str = None
     factorId: str = None
@@ -25,6 +40,7 @@ class Factor(WatchmenModel):
     flatten: bool = None
     indexGroup: str = None
     tenantId: str = None
+    encrypt: str = None
 
 
 '''

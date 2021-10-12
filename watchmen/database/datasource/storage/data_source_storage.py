@@ -7,6 +7,8 @@ from watchmen.database.datasource.data_source import DataSource
 from watchmen.database.storage.storage_template import page_, find_one, insert_one, update_one, page_all, \
     list_all, find_
 
+DEFAULT_TENANT = "1"
+
 DATA_SOURCES = "data_sources"
 
 
@@ -23,7 +25,7 @@ def load_data_source_by_id(data_source_id: str, current_user: User = None):
 
 
 def load_data_source_list(current_user: User):
-    if settings.MULTIPLE_DATA_SOURCE:
+    if settings.MULTIPLE_DATA_SOURCE and  current_user.tenantId != DEFAULT_TENANT:
         return find_({"tenantId": current_user.tenantId}, DataSource, DATA_SOURCES)
     else:
         return list_all(DataSource, DATA_SOURCES)
