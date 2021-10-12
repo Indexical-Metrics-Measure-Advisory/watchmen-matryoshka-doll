@@ -3,6 +3,7 @@ from watchmen.database.storage.storage_template import find_one
 from watchmen.security.key.db.key_model import KeyStore
 KEY_STORES = "key_stores"
 
+
 def load_key_store_by_tenant(tenant_id: str) -> KeyStore:
     cached_key = cacheman[KEY_STORES].get(tenant_id)
     if cached_key is not None:
