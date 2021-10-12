@@ -24,6 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 if settings.PROMETHEUS_ON:
     init_prometheus_monitor(app)
 
