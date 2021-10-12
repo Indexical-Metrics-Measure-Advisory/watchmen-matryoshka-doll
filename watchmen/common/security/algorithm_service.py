@@ -1,4 +1,5 @@
-from watchmen.common.security.algorithm import algorithm_aes, algorithm_md5, algorithm_mask_mail, algorithm_mask_center
+from watchmen.common.security.algorithm import algorithm_aes, algorithm_md5, algorithm_mask_mail, algorithm_mask_center, \
+    algorithm_date
 
 AES256_PKCS5_PADDING = 'AES256-PKCS5-PADDING'
 MD5 = 'MD5'
@@ -23,8 +24,18 @@ def find_algorithm_encryption(factor_type,factor_encrypt):
     elif factor_encrypt == MASK_MAIL:
         return algorithm_mask_mail.encrypt
     elif factor_encrypt ==MASK_CENTER_3:
-        return algorithm_mask_center.encrypt
+        return algorithm_mask_center.encrypt_center_3
     elif factor_encrypt== MASK_CENTER_5:
-        return algorithm_mask_center.encrypt
+        return algorithm_mask_center.encrypt_center_5
+    elif factor_encrypt == MASK_LAST_3:
+        return algorithm_mask_center.encrypt_last_3
+    elif factor_encrypt == MASK_LAST_6:
+        return algorithm_mask_center.encrypt_last_6
+    elif factor_encrypt == MASK_DAY:
+        return algorithm_date.encrypt_day
+    elif factor_encrypt == MASK_MONTH:
+        return algorithm_date.encrypt_month
+    elif factor_encrypt == MASK_MONTH_DAY:
+        return algorithm_date.encrypt_month_day
     else:
         raise NotImplementedError("not supported now")

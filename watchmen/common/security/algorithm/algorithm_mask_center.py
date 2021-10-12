@@ -43,6 +43,24 @@ def __mask_center(value_char_list, __center):
     return __convert(mask_result_list)
 
 
+def __mask_last(value_char_list, __last):
+    number_char_list = __find_number(value_char_list)
+    last = len(number_char_list)
+    mask_result_list = []
+    number_index = 0
+    for index, char in enumerate(value_char_list):
+        if char.isnumeric():
+            if __last(number_index, last):
+                mask_result_list.append("*")
+            else:
+                mask_result_list.append(char)
+            number_index = number_index + 1
+        else:
+            mask_result_list.append(char)
+    return __convert(mask_result_list)
+
+
+
 def __split(value_):
     return [char for char in value_]
 
@@ -55,12 +73,29 @@ def __center_5(number_index, middle):
     return middle - 2 <= number_index <= middle + 2
 
 
-def encrypt(value_, params):
-    center_num = params["center_num"]
+def __last_3(number_index, last_index):
+    return last_index - 3 <= number_index < last_index
+
+
+def __last_6(number_index, last_index):
+    return last_index - 6 <= number_index < last_index
+
+
+def encrypt_center_3(value_, params=None):
     value_char_list = __split(value_)
-    if center_num and center_num == 3:
-        return __mask_center(value_char_list, __center_3)
-    elif center_num and center_num == 5:
-        return __mask_center(value_char_list, __center_5)
-    else:
-        raise Exception("center_num is not supported {}".format(center_num))
+    return __mask_center(value_char_list, __center_3)
+
+
+def encrypt_center_5(value_, params=None):
+    value_char_list = __split(value_)
+    return __mask_center(value_char_list, __center_5)
+
+
+def encrypt_last_3(value_, params=None):
+    value_char_list = __split(value_)
+    return __mask_last(value_char_list,__last_3)
+
+
+def encrypt_last_6(value_, params=None):
+    value_char_list = __split(value_)
+    return __mask_last(value_char_list, __last_6)
