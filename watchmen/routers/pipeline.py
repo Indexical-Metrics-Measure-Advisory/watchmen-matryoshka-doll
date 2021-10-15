@@ -20,7 +20,7 @@ async def health():
     return {"health": True}
 
 
-def __load_topic_definition(topic_name: str, current_user: User) -> Topic:
+async def __load_topic_definition(topic_name: str, current_user: User) -> Topic:
     topic = get_topic(topic_name, current_user)
     if topic is None:
         raise Exception(f"{topic_name} topic name does not exist")
@@ -30,17 +30,17 @@ def __load_topic_definition(topic_name: str, current_user: User) -> Topic:
 
 @router.post("/pipeline/data/async", tags=["pipeline"])
 async def push_pipeline_data_async(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
-    topic = __load_topic_definition(topic_event.code, current_user)
+    topic = await __load_topic_definition(topic_event.code, current_user)
     data = get_input_data(topic, topic_event)
-    save_topic_data(topic, data, current_user)
+    await save_topic_data(topic, data, current_user)
     asyncio.ensure_future(run_pipeline(topic_event, current_user))
     return {"received": True}
 
 
 @router.post("/pipeline/data", tags=["pipeline"])
 async def push_pipeline_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
-    topic = __load_topic_definition(topic_event.code, current_user)
+    topic = await __load_topic_definition(topic_event.code, current_user)
     data = get_input_data(topic, topic_event)
-    save_topic_data(topic, data, current_user)
+    await save_topic_data(topic, data, current_user)
     await run_pipeline(topic_event, current_user)
     return {"received": True}

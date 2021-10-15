@@ -7,7 +7,7 @@ from watchmen.pipeline.utils.units_func import INSERT, add_audit_columns
 from watchmen.topic.storage.topic_data_storage import save_topic_instance
 
 
-def save_topic_data(topic, data, current_user):
+async def save_topic_data(topic, data, current_user):
     add_audit_columns(data, INSERT)
     if is_raw(topic):
         flatten_fields = get_flatten_field(data["data_"], topic.factors)
