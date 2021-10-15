@@ -9,7 +9,7 @@ from watchmen.config.config import settings
 from watchmen.connector.kafka import kafka_connector
 from watchmen.connector.rabbitmq import rabbit_connector
 from watchmen.monitor.prometheus.index import init_prometheus_monitor
-from watchmen.routers import admin, console, common, auth, metadata, cache, pipeline
+from watchmen.routers import admin, console, common, auth, metadata, cache, pipeline, data_patch
 
 log = logging.getLogger("app." + __name__)
 
@@ -47,3 +47,4 @@ app.include_router(auth.router)
 app.include_router(metadata.router)
 app.include_router(cache.router)
 app.include_router(pipeline.router)
+app.include_router(data_patch.router)

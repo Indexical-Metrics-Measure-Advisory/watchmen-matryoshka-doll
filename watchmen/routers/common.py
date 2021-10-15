@@ -69,7 +69,7 @@ async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_
     return instances
 
 
-@router.post("/topic/data/rerun", tags=["common"])  ## TODO  move to pipeline worker
+@router.post("/topic/data/rerun", tags=["common"],deprecated=True)
 async def rerun_pipeline(topic_name, instance_id, pipeline_id, current_user: User = Depends(deps.get_current_user)):
     topic = get_topic(topic_name)
     instance = find_topic_data_by_id_and_topic_name(topic, instance_id)
@@ -82,8 +82,8 @@ async def rerun_pipeline(topic_name, instance_id, pipeline_id, current_user: Use
     return {"received": True}
 
 
-@router.post("/topic/data/patch", tags=["common"])
-async def patch_topic_instance(topic_name, instance, instance_id):
+@router.post("/topic/data/patch", tags=["common"],deprecated=True)
+async def patch_topic_instance(topic_name, instance_id,instance= Body(...),current_user: User = Depends(deps.get_current_user)):
     topic = get_topic_by_name(topic_name)
     result = find_topic_data_by_id_and_topic_name(topic, instance_id)
     if result is None:
@@ -91,7 +91,6 @@ async def patch_topic_instance(topic_name, instance, instance_id):
     else:
         # TODO audit data
 
-        # topic = get_topic_by_name(topic_name)
         update_topic_instance(topic, instance, instance_id)
 
 
