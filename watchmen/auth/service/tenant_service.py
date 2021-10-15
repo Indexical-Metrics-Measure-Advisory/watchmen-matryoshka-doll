@@ -1,4 +1,5 @@
 from watchmen.auth.tenant import Tenant
+from watchmen.common.data_page import DataPage
 from watchmen.database.storage import storage_template
 
 TENANTS = "tenants"
@@ -12,7 +13,7 @@ def update(tenant: Tenant) -> Tenant:
     return storage_template.update_one(tenant, Tenant, TENANTS)
 
 
-def query_by_name(tenant_name: str, pagination) -> Tenant:
+def query_by_name(tenant_name: str, pagination) -> DataPage:
     if tenant_name != '':
         query_dict = {"name": {"like": tenant_name}}
         sort_dict = [("lastModified", "desc")]

@@ -89,8 +89,6 @@ async def patch_topic_instance(topic_name, instance_id,instance= Body(...),curre
     if result is None:
         raise Exception("topic {0} id {1} not found data ".format(topic_name, instance_id))
     else:
-        # TODO audit data
-
         update_topic_instance(topic, instance, instance_id)
 
 
@@ -155,11 +153,11 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
                                                      subject_filter)
 
 
-@router.get("/pipeline/graph/show", tags=["common"])
-async def show_pipeline_graph(topic_id):
-    topic = get_topic_by_id(topic_id)
-    result = pipelineExecutionPath(topic)
-    return {"show": result}
+# @router.get("/pipeline/graph/show", tags=["common"])
+# async def show_pipeline_graph(topic_id):
+#     topic = get_topic_by_id(topic_id)
+#     result = pipelineExecutionPath(topic)
+#     return {"show": result}
 
 
 @router.get("/table/metadata/clear", tags=["common"])
@@ -169,7 +167,7 @@ async def clear_table_metadata():
 
 # TODO current_user
 @router.post("/tenant", tags=["common"], response_model=Tenant)
-async def save_tenant(tenant: Tenant) -> Tenant:
+async def save_tenant(tenant: Tenant,current_user: User = Depends(deps.get_current_user)) -> Tenant:
     if check_fake_id(tenant.tenantId):
         tenant.tenantId = get_surrogate_key()
         return tenant_service.create(tenant)
@@ -178,7 +176,7 @@ async def save_tenant(tenant: Tenant) -> Tenant:
 
 
 @router.post("/tenant/id", tags=["common"], response_model=Tenant)
-async def load_tenant_by_id(tenant_id: str) -> Tenant:
+async def load_tenant_by_id(tenant_id: str,current_user: User = Depends(deps.get_current_user)) -> Tenant:
     return tenant_service.load(tenant_id)
 
 
