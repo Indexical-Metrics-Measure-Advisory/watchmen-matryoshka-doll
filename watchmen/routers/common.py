@@ -51,7 +51,7 @@ async def health():
     return {"health": True}
 
 
-@router.post("/topic/data", tags=["common"])
+@router.post("/topic/data", tags=["common"],deprecated=True)
 async def save_topic_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
     # TODO user check URP
     await import_raw_topic_data(topic_event, current_user)
