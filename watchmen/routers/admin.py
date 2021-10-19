@@ -23,6 +23,10 @@ from watchmen.common.security.pat.pat_service import createPAT, queryPAT, delete
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id, add_tenant_id_to_model, \
     compare_tenant, clean_password, is_super_admin
+from watchmen.console_space.model.console_space import ConsoleSpace
+from watchmen.console_space.service.console_space_service import load_space_list_by_dashboard
+from watchmen.console_space.storage.console_space_storage import load_console_space_by_subject_id
+from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_report_id
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
@@ -39,7 +43,7 @@ from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_p
 from watchmen.raw_data.service.generate_raw_topic_schema import create_raw_topic
 from watchmen.raw_data.service.generate_schema import create_raw_data_model_set, RawTopicGenerateEvent
 from watchmen.report.model.report import Report
-from watchmen.report.storage.report_storage import query_report_list_with_pagination, load_reports_by_ids
+from watchmen.report.storage.report_storage import query_report_list_with_pagination, load_report_by_id
 from watchmen.space.service.admin import create_space, update_space_by_id, sync_space_to_user_group
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
@@ -57,6 +61,7 @@ log = logging.getLogger("app." + __name__)
 class AdminDashboard(BaseModel):
     dashboard: ConsoleDashboard = None
     reports: List[Report] = []
+    connectedSpaces: List[ConsoleSpace] = []
 
 
 class MonitorLogCriteria(BaseModel):
@@ -407,19 +412,22 @@ async def load_pipeline_by_pipeline_id(enum_id, current_user: User = Depends(dep
     return load_enum_by_id(enum_id, current_user)
 
 
+async def __load_subject_list_by_report():
+    pass
+
+
 @router.get("/home/dashboard", tags=["admin"], response_model=AdminDashboard)
 async def load_admin_dashboard(current_user: User = Depends(deps.get_current_user)):
     result = load_last_snapshot(current_user.userId, current_user)
+
     if result is not None:
         admin_dashboard_id = result.adminDashboardId
         dashboard = load_dashboard_by_id(admin_dashboard_id, current_user)
-        if dashboard is not None:
-            reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)), current_user)
-            return AdminDashboard(dashboard=dashboard, reports=reports)
-        else:
-            return AdminDashboard()
+        return load_space_list_by_dashboard(dashboard,current_user)
     else:
         return AdminDashboard()
+
+
 ## ENUM
 
 @router.post("/enum", tags=["admin"], response_model=Enum)

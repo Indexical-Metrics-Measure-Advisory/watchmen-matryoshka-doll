@@ -19,7 +19,7 @@ from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpac
 from watchmen.console_space.model.favorite import Favorite
 from watchmen.console_space.model.last_snapshot import LastSnapshot
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
-    delete_console_space_and_sub_data, copy_template_to_console_space
+    delete_console_space_and_sub_data, copy_template_to_console_space, load_space_list_by_dashboard
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
     load_console_space_by_id, rename_console_space_by_id, create_console_space_graph, update_console_space_graph, \
     load_console_space_graph_by_user_id, load_console_space_graph, load_template_space_list_by_space_id
@@ -282,10 +282,7 @@ async def share_dashboard(dashboard_id: str, token: str):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     dashboard = load_dashboard_by_id(dashboard_id, user)
-
-    reports = load_reports_by_ids(list(map(lambda report: report.reportId, dashboard.reports)), user)
-
-    return {"dashboard": dashboard, "reports": reports}
+    return load_space_list_by_dashboard(dashboard)
 
 
 @router.get("/share/subject", tags=["share"], response_model=ConsoleSpaceSubject)
