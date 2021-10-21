@@ -43,12 +43,15 @@ def delete_console_space_storage(connect_id: str):
 
 
 def load_console_space_list_by_user(user_id: str, current_user: User) -> ConsoleSpace:
-    # return template.find("console_spaces", {"userId": user_id}, ConsoleSpace)
     return find_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}]}, ConsoleSpace, CONSOLE_SPACES)
 
 
+def load_console_space_template_list_by_user(user_id: str, current_user: User) -> ConsoleSpace:
+    return find_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}, {"isTemplate": True}]},
+                 ConsoleSpace, CONSOLE_SPACES)
+
+
 def load_console_space_by_subject_id(subject_id: str, current_user) -> ConsoleSpace:
-    # return template.find_one("console_spaces", {"subjectIds": subject_id}, ConsoleSpace)
     return find_one({"subjectIds": {"in": [subject_id]}}, ConsoleSpace,
                     CONSOLE_SPACES)
 

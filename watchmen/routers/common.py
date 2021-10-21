@@ -153,11 +153,6 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
                                                      subject_filter)
 
 
-# @router.get("/pipeline/graph/show", tags=["common"])
-# async def show_pipeline_graph(topic_id):
-#     topic = get_topic_by_id(topic_id)
-#     result = pipelineExecutionPath(topic)
-#     return {"show": result}
 
 
 @router.get("/table/metadata/clear", tags=["common"])

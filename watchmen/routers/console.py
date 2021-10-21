@@ -22,7 +22,8 @@ from watchmen.console_space.service.console_space_service import delete_console_
     delete_console_space_and_sub_data, copy_template_to_console_space, load_space_list_by_dashboard
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
     load_console_space_by_id, rename_console_space_by_id, create_console_space_graph, update_console_space_graph, \
-    load_console_space_graph_by_user_id, load_console_space_graph, load_template_space_list_by_space_id
+    load_console_space_graph_by_user_id, load_console_space_graph, load_template_space_list_by_space_id, \
+    load_console_space_template_list_by_user
 from watchmen.console_space.storage.console_subject_storage import create_console_subject_to_storage, \
     load_console_subject_list_by_ids, update_console_subject, rename_console_subject_by_id, load_console_subject_by_id, \
     load_console_subject_by_report_id
@@ -88,6 +89,19 @@ async def load_template_space_list(space_id: str, current_user: User = Depends(d
     return template_list
 
 
+@router.get("/console_space/export", tags=["console"], response_model=List[ConsoleSpace])
+async def load_template_for_export(current_user: User = Depends(deps.get_current_user)):
+    console_space_list = load_console_space_template_list_by_user(current_user.userId, current_user)
+    # template_list = list(filter(lambda x: x.isTemplate, console_space_list))
+    return await load_complete_console_space(console_space_list, current_user)
+
+
+@router.get("/space/export", tags=["console"], response_model=List[Space])
+async def load_space_list_by_user(current_user: User = Depends(deps.get_current_user)):
+    space_list = load_space_by_user(current_user.groupIds, current_user)
+    return space_list
+
+
 @router.get("/space/connect", tags=["console"], response_model=ConsoleSpace)
 async def connect_to_space(space_id, name, template_ids=None, current_user: User = Depends(deps.get_current_user)):
     console_space = ConsoleSpace()
@@ -119,6 +133,10 @@ async def rename_console_space(connect_id: str, name: str, current_user: User = 
 async def load_connected_space(current_user: User = Depends(deps.get_current_user)):
     user_id = current_user.userId
     console_space_list = load_console_space_list_by_user(user_id, current_user)
+    return await load_complete_console_space(console_space_list, current_user)
+
+
+async def load_complete_console_space(console_space_list, current_user):
     result = []
     for console_space in console_space_list:
         topic_list = load_topic_list_by_space_id(console_space.spaceId, current_user)

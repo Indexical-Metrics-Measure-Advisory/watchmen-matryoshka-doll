@@ -1,5 +1,6 @@
 # IMPORT data
 from datetime import datetime
+from enum import Enum
 from typing import List
 
 from fastapi import APIRouter, Depends
@@ -8,6 +9,7 @@ from pydantic import BaseModel
 from watchmen.auth.storage.user_group import import_user_group_to_db, get_user_group, update_user_group_storage
 from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import add_tenant_id_to_model
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceSubject
 from watchmen.console_space.storage.console_space_storage import import_console_spaces, load_console_space_by_id, \
@@ -49,6 +51,15 @@ class ImportDataResponse(BaseModel):
 class ImportDataRequest(BaseModel):
     topics: List[Topic] = []
     pipelines: List[Pipeline] = []
+    spaces: List [Space] =[]
+    connectedSpaces: List [ConsoleSpace] = []
+    importType: str = None
+
+
+class ImportTPSCSType(Enum):
+    NON_REDUNDANT = 'non-redundant',
+    REPLACE = 'replace',
+    FORCE_NEW = 'force-new'
 
 
 ### import space
@@ -77,14 +88,30 @@ async def import_user_group(group: UserGroup, current_user: User = Depends(deps.
 
 ### import space
 
+def __is_same_tenant(tenant_id, current_user):
+    return tenant_id == current_user.tenantId
+
+
 @router.post("/import/admin/space", tags=["import"])
-async def import_space(space: Space, current_user: User = Depends(deps.get_current_user)):
-    result = get_space_by_id(space.spaceId, current_user)
-    space = add_tenant_id_to_model(space, current_user)
-    if result is None:
-        import_space_to_db(space)
+async def import_space(space: Space, import_type="non-redundant", current_user: User = Depends(deps.get_current_user)):
+    if __is_same_tenant(space.tenantId, current_user):
+        result = get_space_by_id(space.spaceId, current_user)
+        if import_type == ImportTPSCSType.NON_REDUNDANT.value:
+            if result is None:
+                import_space_to_db(space)
+            else:
+                raise Exception("duplicate space found")
+        elif import_type == ImportTPSCSType.REPLACE.value:
+
+            update_space_by_id(space.spaceId, space)
+        else:
+            space.spaceId = get_surrogate_key()
+            import_space_to_db(space)
     else:
-        update_space_by_id(space.spaceId, space)
+        if import_type == ImportTPSCSType.FORCE_NEW.value:
+            space = add_tenant_id_to_model(space, current_user)
+            space.spaceId = get_surrogate_key()
+            import_space_to_db(space)
 
 
 ## import topic data
@@ -172,7 +199,5 @@ async def import_assert(import_request: ImportDataRequest,
             import_response.pipelines.append(ImportCheckResult(pipelineId=result_pipeline.pipelineId))
     import_response.passed = True
     return import_response
-
-
 
 ### TODO import markdown file
