@@ -4,7 +4,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.model.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.database.storage.storage_template import insert_one, update_one, page_, find_, find_one
-from watchmen.space.space import Space
+from watchmen.space.space import Space, SpaceFilter
 
 SPACES = "spaces"
 
@@ -31,6 +31,11 @@ def get_space_list_by_ids(space_ids, current_user) -> List[Space]:
         return find_({"and": [{"spaceId": {"in": space_ids}}, {"tenantId": current_user.tenantId}]}, Space, SPACES)
     else:
         return []
+
+
+def get_filters_by_id(space_id, current_user) -> List[SpaceFilter]:
+    space: Space = find_one({"and": [{"spaceId": space_id}, {"tenantId": current_user.tenantId}]}, Space, SPACES)
+    return space.filters
 
 
 ## TODO  in for and

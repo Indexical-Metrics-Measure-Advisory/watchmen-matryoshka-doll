@@ -70,9 +70,9 @@ class ConnectedSpaceTemplate(BaseModel):
 
 
 class ConsoleSpace(WatchmenModel):
+    connectId: str = None
     spaceId: str = None
     name: str = None
-    connectId: str = None
     type: str = None
     lastVisitTime: datetime = None
     subjects: List[ConsoleSpaceSubject] = []

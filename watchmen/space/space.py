@@ -1,6 +1,15 @@
 from typing import List
 
+from pydantic import BaseModel
+
+from watchmen.common.parameter import ParameterJoint
 from watchmen.common.watchmen_model import WatchmenModel
+
+
+class SpaceFilter(BaseModel):
+    enabled: bool = False
+    joint: ParameterJoint = None
+    topicId: str = None
 
 
 class Space(WatchmenModel):
@@ -10,3 +19,5 @@ class Space(WatchmenModel):
     name: str = None
     description: str = None
     tenantId: str = None
+    filters: List[SpaceFilter] = None
+

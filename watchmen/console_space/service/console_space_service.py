@@ -24,7 +24,7 @@ def delete_console_space_and_sub_data(connect_id, current_user):
     delete_console_space_storage(connect_id)
 
 
-def load_space_list_by_dashboard(dashboard,current_user):
+def load_space_list_by_dashboard(dashboard, current_user):
     subject_dict = {}
     space_dict = {}
     report_dict = {}
@@ -47,7 +47,7 @@ def load_space_list_by_dashboard(dashboard,current_user):
                             subject.reports.append(report)
                     space.subjects.append(subject)
             space_list.append(space)
-        return {"dashboard":dashboard,"connectedSpaces":space_list}
+        return {"dashboard": dashboard, "connectedSpaces": space_list}
 
 
 def copy_template_to_console_space(template_ids, console_space: ConsoleSpace, current_user):

@@ -2,26 +2,23 @@ import logging
 import time
 import traceback
 
-from pypika import functions as fn
+from pypika import functions as fn, AliasedQuery, Field, JoinType
 
 from watchmen.common.pagination import Pagination
 from watchmen.common.presto.presto_client import get_connection
-from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id, \
-    load_console_subject_by_report_id
+from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.monitor.model.query_monitor import QueryMonitor
 from watchmen.monitor.services.query_monitor_service import build_query_summary, \
     build_result_summary, build_query_monitor
-from watchmen.report.engine.sql_builder import _from, _select, _join, _filter, _groupby, _indicator, _orderby, \
-    _dimension, _limit
-from watchmen.report.model.report import ChartType
-from watchmen.report.storage.report_storage import load_report_by_id
+from watchmen.pipeline.utils.units_func import get_factor
+from watchmen.report.builder.dataset_filter import build_dataset_where, build_dataset_select_fields
+from watchmen.report.builder.dialects import PrestoQuery, PrestoQueryBuilder
+from watchmen.report.builder.space_filter import get_topic_sub_query_with_space_filter
+from watchmen.report.builder.utils import build_table_by_topic_id
+from watchmen.report.engine.sql_builder import _filter
+from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
-
-
-def build_pagination(pagination):
-    offset_num = pagination.pageSize * (pagination.pageNumber - 1)
-    return ") WHERE rn BETWEEN {0} AND {1}".format(offset_num, offset_num + pagination.pageSize)
 
 
 def __find_factor_index(field_list, factor_name_list):
@@ -34,8 +31,8 @@ def __find_factor_index(field_list, factor_name_list):
     return index_list
 
 
-def get_factor_value_by_subject_and_condition(console_subject, factor_name_list, filter_list):
-    query = build_query_for_subject(console_subject)
+def get_factor_value_by_subject_and_condition(console_subject, factor_name_list, filter_list, current_user):
+    query = build_query_for_subject(console_subject, current_user)
     if filter_list:
         query = _filter(query, filter_list)
     conn = get_connection()
@@ -64,9 +61,8 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
     try:
         # build query condition
         start = time.time()
-        count_query = build_count_query_for_subject(console_subject)
+        count_query = build_count_query_for_subject(console_subject, current_user)
         count_sql = count_query.get_sql()
-
         query_count_summary = build_query_summary(count_sql)
         conn = get_connection()
         cur = conn.cursor()
@@ -76,9 +72,11 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
         log.info("sql result: {0}".format(count_rows))
         query_count_summary.resultSummary = build_result_summary(count_rows, start)
         query_monitor.querySummaryList.append(query_count_summary)
+
         query_start = time.time()
-        query = build_query_for_subject(console_subject)
-        query_sql = build_page_by_row_number(pagination, query)
+        query = build_query_for_subject(console_subject, current_user)
+        # query_sql = build_page_by_row_number(pagination, query)
+        query_sql = build_pagination(query, pagination).get_sql()
         query_summary = build_query_summary(query_sql)
         log.info("sql:{0}".format(query_sql))
         cur = conn.cursor()
@@ -105,10 +103,11 @@ def __remove_index(rows):
     return rows
 
 
-def build_page_by_row_number(pagination, query):
-    query_sql = query.get_sql() + " " + build_pagination(pagination)
-    query_sql = query_sql.replace("SELECT", "SELECT * FROM (select row_number() over() AS rn,")
-    return query_sql
+def build_pagination(query: PrestoQueryBuilder, pagination):
+    offset = pagination.pageSize * (pagination.pageNumber - 1)
+    # todo, need higher presto or trino engine to support offset
+    # return query.limit(pagination.pageSize).offset(offset)
+    return query.limit(pagination.pageSize)
 
 
 async def save_query_monitor_data(query_monitor):
@@ -116,138 +115,76 @@ async def save_query_monitor_data(query_monitor):
     # await sync_query_monitor_data(query_monitor)
 
 
-async def load_chart_dataset(report_id, current_user):
-    report = load_report_by_id(report_id, current_user)
-    try:
-        query = build_query_for_subject_chart(report_id, report, current_user)
-        if query is None or query.get_sql() == "":
-            return []
+def build_query_for_subject(console_subject, current_user):
+    return build_dataset_query_for_subject(console_subject, current_user)
+
+
+def build_count_query_for_subject(console_subject, current_user):
+    return build_dataset_query_for_subject(console_subject, current_user, True)
+
+
+def build_dataset_query_for_subject(console_subject, current_user, for_count=False):
+    dataset = console_subject.dataset
+    if dataset is None:
+        return None
+
+    topic_space_filter = get_topic_sub_query_with_space_filter(console_subject, current_user)
+
+    if dataset.joins and len(dataset.joins) > 0:
+        topic_id = dataset.joins[0].topicId
+        topic_table = topic_space_filter(topic_id)
+        if topic_table:
+            q = PrestoQuery.with_(topic_table["query"], topic_table["alias"]).from_(topic_table["alias"])
         else:
-            rows = __load_chart_dataset(query, query_monitor=None)
-            return rows
-    except Exception as e:
-        log.exception(e)
-
-
-def __load_chart_dataset(query, query_monitor=None):
-    start = time.time()
-    conn = get_connection()
-    query_sql = query.get_sql()
-    query_sql_summary = build_query_summary(query_sql)
-    log.info("sql: {0}".format(query_sql))
-    cur = conn.cursor()
-    cur.execute(query_sql)
-    rows = cur.fetchall()
-    log.debug("sql result: {0}".format(rows))
-    query_sql_summary.resultSummary = build_result_summary(rows, start)
-
-    if query_monitor:
-        query_monitor.querySummaryList.append(query_sql_summary)
-        query_monitor.executionTime = time.time() - start
-    return rows or []
-
-
-def load_chart_dataset_temp(report, current_user):
-    query = build_query_for_subject_chart(report.reportId, report, current_user)
-    return __load_chart_dataset(query)
-
-
-def build_query_for_subject(console_subject):
-    dataset = console_subject.dataset
-    query = None
-    if dataset is not None:
-        query = _from(dataset.columns[0])
-        for column in dataset.columns:
-            query = _select(query, column)
-        for join in dataset.joins:
-            query = _join(query, join)
-        if dataset.filters:
-            query = _filter(query, dataset.filters)
-        # query = query.("row_number() over() AS rn").as_("rn")
-    return query
-
-
-def build_count_query_for_subject_chart(console_subject, columns_dict, report):
-    dataset = console_subject.dataset
-    query = None
-    if dataset is not None:
-        query = _from(dataset.columns[0])
-        if report.indicators:
-            for indicator in report.indicators:
-                query = _indicator(query, indicator, columns_dict.get(indicator.columnId))
-        else:
-            query = query.select(fn.Count("*"))
-        for join in dataset.joins:
-            query = _join(query, join)
-        if dataset.filters:
-            query = _filter(query, dataset.filters)
-    return query
-
-
-def build_count_query_for_subject(console_subject):
-    dataset = console_subject.dataset
-    query = None
-    # indicator = report.indicators[0]
-    if dataset is not None:
-        query = _from(dataset.columns[0])
-        query = query.select(fn.Count("*"))
-        for join in dataset.joins:
-            query = _join(query, join)
-        if dataset.filters:
-            query = _filter(query, dataset.filters)
-    return query
-
-
-def build_query_for_subject_chart(chart_id, report=None, current_user=None):
-    console_subject = load_console_subject_by_report_id(chart_id, current_user)
-    columns_dict = column_list_convert_dict(console_subject.dataset.columns)
-    if report is None:
-        report = load_report_by_id(chart_id, current_user)
-    if report.chart.type == ChartType.COUNT:
-        q = build_count_query_for_subject_chart(console_subject, columns_dict, report)
+            table = build_table_by_topic_id(topic_id)
+            q = PrestoQuery.from_(table)
     else:
-        dataset = console_subject.dataset
-        if len(dataset.columns) == 0:
-            return None
-        q = _from(dataset.columns[0])
-        for join in dataset.joins:
-            q = _join(q, join)
-        if dataset.filters:
-            q = _filter(q, dataset.filters)
-        for indicator in report.indicators:
-            if indicator.columnId != '':
-                column = columns_dict.get(indicator.columnId)
-                if column is not None:
-                    q = _indicator(q, indicator, column)
+        topic_id = dataset.columns[0].parameter.topicId
+        topic_table = topic_space_filter(topic_id)
+        if topic_table:
+            table = AliasedQuery(topic_table["alias"])
+            q = PrestoQuery.with_(topic_table["query"], topic_table["alias"]).from_(table)
+        else:
+            table = build_table_by_topic_id(topic_id)
+            q = PrestoQuery.from_(table)
 
-        truncation = report.chart.settings.get('truncation', None)
-        if truncation is not None:
-            truncation_type = truncation['type']
-            count = truncation['count']
+    for join in dataset.joins:
+        right_topic_id = join.secondaryTopicId
+        right_topic = get_topic_by_id(right_topic_id)
+        right_topic_table = topic_space_filter(right_topic_id)
+        if right_topic_table:
+            q = q.with_(right_topic_table["query"], right_topic_table["alias"])
+            right_table = AliasedQuery(right_topic_table["alias"])
+        else:
+            right_table = build_table_by_topic_id(right_topic_id)
 
-        for dimension in report.dimensions:
-            if dimension.columnId != '':
-                column_ = columns_dict.get(dimension.columnId)
-                if column_ is not None:
-                    q = _dimension(q, dimension, column_)
-                    q = _groupby(q, column_)
-                    if truncation is not None:
-                        if truncation_type == "top":
-                            q = _orderby(q, column_, "asc")
-                        if truncation_type == "bottom":
-                            q = _orderby(q, column_, "desc")
-                        if truncation_type == "none":
-                            q = _orderby(q, column_, "none")
-                    else:
-                        q = _orderby(q, column_, "none")
+        left_topic_id = join.topicId
+        left_topic = get_topic_by_id(left_topic_id)
+        left_topic_table = topic_space_filter(left_topic_id)
+        if left_topic_table:
+            left_table = AliasedQuery(left_topic_table["alias"])
+        else:
+            left_table = build_table_by_topic_id(right_topic_id)
 
-        if truncation is not None:
-            q = _limit(q, count)
-    return q
+        left_factor = get_factor(join.factorId, left_topic)
+        left_field = Field(left_factor.name, None, left_table)
 
+        right_factor = get_factor(join.secondaryFactorId, right_topic)
+        right_field = Field(right_factor.name, None, right_table)
 
-def column_list_convert_dict(columns) -> dict:
-    columns_dict = {}
-    for column in columns:
-        columns_dict[column.columnId] = column
-    return columns_dict
+        if join.type == "inner" or join.type == "":
+            join_type = JoinType.inner
+        elif join.type == "left":
+            join_type = JoinType.left
+        elif join.type == "right":
+            join_type = JoinType.right
+        else:
+            join_type = JoinType.inner
+
+        q = q.join(right_table, join_type).on(left_field.eq(right_field))
+
+    q = q.where(build_dataset_where(dataset.filters, topic_space_filter))
+    if for_count:
+        return q.select(fn.Count("*"))
+    else:
+        return q.select(*build_dataset_select_fields(dataset.columns, topic_space_filter))
