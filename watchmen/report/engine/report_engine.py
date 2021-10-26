@@ -41,8 +41,7 @@ def build_query_for_chart(chart_id, current_user):
         else:
             chart_query = chart_query.orderby(*_orderbys)
         if count:
-            # chart_query = chart_query.limit(count)
-            pass
+            chart_query = chart_query.limit(count)
 
     if report.filters:
         chart_query = chart_query.where(build_report_where(report.filters,
@@ -59,6 +58,7 @@ def build_query_for_chart(chart_id, current_user):
 async def load_chart_dataset(report_id, current_user):
     try:
         query = build_query_for_chart(report_id, current_user)
+
         if query is None or query.get_sql() == "":
             return []
         else:
@@ -74,6 +74,7 @@ def __load_chart_dataset(query, query_monitor=None):
     query_sql = query.get_sql()
     query_sql_summary = build_query_summary(query_sql)
     log.info("sql: {0}".format(query_sql))
+    # print(query_sql)
     cur = conn.cursor()
     cur.execute(query_sql)
     rows = cur.fetchall()

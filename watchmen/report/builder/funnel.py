@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import List
 
-from arrow import arrow
+import arrow
 from pypika import Criterion, AliasedQuery, Field
 from pypika.terms import LiteralValue
 
@@ -32,7 +32,7 @@ def build_report_funnels(funnels: List[ReportFunnel], dataset_columns: List[Colu
                     criterions.append(field.between(lower, upper))
                 else:
                     value = LiteralValue("DATE \'{0}\'".format(arrow.get(funnel.values[0]).format('YYYY-MM-DD')))
-                    criterions.append(field.eq(Decimal(value)))
+                    criterions.append(field.eq(value))
             else:
                 if funnel.range:
                     lower = LiteralValue(funnel.values[0])

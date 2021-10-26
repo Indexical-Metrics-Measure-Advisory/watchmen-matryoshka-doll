@@ -109,6 +109,7 @@ def build_pagination(query: str, pagination):
     # todo, need higher presto or trino engine to support offset
     return query + f' OFFSET {offset} LIMIT {pagination.pageSize}'
     # return query.limit(pagination.pageSize)
+    # return
 
 
 async def save_query_monitor_data(query_monitor):

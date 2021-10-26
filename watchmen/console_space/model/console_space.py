@@ -10,8 +10,8 @@ from watchmen.topic.topic import Topic
 
 
 class ConsoleSpaceSubjectChartDataSet(BaseModel):
-    meta: List[str] = []
-    data: list = []
+    # meta: List[str] = []
+    data: List = []
 
 
 class SubjectDataSetJoin(BaseModel):
