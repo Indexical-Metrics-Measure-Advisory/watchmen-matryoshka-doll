@@ -40,7 +40,9 @@ def build_report_funnels(funnels: List[ReportFunnel], dataset_columns: List[Colu
                     criterions.append(field.between(lower, upper))
                 else:
                     value = LiteralValue(funnel.values[0])
-                    criterions.append(field.eq(Decimal(value)))
+                    if value:
+                        print(value)
+                        criterions.append(field.eq(value))
         return Criterion.all(criterions)
 
 

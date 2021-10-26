@@ -2,7 +2,7 @@
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import List, Any
+from typing import List, Any, Dict
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -14,6 +14,7 @@ from watchmen.common import deps
 from watchmen.common.model.user import User
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import add_tenant_id_to_model
+from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceSubject
 from watchmen.console_space.storage.console_space_storage import load_console_space_by_id, \
     update_console_space, import_console_space_to_db
@@ -308,8 +309,48 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
     return import_response
 
 
+def __process_model_dict():
+    pass
+
+def __replace_topic_id(model:WatchmenModel,topic_ids_map:Dict[int,int]):
+    model_dict =  model.dict()
+
+
+
+    pass
+
+
+
+
+
 def __process_forced_new_import(import_request: ImportDataRequest, current_user):
     ## TODO __process_forced_new_import
+    import_response = ImportDataResponse()
+    topic_ids_map ={}
+    for topic in import_request.topics:
+        result_topic = get_topic_by_id(topic.topicId, current_user)
+        topic = add_tenant_id_to_model(topic, current_user)
+        if result_topic:
+            old_topic_id = result_topic.topicId
+            topic.topicId = get_surrogate_key()
+            topic.dataSourceId = result_topic.dataSourceId
+            new_topic = import_topic_to_db(__update_create_time(__update_last_modified(topic)))
+            topic_ids_map[old_topic_id]=new_topic.topicId
+        else:
+            __clear_datasource_id(topic)
+            import_topic_to_db(__update_create_time(__update_last_modified(topic)))
+    for pipeline in import_request.pipelines:
+        result_pipeline = load_pipeline_by_id(pipeline.pipelineId, current_user)
+        pipeline = add_tenant_id_to_model(pipeline, current_user)
+        if result_pipeline:
+
+            old_pipeline_id = result_pipeline.pipelineId
+
+
+            # update_pipeline(__update_last_modified(pipeline))
+        else:
+            import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
+
     pass
 
 
