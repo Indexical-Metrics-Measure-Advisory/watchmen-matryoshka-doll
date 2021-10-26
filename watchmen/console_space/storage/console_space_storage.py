@@ -87,6 +87,6 @@ def load_console_space_graph(connect_id: str, current_user) -> ConnectedSpaceGra
                     "console_space_graph")
 
 
-def import_console_spaces(console_space: ConnectedSpaceGraphics) -> ConnectedSpaceGraphics:
+def import_console_space_to_db(console_space:ConsoleSpace) -> ConsoleSpace:
     # return template.create("console_space_graph", console_space, ConnectedSpaceGraphics)
-    return insert_one(console_space, ConnectedSpaceGraphics, "console_space_graph")
+    return insert_one(console_space, ConsoleSpace, CONSOLE_SPACES)

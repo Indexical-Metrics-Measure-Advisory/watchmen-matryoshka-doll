@@ -33,7 +33,6 @@ def delete_report_by_id(report_id):
 
 
 def import_report_to_db(report):
-    # template.create(CONSOLE_REPORTS, report, Report)
     insert_one(report, Report, CONSOLE_REPORTS)
 
 

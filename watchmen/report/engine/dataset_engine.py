@@ -76,9 +76,10 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
         query_start = time.time()
         query = build_query_for_subject(console_subject, current_user)
         # query_sql = build_page_by_row_number(pagination, query)
-        query_sql = build_pagination(query, pagination).get_sql()
+        query_sql = build_pagination(query.get_sql(), pagination)
         query_summary = build_query_summary(query_sql)
         log.info("sql:{0}".format(query_sql))
+        print(query_sql)
         cur = conn.cursor()
         cur.execute(query_sql)
         rows = cur.fetchall()
@@ -86,7 +87,7 @@ async def load_dataset_by_subject_id(subject_id, pagination: Pagination, current
         query_summary.resultSummary = build_result_summary(rows, query_start)
         query_monitor.querySummaryList.append(query_summary)
         query_monitor.executionTime = time.time() - start
-        return __remove_index(rows), count_rows[0]
+        return rows, count_rows[0]
     except Exception as e:
         log.exception(e)
         query_monitor.error = traceback.format_exc()
@@ -103,11 +104,11 @@ def __remove_index(rows):
     return rows
 
 
-def build_pagination(query: PrestoQueryBuilder, pagination):
+def build_pagination(query: str, pagination):
     offset = pagination.pageSize * (pagination.pageNumber - 1)
     # todo, need higher presto or trino engine to support offset
-    # return query.limit(pagination.pageSize).offset(offset)
-    return query.limit(pagination.pageSize)
+    return query + f' OFFSET {offset} LIMIT {pagination.pageSize}'
+    # return query.limit(pagination.pageSize)
 
 
 async def save_query_monitor_data(query_monitor):

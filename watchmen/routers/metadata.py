@@ -1,19 +1,21 @@
 # IMPORT data
 from datetime import datetime
 from enum import Enum
-from typing import List
+from typing import List, Dict, Any
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from watchmen.auth.storage.user import import_user_to_db, get_user, update_user_storage
 from watchmen.auth.storage.user_group import import_user_group_to_db, get_user_group, update_user_group_storage
 from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
+from watchmen.common.model.user import User
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import add_tenant_id_to_model
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceSubject
-from watchmen.console_space.storage.console_space_storage import import_console_spaces, load_console_space_by_id, \
-    update_console_space
+from watchmen.console_space.storage.console_space_storage import load_console_space_by_id, \
+    update_console_space, import_console_space_to_db
 from watchmen.console_space.storage.console_subject_storage import import_console_subject_to_db, \
     load_console_subject_by_id, update_console_subject
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
@@ -27,38 +29,39 @@ from watchmen.space.service.admin import update_space_by_id
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import import_space_to_db, get_space_by_id
 from watchmen.topic.service.topic_service import update_topic_schema, create_topic_schema
-from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
+from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, import_topic_to_db
 from watchmen.topic.topic import Topic
 
 router = APIRouter()
-
-from watchmen.auth.storage.user import import_user_to_db, get_user, update_user_storage
-from watchmen.common.model.user import User
 
 
 class ImportCheckResult(BaseModel):
     topicId: str = None
     reason: str = None
     pipelineId: str = None
+    spaceId: str = None
+    connectionId: str = None
 
 
 class ImportDataResponse(BaseModel):
     passed: bool = None
     topics: List[ImportCheckResult] = []
     pipelines: List[ImportCheckResult] = []
+    spaces: List[ImportCheckResult] = []
+    connectedSpaces: List[ImportCheckResult] = []
 
 
 class ImportDataRequest(BaseModel):
     topics: List[Topic] = []
     pipelines: List[Pipeline] = []
-    spaces: List [Space] =[]
-    connectedSpaces: List [ConsoleSpace] = []
+    spaces: List[Space] = []
+    connectedSpaces: List[ConsoleSpace] = []
     importType: str = None
 
 
 class ImportTPSCSType(Enum):
-    NON_REDUNDANT = 'non-redundant',
-    REPLACE = 'replace',
+    NON_REDUNDANT = 'non-redundant'
+    REPLACE = 'replace'
     FORCE_NEW = 'force-new'
 
 
@@ -73,7 +76,7 @@ async def import_user(user: User):
         update_user_storage(user)
 
 
-### import user group
+# import user group
 
 
 @router.post("/import/admin/user/group", tags=["import"])
@@ -86,7 +89,7 @@ async def import_user_group(group: UserGroup, current_user: User = Depends(deps.
         update_user_group_storage(group)
 
 
-### import space
+# import space
 
 def __is_same_tenant(tenant_id, current_user):
     return tenant_id == current_user.tenantId
@@ -143,7 +146,7 @@ async def import_console_space(console_space: ConsoleSpace, current_user: User =
     result = load_console_space_by_id(console_space.connectId, current_user)
     console_space = add_tenant_id_to_model(console_space, current_user)
     if result is None:
-        import_console_spaces(console_space)
+        import_console_space_to_db(console_space)
     else:
         update_console_space(console_space)
 
@@ -182,22 +185,168 @@ async def import_dashboard(dashboard: ConsoleDashboard, current_user: User = Dep
         update_dashboard_to_storage(dashboard)
 
 
+def ___system_fields(model: Any):
+    model.createTime = datetime.now().replace(tzinfo=None).isoformat()
+    model.lastModified = datetime.now().replace(tzinfo=None)
+
+
+def update_create_time(model:Any):
+    model.createTime = datetime.now().replace(tzinfo=None).isoformat()
+
+
+def __update_last_modified(model:Any):
+    model.lastModified = datetime.now().replace(tzinfo=None)
+
+
+def __clear_datasource_id(topic: Topic):
+    topic.dataSourceId = None
+    return topic
+
+
+def __process_import_topic_list_by_force_new(topic_list: List[Topic], current_user) -> Dict[int, int]:
+    topic_id_mapping = {}
+    for topic in topic_list:
+        __clear_datasource_id(topic)
+        ___system_fields(topic, current_user)
+        topic_id = topic.topicId
+        topic.topicId = None
+        new_topic = import_topic(topic)
+        topic_id_mapping[topic_id] = new_topic.topicId
+    return topic_id_mapping
+
+
+def __process_non_redundant_import(import_request: ImportDataRequest, current_user) -> ImportDataResponse:
+    import_response = ImportDataResponse()
+    for topic in import_request.topics:
+        result_topic = get_topic_by_id(topic.topicId, current_user)
+        topic = add_tenant_id_to_model(topic, current_user)
+        ___system_fields(topic)
+        if result_topic:
+            import_response.topics.append(
+                ImportCheckResult(topicId=result_topic.topicId, reason="topic alredy existed"))
+        else:
+            import_topic_to_db(topic)
+
+    for pipeline in import_request.pipelines:
+        result_pipeline = load_pipeline_by_id(pipeline.pipelineId, current_user)
+        pipeline = add_tenant_id_to_model(pipeline, current_user)
+        ___system_fields(pipeline)
+        if result_pipeline:
+            import_response.pipelines.append(
+                ImportCheckResult(pipelineId=result_pipeline.pipelineId, reason="pipeline alredy existed"))
+        else:
+            return import_pipeline_to_db(pipeline)
+
+    for space in import_request.spaces:
+        result_space = get_space_by_id(space.spaceId, current_user)
+        space = add_tenant_id_to_model(space, current_user)
+        ___system_fields(space, current_user)
+        if result_space:
+            import_response.spaces.append(
+                ImportCheckResult(spaceId=result_space.spaceId, reason="space alredy existed"))
+        else:
+            import_space_to_db(space)
+
+    for console_space in import_request.connectedSpaces:
+        result_connect_space = load_console_space_by_id(console_space.connectId, current_user)
+        console_space = add_tenant_id_to_model(console_space, current_user)
+        ___system_fields(space, current_user)
+        if result_connect_space:
+            import_response.connectedSpaces.append(
+                ImportCheckResult(connectId=result_connect_space.connectId, reason="connect_space alredy existed"))
+
+        else:
+            __create_console_space_to_db(console_space)
+
+    return import_response
+
+
+def __update_console_space_to_db(console_space: ConsoleSpace, current_user):
+    for console_space_subject in console_space.subjects:
+        console_space_subject = add_tenant_id_to_model(console_space_subject, current_user)
+        console_space.subjectIds.append(console_space_subject.subjectId)
+        for report in console_space_subject.reports:
+            console_space_subject.reportIds.append(report.reportId)
+            save_subject_report(report)
+        update_console_subject(console_space_subject)
+    update_console_space(console_space)
+
+
+def __create_console_space_to_db(console_space: ConsoleSpace, current_user):
+    for console_space_subject in console_space.subjects:
+        console_space_subject = add_tenant_id_to_model(console_space_subject, current_user)
+        console_space.subjectIds.append(console_space_subject.subjectId)
+        for report in console_space_subject.reports:
+            console_space_subject.reportIds.append(report.reportId)
+            import_report_to_db(report)
+        import_console_subject_to_db(console_space_subject)
+    import_console_space_to_db(console_space)
+
+
+def __process_replace_import(import_request: ImportDataRequest, current_user):
+    import_response = ImportDataResponse()
+    for topic in import_request.topics:
+        result_topic = get_topic_by_id(topic.topicId, current_user)
+        topic = add_tenant_id_to_model(topic, current_user)
+        ___system_fields(topic)
+        if result_topic:
+            update_topic_schema(topic.topicId, topic)
+        else:
+            import_topic_to_db(topic)
+
+    for pipeline in import_request.pipelines:
+        result_pipeline = load_pipeline_by_id(pipeline.pipelineId, current_user)
+        pipeline = add_tenant_id_to_model(pipeline, current_user)
+        ___system_fields(pipeline)
+        if result_pipeline:
+            update_pipeline(pipeline)
+        else:
+            import_pipeline_to_db(pipeline)
+
+    for space in import_request.spaces:
+        result_space = get_space_by_id(space.spaceId, current_user)
+        space = add_tenant_id_to_model(space, current_user)
+        if result_space:
+            update_space_by_id(space.spaceId, space)
+        else:
+            import_space_to_db(space)
+
+    for console_space in import_request.connectedSpaces:
+        result_connect_space = load_console_space_by_id(console_space.connectId, current_user)
+        console_space = add_tenant_id_to_model(console_space, current_user)
+        if result_connect_space:
+            __update_console_space_to_db(console_space)
+        else:
+            __create_console_space_to_db(console_space)
+
+    return import_response
+
+
+def __process_forced_new_import(import_request: ImportDataRequest, current_user):
+    pass
+
+
 @router.post("/import", tags=["import"])
 async def import_assert(import_request: ImportDataRequest,
                         current_user: User = Depends(deps.get_current_user)) -> ImportDataResponse:
-    import_response = ImportDataResponse()
-    for topic in import_request.topics:
-        topic.lastModified = datetime.now().replace(tzinfo=None)
-        result_topic = await import_topic(topic, current_user)
-        if result_topic:
-            import_response.topics.append(ImportCheckResult(topicId=result_topic.topicId))
+    if import_request.importType == ImportTPSCSType.NON_REDUNDANT.value:
+        return __process_non_redundant_import(import_request, current_user)
+    elif import_request.importType == ImportTPSCSType.REPLACE.value:
+        print("replace")
+        return __process_replace_import(import_request, current_user)
+    elif import_request.importType == ImportTPSCSType.FORCE_NEW.value:
 
-    for pipeline in import_request.pipelines:
-        pipeline.lastModified = datetime.now().replace(tzinfo=None)
-        result_pipeline = await import_pipeline(pipeline, current_user)
-        if result_pipeline:
-            import_response.pipelines.append(ImportCheckResult(pipelineId=result_pipeline.pipelineId))
-    import_response.passed = True
-    return import_response
+        pass
+    else:
+        raise Exception("unknown import type {0}".format(import_request.importType))
 
-### TODO import markdown file
+    ## clear datasouce id
+    ## new lastModified and createtime
+    ## topic id list
+    ## generate new topic  id
+    ## generate new pipeline id
+    ## replace topic id
+    ## create space id
+    ## replace topic id
+    ## generate connect space id
+    ## replace space id
