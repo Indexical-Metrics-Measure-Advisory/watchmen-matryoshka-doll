@@ -19,6 +19,10 @@ log = logging.getLogger("app." + __name__)
 def build_query_for_chart(chart_id, current_user):
     console_subject = load_console_subject_by_report_id(chart_id, current_user)
     report = load_report_by_id(chart_id, current_user)
+    return __build_chart_query(report,console_subject,current_user)
+
+
+def __build_chart_query(report,console_subject,current_user):
     q = build_dataset_query_for_subject(console_subject, current_user)
     dataset_query_alias = "chart_dataset"
     chart_query = PrestoQuery.with_(q, dataset_query_alias).from_(AliasedQuery(dataset_query_alias))
@@ -51,7 +55,6 @@ def build_query_for_chart(chart_id, current_user):
         chart_query = chart_query.where(build_report_funnels(report.funnels,
                                                              console_subject.dataset.columns,
                                                              dataset_query_alias))
-
     return chart_query
 
 
@@ -88,5 +91,6 @@ def __load_chart_dataset(query, query_monitor=None):
 
 
 def load_chart_dataset_temp(report, current_user):
-    query = build_query_for_chart(report.reportId, current_user)
+    console_subject = load_console_subject_by_report_id(report.reportId, current_user)
+    query = __build_chart_query(report,console_subject,current_user)
     return __load_chart_dataset(query)
