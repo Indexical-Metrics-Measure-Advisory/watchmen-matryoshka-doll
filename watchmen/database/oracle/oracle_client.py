@@ -28,8 +28,7 @@ class OracleEngine(object):
         try:
             cx_Oracle.init_oracle_client(lib_dir=settings.ORACLE_LIB_DIR)
         except Exception as err:
-
-           log.warning("init_oracle_client error")
+            log.warning("init_oracle_client error")
 
         sid = self.find_sid(database.params)
         if sid:
