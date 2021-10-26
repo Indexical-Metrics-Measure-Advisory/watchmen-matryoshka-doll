@@ -1,7 +1,8 @@
 # IMPORT data
+import logging
 from datetime import datetime
 from enum import Enum
-from typing import List, Dict, Any
+from typing import List, Any
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -33,6 +34,8 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, import_
 from watchmen.topic.topic import Topic
 
 router = APIRouter()
+
+log = logging.getLogger("app." + __name__)
 
 
 class ImportCheckResult(BaseModel):
@@ -185,17 +188,14 @@ async def import_dashboard(dashboard: ConsoleDashboard, current_user: User = Dep
         update_dashboard_to_storage(dashboard)
 
 
-def ___system_fields(model: Any):
+def __update_create_time(model: Any):
     model.createTime = datetime.now().replace(tzinfo=None).isoformat()
+    return model
+
+
+def __update_last_modified(model: Any):
     model.lastModified = datetime.now().replace(tzinfo=None)
-
-
-def update_create_time(model:Any):
-    model.createTime = datetime.now().replace(tzinfo=None).isoformat()
-
-
-def __update_last_modified(model:Any):
-    model.lastModified = datetime.now().replace(tzinfo=None)
+    return model
 
 
 def __clear_datasource_id(topic: Topic):
@@ -203,60 +203,47 @@ def __clear_datasource_id(topic: Topic):
     return topic
 
 
-def __process_import_topic_list_by_force_new(topic_list: List[Topic], current_user) -> Dict[int, int]:
-    topic_id_mapping = {}
-    for topic in topic_list:
-        __clear_datasource_id(topic)
-        ___system_fields(topic, current_user)
-        topic_id = topic.topicId
-        topic.topicId = None
-        new_topic = import_topic(topic)
-        topic_id_mapping[topic_id] = new_topic.topicId
-    return topic_id_mapping
-
-
 def __process_non_redundant_import(import_request: ImportDataRequest, current_user) -> ImportDataResponse:
     import_response = ImportDataResponse()
     for topic in import_request.topics:
         result_topic = get_topic_by_id(topic.topicId, current_user)
         topic = add_tenant_id_to_model(topic, current_user)
-        ___system_fields(topic)
+
         if result_topic:
             import_response.topics.append(
                 ImportCheckResult(topicId=result_topic.topicId, reason="topic alredy existed"))
         else:
-            import_topic_to_db(topic)
+            __clear_datasource_id(topic)
+            import_topic_to_db(__update_create_time(__update_last_modified(topic)))
 
     for pipeline in import_request.pipelines:
         result_pipeline = load_pipeline_by_id(pipeline.pipelineId, current_user)
         pipeline = add_tenant_id_to_model(pipeline, current_user)
-        ___system_fields(pipeline)
+
         if result_pipeline:
             import_response.pipelines.append(
                 ImportCheckResult(pipelineId=result_pipeline.pipelineId, reason="pipeline alredy existed"))
         else:
-            return import_pipeline_to_db(pipeline)
+            return import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
 
     for space in import_request.spaces:
         result_space = get_space_by_id(space.spaceId, current_user)
         space = add_tenant_id_to_model(space, current_user)
-        ___system_fields(space, current_user)
         if result_space:
             import_response.spaces.append(
                 ImportCheckResult(spaceId=result_space.spaceId, reason="space alredy existed"))
         else:
-            import_space_to_db(space)
+            import_space_to_db(__update_create_time(__update_last_modified(space)))
 
     for console_space in import_request.connectedSpaces:
         result_connect_space = load_console_space_by_id(console_space.connectId, current_user)
         console_space = add_tenant_id_to_model(console_space, current_user)
-        ___system_fields(space, current_user)
         if result_connect_space:
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=result_connect_space.connectId, reason="connect_space alredy existed"))
 
         else:
-            __create_console_space_to_db(console_space)
+            __create_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
 
     return import_response
 
@@ -267,8 +254,8 @@ def __update_console_space_to_db(console_space: ConsoleSpace, current_user):
         console_space.subjectIds.append(console_space_subject.subjectId)
         for report in console_space_subject.reports:
             console_space_subject.reportIds.append(report.reportId)
-            save_subject_report(report)
-        update_console_subject(console_space_subject)
+            save_subject_report(__update_last_modified(report))
+        update_console_subject(__update_last_modified(console_space_subject))
     update_console_space(console_space)
 
 
@@ -278,8 +265,8 @@ def __create_console_space_to_db(console_space: ConsoleSpace, current_user):
         console_space.subjectIds.append(console_space_subject.subjectId)
         for report in console_space_subject.reports:
             console_space_subject.reportIds.append(report.reportId)
-            import_report_to_db(report)
-        import_console_subject_to_db(console_space_subject)
+            import_report_to_db(__update_create_time(__update_last_modified(report)))
+        import_console_subject_to_db(__update_create_time(__update_last_modified(console_space_subject)))
     import_console_space_to_db(console_space)
 
 
@@ -288,41 +275,41 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
     for topic in import_request.topics:
         result_topic = get_topic_by_id(topic.topicId, current_user)
         topic = add_tenant_id_to_model(topic, current_user)
-        ___system_fields(topic)
         if result_topic:
-            update_topic_schema(topic.topicId, topic)
+            topic.dataSourceId = result_topic.dataSourceId
+            update_topic_schema(topic.topicId, __update_last_modified(topic))
         else:
-            import_topic_to_db(topic)
+            __clear_datasource_id(topic)
+            import_topic_to_db(__update_create_time(__update_last_modified(topic)))
 
     for pipeline in import_request.pipelines:
         result_pipeline = load_pipeline_by_id(pipeline.pipelineId, current_user)
         pipeline = add_tenant_id_to_model(pipeline, current_user)
-        ___system_fields(pipeline)
         if result_pipeline:
-            update_pipeline(pipeline)
+            update_pipeline(__update_last_modified(pipeline))
         else:
-            import_pipeline_to_db(pipeline)
+            import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
 
     for space in import_request.spaces:
         result_space = get_space_by_id(space.spaceId, current_user)
         space = add_tenant_id_to_model(space, current_user)
         if result_space:
-            update_space_by_id(space.spaceId, space)
+            update_space_by_id(space.spaceId, __update_last_modified(space))
         else:
-            import_space_to_db(space)
+            import_space_to_db(__update_create_time(__update_last_modified(space)))
 
     for console_space in import_request.connectedSpaces:
         result_connect_space = load_console_space_by_id(console_space.connectId, current_user)
         console_space = add_tenant_id_to_model(console_space, current_user)
         if result_connect_space:
-            __update_console_space_to_db(console_space)
+            __update_console_space_to_db(__update_last_modified(console_space))
         else:
-            __create_console_space_to_db(console_space)
-
+            __create_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
     return import_response
 
 
 def __process_forced_new_import(import_request: ImportDataRequest, current_user):
+    ## TODO __process_forced_new_import
     pass
 
 
@@ -330,23 +317,12 @@ def __process_forced_new_import(import_request: ImportDataRequest, current_user)
 async def import_assert(import_request: ImportDataRequest,
                         current_user: User = Depends(deps.get_current_user)) -> ImportDataResponse:
     if import_request.importType == ImportTPSCSType.NON_REDUNDANT.value:
+        log.info("import asset with NON_REDUNDANT type")
         return __process_non_redundant_import(import_request, current_user)
     elif import_request.importType == ImportTPSCSType.REPLACE.value:
-        print("replace")
+        log.info("import asset with replace type")
         return __process_replace_import(import_request, current_user)
     elif import_request.importType == ImportTPSCSType.FORCE_NEW.value:
-
         pass
     else:
         raise Exception("unknown import type {0}".format(import_request.importType))
-
-    ## clear datasouce id
-    ## new lastModified and createtime
-    ## topic id list
-    ## generate new topic  id
-    ## generate new pipeline id
-    ## replace topic id
-    ## create space id
-    ## replace topic id
-    ## generate connect space id
-    ## replace space id
