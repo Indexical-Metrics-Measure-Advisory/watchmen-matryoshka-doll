@@ -41,7 +41,6 @@ def build_report_funnels(funnels: List[ReportFunnel], dataset_columns: List[Colu
                 else:
                     value = LiteralValue(funnel.values[0])
                     if value:
-                        print(value)
                         criterions.append(field.eq(value))
         return Criterion.all(criterions)
 
