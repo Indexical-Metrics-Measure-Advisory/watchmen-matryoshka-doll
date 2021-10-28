@@ -33,7 +33,7 @@ def delete_report_by_id(report_id):
 
 
 def import_report_to_db(report):
-    insert_one(report, Report, CONSOLE_REPORTS)
+    return insert_one(report, Report, CONSOLE_REPORTS)
 
 
 def query_report_list_with_pagination(query_name: str, pagination: Pagination, current_user: User):

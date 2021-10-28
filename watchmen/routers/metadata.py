@@ -244,7 +244,7 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
                 ImportCheckResult(connectId=result_connect_space.connectId, reason="connect_space alredy existed"))
 
         else:
-            __create_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
+            __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
 
     return import_response
 
@@ -260,7 +260,7 @@ def __update_console_space_to_db(console_space: ConsoleSpace, current_user):
     update_console_space(console_space)
 
 
-def __create_console_space_to_db(console_space: ConsoleSpace, current_user):
+def __import_console_space_to_db(console_space: ConsoleSpace, current_user):
     for console_space_subject in console_space.subjects:
         console_space_subject = add_tenant_id_to_model(console_space_subject, current_user)
         console_space.subjectIds.append(console_space_subject.subjectId)
@@ -268,6 +268,22 @@ def __create_console_space_to_db(console_space: ConsoleSpace, current_user):
             console_space_subject.reportIds.append(report.reportId)
             import_report_to_db(__update_create_time(__update_last_modified(report)))
         import_console_subject_to_db(__update_create_time(__update_last_modified(console_space_subject)))
+    import_console_space_to_db(console_space)
+
+
+def __create_console_space_with_new_id(console_space: ConsoleSpace, current_user):
+    for console_space_subject in console_space.subjects:
+        console_space_subject: ConsoleSpaceSubject = add_tenant_id_to_model(console_space_subject, current_user)
+        for report in console_space_subject.reports:
+            report.reportId = get_surrogate_key()
+            report = add_tenant_id_to_model(report, current_user)
+            new_report: Report = import_report_to_db(__update_create_time(__update_last_modified(report)))
+            console_space_subject.reportIds = []
+            console_space_subject.reportIds.append(new_report.reportId)
+        console_space_subject.subjectId = get_surrogate_key()
+        new_subject = import_console_subject_to_db(__update_create_time(__update_last_modified(console_space_subject)))
+        console_space.subjectIds = []
+        console_space.subjectIds.append(new_subject.subjectId)
     import_console_space_to_db(console_space)
 
 
@@ -305,53 +321,74 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
         if result_connect_space:
             __update_console_space_to_db(__update_last_modified(console_space))
         else:
-            __create_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
+            __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
     return import_response
 
 
-def __process_model_dict():
-    pass
+def __process_model_dict(model_dict: Dict, replace_key, ids_map: Dict):
+    for key, value in model_dict.items():
+        if key == replace_key and value:
+            # print("replace_key {} id {}".format(replace_key,ids_map[value]))
+            model_dict[key] = ids_map[value]
+        elif type(value) == dict:
+            __process_model_dict(value, replace_key, ids_map)
+        elif type(value) == list:
+            for v in value:
+                if type(v) == dict:
+                    __process_model_dict(v, replace_key, ids_map)
 
-def __replace_topic_id(model:WatchmenModel,topic_ids_map:Dict[int,int]):
-    model_dict =  model.dict()
 
-
-
-    pass
-
-
-
+def __replace_id(model: WatchmenModel, replace_key: str, topic_ids_map: Dict):
+    model_dict = model.dict()
+    __process_model_dict(model_dict, replace_key, topic_ids_map)
+    return model.parse_obj(model_dict)
 
 
 def __process_forced_new_import(import_request: ImportDataRequest, current_user):
     ## TODO __process_forced_new_import
     import_response = ImportDataResponse()
-    topic_ids_map ={}
+    topic_ids_map = {}
+    space_ids_map = {}
     for topic in import_request.topics:
-        result_topic = get_topic_by_id(topic.topicId, current_user)
         topic = add_tenant_id_to_model(topic, current_user)
-        if result_topic:
-            old_topic_id = result_topic.topicId
-            topic.topicId = get_surrogate_key()
-            topic.dataSourceId = result_topic.dataSourceId
-            new_topic = import_topic_to_db(__update_create_time(__update_last_modified(topic)))
-            topic_ids_map[old_topic_id]=new_topic.topicId
-        else:
-            __clear_datasource_id(topic)
-            import_topic_to_db(__update_create_time(__update_last_modified(topic)))
+        old_topic_id = topic.topicId
+        topic.topicId = get_surrogate_key()
+        topic.dataSourceId = None
+        new_topic = import_topic_to_db(__update_create_time(__update_last_modified(topic)))
+        topic_ids_map[old_topic_id] = new_topic.topicId
+        import_response.topics.append({"topicId": new_topic.topicId, "reason": "create a new topic"})
+
     for pipeline in import_request.pipelines:
-        result_pipeline = load_pipeline_by_id(pipeline.pipelineId, current_user)
+        old_topic_id = pipeline.topicId
         pipeline = add_tenant_id_to_model(pipeline, current_user)
-        if result_pipeline:
+        pipeline = __replace_id(pipeline, "topicId", topic_ids_map)
+        pipeline.pipelineId = get_surrogate_key()
+        pipeline.topicId = topic_ids_map[old_topic_id]
+        import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
+        import_response.pipelines.append({"pipelineId": pipeline.pipelineId, "reason": "create a new pipeline"})
 
-            old_pipeline_id = result_pipeline.pipelineId
+    for space in import_request.spaces:
+        old_space_id = space.spaceId
+        space = add_tenant_id_to_model(space, current_user)
+        space.spaceId = get_surrogate_key()
+        topic_ids = []
+        for topic_id in space.topicIds:
+            topic_ids.append(topic_ids_map[topic_id])
+        space.topicIds = topic_ids
+        new_space = import_space_to_db(__update_create_time(__update_last_modified(space)))
+        space_ids_map[old_space_id] = new_space.spaceId
+        import_response.spaces.append({"spaceId": new_space.spaceId, "reason": "create a new space"})
 
+    for console_space in import_request.connectedSpaces:
+        console_space = add_tenant_id_to_model(console_space, current_user)
+        console_space.connectId = get_surrogate_key()
+        console_space = __replace_id(console_space, "topicId", topic_ids_map)
+        console_space = __replace_id(console_space, "spaceId", space_ids_map)
+        __create_console_space_with_new_id(__update_create_time(__update_last_modified(console_space)), current_user)
+        import_response.connectedSpaces.append(
+            {"connectId": console_space.connectId, "reason": "create a new connectedSpace"})
 
-            # update_pipeline(__update_last_modified(pipeline))
-        else:
-            import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
-
-    pass
+    return import_response
 
 
 @router.post("/import", tags=["import"])
@@ -364,6 +401,6 @@ async def import_assert(import_request: ImportDataRequest,
         log.info("import asset with replace type")
         return __process_replace_import(import_request, current_user)
     elif import_request.importType == ImportTPSCSType.FORCE_NEW.value:
-        pass
+        return __process_forced_new_import(import_request, current_user)
     else:
         raise Exception("unknown import type {0}".format(import_request.importType))

@@ -33,19 +33,19 @@ def __build_chart_query(report,console_subject,current_user):
                                                       console_subject.dataset.columns,
                                                       dataset_query_alias)
     chart_query = chart_query.select(*_selects).groupby(*_groupbys)
-
-    truncation = report.chart.settings.get('truncation', None)
-    if truncation:
-        truncation_type = truncation.get('type')
-        count = truncation['count']
-        if truncation_type == "top":
-            chart_query = chart_query.orderby(*_orderbys, order=Order.asc)
-        elif truncation_type == "bottom":
-            chart_query = chart_query.orderby(*_orderbys, order=Order.desc)
-        else:
-            chart_query = chart_query.orderby(*_orderbys)
-        if count:
-            chart_query = chart_query.limit(count)
+    if report.chart.settings:
+        truncation = report.chart.settings.get('truncation', None)
+        if truncation:
+            truncation_type = truncation.get('type')
+            count = truncation['count']
+            if truncation_type == "top":
+                chart_query = chart_query.orderby(*_orderbys, order=Order.asc)
+            elif truncation_type == "bottom":
+                chart_query = chart_query.orderby(*_orderbys, order=Order.desc)
+            else:
+                chart_query = chart_query.orderby(*_orderbys)
+            if count:
+                chart_query = chart_query.limit(count)
 
     if report.filters:
         chart_query = chart_query.where(build_report_where(report.filters,

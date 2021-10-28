@@ -141,6 +141,7 @@ def build_dataset_query_for_subject(console_subject, current_user, for_count=Fal
             table = build_table_by_topic_id(topic_id)
             q = PrestoQuery.from_(table)
     else:
+
         topic_id = dataset.columns[0].parameter.topicId
         topic_table = topic_space_filter(topic_id)
         if topic_table:

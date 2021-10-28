@@ -103,8 +103,9 @@ def update_topic(topic_id: str, topic: Topic) -> Topic:
 
 
 def import_topic_to_db(topic: Topic) -> Topic:
-    insert_one(topic, Topic, TOPICS)
+    result =  insert_one(topic, Topic, TOPICS)
     cacheman[TOPIC_BY_NAME].delete(topic.name)
     cacheman[TOPIC_DICT_BY_NAME].delete(topic.name)
     cacheman[TOPIC_BY_ID].delete(topic.topicId)
     cacheman[COLUMNS_BY_TABLE_NAME].delete(build_collection_name(topic.name))
+    return result
