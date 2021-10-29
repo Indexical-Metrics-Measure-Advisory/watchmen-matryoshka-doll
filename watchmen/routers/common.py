@@ -9,6 +9,7 @@ from watchmen.auth.tenant import Tenant
 from watchmen.auth.user import User
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
+from watchmen.common.constants import pipeline_constants
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
 from watchmen.common.pagination import Pagination
 from watchmen.common.parameter import Parameter
@@ -64,7 +65,8 @@ async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_
 
 @router.post("/topic/data/rerun", tags=["common"])  ## TODO  move to pipeline worker
 async def rerun_pipeline(topic_name, instance_id, pipeline_id):
-    instance = find_topic_data_by_id_and_topic_name(topic_name, instance_id)
+    instance = {pipeline_constants.NEW: find_topic_data_by_id_and_topic_name(topic_name, instance_id),
+                pipeline_constants.OLD: None}
     topic = get_topic(topic_name)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
     for pipeline in pipeline_list:
