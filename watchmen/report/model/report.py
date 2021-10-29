@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import List, Any
 
 from pydantic import BaseModel
 
@@ -96,3 +96,6 @@ class Report(WatchmenModel):
     lastVisitTime: str = None
     tenantId: str = None
     # subjectId: str = None
+    # simulating: bool = False
+    # simulateData: List[Any] = None
+    # simulateThumbnail: str = None

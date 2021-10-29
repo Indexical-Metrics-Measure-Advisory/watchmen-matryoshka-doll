@@ -13,7 +13,7 @@ from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
 from watchmen.common.model.user import User
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import add_tenant_id_to_model
+from watchmen.common.utils.data_utils import add_tenant_id_to_model, add_user_id_to_model
 from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.console_space.model.console_space import ConsoleSpace, ConsoleSpaceSubject
 from watchmen.console_space.storage.console_space_storage import load_console_space_by_id, \
@@ -238,7 +238,7 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
 
     for console_space in import_request.connectedSpaces:
         result_connect_space = load_console_space_by_id(console_space.connectId, current_user)
-        console_space = add_tenant_id_to_model(console_space, current_user)
+        console_space = add_user_id_to_model(add_tenant_id_to_model(console_space, current_user), current_user)
         if result_connect_space:
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=result_connect_space.connectId, reason="connect_space alredy existed"))
@@ -265,6 +265,7 @@ def __import_console_space_to_db(console_space: ConsoleSpace, current_user):
         console_space_subject = add_tenant_id_to_model(console_space_subject, current_user)
         console_space.subjectIds.append(console_space_subject.subjectId)
         for report in console_space_subject.reports:
+            report = add_tenant_id_to_model(report, current_user)
             console_space_subject.reportIds.append(report.reportId)
             import_report_to_db(__update_create_time(__update_last_modified(report)))
         import_console_subject_to_db(__update_create_time(__update_last_modified(console_space_subject)))
@@ -384,6 +385,7 @@ def __process_forced_new_import(import_request: ImportDataRequest, current_user)
         console_space.connectId = get_surrogate_key()
         console_space = __replace_id(console_space, "topicId", topic_ids_map)
         console_space = __replace_id(console_space, "spaceId", space_ids_map)
+        console_space.userId = current_user.userId
         __create_console_space_with_new_id(__update_create_time(__update_last_modified(console_space)), current_user)
         import_response.connectedSpaces.append(
             {"connectId": console_space.connectId, "reason": "create a new connectedSpace"})

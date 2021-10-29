@@ -82,7 +82,6 @@ async def load_template_space_list(space_id: str, current_user: User = Depends(d
     results: List[ConsoleSpace] = load_template_space_list_by_space_id(space_id)
     template_list = []
     for console_space in results:
-        print("user", console_space.userId)
         user = get_user(console_space.userId)
         template_list.append(
             ConnectedSpaceTemplate(connectId=console_space.connectId, name=console_space.name, createBy=user.name))

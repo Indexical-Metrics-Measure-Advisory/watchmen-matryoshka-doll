@@ -146,6 +146,12 @@ def add_tenant_id_to_model(instance, user):
     return instance
 
 
+def add_user_id_to_model(instance, user):
+    if user:
+        instance.userId = user.userId
+    return instance
+
+
 def compare_tenant(instance, user):
     if instance.tenantId == user.tenantId:
         return True
