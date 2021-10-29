@@ -26,7 +26,7 @@ user_groups_table = Table("user_groups", metadata,
                           Column('lastmodified', Date, nullable=True)
                           )
 
-external_writer = Table("external_writer", metadata,
+external_writer_table = Table("external_writer", metadata,
                         Column('writerid', String(50), primary_key=True),
                         Column('writercode', String(50), nullable=False),
                         Column('type', String(50), nullable=False),
@@ -234,17 +234,6 @@ data_sources_table = Table("data_sources", metadata,
                            Column('lastmodified', DateTime, nullable=True),
                            Column('createtime', String(50), nullable=True)
                            )
-
-external_writer_table = Table("external_writer", metadata,
-                              Column('writerid', String(50), primary_key=True),
-                              Column('writercode', String(50), nullable=False),
-                              Column('type', String(50), nullable=False),
-                              Column('pat', String(50), nullable=False),
-                              Column('url', String(50), nullable=False),
-                              Column('tenantid', String(60), nullable=True),
-                              Column('createtime', String(50), nullable=True),
-                              Column('lastmodified', Date, nullable=True)
-                              )
 
 
 def get_table_by_name(table_name):
