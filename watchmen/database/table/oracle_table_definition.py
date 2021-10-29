@@ -65,8 +65,9 @@ topics_table = Table("topics", metadata,
                      Column("name", String(25), nullable=False),
                      Column("kind", String(10), nullable=True),
                      Column("type", String(10), nullable=True),
-                     Column("description", String(50), nullable=True),
+                     Column("description", String(250), nullable=True),
                      Column("factors", CLOB, nullable=True),
+                     Column("datasourceid", String(60), nullable=True),
                      Column('tenantid', String(60), nullable=False),
                      Column('createtime', String(50), nullable=True),
                      # Column('last_modified', DateTime, nullable=True),
@@ -210,30 +211,40 @@ tenants_table = Table("tenants", metadata,
                       Column('createtime', String(50), nullable=True)
                       )
 
-
 key_store_table = Table("key_stores", metadata,
-                      Column("tenantid", String(50), primary_key=True),
-                      Column("keyType", String(50), nullable=True),
-                      Column("params", CLOB, nullable=True),
-                      Column('lastmodified', DateTime, nullable=True),
-                      Column('createtime', String(50), nullable=True)
-                      )
+                        Column("tenantid", String(50), primary_key=True),
+                        Column("keyType", String(50), nullable=True),
+                        Column("params", CLOB, nullable=True),
+                        Column('lastmodified', DateTime, nullable=True),
+                        Column('createtime', String(50), nullable=True)
+                        )
 
 data_sources_table = Table("data_sources", metadata,
-                                        Column("datasourceid", String(60), primary_key=True),
-                                        Column("datasourcecode", String(50), nullable=False),
-                                        Column("datasourcetype", String(50), nullable=False),
-                                        Column("host", String(50), nullable=True),
-                                        Column("port", String(50), nullable=True),
-                                        Column("username", String(60), nullable=True),
-                                        Column("password", String(50), nullable=True),
-                                        Column("name", String(50), nullable=True),
-                                        Column("url", String(60), nullable=True),
-                                        Column("tenantid", String(50), nullable=False),
-                                        Column("params", CLOB, nullable=True),
-                                        Column('lastmodified', DateTime, nullable=True),
-                                        Column('createtime', String(50), nullable=True)
-                                        )
+                           Column("datasourceid", String(60), primary_key=True),
+                           Column("datasourcecode", String(50), nullable=False),
+                           Column("datasourcetype", String(50), nullable=False),
+                           Column("host", String(50), nullable=True),
+                           Column("port", String(50), nullable=True),
+                           Column("username", String(60), nullable=True),
+                           Column("password", String(50), nullable=True),
+                           Column("name", String(50), nullable=True),
+                           Column("url", String(60), nullable=True),
+                           Column("tenantid", String(50), nullable=False),
+                           Column("params", CLOB, nullable=True),
+                           Column('lastmodified', DateTime, nullable=True),
+                           Column('createtime', String(50), nullable=True)
+                           )
+
+external_writer_table = Table("external_writer", metadata,
+                              Column('writerid', String(50), primary_key=True),
+                              Column('writercode', String(50), nullable=False),
+                              Column('type', String(50), nullable=False),
+                              Column('pat', String(50), nullable=False),
+                              Column('url', String(50), nullable=False),
+                              Column('tenantid', String(60), nullable=True),
+                              Column('createtime', String(50), nullable=True),
+                              Column('lastmodified', Date, nullable=True)
+                              )
 
 
 def get_table_by_name(table_name):
@@ -272,7 +283,7 @@ def get_table_by_name(table_name):
     elif table_name == "data_sources":
         table = data_sources_table
     elif table_name == "external_writer":
-        table = external_writer
+        table = external_writer_table
     elif table_name == "key_stores":
         table = key_store_table
     return table
