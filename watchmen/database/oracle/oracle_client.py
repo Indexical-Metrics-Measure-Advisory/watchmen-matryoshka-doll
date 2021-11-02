@@ -11,42 +11,43 @@ from watchmen.config.config import settings
 from watchmen.database.datasource.data_source import DataSource, DataSourceParam
 
 SID = "SID"
+SERVICE_NAME = "SERVICE_NAME"
 log = logging.getLogger("app." + __name__)
 
-class OracleEngine(object):
-    engine = None
 
-    def dumps(self, o):
-        return json.dumps(o, cls=DateTimeEncoder)
+class OracleEngine(object):
+
+    cx_Oracle.init_oracle_client(lib_dir=settings.ORACLE_LIB_DIR)
 
     def find_sid(self, params: List[DataSourceParam]):
         for param in params:
             if param.name == SID:
                 return param.value
 
-    def __init__(self, database: DataSource):
-        try:
-            cx_Oracle.init_oracle_client(lib_dir=settings.ORACLE_LIB_DIR)
-        except Exception as err:
-            log.warning("init_oracle_client error")
+    def find_service_name(self, params: List[DataSourceParam]):
+        for param in params:
+            if param.name == SERVICE_NAME.lower():
+                return param.value
 
+    def __init__(self, database: DataSource):
         sid = self.find_sid(database.params)
         if sid:
             dsn = cx_Oracle.makedsn(database.host,
                                     database.port, sid=sid)
 
-        if sid is None and database.name is not None:
+        service_name = self.find_service_name(database.params)
+        if sid is None and service_name is not None:
             dsn = cx_Oracle.makedsn(database.host,
-                                    database.port, service_name=database.name)
+                                    database.port, service_name=service_name)
 
         pool = cx_Oracle.SessionPool(
             database.username, database.password, dsn=dsn,
-            min=10, max=10, increment=0, threaded=True, getmode=cx_Oracle.SPOOL_ATTRVAL_WAIT
+            min=3, max=3, increment=0, getmode=cx_Oracle.SPOOL_ATTRVAL_WAIT
         )
 
-        # engine = create_engine(connection_url, future=True)
         self.engine = create_engine("oracle+cx_oracle://", creator=pool.acquire,
-                                    poolclass=NullPool, coerce_to_decimal=False, echo=False, optimize_limits=True)
+                                    poolclass=NullPool, coerce_to_decimal=False, echo=False, optimize_limits=True,
+                                    future=True)
 
     def get_engine(self):
         return self.engine

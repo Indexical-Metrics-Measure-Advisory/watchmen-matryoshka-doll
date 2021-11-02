@@ -12,7 +12,7 @@ from watchmen.database.storage.storage_template import find_template
 
 USERS = "users"
 
-template = find_template()
+# template = find_template()
 
 
 def __clean_password(user):

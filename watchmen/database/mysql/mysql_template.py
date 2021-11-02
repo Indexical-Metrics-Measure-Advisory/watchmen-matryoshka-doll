@@ -25,9 +25,6 @@ log.info("mysql template initialized")
 
 # @singleton
 class MysqlStorage(StorageInterface):
-    engine = None
-    insp = None
-    table = None
 
     def __init__(self, client, table_provider):
         self.engine = client

@@ -26,9 +26,6 @@ log.info("oracle template initialized")
 
 # @singleton
 class OracleStorage(StorageInterface):
-    engine = None
-    insp = None
-    table = None
 
     def __init__(self, client, table_provider):
         self.engine = client
