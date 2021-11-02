@@ -16,7 +16,6 @@ log.info("mongo template initialized")
 
 # @singleton
 class MongoStorage(StorageInterface):
-    client = None
 
     def __init__(self, client, table_provider):
         self.client = client
