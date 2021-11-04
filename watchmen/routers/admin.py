@@ -226,12 +226,12 @@ async def save_user(user: User, current_user: User = Depends(deps.get_current_us
         sync_user_to_user_groups(result)
         return result
     else:
-        if user.userId is not None:
-            _user = get_user(user.userId)
-            if _user.tenantId != current_user.tenantId and not is_super_admin(current_user):
-                raise Exception(
-                    "forbidden 403. the modify user's tenant {0} is not match the current operator user {1}".format(
-                        _user.tenantId, current_user.tenantId))
+        _user = get_user(user.userId)
+        if _user.tenantId != current_user.tenantId and not is_super_admin(current_user):
+            raise Exception(
+                "forbidden 403. the modify user's tenant {0} is not match the current operator user {1}".format(
+                    _user.tenantId, current_user.tenantId))
+        user.tenantId = _user.tenantId
         sync_user_to_user_groups(user)
         user_dict = user.dict(by_alias=True)
         del user_dict["password"]

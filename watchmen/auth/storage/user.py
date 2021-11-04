@@ -12,6 +12,7 @@ from watchmen.database.storage.storage_template import find_template
 
 USERS = "users"
 
+
 # template = find_template()
 
 
@@ -28,8 +29,17 @@ def get_user(user_id) -> User:
     return __clean_password(user)
 
 
+"""
 def get_user_list_by_ids(user_ids: list, current_user):
     return find_({"and": [{"userId": {"in": user_ids}}, {"tenantId": current_user.tenantId}]}, User, USERS)
+"""
+
+
+def get_user_list_by_ids(user_ids: list, current_user):
+    if user_ids:
+        return find_({"and": [{"userId": {"in": user_ids}}, {"tenantId": current_user.tenantId}]}, User, USERS)
+    else:
+        return []
 
 
 def load_user_list_by_name(query_name, current_user):
