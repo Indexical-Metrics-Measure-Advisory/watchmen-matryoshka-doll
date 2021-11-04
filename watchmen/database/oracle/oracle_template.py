@@ -197,7 +197,7 @@ class OracleStorage(StorageInterface):
             else:
                 values[key.lower()] = value
         stmt = insert(table).values(values)
-        with self.engine.connect() as conn:
+        with self.engine.begin() as conn:
             conn.execute(stmt)
         return model.parse_obj(one)
 
@@ -211,7 +211,7 @@ class OracleStorage(StorageInterface):
             for key in table.c.keys():
                 values[key] = instance_dict.get(key)
             value_list.append(values)
-        with self.engine.connect() as conn:
+        with self.engine.begin() as conn:
             conn.execute(stmt, value_list)
 
     def update_one(self, one, model, name) -> any:
@@ -292,14 +292,14 @@ class OracleStorage(StorageInterface):
         table = self.table.get_table_by_name(name)
         key = get_primary_key(name)
         stmt = delete(table).where(eq(table.c[key.lower()], id_))
-        with self.engine.connect() as conn:
+        with self.engine.begin() as conn:
             conn.execute(stmt)
             # conn.commit()
 
     def delete_one(self, where: dict, name: str):
         table = self.table.get_table_by_name(name)
         stmt = delete(table).where(self.build_oracle_where_expression(table, where))
-        with self.engine.connect() as conn:
+        with self.engine.begin() as conn:
             conn.execute(stmt)
 
     def delete_(self, where, model, name):
@@ -308,7 +308,7 @@ class OracleStorage(StorageInterface):
             stmt = delete(table)
         else:
             stmt = delete(table).where(self.build_oracle_where_expression(table, where))
-        with self.engine.connect() as conn:
+        with self.engine.begin() as conn:
             conn.execute(stmt)
 
     def find_by_id(self, id_, model, name):
