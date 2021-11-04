@@ -140,10 +140,11 @@ async def load_complete_console_space(console_space_list, current_user):
     for console_space in console_space_list:
         topic_list = load_topic_list_by_space_id(console_space.spaceId, current_user)
         console_space.topics = topic_list
-        if console_space.subjectIds is not None:
+        if console_space.subjectIds:
             subjects = load_console_subject_list_by_ids(console_space.subjectIds, current_user)
             for subject in subjects:
-                subject.reports = load_reports_by_ids(subject.reportIds, current_user)
+                if subject.reportIds:
+                    subject.reports = load_reports_by_ids(subject.reportIds, current_user)
             console_space.subjects = subjects
         result.append(console_space)
     return result

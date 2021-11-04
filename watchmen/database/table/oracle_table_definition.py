@@ -172,7 +172,7 @@ console_space_subjects_table = Table("console_space_subjects", metadata,
                                      Column('tenantid', String(60), nullable=False),
                                      Column("lastvisittime", DateTime, nullable=True),
                                      Column("createdat", String(50), nullable=True),
-                                     Column('lastmodifytime', DateTime, nullable=True),
+                                     # Column('lastmodifytime', DateTime, nullable=True),
                                      Column('lastmodified', DateTime, nullable=True),
                                      Column('createtime', String(50), nullable=True)
                                      )
