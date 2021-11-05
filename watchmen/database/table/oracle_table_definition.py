@@ -189,7 +189,7 @@ console_reports_table = Table("reports", metadata,
                               Column("chart", CLOB, nullable=True),
                               Column('tenantid', String(60), nullable=False),
                               Column("createdat", String(50), nullable=True),
-                              Column("lastVisitTime", String(50), nullable=True),
+                              Column("lastvisittime", String(50), nullable=True),
                               Column('lastmodified', DateTime, nullable=True),
                               Column('createtime', String(50), nullable=True)
                               )
