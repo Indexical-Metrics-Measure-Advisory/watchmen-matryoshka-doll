@@ -154,31 +154,53 @@ def build_criterion(filter: SubjectDataSetFilter, topic_space_filter) -> Criteri
     if operator_ == "empty" or operator_ == "not-empty":
         return _build_criterion_expression(operator_, lvalue, rvalue)
     if ltype == rtype:
-        return _build_criterion_expression(operator_, lvalue, rvalue)
-    else:
-        if ltype == "number" and rtype == "text":
-            if operator_ == "in" or operator_ == "not-in":
-                if isinstance(rvalue, str):
-                    right_value_list = rvalue.split(",")
+        if operator_ == "in" or operator_ == "not-in":
+            if ltype == "number":
+                if isinstance(rvalue, ValueWrapper):
+                    value = rvalue.value
+                    right_value_list = value.split(",")
                     right_value_trans_list = []
                     for value_ in right_value_list:
                         if value_.isdigit():
                             right_value_trans_list.append(Decimal(value_))
                     return _build_criterion_expression(operator_, lvalue, right_value_trans_list)
             else:
-                if isinstance(rvalue, str):
-                    right_trans_value = Decimal(rvalue)
+                if isinstance(rvalue, ValueWrapper):
+                    value = rvalue.value
+                    right_value_list = value.split(",")
+                    right_value_trans_list = []
+                    for value_ in right_value_list:
+                        right_value_trans_list.append(value_)
+                    return _build_criterion_expression(operator_, lvalue, right_value_trans_list)
+        else:
+            return _build_criterion_expression(operator_, lvalue, rvalue)
+    else:
+        if ltype == "number" and rtype == "text":
+            if operator_ == "in" or operator_ == "not-in":
+                if isinstance(rvalue, ValueWrapper):
+                    value = rvalue.value
+                    right_value_list = value.split(",")
+                    right_value_trans_list = []
+                    for value_ in right_value_list:
+                        if value_.isdigit():
+                            right_value_trans_list.append(Decimal(value_))
+                    return _build_criterion_expression(operator_, lvalue, right_value_trans_list)
+            else:
+                if isinstance(rvalue, ValueWrapper):
+                    value = rvalue.value
+                    right_trans_value = Decimal(value)
                     return _build_criterion_expression(operator_, lvalue, right_trans_value)
                 else:
                     return _build_criterion_expression(operator_, lvalue, rvalue)
         if ltype == "date" and rtype == "text":
-            if isinstance(rvalue, str):
+            if isinstance(rvalue, ValueWrapper):
+                value = rvalue.value
                 return _build_criterion_expression(operator_, lvalue, LiteralValue(
-                    "DATE \'{0}\'".format(arrow.get(rvalue).format('YYYY-MM-DD'))))
+                    "DATE \'{0}\'".format(arrow.get(value).format('YYYY-MM-DD'))))
         elif ltype == "datetime" and rtype == "text":
             return _build_criterion_expression(operator_, lvalue,
                                                LiteralValue("timestamp \'{0}\'".format(
-                                                   arrow.get(rvalue).format('YYYY-MM-DD HH:mm:ss'))))
+                                                   arrow.get(rvalue.value).format('YYYY-MM-DD HH:mm:ss'))))
         else:
             return _build_criterion_expression(operator_, lvalue, rvalue)
 
