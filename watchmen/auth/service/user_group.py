@@ -13,9 +13,25 @@ def sync_user_group_to_space(user_group: UserGroup, current_user):
     for space in space_list:
         if space.groupIds is None:
             space.groupIds = []
-        if user_group.userGroupId not in space.groupIds:
             space.groupIds.append(user_group.userGroupId)
-            update_space_to_storage(space.spaceId, space)
+        elif user_group.userGroupId not in space.groupIds:
+            space.groupIds.append(user_group.userGroupId)
+        update_space_to_storage(space.spaceId, space)
+
+
+"""
+def sync_user_group_to_user(user_group: UserGroup, current_user):
+    pull_update({"groupIds": {"in": [user_group.userGroupId]}}, {"groupIds": {"in": [user_group.userGroupId]}}, User,
+                USERS)
+    if len(user_group.userIds) > 0:
+        user_list = get_user_list_by_ids(user_group.userIds, current_user)
+        for user in user_list:
+            if user.groupIds is None:
+                user.groupIds = []
+            if user_group.userGroupId not in user.groupIds:
+                user.groupIds.append(user_group.userGroupId)
+                update_user_storage(user)
+"""
 
 
 def sync_user_group_to_user(user_group: UserGroup, current_user):
@@ -25,6 +41,7 @@ def sync_user_group_to_user(user_group: UserGroup, current_user):
     for user in user_list:
         if user.groupIds is None:
             user.groupIds = []
-        if user_group.userGroupId not in user.groupIds:
             user.groupIds.append(user_group.userGroupId)
-            update_user_storage(user)
+        elif user_group.userGroupId not in user.groupIds:
+            user.groupIds.append(user_group.userGroupId)
+        update_user_storage(user)

@@ -167,7 +167,7 @@ def build_dataset_query_for_subject(console_subject, current_user, for_count=Fal
         if left_topic_table:
             left_table = AliasedQuery(left_topic_table["alias"])
         else:
-            left_table = build_table_by_topic_id(right_topic_id)
+            left_table = build_table_by_topic_id(left_topic_id)
 
         left_factor = get_factor(join.factorId, left_topic)
         left_field = Field(left_factor.name, None, left_table)

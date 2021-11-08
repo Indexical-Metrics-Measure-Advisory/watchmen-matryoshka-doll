@@ -1,5 +1,5 @@
 from watchmen.config.config import settings
-from watchmen.database.datasource.data_source import DataSource
+from watchmen.database.datasource.data_source import DataSource, DataSourceParam
 from watchmen.database.mongo.mongo_client import MongoEngine
 
 from watchmen.database.mysql.mysql_client import MysqlEngine
@@ -37,10 +37,23 @@ def get_default_datasource():
     elif settings.STORAGE_ENGINE == ORACLE:
         datasource.username = settings.ORACLE_USER
         datasource.password = settings.ORACLE_PASSWORD
-        datasource.name = settings.ORACLE_SERVICE
+        datasource.name = settings.ORACLE_NAME
         datasource.host = settings.ORACLE_HOST
         datasource.port = settings.ORACLE_PORT
         datasource.dataSourceType = "oracle"
+        datasource.params = []
+        if settings.ORACLE_SERVICE and settings.ORACLE_SERVICE != "":
+            ds_param_service = DataSourceParam(**{
+                'name': 'service_name',
+                'value': settings.ORACLE_SERVICE
+            })
+            datasource.params.append(ds_param_service)
+        if settings.ORACLE_SID and settings.ORACLE_SID != "":
+            ds_param_sid = DataSourceParam(**{
+                'name': 'SID',
+                'value': settings.ORACLE_SID
+            })
+            datasource.params.append(ds_param_sid)
         return datasource
 
 

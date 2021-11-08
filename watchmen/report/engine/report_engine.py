@@ -37,7 +37,7 @@ def __build_chart_query(report,console_subject,current_user):
         truncation = report.chart.settings.get('truncation', None)
         if truncation:
             truncation_type = truncation.get('type')
-            count = truncation['count']
+            count = truncation.get('count', None)
             if truncation_type == "top":
                 chart_query = chart_query.orderby(*_orderbys, order=Order.asc)
             elif truncation_type == "bottom":

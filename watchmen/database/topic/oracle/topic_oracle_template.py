@@ -15,6 +15,7 @@ from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
+from watchmen.database.oracle.oracle_engine import dumps
 from watchmen.database.oracle.oracle_utils import parse_obj
 from watchmen.database.storage import storage_template
 from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
@@ -28,10 +29,10 @@ class OracleTopicStorage(TopicStorageInterface):
     insp = None
     metadata = MetaData()
 
-    def __init__(self, client, ):
+    def __init__(self, client):
         self.engine = client
         self.insp = inspect(client)
-        log.info("oracle template initialized")
+        log.info("topic oracle template initialized")
 
     def get_topic_table_by_name(self, table_name):
         table = Table(table_name, self.metadata, extend_existing=False, autoload=True, autoload_with=self.engine)
@@ -119,7 +120,7 @@ class OracleTopicStorage(TopicStorageInterface):
                 else:
                     if isinstance(table.c[key].type, CLOB):
                         if updates.get(key) is not None:
-                            new_updates[key] = self.engine.dumps(updates.get(key))
+                            new_updates[key] = dumps(updates.get(key))
                         else:
                             new_updates[key] = None
                     else:
@@ -154,7 +155,7 @@ class OracleTopicStorage(TopicStorageInterface):
                 else:
                     if isinstance(table.c[key].type, CLOB):
                         if updates.get(key) is not None:
-                            new_updates[key] = self.engine.dumps(updates.get(key))
+                            new_updates[key] = dumps(updates.get(key))
                     else:
                         if updates.get(key) is not None:
                             value_ = updates.get(key)
@@ -330,7 +331,7 @@ class OracleTopicStorage(TopicStorageInterface):
                 result = {}
                 for index, name in enumerate(columns):
                     if isinstance(table.c[name.lower()].type, CLOB):
-                        result[name] = self.engine.dumps(rows[index])
+                        result[name] = dumps(rows[index])
                     else:
                         result[name] = rows[index]
                 return result

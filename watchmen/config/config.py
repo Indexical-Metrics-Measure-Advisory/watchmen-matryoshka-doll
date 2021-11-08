@@ -53,6 +53,7 @@ class Settings(BaseSettings):
     ORACLE_PASSWORD: str = ""
     ORACLE_SERVICE: str = ""
     ORACLE_SID: str = ""
+    ORACLE_NAME: str = ""
 
     CONNECTOR_KAFKA = False
     CONNECTOR_RABBITMQ = False

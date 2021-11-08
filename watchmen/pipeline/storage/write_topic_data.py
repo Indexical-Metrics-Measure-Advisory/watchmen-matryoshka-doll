@@ -15,6 +15,7 @@ from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 
+
 def __build_trigger_pipeline_data(topic_name: str, data, trigger_type):
     return TriggerData(topicName=topic_name, triggerType=trigger_type, data=data)
 
@@ -63,7 +64,7 @@ def update_topic_data(mapping_result, target_data, pipeline_uid, query_, topic: 
     add_audit_columns(mapping_result, UPDATE)
     add_tenant_id_to_instance(mapping_result, current_user)
     if __need_encrypt():
-        __encrypt_value(__find_encrypt_factor_in_mapping_result(mapping_result,topic),mapping_result,current_user)
+        __encrypt_value(__find_encrypt_factor_in_mapping_result(mapping_result, topic), mapping_result, current_user)
     add_trace_columns(mapping_result, "update_row", pipeline_uid)
     template.topic_data_update_(query_, mapping_result, topic.name)
     data = {**target_data, **mapping_result}
