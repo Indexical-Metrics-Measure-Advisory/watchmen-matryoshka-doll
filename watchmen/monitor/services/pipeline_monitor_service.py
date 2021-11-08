@@ -16,7 +16,7 @@ from watchmen.topic.topic import Topic
 def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):
     code = "raw_pipeline_monitor"
     data = pipeline_monitor.dict()
-    raw_data = {"data_": data, "tenant_id_": pipeline_monitor.tenantId}
+    raw_data = {"data_": data, "tenant_id_": pipeline_monitor.tenantId,"traceid":pipeline_monitor.traceId}
     topic = get_topic(code)
     if topic is None:
         raise Exception(code + " topic name does not exist")

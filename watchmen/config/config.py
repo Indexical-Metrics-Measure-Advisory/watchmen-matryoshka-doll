@@ -91,6 +91,10 @@ class Settings(BaseSettings):
 
     PROMETHEUS_ON = False
 
+    PIPELINE_MONITOR_ON = False
+
+    QUERY_MONITOR_ON = False
+
     KEY_MANAGEMENT_TYPE: str = "db"  ## 'aws-kms' 'azure-kms' , 'aliyun-kms'
 
     DATA_SECURITY_ON = False

@@ -7,6 +7,7 @@ from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.model.topic import Topic
 from watchmen.common.model.user import User
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.pipeline.service.pipeline_service import save_topic_data, get_input_data, run_pipeline
 from watchmen.topic.storage.topic_schema_storage import get_topic
 
@@ -30,17 +31,19 @@ async def __load_topic_definition(topic_name: str, current_user: User) -> Topic:
 
 @router.post("/pipeline/data/async", tags=["pipeline"])
 async def push_pipeline_data_async(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
+    trace_id = get_surrogate_key()
     topic = await __load_topic_definition(topic_event.code, current_user)
     data = get_input_data(topic, topic_event)
     await save_topic_data(topic, data, current_user)
-    asyncio.ensure_future(run_pipeline(topic_event, current_user))
-    return {"received": True}
+    asyncio.ensure_future(run_pipeline(topic_event, current_user,trace_id))
+    return {"received": True,"trace_id":trace_id}
 
 
 @router.post("/pipeline/data", tags=["pipeline"])
 async def push_pipeline_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
+    trace_id = get_surrogate_key()
     topic = await __load_topic_definition(topic_event.code, current_user)
     data = get_input_data(topic, topic_event)
     await save_topic_data(topic, data, current_user)
-    await run_pipeline(topic_event, current_user)
-    return {"received": True}
+    await run_pipeline(topic_event, current_user,trace_id)
+    return {"received": True,"trace_id":trace_id}

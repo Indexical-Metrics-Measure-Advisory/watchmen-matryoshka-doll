@@ -16,8 +16,10 @@ class PipelineContext:
     pipelineStatus: PipelineRunStatus
     pipeline_trigger_merge_list = []
     currentUser: User = None
+    traceId:int = None
 
-    def __init__(self, pipeline, data, current_user):
+    def __init__(self, pipeline, data, current_user,trace_id):
+        self.traceId = trace_id
         self.pipeline = pipeline
         self.data = data
         self.currentUser = current_user

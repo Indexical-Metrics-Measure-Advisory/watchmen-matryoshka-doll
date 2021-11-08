@@ -70,11 +70,13 @@ class MonitorLogCriteria(BaseModel):
     startDate: str = None
     endDate: str = None
     status: str = None
+    traceId: int = None
 
 
 class MonitorLogQuery(BaseModel):
     criteria: MonitorLogCriteria = None
     pagination: Pagination = None
+
 
 
 # ADMIN
@@ -500,6 +502,8 @@ async def query_log_by_critical(query: MonitorLogQuery, current_user: User = Dep
                 arrow.get(query.criteria.endDate).datetime.replace(tzinfo=None)
             )
         }})
+    if query.criteria.traceId is not None:
+        query_list.append({"traceid": query.criteria.traceId})
     if query.criteria.status is not None:
         query_list.append({"status": query.criteria.status.upper()})
     if len(query_list) > 1:

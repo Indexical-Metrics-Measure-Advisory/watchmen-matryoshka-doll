@@ -83,3 +83,4 @@ class PipelineRunStatus(ConditionHolder):
     newValue: Any = None
     tenantId: str = None
     currentUser: User = None
+    traceId:int = None

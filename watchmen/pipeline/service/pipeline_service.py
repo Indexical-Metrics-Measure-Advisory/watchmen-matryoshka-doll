@@ -24,7 +24,7 @@ def get_input_data(topic, topic_event):
     return raw_data
 
 
-async def run_pipeline(topic_event,current_user):
+async def run_pipeline(topic_event,current_user,trace_id=None):
     trigger_pipeline(topic_event.code, {pipeline_constants.NEW: topic_event.data, pipeline_constants.OLD: None},
-                     TriggerType.insert, current_user)
+                     TriggerType.insert, current_user,trace_id)
 

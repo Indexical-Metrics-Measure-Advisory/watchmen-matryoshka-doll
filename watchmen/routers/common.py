@@ -25,7 +25,6 @@ from watchmen.database.storage.storage_template import clear_metadata, DataPage
 from watchmen.external.model.external_writer import ExternalWriter
 from watchmen.external.storage import external_storage
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
-from watchmen.pipeline.core.dependency.caculate_dependency_new import pipelineExecutionPath
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.pipeline.utils.units_func import get_factor
@@ -51,7 +50,7 @@ async def health():
     return {"health": True}
 
 
-@router.post("/topic/data", tags=["common"],deprecated=True)
+@router.post("/topic/data", tags=["common"], deprecated=True)
 async def save_topic_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
     # TODO user check URP
     await import_raw_topic_data(topic_event, current_user)
@@ -69,7 +68,7 @@ async def load_topic_instance(topic_name, current_user: User = Depends(deps.get_
     return instances
 
 
-@router.post("/topic/data/rerun", tags=["common"],deprecated=True)
+@router.post("/topic/data/rerun", tags=["common"], deprecated=True)
 async def rerun_pipeline(topic_name, instance_id, pipeline_id, current_user: User = Depends(deps.get_current_user)):
     topic = get_topic(topic_name)
     instance = find_topic_data_by_id_and_topic_name(topic, instance_id)
@@ -82,8 +81,9 @@ async def rerun_pipeline(topic_name, instance_id, pipeline_id, current_user: Use
     return {"received": True}
 
 
-@router.post("/topic/data/patch", tags=["common"],deprecated=True)
-async def patch_topic_instance(topic_name, instance_id,instance= Body(...),current_user: User = Depends(deps.get_current_user)):
+@router.post("/topic/data/patch", tags=["common"], deprecated=True)
+async def patch_topic_instance(topic_name, instance_id, instance=Body(...),
+                               current_user: User = Depends(deps.get_current_user)):
     topic = get_topic_by_name(topic_name)
     result = find_topic_data_by_id_and_topic_name(topic, instance_id)
     if result is None:
@@ -153,8 +153,6 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
                                                      subject_filter)
 
 
-
-
 @router.get("/table/metadata/clear", tags=["common"])
 async def clear_table_metadata():
     clear_metadata()
@@ -162,7 +160,7 @@ async def clear_table_metadata():
 
 # TODO current_user
 @router.post("/tenant", tags=["common"], response_model=Tenant)
-async def save_tenant(tenant: Tenant,current_user: User = Depends(deps.get_current_user)) -> Tenant:
+async def save_tenant(tenant: Tenant, current_user: User = Depends(deps.get_current_user)) -> Tenant:
     if check_fake_id(tenant.tenantId):
         tenant.tenantId = get_surrogate_key()
         return tenant_service.create(tenant)
@@ -171,7 +169,7 @@ async def save_tenant(tenant: Tenant,current_user: User = Depends(deps.get_curre
 
 
 @router.post("/tenant/id", tags=["common"], response_model=Tenant)
-async def load_tenant_by_id(tenant_id: str,current_user: User = Depends(deps.get_current_user)) -> Tenant:
+async def load_tenant_by_id(tenant_id: str, current_user: User = Depends(deps.get_current_user)) -> Tenant:
     return tenant_service.load(tenant_id)
 
 
