@@ -3,9 +3,9 @@ from typing import List, Dict
 from watchmen.common.cache.cache_manage import DATA_SOURCE_LIST, cacheman
 from watchmen.database.datasource.data_source import DataSource
 from watchmen.database.datasource.storage.data_source_storage import list_all_data_source_list
-from watchmen.database.mongo.mongo_client import MongoEngine
-from watchmen.database.mysql.mysql_client import MysqlEngine
-from watchmen.database.oracle.oracle_client import OracleEngine
+
+
+
 from watchmen.database.singleton import singleton
 from watchmen.database.storage.engine_adaptor import get_default_datasource
 from watchmen.database.topic.mongo.topic_mongo_template import MongoTopicStorage
@@ -44,12 +44,15 @@ class DataSourceContainer(object):
     @staticmethod
     def build_storage(datasource: DataSource):
         if datasource.dataSourceType == "mongodb":
+            from watchmen.database.mongo.mongo_client import MongoEngine
             engine = MongoEngine(datasource)
             return MongoTopicStorage(client=engine.get_engine())
         elif datasource.dataSourceType == "mysql":
+            from watchmen.database.mysql.mysql_client import MysqlEngine
             engine = MysqlEngine(datasource)
             return MysqlTopicStorage(client=engine.get_engine())
         elif datasource.dataSourceType == "oracle":
+            from watchmen.database.oracle.oracle_client import OracleEngine
             engine = OracleEngine(datasource)
             return OracleTopicStorage(client=engine.get_engine())
 

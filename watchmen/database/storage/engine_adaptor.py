@@ -1,13 +1,8 @@
 from watchmen.config.config import settings
 from watchmen.database.datasource.data_source import DataSource, DataSourceParam
-from watchmen.database.mongo.mongo_client import MongoEngine
 
-from watchmen.database.mysql.mysql_client import MysqlEngine
-
-from watchmen.database.oracle.oracle_client import OracleEngine
-from watchmen.database.table import oracle_table_definition
 from watchmen.database.table.base_table_definition import TableDefinition
-from watchmen.database.table.mysql_table_definition import MysqlTableDefinition
+
 
 MYSQL = "mysql"
 MONGO = "mongo"
@@ -60,14 +55,19 @@ def get_default_datasource():
 def find_template():
     default_datasource = get_default_datasource()
     if settings.STORAGE_ENGINE == MONGO:
+        from watchmen.database.mongo.mongo_client import MongoEngine
         from watchmen.database.mongo.mongo_template import MongoStorage
         engine = MongoEngine(default_datasource)
         return MongoStorage(engine.get_engine(), TableDefinition())
     elif settings.STORAGE_ENGINE == MYSQL:
+        from watchmen.database.table.mysql_table_definition import MysqlTableDefinition
+        from watchmen.database.mysql.mysql_client import MysqlEngine
         from watchmen.database.mysql.mysql_template import MysqlStorage
         engine = MysqlEngine(default_datasource)
         return MysqlStorage(engine.get_engine(), MysqlTableDefinition())
     elif settings.STORAGE_ENGINE == ORACLE:
+        from watchmen.database.table import oracle_table_definition
+        from watchmen.database.oracle.oracle_client import OracleEngine
         from watchmen.database.oracle.oracle_template import OracleStorage
         engine = OracleEngine(default_datasource)
         return OracleStorage(engine.get_engine(), oracle_table_definition)
