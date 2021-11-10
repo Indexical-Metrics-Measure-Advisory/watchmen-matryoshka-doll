@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, get_variable_with_func_pattern, \
     get_variable_with_dot_pattern, convert_datetime, check_and_convert_value_by_factor
@@ -124,7 +125,7 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
             return {"value": convert_datetime(value_).weekday(), "position": "right"}
-        elif parameter_.type == "day-of-month":
+        elif parameter_.type == "week-of-month":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
             return {"value": __week_number_of_month(convert_datetime(value_).date()), "position": "right"}

@@ -180,7 +180,7 @@ def parse_parameter(parameter_: Parameter, instance, variables):
         elif parameter_.type == "day-of-week":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
             return convert_datetime(result).weekday()
-        elif parameter_.type == "day-of-month":
+        elif parameter_.type == "week-of-month":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
             return __week_number_of_month(convert_datetime(result).date())
         elif parameter_.type == "quarter-of":
