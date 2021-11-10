@@ -27,13 +27,11 @@ log = logging.getLogger("app." + __name__)
 
 # @singleton
 class MysqlTopicStorage(TopicStorageInterface):
-    metadata = MetaData()
-    engine = None
-    insp = None
 
     def __init__(self, client):
         self.engine = client
         self.insp = inspect(client)
+        self.metadata = MetaData()
         log.info("mysql template initialized")
 
     def get_topic_table_by_name(self, table_name):
