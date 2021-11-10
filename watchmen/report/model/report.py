@@ -96,6 +96,6 @@ class Report(WatchmenModel):
     lastVisitTime: str = None
     tenantId: str = None
     # subjectId: str = None
-    # simulating: bool = False
-    # simulateData: List[Any] = None
-    # simulateThumbnail: str = None
+    simulating: bool = False
+    simulateData: List[Any] = None
+    simulateThumbnail: str = None

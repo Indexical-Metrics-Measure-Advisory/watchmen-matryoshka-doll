@@ -206,7 +206,10 @@ class MysqlTableDefinition(TableDefinition):
                                            Column("lastvisittime", String(50), nullable=True),
                                            Column('tenantid', String(60), nullable=False),
                                            Column('lastmodified', DateTime, nullable=True),
-                                           Column('createtime', String(50), nullable=True)
+                                           Column('createtime', String(50), nullable=True),
+                                           Column('simulating', Boolean, default=False),
+                                           Column('simulatedata', JSON, nullable=True),
+                                           Column('simulatethumbnail', String, nullable=True)
                                            )
 
         self.pats_table = Table("pats", self.metadata,
@@ -223,12 +226,12 @@ class MysqlTableDefinition(TableDefinition):
                                 )
 
         self.key_store_table = Table("key_stores", self.metadata,
-                                Column("tenantid", String(50), primary_key=True),
-                                Column("keyType", String(50), nullable=True),
-                                Column("params", JSON, nullable=True),
-                                Column('lastmodified', DateTime, nullable=True),
-                                Column('createtime', String(50), nullable=True)
-                                )
+                                     Column("tenantid", String(50), primary_key=True),
+                                     Column("keyType", String(50), nullable=True),
+                                     Column("params", JSON, nullable=True),
+                                     Column('lastmodified', DateTime, nullable=True),
+                                     Column('createtime', String(50), nullable=True)
+                                     )
 
         self.data_sources_table = Table("data_sources", self.metadata,
                                         Column("datasourceid", String(60), primary_key=True),

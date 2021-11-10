@@ -217,8 +217,6 @@ async def query_topic_list_by_ids(topic_ids: List[str], current_user: User = Dep
     return get_topic_list_by_ids(topic_ids, current_user)
 
 
-# User
-
 @router.post("/user", tags=["admin"], response_model=User)
 async def save_user(user: User, current_user: User = Depends(deps.get_current_user)) -> User:
     if user.userId is None or check_fake_id(user.userId):
