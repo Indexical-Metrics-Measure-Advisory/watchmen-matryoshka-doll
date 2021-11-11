@@ -488,7 +488,6 @@ async def create_raw_topic_schema_v2(event: RawTopicGenerateEvent, current_user:
 @router.post("/pipeline/log/query", tags=["admin"])
 async def query_log_by_critical(query: MonitorLogQuery, current_user: User = Depends(deps.get_current_user)):
 
-    print(query.criteria)
     query_dict = {}
     query_list = [{"tenant_id_": current_user.tenantId}]
     if query.criteria.topicId is not None:

@@ -16,21 +16,20 @@ from watchmen.topic.topic import Topic
 def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):
     code = "raw_pipeline_monitor"
     data = pipeline_monitor.dict()
-    raw_data = {"data_": data, "tenant_id_": pipeline_monitor.tenantId,"traceid":pipeline_monitor.traceId}
-    topic = get_topic(code)
+    raw_data = {"data_": data, "tenant_id_": pipeline_monitor.tenantId, "traceid": pipeline_monitor.traceId}
+    topic = find_monitor_topic(code, pipeline_monitor.currentUser)
+    trace_id = get_surrogate_key()
     if topic is None:
         raise Exception(code + " topic name does not exist")
     add_audit_columns(raw_data, INSERT)
     flatten_fields = get_flatten_field(data, topic.factors)
     raw_data.update(flatten_fields)
-    # print(topic.dataSourceId is None)
     storage_template = get_template_by_datasource_id(topic.dataSourceId)
-    # print("storage_template ",storage_template)
     storage_template.topic_data_insert_one(raw_data, code)
     watchmen.pipeline.index.trigger_pipeline(code,
                                              {pipeline_constants.NEW: data, pipeline_constants.OLD: None},
                                              TriggerType.insert,
-                                             pipeline_monitor.currentUser)
+                                             pipeline_monitor.currentUser, trace_id)
 
 
 def insert_monitor_topic():
@@ -52,3 +51,11 @@ def get_flatten_field(data: dict, factors: List[Factor]):
             value = check_and_convert_value_by_factor(factor, data.get(key, None))
             flatten_fields[key.lower()] = value
     return flatten_fields
+
+
+def find_monitor_topic(topic_name, current_user):
+    topic = get_topic_by_name(topic_name, current_user)
+    if topic is None:
+        return get_topic_by_name(topic_name)
+    else:
+        return topic

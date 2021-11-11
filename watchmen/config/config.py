@@ -92,7 +92,7 @@ class Settings(BaseSettings):
 
     PROMETHEUS_ON = False
 
-    PIPELINE_MONITOR_ON = False
+    PIPELINE_MONITOR_ON = True
 
     QUERY_MONITOR_ON = False
 
