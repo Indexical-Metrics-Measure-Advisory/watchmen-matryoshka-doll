@@ -14,6 +14,7 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 def build_indicators(indicators: List[ReportIndicator], dataset_columns: List[Column], dataset_query_alias):
     _selects = []
+    _appear_in_group_by = []
     columns = convent_column_list_to_dict(dataset_columns)
     for indicator in indicators:
         column: Column = columns.get(indicator.columnId, None)
@@ -35,7 +36,8 @@ def build_indicators(indicators: List[ReportIndicator], dataset_columns: List[Co
                 _selects.append(fn.Count(field))
             else:
                 _selects.append(field)
-    return _selects
+                _appear_in_group_by.append(field)
+    return _selects, _appear_in_group_by
 
 
 def build_dimensions(dimensions: List[ReportDimension], dataset_columns: List[Column], dataset_query_alias):

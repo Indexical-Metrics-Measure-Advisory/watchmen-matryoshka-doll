@@ -22,7 +22,6 @@ def load_report_by_id(report_id, current_user):
 
 
 def load_reports_by_ids(report_ids, current_user):
-    # return template.find(CONSOLE_REPORTS, {"reportId": {"$in": report_ids}}, Report)
     return find_({"and": [{"reportId": {"in": report_ids}}, {"tenantId": current_user.tenantId}]}, Report,
                  CONSOLE_REPORTS)
 
