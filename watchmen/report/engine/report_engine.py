@@ -94,4 +94,7 @@ def __load_chart_dataset(query, query_monitor=None):
 def load_chart_dataset_temp(report, current_user):
     console_subject = load_console_subject_by_report_id(report.reportId, current_user)
     query = __build_chart_query(report, console_subject, current_user)
-    return __load_chart_dataset(query)
+    if query is None or query.get_sql() == "":
+        return []
+    else:
+        return __load_chart_dataset(query)
