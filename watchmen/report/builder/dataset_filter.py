@@ -20,10 +20,20 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, load_to
 def build_dataset_select_fields(columns: List[Column], topic_space_filter) -> List[Field]:
     fields = []
     for column in columns:
-        filed: Field = dataset_parse_parameter(column.parameter, topic_space_filter)["value"]
-        filed.as_(column.alias)
-        fields.append(filed)
+        field: Field = dataset_parse_parameter(column.parameter, topic_space_filter)["value"]
+        if check_column_type_is_date(column.parameter):
+            date_fnc = CustomFunction("date", ["col1"])
+            fields.append(date_fnc(field).as_(column.alias))
+        else:
+            fields.append(field.as_(column.alias))
     return fields
+
+
+def check_column_type_is_date(parameter: Parameter):
+    topic = get_topic_by_id(parameter.topicId)
+    factor = get_factor(parameter.factorId, topic)
+    if factor.type == "date":
+        return True
 
 
 def dataset_parse_parameter(parameter: Parameter, topic_space_filter):

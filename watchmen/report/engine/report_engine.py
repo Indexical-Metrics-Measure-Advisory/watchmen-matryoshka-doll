@@ -19,16 +19,17 @@ log = logging.getLogger("app." + __name__)
 def build_query_for_chart(chart_id, current_user):
     console_subject = load_console_subject_by_report_id(chart_id, current_user)
     report = load_report_by_id(chart_id, current_user)
-    return __build_chart_query(report,console_subject,current_user)
+    return __build_chart_query(report, console_subject, current_user)
 
 
-def __build_chart_query(report,console_subject,current_user):
+def __build_chart_query(report, console_subject, current_user):
     q = build_dataset_query_for_subject(console_subject, current_user)
     dataset_query_alias = "chart_dataset"
     chart_query = PrestoQuery.with_(q, dataset_query_alias).from_(AliasedQuery(dataset_query_alias))
-    chart_query = chart_query.select(*build_indicators(report.indicators,
-                                                       console_subject.dataset.columns,
-                                                       dataset_query_alias))
+    _indicator_selects, _indicator_in_group_by = build_indicators(report.indicators,
+                                                                  console_subject.dataset.columns,
+                                                                  dataset_query_alias)
+    chart_query = chart_query.select(*_indicator_selects).groupby(*_indicator_in_group_by)
     _selects, _groupbys, _orderbys = build_dimensions(report.dimensions,
                                                       console_subject.dataset.columns,
                                                       dataset_query_alias)
@@ -92,5 +93,8 @@ def __load_chart_dataset(query, query_monitor=None):
 
 def load_chart_dataset_temp(report, current_user):
     console_subject = load_console_subject_by_report_id(report.reportId, current_user)
-    query = __build_chart_query(report,console_subject,current_user)
-    return __load_chart_dataset(query)
+    query = __build_chart_query(report, console_subject, current_user)
+    if query is None or query.get_sql() == "":
+        return []
+    else:
+        return __load_chart_dataset(query)

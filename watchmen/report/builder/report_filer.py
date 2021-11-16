@@ -14,6 +14,7 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 def build_indicators(indicators: List[ReportIndicator], dataset_columns: List[Column], dataset_query_alias):
     _selects = []
+    _appear_in_group_by = []
     columns = convent_column_list_to_dict(dataset_columns)
     for indicator in indicators:
         column: Column = columns.get(indicator.columnId, None)
@@ -22,7 +23,7 @@ def build_indicators(indicators: List[ReportIndicator], dataset_columns: List[Co
         else:
             # should use alias?
             # field = Field(column.alias, None, AliasedQuery(dataset_query_alias))
-            field = parse_column_parameter(column.parameter, dataset_query_alias)["value"]
+            field = parse_column_parameter(column, dataset_query_alias)["value"]
             if indicator.arithmetic == "sum":
                 _selects.append(fn.Sum(field))
             elif indicator.arithmetic == "avg":
@@ -35,7 +36,8 @@ def build_indicators(indicators: List[ReportIndicator], dataset_columns: List[Co
                 _selects.append(fn.Count(field))
             else:
                 _selects.append(field)
-    return _selects
+                _appear_in_group_by.append(field)
+    return _selects, _appear_in_group_by
 
 
 def build_dimensions(dimensions: List[ReportDimension], dataset_columns: List[Column], dataset_query_alias):
@@ -49,7 +51,7 @@ def build_dimensions(dimensions: List[ReportDimension], dataset_columns: List[Co
             continue
         else:
             # field = Field(column.alias, None, AliasedQuery(dataset_query_alias))
-            field = parse_column_parameter(column.parameter, dataset_query_alias)["value"]
+            field = parse_column_parameter(column, dataset_query_alias)["value"]
             _selects.append(fn.Max(field))  # need put dimension field in select expr, and max mean first in group by
             _groupbys.append(field)
             _orderbys.append(field)
@@ -148,15 +150,16 @@ def parse_report_filter_parameter(parameter: Parameter, dataset_columns, dataset
     if parameter.kind == "topic":
         for column in dataset_columns:
             if column.columnId == parameter.factorId:
-                return parse_column_parameter(column.parameter, dataset_query_alias)
+                return parse_column_parameter(column, dataset_query_alias)
     elif parameter.kind == 'constant':
         return {"value": Term.wrap_constant(parameter.value), "type": "text"}
 
 
-def parse_column_parameter(parameter, dataset_query_alias):
+def parse_column_parameter(column, dataset_query_alias):
+    parameter = column.parameter
     if parameter.kind == "topic":
         topic = get_topic_by_id(parameter.topicId)
         table = AliasedQuery(dataset_query_alias)
         factor = get_factor(parameter.factorId, topic)
-        field = Field(factor.name, None, table)
+        field = Field(column.alias, None, table)
         return {"value": field, "type": factor.type}

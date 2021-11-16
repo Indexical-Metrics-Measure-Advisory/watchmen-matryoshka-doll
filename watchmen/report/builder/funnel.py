@@ -24,7 +24,8 @@ def build_report_funnels(funnels: List[ReportFunnel], dataset_columns: List[Colu
                     upper = Decimal(funnel.values[1])
                     criterions.append(field.between(lower, upper))
                 else:
-                    criterions.append(field.eq(Decimal(funnel.values[0])))
+                    if funnel.values:
+                        criterions.append(field.eq(Decimal(funnel.values[0])))
             elif funnel.type == "date":
                 if funnel.range:
                     lower = LiteralValue("DATE \'{0}\'".format(arrow.get(funnel.values[0]).format('YYYY-MM-DD')))

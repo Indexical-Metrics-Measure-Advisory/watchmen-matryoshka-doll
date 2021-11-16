@@ -192,7 +192,7 @@ console_reports_table = Table("reports", metadata,
                               Column("lastvisittime", String(50), nullable=True),
                               Column('lastmodified', DateTime, nullable=True),
                               Column('createtime', String(50), nullable=True),
-                              Column('simulating', Boolean, default=False),
+                              Column('simulating', String(5), default=False),
                               Column('simulatedata', CLOB, nullable=True),
                               Column('simulatethumbnail', CLOB, nullable=True)
                               )
