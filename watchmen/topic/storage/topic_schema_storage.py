@@ -48,6 +48,11 @@ def load_topic_list_by_name(topic_name: str, current_user) -> List[Topic]:
     return find_(where, Topic, TOPICS)
 
 
+def load_topic_list_by_name_and_exclude(topic_name,topic_type ,current_user)-> List[Topic]:
+    where = {"and": [{"name": {"like": topic_name}}, {"type": {"!=":topic_type}},{"tenantId": current_user.tenantId}], }
+    return find_(where, Topic, TOPICS)
+
+
 def load_topic_by_name(topic_name: str, current_user) -> Topic:
     cached_topic = cacheman[TOPIC_BY_NAME].get(topic_name)
     if cached_topic is not None:

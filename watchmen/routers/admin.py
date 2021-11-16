@@ -50,7 +50,8 @@ from watchmen.space.storage.space_storage import query_space_with_pagination, ge
     load_space_list_by_name, load_space_by_name
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
-    get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name
+    get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name, \
+    load_topic_list_by_name_and_exclude
 from watchmen.topic.topic import Topic
 
 router = APIRouter()
@@ -208,8 +209,11 @@ async def query_topic_list_for_pipeline(pagination: Pagination, current_user: Us
 
 
 @router.get("/query/topic/space", tags=["admin"], response_model=List[Topic])
-async def query_topic_list_for_space(query_name: str, current_user: User = Depends(deps.get_current_user)):
-    return load_topic_list_by_name(query_name, current_user)
+async def query_topic_list_for_space(query_name: str, exclude:str,current_user: User = Depends(deps.get_current_user)):
+    if exclude is not None:
+        return load_topic_list_by_name_and_exclude(query_name, exclude,current_user)
+    else:
+        return load_topic_list_by_name(query_name, current_user)
 
 
 @router.post("/topic/ids", tags=["admin"], response_model=List[Topic])
