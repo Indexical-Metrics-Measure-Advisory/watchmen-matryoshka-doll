@@ -73,6 +73,7 @@ class StageRunStatus(ConditionHolder):
 class PipelineRunStatus(ConditionHolder):
     status: str = None  # DONE ,ERROR
     pipelineId: str = None
+    pipelineName:str = None
     uid: str = None
     startTime: datetime = None
     completeTime: int = None
