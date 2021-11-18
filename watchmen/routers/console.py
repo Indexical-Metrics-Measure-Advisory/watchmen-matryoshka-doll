@@ -119,8 +119,10 @@ async def connect_to_space(space_id, name, template_ids=None, current_user: User
 @router.post("/console_space/save", tags=["console"], response_model=ConsoleSpace)
 async def update_console_space(console_space: ConsoleSpace, current_user: User = Depends(deps.get_current_user)):
     console_space = add_tenant_id_to_model(console_space, current_user)
+    new_subject_ids =  []
     for subject in console_space.subjects:
-        console_space.subjectIds.append(subject.subjectId)
+        new_subject_ids.append(subject.subjectId)
+    console_space.subjectIds = new_subject_ids
     console_space.userId = current_user.userId
     return save_console_space(console_space)
 
@@ -164,7 +166,6 @@ async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body
         for report in subject.reports:
             report.reportId = get_surrogate_key()
             subject.reportIds.append(report.reportId)
-
         subject = create_console_subject_to_storage(subject)
         console_space.subjectIds.append(subject.subjectId)
         save_console_space(console_space)
@@ -227,10 +228,9 @@ async def load_my_console_space_graph(current_user: User = Depends(deps.get_curr
 async def save_report(subject_id: str, report: Report, current_user: User = Depends(deps.get_current_user)):
     report = add_tenant_id_to_model(report, current_user)
     report.reportId = get_surrogate_key()
-    # report.subjectId = subject_id
     new_report = create_report(report)
     subject = load_console_subject_by_id(subject_id, current_user)
-    subject.reportIds.append(report.reportId)
+    subject.reportIds.append(new_report.reportId)
     update_console_subject(subject)
     return new_report
 

@@ -56,11 +56,12 @@ def copy_template_to_console_space(template_ids, console_space: ConsoleSpace, cu
             template_space = load_console_space_by_id(template_id, current_user)
             for subject_id in template_space.subjectIds:
                 subject: ConsoleSpaceSubject = load_console_subject_by_id(subject_id, current_user)
+                # print(subject.subjectId)
                 subject.subjectId = None
                 subject = add_tenant_id_to_model(subject, current_user)
                 new_report_ids = []
-                report_ids = subject.reportIds
-                for report_id in report_ids:
+
+                for report_id in subject.reportIds:
                     report: Report = load_report_by_id(report_id, current_user)
                     report = add_tenant_id_to_model(report, current_user)
                     report = create_report(report)
