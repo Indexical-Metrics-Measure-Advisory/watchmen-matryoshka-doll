@@ -98,6 +98,7 @@ def run_pipeline(pipeline_context: PipelineContext):
 
     if pipeline.enabled:
         pipeline_topic = get_topic_by_id(pipeline.topicId)
+        pipeline_status.pipelineTopicName = pipeline_topic.name
         pipeline_context = PipelineContext(pipeline, data, pipeline_context.currentUser,pipeline_context.traceId)
         pipeline_context.variables[PIPELINE_UID] = pipeline_status.uid
         pipeline_context.pipelineTopic = pipeline_topic

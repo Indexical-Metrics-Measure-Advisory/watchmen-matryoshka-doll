@@ -164,6 +164,7 @@ class MysqlTopicStorage(TopicStorageInterface):
             new_updates = {}
             for key in table.c.keys():
                 if key == "version_":
+                    # print(updates)
                     new_updates[key] = updates.get(key) + 1
                 else:
                     if isinstance(table.c[key].type, JSON):

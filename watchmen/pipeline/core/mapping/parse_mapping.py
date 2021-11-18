@@ -40,7 +40,7 @@ def parse_mappings(mappings, target_topic, previous_data, current_data, variable
             having_aggregate_functions = True
 
         mappings_results.update(result)
-
+    # print(mappings_results)
     return mappings_results, having_aggregate_functions
 
 

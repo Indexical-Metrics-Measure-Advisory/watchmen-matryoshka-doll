@@ -246,6 +246,7 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
         else:
             __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
 
+    import_response.passed = True
     return import_response
 
 
@@ -323,6 +324,7 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
             __update_console_space_to_db(__update_last_modified(console_space))
         else:
             __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
+    import_response.passed = True
     return import_response
 
 
@@ -390,6 +392,7 @@ def __process_forced_new_import(import_request: ImportDataRequest, current_user)
         import_response.connectedSpaces.append(
             {"connectId": console_space.connectId, "reason": "create a new connectedSpace"})
 
+    import_response.passed= True
     return import_response
 
 

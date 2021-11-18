@@ -54,7 +54,7 @@ def load_console_space_template_list_by_user(user_id: str, current_user: User) -
 def load_console_space_by_subject_id(subject_id: str, current_user) -> ConsoleSpace:
     return find_one({"subjectIds": {"in": [subject_id]}}, ConsoleSpace,
                     CONSOLE_SPACES)
-
+    
 
 def rename_console_space_by_id(connect_id: str, name: str) -> ConsoleSpace:
     # return template.update_one("console_spaces", {"connectId": connect_id}, {"name": name}, ConsoleSpace)
