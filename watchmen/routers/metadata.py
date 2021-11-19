@@ -215,7 +215,9 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
                 ImportCheckResult(topicId=result_topic.topicId, reason="topic alredy existed"))
         else:
             __clear_datasource_id(topic)
-            import_topic_to_db(__update_create_time(__update_last_modified(topic)))
+            topic = import_topic_to_db(__update_create_time(__update_last_modified(topic)))
+            import_response.topics.append(
+                ImportCheckResult(topicId=topic.topicId, reason="topic successfully imported"))
 
     for pipeline in import_request.pipelines:
         result_pipeline = load_pipeline_by_id(pipeline.pipelineId, current_user)
@@ -225,7 +227,9 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
             import_response.pipelines.append(
                 ImportCheckResult(pipelineId=result_pipeline.pipelineId, reason="pipeline alredy existed"))
         else:
-            return import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
+            pipeline =  import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
+            import_response.pipelines.append(
+                ImportCheckResult(pipelineId=pipeline.pipelineId, reason="pipeline successfully imported"))
 
     for space in import_request.spaces:
         result_space = get_space_by_id(space.spaceId, current_user)
@@ -234,7 +238,9 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
             import_response.spaces.append(
                 ImportCheckResult(spaceId=result_space.spaceId, reason="space alredy existed"))
         else:
-            import_space_to_db(__update_create_time(__update_last_modified(space)))
+            space = import_space_to_db(__update_create_time(__update_last_modified(space)))
+            import_response.spaces.append(
+                ImportCheckResult(spaceId=space.spaceId, reason="space successfully imported"))
 
     for console_space in import_request.connectedSpaces:
         result_connect_space = load_console_space_by_id(console_space.connectId, current_user)
@@ -242,9 +248,10 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
         if result_connect_space:
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=result_connect_space.connectId, reason="connect_space alredy existed"))
-
         else:
-            __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
+            console_space = __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
+            import_response.connectedSpaces.append(
+                ImportCheckResult(connectId=console_space.connectId, reason="connect space successfully imported"))
 
     import_response.passed = True
     return import_response
@@ -270,7 +277,7 @@ def __import_console_space_to_db(console_space: ConsoleSpace, current_user):
             console_space_subject.reportIds.append(report.reportId)
             import_report_to_db(__update_create_time(__update_last_modified(report)))
         import_console_subject_to_db(__update_create_time(__update_last_modified(console_space_subject)))
-    import_console_space_to_db(console_space)
+    return  import_console_space_to_db(console_space)
 
 
 def __create_console_space_with_new_id(console_space: ConsoleSpace, current_user):
@@ -297,33 +304,50 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
         if result_topic:
             topic.dataSourceId = result_topic.dataSourceId
             update_topic_schema(topic.topicId, __update_last_modified(topic))
+            import_response.topics.append(
+                ImportCheckResult(topicId=result_topic.topicId, reason="topic successfully updated"))
+
         else:
             __clear_datasource_id(topic)
-            import_topic_to_db(__update_create_time(__update_last_modified(topic)))
+            topic =  import_topic_to_db(__update_create_time(__update_last_modified(topic)))
+            import_response.topics.append(
+                ImportCheckResult(topicId=topic.topicId, reason="topic successfully imported"))
 
     for pipeline in import_request.pipelines:
         result_pipeline = load_pipeline_by_id(pipeline.pipelineId, current_user)
         pipeline = add_tenant_id_to_model(pipeline, current_user)
         if result_pipeline:
             update_pipeline(__update_last_modified(pipeline))
+            import_response.topics.append(
+                ImportCheckResult(pipelineId=result_pipeline.pipelineId, reason="pipeline successfully updated"))
         else:
-            import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
+            pipeline  = import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
+            import_response.topics.append(
+                ImportCheckResult(pipelineId=pipeline.pipelineId, reason="pipeline successfully imported"))
 
     for space in import_request.spaces:
         result_space = get_space_by_id(space.spaceId, current_user)
         space = add_tenant_id_to_model(space, current_user)
         if result_space:
             update_space_by_id(space.spaceId, __update_last_modified(space))
+            import_response.spaces.append(
+                ImportCheckResult(spaceId=result_space.spaceId, reason="space successfully updated"))
         else:
-            import_space_to_db(__update_create_time(__update_last_modified(space)))
+            space = import_space_to_db(__update_create_time(__update_last_modified(space)))
+            import_response.spaces.append(
+                ImportCheckResult(spaceId=space.spaceId, reason="space successfully imported"))
 
     for console_space in import_request.connectedSpaces:
         result_connect_space = load_console_space_by_id(console_space.connectId, current_user)
         console_space = add_tenant_id_to_model(console_space, current_user)
         if result_connect_space:
             __update_console_space_to_db(__update_last_modified(console_space))
+            import_response.connectedSpaces.append(
+                ImportCheckResult(connectId=result_connect_space.connectId, reason="connect space successfully updated"))
         else:
-            __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
+            console_space =  __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
+            import_response.connectedSpaces.append(
+                ImportCheckResult(connectId=console_space.connectId, reason="connect space successfully imported"))
     import_response.passed = True
     return import_response
 
@@ -392,7 +416,7 @@ def __process_forced_new_import(import_request: ImportDataRequest, current_user)
         import_response.connectedSpaces.append(
             {"connectId": console_space.connectId, "reason": "create a new connectedSpace"})
 
-    import_response.passed= True
+    import_response.passed = True
     return import_response
 
 
