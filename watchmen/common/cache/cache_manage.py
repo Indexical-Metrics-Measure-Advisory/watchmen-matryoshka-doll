@@ -1,6 +1,5 @@
 from cacheout import CacheManager, Cache
 
-
 TOPIC_BY_NAME = "topic_by_name"
 TOPIC_DICT_BY_NAME = "topic_dict_by_name"
 TOPIC_BY_ID = "topic_by_id"
@@ -14,6 +13,7 @@ KEY_STORES = "key_stores"
 
 class WatchmenCache(Cache):
     pass
+
 
 cacheman = CacheManager({
     STMT: {"maxsize": 200, "ttl": 0, "default": None},

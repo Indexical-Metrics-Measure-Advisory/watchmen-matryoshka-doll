@@ -8,7 +8,6 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 # users = db.get_collection('users')
 from watchmen.common.utils.data_utils import is_superuser
 from watchmen.database.storage.storage_template import find_one, find_, insert_one, update_one, page_
-from watchmen.database.storage.storage_template import find_template
 
 USERS = "users"
 

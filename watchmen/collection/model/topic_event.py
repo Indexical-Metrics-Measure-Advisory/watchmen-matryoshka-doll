@@ -9,5 +9,5 @@ class TopicEvent(BaseModel):
     data: Any = None
     previous_data: Any = None
     trigger_type: str = None
-    pat:str = None
-    user:str = None
+    pat: str = None
+    user: str = None

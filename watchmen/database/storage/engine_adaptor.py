@@ -3,7 +3,6 @@ from watchmen.database.datasource.data_source import DataSource, DataSourceParam
 
 from watchmen.database.table.base_table_definition import TableDefinition
 
-
 MYSQL = "mysql"
 MONGO = "mongo"
 ORACLE = "oracle"

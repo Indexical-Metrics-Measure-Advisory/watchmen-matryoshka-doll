@@ -119,7 +119,7 @@ async def connect_to_space(space_id, name, template_ids=None, current_user: User
 @router.post("/console_space/save", tags=["console"], response_model=ConsoleSpace)
 async def update_console_space(console_space: ConsoleSpace, current_user: User = Depends(deps.get_current_user)):
     console_space = add_tenant_id_to_model(console_space, current_user)
-    new_subject_ids =  []
+    new_subject_ids = []
     for subject in console_space.subjects:
         new_subject_ids.append(subject.subjectId)
     console_space.subjectIds = new_subject_ids

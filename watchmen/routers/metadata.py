@@ -227,7 +227,7 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
             import_response.pipelines.append(
                 ImportCheckResult(pipelineId=result_pipeline.pipelineId, reason="pipeline alredy existed"))
         else:
-            pipeline =  import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
+            pipeline = import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
             import_response.pipelines.append(
                 ImportCheckResult(pipelineId=pipeline.pipelineId, reason="pipeline successfully imported"))
 
@@ -277,7 +277,7 @@ def __import_console_space_to_db(console_space: ConsoleSpace, current_user):
             console_space_subject.reportIds.append(report.reportId)
             import_report_to_db(__update_create_time(__update_last_modified(report)))
         import_console_subject_to_db(__update_create_time(__update_last_modified(console_space_subject)))
-    return  import_console_space_to_db(console_space)
+    return import_console_space_to_db(console_space)
 
 
 def __create_console_space_with_new_id(console_space: ConsoleSpace, current_user):
@@ -309,7 +309,7 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
 
         else:
             __clear_datasource_id(topic)
-            topic =  import_topic_to_db(__update_create_time(__update_last_modified(topic)))
+            topic = import_topic_to_db(__update_create_time(__update_last_modified(topic)))
             import_response.topics.append(
                 ImportCheckResult(topicId=topic.topicId, reason="topic successfully imported"))
 
@@ -321,7 +321,7 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
             import_response.topics.append(
                 ImportCheckResult(pipelineId=result_pipeline.pipelineId, reason="pipeline successfully updated"))
         else:
-            pipeline  = import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
+            pipeline = import_pipeline_to_db(__update_create_time(__update_last_modified(pipeline)))
             import_response.topics.append(
                 ImportCheckResult(pipelineId=pipeline.pipelineId, reason="pipeline successfully imported"))
 
@@ -343,9 +343,10 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
         if result_connect_space:
             __update_console_space_to_db(__update_last_modified(console_space))
             import_response.connectedSpaces.append(
-                ImportCheckResult(connectId=result_connect_space.connectId, reason="connect space successfully updated"))
+                ImportCheckResult(connectId=result_connect_space.connectId,
+                                  reason="connect space successfully updated"))
         else:
-            console_space =  __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
+            console_space = __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=console_space.connectId, reason="connect space successfully imported"))
     import_response.passed = True

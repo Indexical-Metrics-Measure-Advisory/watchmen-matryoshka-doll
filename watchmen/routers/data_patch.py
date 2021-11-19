@@ -46,7 +46,7 @@ async def rerun_pipeline(topic_name, instance_id, pipeline_id=None,
 
 
 @router.post("/data/patch", tags=["patch"])
-async def patch_topic_instance(topic_name, instance_id = None, instance=Body(...),
+async def patch_topic_instance(topic_name, instance_id=None, instance=Body(...),
                                current_user: User = Depends(deps.get_current_user)):
     topic = get_topic_by_name(topic_name)
     if instance_id is None:
@@ -57,5 +57,3 @@ async def patch_topic_instance(topic_name, instance_id = None, instance=Body(...
             update_topic_instance(topic, instance, instance_id)
         else:
             raise Exception("instance ID {0} could not find any data for update".format(instance_id))
-
-

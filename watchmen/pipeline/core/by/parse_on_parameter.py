@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, get_variable_with_func_pattern, \
     get_variable_with_dot_pattern, convert_datetime, check_and_convert_value_by_factor

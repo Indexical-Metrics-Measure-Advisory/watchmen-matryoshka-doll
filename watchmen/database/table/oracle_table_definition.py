@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer, Boolean
+from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer
 
 metadata = MetaData()
 

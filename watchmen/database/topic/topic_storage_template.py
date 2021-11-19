@@ -1,10 +1,9 @@
 from pydantic import BaseModel
 
-from watchmen.database.singleton import singleton
 from watchmen.database.storage.storage_interface import Pageable, DataPage
 
 
-#@singleton
+# @singleton
 class TopicStorageEngine(object):
 
     def __init__(self, template):

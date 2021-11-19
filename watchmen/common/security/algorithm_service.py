@@ -14,18 +14,18 @@ MASK_MONTH = 'MASK-MONTH'
 MASK_MONTH_DAY = 'MASK-MONTH-DAY'
 
 
-def find_algorithm_encryption(factor_type,factor_encrypt):
-    if factor_encrypt==AES256_PKCS5_PADDING:
+def find_algorithm_encryption(factor_type, factor_encrypt):
+    if factor_encrypt == AES256_PKCS5_PADDING:
         return algorithm_aes.encrypt
-    elif factor_encrypt ==MD5:
+    elif factor_encrypt == MD5:
         return algorithm_md5.encrypt
     elif factor_encrypt == SHA256:
         return algorithm_md5.encrypt
     elif factor_encrypt == MASK_MAIL:
         return algorithm_mask_mail.encrypt
-    elif factor_encrypt ==MASK_CENTER_3:
+    elif factor_encrypt == MASK_CENTER_3:
         return algorithm_mask_center.encrypt_center_3
-    elif factor_encrypt== MASK_CENTER_5:
+    elif factor_encrypt == MASK_CENTER_5:
         return algorithm_mask_center.encrypt_center_5
     elif factor_encrypt == MASK_LAST_3:
         return algorithm_mask_center.encrypt_last_3

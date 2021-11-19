@@ -9,7 +9,7 @@ from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_fa
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.utils.units_func import add_audit_columns, INSERT
 from watchmen.topic.factor.factor import Factor
-from watchmen.topic.storage.topic_schema_storage import get_topic, get_topic_by_name, save_topic
+from watchmen.topic.storage.topic_schema_storage import get_topic_by_name, save_topic
 from watchmen.topic.topic import Topic
 
 

@@ -1,9 +1,6 @@
 import json
 
-from sqlalchemy import create_engine
-
 from watchmen.common.utils.date_utils import DateTimeEncoder
-from watchmen.config.config import settings
 
 
 def dumps(o):

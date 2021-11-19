@@ -23,8 +23,3 @@ def build_table_by_topic_id(topic_id) -> Table:
     schema_name = datasource.name
     schema = Schema(schema_name, LiteralValue(catalog_name))
     return Table(topic_col_name, schema)
-
-
-
-
-

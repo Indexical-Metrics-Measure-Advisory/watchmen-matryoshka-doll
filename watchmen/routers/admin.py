@@ -25,8 +25,6 @@ from watchmen.common.utils.data_utils import check_fake_id, add_tenant_id_to_mod
     compare_tenant, clean_password, is_super_admin
 from watchmen.console_space.model.console_space import ConsoleSpace
 from watchmen.console_space.service.console_space_service import load_space_list_by_dashboard
-from watchmen.console_space.storage.console_space_storage import load_console_space_by_subject_id
-from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_report_id
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.model.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
@@ -43,7 +41,7 @@ from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_p
 from watchmen.raw_data.service.generate_raw_topic_schema import create_raw_topic
 from watchmen.raw_data.service.generate_schema import create_raw_data_model_set, RawTopicGenerateEvent
 from watchmen.report.model.report import Report
-from watchmen.report.storage.report_storage import query_report_list_with_pagination, load_report_by_id
+from watchmen.report.storage.report_storage import query_report_list_with_pagination
 from watchmen.space.service.admin import create_space, update_space_by_id, sync_space_to_user_group
 from watchmen.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
@@ -77,7 +75,6 @@ class MonitorLogCriteria(BaseModel):
 class MonitorLogQuery(BaseModel):
     criteria: MonitorLogCriteria = None
     pagination: Pagination = None
-
 
 
 # ADMIN
@@ -209,9 +206,10 @@ async def query_topic_list_for_pipeline(pagination: Pagination, current_user: Us
 
 
 @router.get("/query/topic/space", tags=["admin"], response_model=List[Topic])
-async def query_topic_list_for_space(query_name: str, exclude:str,current_user: User = Depends(deps.get_current_user)):
+async def query_topic_list_for_space(query_name: str, exclude: str,
+                                     current_user: User = Depends(deps.get_current_user)):
     if exclude is not None:
-        return load_topic_list_by_name_and_exclude(query_name, exclude,current_user)
+        return load_topic_list_by_name_and_exclude(query_name, exclude, current_user)
     else:
         return load_topic_list_by_name(query_name, current_user)
 
@@ -422,7 +420,7 @@ async def load_admin_dashboard(current_user: User = Depends(deps.get_current_use
     if result is not None:
         admin_dashboard_id = result.adminDashboardId
         dashboard = load_dashboard_by_id(admin_dashboard_id, current_user)
-        return load_space_list_by_dashboard(dashboard,current_user)
+        return load_space_list_by_dashboard(dashboard, current_user)
     else:
         return AdminDashboard()
 
@@ -491,7 +489,6 @@ async def create_raw_topic_schema_v2(event: RawTopicGenerateEvent, current_user:
 ### LOG
 @router.post("/pipeline/log/query", tags=["admin"])
 async def query_log_by_critical(query: MonitorLogQuery, current_user: User = Depends(deps.get_current_user)):
-
     query_dict = {}
     query_list = [{"tenant_id_": current_user.tenantId}]
     if query.criteria.topicId is not None:

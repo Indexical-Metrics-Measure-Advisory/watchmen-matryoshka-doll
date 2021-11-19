@@ -4,7 +4,7 @@ from typing import List
 from arrow import arrow
 from pypika import Table, Schema, Field, Criterion, CustomFunction, AliasedQuery
 from pypika.enums import Arithmetic
-from pypika.terms import PseudoColumn, ArithmeticExpression, Term, ValueWrapper, LiteralValue, EmptyCriterion
+from pypika.terms import PseudoColumn, ArithmeticExpression, Term, ValueWrapper, LiteralValue
 
 from watchmen.common.parameter import Parameter, ParameterJoint
 from watchmen.common.utils.data_utils import build_collection_name

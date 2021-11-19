@@ -1,8 +1,5 @@
-import json
-
 from sqlalchemy import create_engine
 
-from watchmen.common.utils.date_utils import DateTimeEncoder
 from watchmen.database.datasource.data_source import DataSource
 from watchmen.database.mysql.mysql_engine import dumps
 

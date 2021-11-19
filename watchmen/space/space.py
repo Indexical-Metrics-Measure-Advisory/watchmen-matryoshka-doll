@@ -20,4 +20,3 @@ class Space(WatchmenModel):
     description: str = None
     tenantId: str = None
     filters: List[SpaceFilter] = None
-

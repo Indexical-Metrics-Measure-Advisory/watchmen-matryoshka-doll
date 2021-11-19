@@ -35,8 +35,8 @@ async def push_pipeline_data_async(topic_event: TopicEvent, current_user: User =
     topic = await __load_topic_definition(topic_event.code, current_user)
     data = get_input_data(topic, topic_event)
     await save_topic_data(topic, data, current_user)
-    asyncio.ensure_future(run_pipeline(topic_event, current_user,trace_id))
-    return {"received": True,"trace_id":trace_id}
+    asyncio.ensure_future(run_pipeline(topic_event, current_user, trace_id))
+    return {"received": True, "trace_id": trace_id}
 
 
 @router.post("/pipeline/data", tags=["pipeline"])
@@ -45,5 +45,5 @@ async def push_pipeline_data(topic_event: TopicEvent, current_user: User = Depen
     topic = await __load_topic_definition(topic_event.code, current_user)
     data = get_input_data(topic, topic_event)
     await save_topic_data(topic, data, current_user)
-    await run_pipeline(topic_event, current_user,trace_id)
-    return {"received": True,"trace_id":trace_id}
+    await run_pipeline(topic_event, current_user, trace_id)
+    return {"received": True, "trace_id": trace_id}

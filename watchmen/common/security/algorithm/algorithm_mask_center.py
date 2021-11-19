@@ -60,7 +60,6 @@ def __mask_last(value_char_list, __last):
     return __convert(mask_result_list)
 
 
-
 def __split(value_):
     return [char for char in value_]
 
@@ -93,7 +92,7 @@ def encrypt_center_5(value_, params=None):
 
 def encrypt_last_3(value_, params=None):
     value_char_list = __split(value_)
-    return __mask_last(value_char_list,__last_3)
+    return __mask_last(value_char_list, __last_3)
 
 
 def encrypt_last_6(value_, params=None):

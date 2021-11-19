@@ -74,7 +74,7 @@ class ChartType(str, Enum):
     TREE = 'tree'
     TREEMAP = 'treemap'
     MAP = 'map'
-    CUSTOM='customized'
+    CUSTOM = 'customized'
 
 
 class Chart(BaseModel):

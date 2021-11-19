@@ -1,6 +1,8 @@
 import logging
-from pypika import Order
+import time
+
 from pypika import AliasedQuery
+from pypika import Order
 
 from watchmen.common.presto.presto_client import get_connection
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_report_id
@@ -10,8 +12,6 @@ from watchmen.report.builder.funnel import build_report_funnels
 from watchmen.report.builder.report_filer import build_indicators, build_dimensions, build_report_where
 from watchmen.report.engine.dataset_engine import build_dataset_query_for_subject
 from watchmen.report.storage.report_storage import load_report_by_id
-
-import time
 
 log = logging.getLogger("app." + __name__)
 

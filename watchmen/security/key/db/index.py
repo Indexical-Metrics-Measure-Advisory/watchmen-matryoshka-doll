@@ -1,6 +1,7 @@
 from watchmen.common.cache.cache_manage import cacheman
 from watchmen.database.storage.storage_template import find_one
 from watchmen.security.key.db.key_model import KeyStore
+
 KEY_STORES = "key_stores"
 
 

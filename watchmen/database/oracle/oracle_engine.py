@@ -1,15 +1,11 @@
 import json
 
-import cx_Oracle
-from sqlalchemy import create_engine
-from sqlalchemy.pool import NullPool
-
 from watchmen.common.utils.date_utils import DateTimeEncoder
-from watchmen.config.config import settings
 
 
 def dumps(o):
     return json.dumps(o, cls=DateTimeEncoder)
+
 
 """
 cx_Oracle.init_oracle_client(lib_dir=settings.ORACLE_LIB_DIR)

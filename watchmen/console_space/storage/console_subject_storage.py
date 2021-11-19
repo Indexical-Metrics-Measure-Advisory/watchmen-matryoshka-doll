@@ -43,12 +43,10 @@ def rename_console_subject_by_id(subject_id, name):
     return update_one_first({"subjectId": subject_id}, {"name": name}, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
-def load_console_subject_by_report_id(report_id, current_user)->ConsoleSpaceSubject:
+def load_console_subject_by_report_id(report_id, current_user) -> ConsoleSpaceSubject:
     return find_one({"reportIds": {"in": [report_id]}},
                     ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 
 def import_console_subject_to_db(subject):
     return insert_one(subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
-
-

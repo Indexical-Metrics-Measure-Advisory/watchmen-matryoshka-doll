@@ -12,7 +12,7 @@ from watchmen.monitor.services.query_monitor_service import build_query_summary,
     build_result_summary, build_query_monitor
 from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.report.builder.dataset_filter import build_dataset_where, build_dataset_select_fields
-from watchmen.report.builder.dialects import PrestoQuery, PrestoQueryBuilder
+from watchmen.report.builder.dialects import PrestoQuery
 from watchmen.report.builder.space_filter import get_topic_sub_query_with_space_filter
 from watchmen.report.builder.utils import build_table_by_topic_id
 from watchmen.report.engine.sql_builder import _filter

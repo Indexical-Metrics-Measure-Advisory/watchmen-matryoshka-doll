@@ -1,4 +1,3 @@
-import json
 import logging
 from typing import List
 
@@ -6,7 +5,6 @@ import cx_Oracle
 from sqlalchemy import create_engine
 from sqlalchemy.pool import NullPool
 
-from watchmen.common.utils.date_utils import DateTimeEncoder
 from watchmen.config.config import settings
 from watchmen.database.datasource.data_source import DataSource, DataSourceParam
 
@@ -16,7 +14,6 @@ log = logging.getLogger("app." + __name__)
 
 
 class OracleEngine(object):
-
     cx_Oracle.init_oracle_client(lib_dir=settings.ORACLE_LIB_DIR)
 
     def find_sid(self, params: List[DataSourceParam]):

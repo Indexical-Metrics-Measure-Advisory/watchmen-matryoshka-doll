@@ -9,6 +9,9 @@ class WhereCondition(BaseModel):
     value: Any = None
 
 
+# class PreCondition(BaseModel):
+
+
 class ActionStatus(BaseModel):
     type: str = None
     complete_time: int = None

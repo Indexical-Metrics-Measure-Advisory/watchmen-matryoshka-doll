@@ -62,22 +62,24 @@ class MergeRowAction(UnitActionStatus, MappingHolder):
 
 
 class UnitRunStatus(ConditionHolder):
+    conditionResult: bool = None
     actions: List[UnitActionStatus] = []
 
 
 class StageRunStatus(ConditionHolder):
     name: str = None
+    conditionResult: bool = None
     units: List[UnitRunStatus] = []
 
 
 class PipelineRunStatus(ConditionHolder):
     status: str = None  # DONE ,ERROR
     pipelineId: str = None
-    pipelineName:str = None
+    pipelineName: str = None
     uid: str = None
     startTime: datetime = None
     completeTime: int = None
-    pipelineTopicName:str = None
+    pipelineTopicName: str = None
     topicId: str = None
     stages: List[StageRunStatus] = []
     error: str = None
@@ -85,4 +87,4 @@ class PipelineRunStatus(ConditionHolder):
     newValue: Any = None
     tenantId: str = None
     currentUser: User = None
-    traceId:str = None
+    traceId: str = None

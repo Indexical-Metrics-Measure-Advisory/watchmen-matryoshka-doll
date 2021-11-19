@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,7 +22,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 if settings.PROMETHEUS_ON:
     init_prometheus_monitor(app)

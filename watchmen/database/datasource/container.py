@@ -3,9 +3,6 @@ from typing import List, Dict
 from watchmen.common.cache.cache_manage import DATA_SOURCE_LIST, cacheman
 from watchmen.database.datasource.data_source import DataSource
 from watchmen.database.datasource.storage.data_source_storage import list_all_data_source_list
-
-
-
 from watchmen.database.singleton import singleton
 from watchmen.database.storage.engine_adaptor import get_default_datasource
 from watchmen.database.topic.mongo.topic_mongo_template import MongoTopicStorage

@@ -32,7 +32,7 @@ def get_topic_sub_query_with_space_filter(console_subject, current_user):
                 from_(table). \
                 select('*'). \
                 where(build_space_filter_where(filter.joint))
-                # where(table.tenant_id_ == current_user.tenantId). \
+            # where(table.tenant_id_ == current_user.tenantId). \
             topic_sub_query[filter.topicId] = {"alias": topic.name, "query": sub_query}
 
     def get_topic_sub_query_by_topic_id(topic_id):
@@ -76,8 +76,8 @@ def build_space_filter_criterion(filter: SubjectDataSetFilter) -> Criterion:
             "DATE \'{0}\'".format(arrow.get(rvalue).format('YYYY-MM-DD'))))
     elif ltype == "datetime":
         return build_space_filter_criterion_expression(operator_, lvalue,
-                                           LiteralValue("timestamp \'{0}\'".format(
-                                               arrow.get(rvalue).format('YYYY-MM-DD HH:mm:ss'))))
+                                                       LiteralValue("timestamp \'{0}\'".format(
+                                                           arrow.get(rvalue).format('YYYY-MM-DD HH:mm:ss'))))
     else:
         return build_space_filter_criterion_expression(operator_, lvalue, rvalue)
 
