@@ -23,7 +23,7 @@ DATACENTER_ID_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS
 TIMESTAMP_LEFT_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS + DATACENTER_ID_BITS
 
 #
-SEQUENCE_MASK = -1 ^ (-1 << SEQUENCE_BITS)
+MAX_SEQUENCE = -1 ^ (-1 << SEQUENCE_BITS)
 
 TWEPOCH = 1420041600000
 
@@ -72,9 +72,10 @@ class IdWorker(object):
             raise InvalidSystemClock
 
         if timestamp == self.last_timestamp:
-            randomness = random.SystemRandom().getrandbits(12)
+            # randomness = random.SystemRandom().getrandbits(12)
             # print(randomness)
-            self.sequence = randomness
+            # self.sequence = randomness
+            self.sequence = (self.sequence + 1) & MAX_SEQUENCE
             if self.sequence == 0:
                 timestamp = self._til_next_millis(self.last_timestamp)
         else:
