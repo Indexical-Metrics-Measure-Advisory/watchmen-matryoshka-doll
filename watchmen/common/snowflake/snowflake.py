@@ -72,10 +72,10 @@ class IdWorker(object):
             raise InvalidSystemClock
 
         if timestamp == self.last_timestamp:
-            # randomness = random.SystemRandom().getrandbits(12)
+            randomness = random.SystemRandom().getrandbits(12)
             # print(randomness)
-            # self.sequence = randomness
-            self.sequence = (self.sequence + 1) & MAX_SEQUENCE
+            self.sequence = randomness & MAX_SEQUENCE
+            # self.sequence = (self.sequence + 1) & MAX_SEQUENCE
             if self.sequence == 0:
                 timestamp = self._til_next_millis(self.last_timestamp)
         else:
