@@ -113,7 +113,7 @@ def run_pipeline(pipeline_context: PipelineContext):
                 for stage in pipeline.stages:
                     stage_run_status = StageRunStatus(name=stage.name)
                     stage_context = StageContext(pipeline_context, stage, stage_run_status)
-                    stage_run_status.name  =stage.name
+                    stage_run_status.name = stage.name
                     run_stage(stage_context,stage_run_status)
                     pipeline_status.stages.append(stage_context.stageStatus)
 
