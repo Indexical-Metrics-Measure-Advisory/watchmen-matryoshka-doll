@@ -25,19 +25,21 @@ def should_run(unit_context: UnitContext, unit_run_status: UnitRunStatus) -> boo
     return condition_result
 
 
-def run_unit(unit_context: UnitContext, unit_run_status: UnitRunStatus):
+def run_unit(unit_context: UnitContext):
     loop_variable_name = unit_context.unit.loopVariableName
     if loop_variable_name is not None and loop_variable_name != "":
         loop_variable = unit_context.stageContext.pipelineContext.variables[loop_variable_name]
         if isinstance(loop_variable, list):
             if settings.DASK_ON:
-                run_loop_with_dask(loop_variable_name, unit_context,unit_run_status)
+                run_loop_with_dask(loop_variable_name, unit_context)
             else:
-                run_loop_actions(loop_variable_name, unit_context,unit_run_status)
+                run_loop_actions(loop_variable_name, unit_context)
         elif loop_variable is not None:  # the loop variable just have one element.
+            unit_run_status = UnitRunStatus()
             if unit_context.unit.do is not None:
+                unit_context.unitStatus = UnitRunStatus()
+                unit_context.unitStatus.unitId = unit_context.unit.unitId
                 if should_run(unit_context, unit_run_status):
-                    unit_context.unitStatus = UnitRunStatus()
                     unit_context.unitStatus.name = unit_context.unit.name
                     for action in unit_context.unit.do:
                         action_context = ActionContext(unit_context, action)
@@ -49,10 +51,12 @@ def run_unit(unit_context: UnitContext, unit_run_status: UnitRunStatus):
                                 *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
                                 *trigger_pipeline_data_list]
                         unit_context.unitStatus.actions.append(result.actionStatus)
+                unit_context.stageContext.stageStatus.units.append(unit_context.unitStatus)
     else:
         if unit_context.unit.do is not None:
-            if should_run(unit_context,unit_run_status):
-                unit_context.unitStatus = UnitRunStatus()
+            unit_context.unitStatus = UnitRunStatus()
+            unit_context.unitStatus.unitId = unit_context.unit.unitId
+            if should_run(unit_context,unit_context.unitStatus):
                 for action in unit_context.unit.do:
                     action_context = ActionContext(unit_context, action)
                     result, trigger_pipeline_data_list = run_action(action_context)
@@ -61,13 +65,15 @@ def run_unit(unit_context: UnitContext, unit_run_status: UnitRunStatus):
                             *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
                             *trigger_pipeline_data_list]
                     unit_context.unitStatus.actions.append(result.actionStatus)
+            unit_context.stageContext.stageStatus.units.append(unit_context.unitStatus)
 
 
-def run_loop_actions(loop_variable_name, unit_context,unit_run_status):
+def run_loop_actions(loop_variable_name, unit_context):
     for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
+        unit_run_status = UnitRunStatus()
+        unit_run_status.unitId = unit_context.unit.unitId
         if unit_context.unit.do is not None:
             if should_run(unit_context,unit_run_status):
-                unit_context.unitStatus = UnitRunStatus()
                 for action in unit_context.unit.do:
                     action_context = ActionContext(unit_context, action)
                     action_context.delegateVariableName = loop_variable_name
@@ -77,7 +83,9 @@ def run_loop_actions(loop_variable_name, unit_context,unit_run_status):
                         unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
                             *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
                             *trigger_pipeline_data_list]
-                    unit_context.unitStatus.actions.append(result.actionStatus)
+                    unit_run_status.actions.append(result.actionStatus)
+                unit_context.unitStatus = unit_run_status
+        unit_context.stageContext.stageStatus.units.append(unit_context.unitStatus)
 
 
 def run_loop_with_dask(loop_variable_name, unit_context,unit_run_status):
@@ -86,6 +94,7 @@ def run_loop_with_dask(loop_variable_name, unit_context,unit_run_status):
         if unit_context.unit.do is not None:
             if should_run(unit_context,unit_run_status):
                 unit_context.unitStatus = UnitRunStatus()
+                unit_context.unitStatus.unitId = unit_context.unit.unitId
                 for action in unit_context.unit.do:
                     action_context = ActionContext(unit_context, action)
                     action_context.delegateVariableName = loop_variable_name

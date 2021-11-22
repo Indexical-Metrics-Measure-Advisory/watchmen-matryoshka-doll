@@ -9,7 +9,7 @@ from watchmen.pipeline.core.worker.unit_worker import run_unit
 log = logging.getLogger("app." + __name__)
 
 
-def should_run(stage_context: StageContext, stage_run_status: StageRunStatus = None) -> bool:
+def should_run(stage_context: StageContext, stage_run_status: StageRunStatus) -> bool:
     stage_ = stage_context.stage
     if stage_.on is None:
         stage_run_status.conditionResult = True
@@ -21,12 +21,10 @@ def should_run(stage_context: StageContext, stage_run_status: StageRunStatus = N
     return condition_result
 
 
-def run_stage(stage_context: StageContext, stage_run_status=None):
+def run_stage(stage_context: StageContext, stage_run_status: StageRunStatus):
     if should_run(stage_context, stage_run_status):
         stage = stage_context.stage
         for unit in stage.units:
-            unit_run_status = UnitRunStatus()
-            unit_run_status.name = unit.name
-            unit_context = UnitContext(stage_context, unit, unit_run_status)
-            run_unit(unit_context,unit_run_status)
-            stage_context.stageStatus.units.append(unit_context.unitStatus)
+            unit_context = UnitContext(stage_context, unit)
+            run_unit(unit_context)
+            # stage_context.stageStatus.units.append(unit_context.unitStatus)
