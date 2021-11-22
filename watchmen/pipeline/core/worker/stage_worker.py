@@ -26,6 +26,7 @@ def run_stage(stage_context: StageContext, stage_run_status=None):
         stage = stage_context.stage
         for unit in stage.units:
             unit_run_status = UnitRunStatus()
+            unit_run_status.name = unit.name
             unit_context = UnitContext(stage_context, unit, unit_run_status)
             run_unit(unit_context,unit_run_status)
             stage_context.stageStatus.units.append(unit_context.unitStatus)

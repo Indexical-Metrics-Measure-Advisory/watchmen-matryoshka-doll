@@ -44,7 +44,6 @@ def init(action_context: ActionContext):
                                                         , target_topic, action_context.get_current_user())]
 
         status.insertCount = status.insertCount + 1
-
         elapsed_time = time.time() - start
         status.completeTime = elapsed_time
         return status, trigger_pipeline_data_list

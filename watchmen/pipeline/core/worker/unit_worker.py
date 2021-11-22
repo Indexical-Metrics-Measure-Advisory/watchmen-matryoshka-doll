@@ -38,6 +38,7 @@ def run_unit(unit_context: UnitContext, unit_run_status: UnitRunStatus):
             if unit_context.unit.do is not None:
                 if should_run(unit_context, unit_run_status):
                     unit_context.unitStatus = UnitRunStatus()
+                    unit_context.unitStatus.name = unit_context.unit.name
                     for action in unit_context.unit.do:
                         action_context = ActionContext(unit_context, action)
                         action_context.delegateVariableName = loop_variable_name

@@ -63,6 +63,7 @@ class MergeRowAction(UnitActionStatus, MappingHolder):
 
 class UnitRunStatus(ConditionHolder):
     conditionResult: bool = None
+    name:str = None
     actions: List[UnitActionStatus] = []
 
 
