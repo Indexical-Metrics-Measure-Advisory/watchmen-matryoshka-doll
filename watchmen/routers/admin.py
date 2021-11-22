@@ -39,6 +39,7 @@ from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_p
     load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status, \
     update_pipeline_name, load_pipeline_by_id, remove_pipeline_graph
 from watchmen.raw_data.service.generate_raw_topic_schema import create_raw_topic
+from watchmen.raw_data.service.generate_raw_topic_schema_v3 import create_raw_topic_v3
 from watchmen.raw_data.service.generate_schema import create_raw_data_model_set, RawTopicGenerateEvent
 from watchmen.report.model.report import Report
 from watchmen.report.storage.report_storage import query_report_list_with_pagination
@@ -484,6 +485,14 @@ async def create_raw_topic_schema_v2(event: RawTopicGenerateEvent, current_user:
     for data in event.data:
         json_list.append(data)
     create_raw_topic(event.code, json_list, current_user)
+
+
+@router.post("/topic/raw/generation/v3", tags=["common"])
+async def create_raw_topic_schema_v3(event: RawTopicGenerateEvent, current_user: User = Depends(deps.get_current_user)):
+    json_list = []
+    for data in event.data:
+        json_list.append(data)
+    create_raw_topic_v3(event.code, json_list, current_user)
 
 
 ### LOG

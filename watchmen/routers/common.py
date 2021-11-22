@@ -28,6 +28,7 @@ from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.pipeline.utils.units_func import get_factor
+from watchmen.raw_data.service.generate_raw_instance_with_aid import create_raw_topic_instance
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
 from watchmen.report.engine.dataset_engine import get_factor_value_by_subject_and_condition
 from watchmen.report.model.filter import Filter
@@ -55,6 +56,14 @@ async def save_topic_data(topic_event: TopicEvent, current_user: User = Depends(
     # TODO user check URP
     await import_raw_topic_data(topic_event, current_user)
     # fire_and_forget(task)
+    return {"received": True}
+
+
+@router.post("/topic/data/v3", tags=["common"], deprecated=True)
+async def save_topic_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
+    # TODO user check URP
+    create_raw_topic_instance(topic_event.code, topic_event.data, current_user)
+    await import_raw_topic_data(topic_event, current_user)
     return {"received": True}
 
 

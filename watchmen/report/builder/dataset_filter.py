@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import List
 
-from arrow import arrow
+import arrow
 from pypika import Table, Schema, Field, Criterion, CustomFunction, AliasedQuery
 from pypika.enums import Arithmetic
 from pypika.terms import PseudoColumn, ArithmeticExpression, Term, ValueWrapper, LiteralValue
