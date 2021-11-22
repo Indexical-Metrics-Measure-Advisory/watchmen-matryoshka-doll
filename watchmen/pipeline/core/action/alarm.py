@@ -14,7 +14,7 @@ def init(action_context: ActionContext):
 
         # create action status monitor
         status = ActionStatus()
-        status.type = "Alarm"
+        status.type = "alarm"
         status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
         # todo

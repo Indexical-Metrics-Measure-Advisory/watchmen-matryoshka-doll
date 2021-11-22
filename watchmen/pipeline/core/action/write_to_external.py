@@ -18,7 +18,7 @@ def init(action_context: ActionContext):
 
         status = ActionStatus()
         topic = action_context.get_pipeline_context().pipelineTopic
-        status.type = "WriteToExternal"
+        status.type = "write-to-external"
         status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
         action = action_context.action
         previous_data = action_context.previousOfTriggerData

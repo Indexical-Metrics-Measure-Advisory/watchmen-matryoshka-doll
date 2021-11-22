@@ -18,7 +18,7 @@ def init(action_context: ActionContext):
 
         # create action status monitor
         status = ActionStatus()
-        status.type = "ReadFactor"
+        status.type = "read-factor"
         status.uid = action_context.unitContext.stageContext.pipelineContext.pipeline.pipelineId
 
         previous_data = action_context.previousOfTriggerData
@@ -30,7 +30,7 @@ def init(action_context: ActionContext):
         variables = get_variables(action_context)
 
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
-        status.whereConditions = where_
+        status.by = where_
 
         target_factor = get_factor(action.factorId, target_topic)
 

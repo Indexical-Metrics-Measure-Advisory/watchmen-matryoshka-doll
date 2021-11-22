@@ -23,7 +23,7 @@ def init(action_context: ActionContext):
         start = time.time()
         # create action status monitor
         status = ActionStatus()
-        status.type = "WriteFactor"
+        status.type = "write-factor"
         status.uid = action_context.get_pipeline_id()
 
         previous_data = action_context.previousOfTriggerData
@@ -38,7 +38,7 @@ def init(action_context: ActionContext):
             variables = get_variables(action_context)
 
             where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
-            status.whereConditions = where_
+            status.by = where_
 
             target_data = query_topic_data(where_,
                                            target_topic, action_context.get_current_user())

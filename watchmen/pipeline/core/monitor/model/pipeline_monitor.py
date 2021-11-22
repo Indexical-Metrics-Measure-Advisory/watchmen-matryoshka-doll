@@ -23,3 +23,4 @@ class ActionStatus(BaseModel):
     whereConditions: List[WhereCondition] = []
     mapping: Any = None
     value: Any = None
+    by: Any = None

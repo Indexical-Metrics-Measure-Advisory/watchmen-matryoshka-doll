@@ -62,12 +62,14 @@ class MergeRowAction(UnitActionStatus, MappingHolder):
 
 
 class UnitRunStatus(ConditionHolder):
+    unitId:str = None
     conditionResult: bool = None
     name:str = None
     actions: List[UnitActionStatus] = []
 
 
 class StageRunStatus(ConditionHolder):
+    stageId :str = None
     name: str = None
     conditionResult: bool = None
     units: List[UnitRunStatus] = []

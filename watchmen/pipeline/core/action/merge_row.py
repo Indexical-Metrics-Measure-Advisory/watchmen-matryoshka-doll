@@ -20,7 +20,7 @@ def init(action_context: ActionContext):
 
         # create action status monitor
         status = ActionStatus()
-        status.type = "MergeRow"
+        status.type = "merge-row"
         status.uid = action_context.get_pipeline_id()
 
         previous_data = action_context.previousOfTriggerData
@@ -40,10 +40,10 @@ def init(action_context: ActionContext):
                                                                       previous_data,
                                                                       current_data,
                                                                       variables)
-        status.mapping = mappings_results
+        status.value = mappings_results
 
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
-        status.whereConditions = where_
+        status.by = where_
 
         trigger_pipeline_data_list = []
 
