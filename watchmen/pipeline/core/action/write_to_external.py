@@ -31,7 +31,7 @@ def init(action_context: ActionContext):
         else:
             log.info(f"EXTERNAL_WRITER_ON  value is {settings.EXTERNAL_WRITER_ON}")
         elapsed_time = time.time() - start
-        status.complete_time = elapsed_time
+        status.completeTime = elapsed_time
         return status, []
 
     return write_to_external

@@ -138,7 +138,7 @@ def init(action_context: ActionContext):
 
         status.updateCount = status.updateCount + 1
         elapsed_time = time.time() - start
-        status.complete_time = elapsed_time
+        status.completeTime = elapsed_time
         return status, trigger_pipeline_data_list
 
     def not_aggregation_topic_merge_or_insert_topic():
@@ -197,7 +197,7 @@ def init(action_context: ActionContext):
             status.updateCount = status.updateCount + 1
 
         elapsed_time = time.time() - start
-        status.complete_time = elapsed_time
+        status.completeTime = elapsed_time
 
         return status, trigger_pipeline_data_list
 

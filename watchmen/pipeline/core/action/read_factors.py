@@ -57,7 +57,7 @@ def init(action_context: ActionContext):
                 set_variable(action_context, action.variableName, [read_value])
                 status.value = read_value
 
-        status.complete_time = time.time() - start
+        status.completeTime = time.time() - start
         return status, []
 
     return read_factors

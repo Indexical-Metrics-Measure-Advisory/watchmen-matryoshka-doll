@@ -78,7 +78,7 @@ def init(action_context: ActionContext):
                     target_topic, action_context.get_current_user()))
 
         elapsed_time = time.time() - start
-        status.complete_time = elapsed_time
+        status.completeTime = elapsed_time
         return status, trigger_pipeline_data_list
 
     return write_factor

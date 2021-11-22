@@ -8,9 +8,4 @@ def query_pipeline_monitor(topic_name, query, pagination, current_user=None):
     result = storage_template.topic_data_page_(query, None, pagination, None, topic_name)
     return result
 
-# def find_monitor_topic(topic_name, current_user):
-#     topic = get_topic_by_name(topic_name, current_user)
-#     if topic is None:
-#         return get_topic_by_name(topic_name)
-#     else:
-#         return topic
+

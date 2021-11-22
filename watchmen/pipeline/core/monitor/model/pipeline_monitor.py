@@ -14,7 +14,7 @@ class WhereCondition(BaseModel):
 
 class ActionStatus(BaseModel):
     type: str = None
-    complete_time: int = None
+    completeTime: int = None
     status: str = None  # DONE ,ERROR
     error: str = None
     uid: str = None

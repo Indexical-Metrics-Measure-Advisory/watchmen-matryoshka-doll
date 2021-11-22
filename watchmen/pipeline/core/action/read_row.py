@@ -39,7 +39,7 @@ def init(action_context: ActionContext):
                 status.value = target_data
 
         elapsed_time = time.time() - start
-        status.complete_time = elapsed_time
+        status.completeTime = elapsed_time
         return status, []
 
     return read_row
