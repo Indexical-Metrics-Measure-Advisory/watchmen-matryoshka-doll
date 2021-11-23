@@ -8,12 +8,14 @@ from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.utils.data_utils import build_collection_name, is_presto_varchar_type, is_presto_int_type, \
     is_presto_datetime
 from watchmen.config.config import settings
-from watchmen.database.storage.storage_template import find_one, insert_one, delete_one
+from watchmen.database.find_storage_template import find_storage_template
 from watchmen.pipeline.utils.units_func import BOOLEAN, NUMBER, TIME
 from watchmen.topic.factor.factor import Factor
 from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
+
+storage_template = find_storage_template()
 
 
 class Schema(BaseModel):
@@ -23,7 +25,7 @@ class Schema(BaseModel):
 
 def remove_presto_schema_by_name(topic_name):
     try:
-        delete_one({"table": build_collection_name(topic_name)}, "_schema")
+        storage_template.delete_one({"table": build_collection_name(topic_name)}, "_schema")
     except Exception as e:
         log.exception(e)
 
@@ -67,10 +69,10 @@ def create_or_update_presto_schema_fields_for_mongo(topic: Topic):
         log.info("raw topic ignore trino update")
     else:
         topic_name = build_collection_name(topic.name)
-        presto_schema = find_one({"table": topic_name}, Schema, "_schema")
+        presto_schema = storage_template.find_one({"table": topic_name}, Schema, "_schema")
         new_schema = {"table": topic_name, "fields": __build_presto_fields(topic.factors)}
         if presto_schema is None:
-            insert_one(new_schema, Schema, "_schema")
+            storage_template.insert_one(new_schema, Schema, "_schema")
         else:
-            delete_one({"table": topic_name}, "_schema")
-            insert_one(new_schema, Schema, "_schema")
+            storage_template.delete_one({"table": topic_name}, "_schema")
+            storage_template.insert_one(new_schema, Schema, "_schema")

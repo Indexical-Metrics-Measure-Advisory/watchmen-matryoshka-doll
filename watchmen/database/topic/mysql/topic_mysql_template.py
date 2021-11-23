@@ -17,12 +17,15 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_int_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
-from watchmen.database.mysql.mysql_utils import parse_obj
-from watchmen.database.storage import storage_template
-from watchmen.database.storage.exception.exception import OptimisticLockError, InsertConflictError
+from watchmen.database.find_storage_template import find_storage_template
+from storage.mysql.mysql_utils import parse_obj
+from storage.storage.exception.exception import OptimisticLockError, InsertConflictError
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
+
+
+storage_template = find_storage_template()
 
 
 # @singleton

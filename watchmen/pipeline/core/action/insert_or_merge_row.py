@@ -4,8 +4,8 @@ import time
 from watchmen.common.utils.data_utils import get_id_name_by_datasource
 from watchmen.config.config import settings
 from watchmen.database.datasource.container import data_source_container
-from watchmen.database.storage.engine_adaptor import MONGO
-from watchmen.database.storage.exception.exception import InsertConflictError
+from storage.storage.engine_adaptor import MONGO
+from storage.storage.exception.exception import InsertConflictError
 from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, ActionContext

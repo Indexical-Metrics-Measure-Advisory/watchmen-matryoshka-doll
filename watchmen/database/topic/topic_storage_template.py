@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from watchmen.database.storage.storage_interface import Pageable, DataPage
+from storage.storage.storage_interface import Pageable, DataPage
 
 
 # @singleton
@@ -47,3 +47,10 @@ class TopicStorageEngine(object):
 
     def topic_data_page_(self, where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
         return self.template.topic_data_page_(where, sort, pageable, model, name)
+
+    def delete_topic_collection(collection_name):
+        '''
+        topic_name = build_collection_name(collection_name)
+        client.get_collection(topic_name).drop()
+        '''
+        self.template.topic_data_delete_(None, collection_name)

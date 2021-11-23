@@ -7,7 +7,7 @@ from watchmen.common.data_page import DataPage
 from watchmen.common.model.user import User
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
-from watchmen.database.storage.storage_template import find_
+from watchmen.database.find_storage_template import find_storage_template
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.space import Space
@@ -17,6 +17,9 @@ from watchmen.topic.storage.topic_schema_storage import save_topic, update_topic
 from watchmen.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
+
+
+storage_template = find_storage_template()
 
 
 class QueryTopic(Topic):
@@ -102,9 +105,9 @@ def merge_summary_data_for_topic(data_page: DataPage, current_user: User):
 
 def __find_spaces_in_topic_id(topic_id, current_user):
     where = {"and": [{"topicIds": {"in": [topic_id]}}, {"tenantId": current_user.tenantId}], }
-    return find_(where, Space, SPACES)
+    return storage_template.find_(where, Space, SPACES)
 
 
 def __find_groups_in_topic_id(topic_id, current_user):
     where = {"and": [{"topicIds": {"in": [topic_id]}}, {"tenantId": current_user.tenantId}], }
-    return find_(where, UserGroup, USER_GROUPS)
+    return storage_template.find_(where, UserGroup, USER_GROUPS)

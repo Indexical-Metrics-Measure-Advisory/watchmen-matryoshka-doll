@@ -8,7 +8,7 @@ from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.data_page import DataPage
 from watchmen.common.model.user import SUPER_ADMIN, User
 from watchmen.config.config import settings
-from watchmen.database.datasource.data_source import DataSource
+from storage.model.data_source import DataSource
 from watchmen.pipeline.utils.units_func import ADDRESS, CONTINENT, REGION, COUNTRY, PROVINCE, CITY, \
     DISTRICT, ROAD, COMMUNITY, FLOOR, RESIDENCE_TYPE, RESIDENTIAL_AREA, TEXT, EMAIL, PHONE, MOBILE, FAX, GENDER, \
     HALF_YEAR, QUARTER, SEASON, MONTH, HALF_MONTH, TEN_DAYS, WEEK_OF_YEAR, WEEK_OF_MONTH, HALF_WEEK, DAY_OF_MONTH, \

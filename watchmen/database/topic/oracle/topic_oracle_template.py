@@ -15,13 +15,17 @@ from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME
 from watchmen.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
-from watchmen.database.oracle.oracle_engine import dumps
-from watchmen.database.oracle.oracle_utils import parse_obj
-from watchmen.database.storage import storage_template
-from watchmen.database.storage.exception.exception import InsertConflictError, OptimisticLockError
+from watchmen.database.find_storage_template import find_storage_template
+from storage.oracle.oracle_engine import dumps
+from storage.oracle.oracle_utils import parse_obj
+from storage.storage.exception.exception import InsertConflictError, OptimisticLockError
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
+
+
+
+storage_template = find_storage_template()
 
 
 class OracleTopicStorage(TopicStorageInterface):

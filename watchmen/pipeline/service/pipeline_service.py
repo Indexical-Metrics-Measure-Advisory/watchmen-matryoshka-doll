@@ -1,6 +1,6 @@
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.utils.data_utils import is_raw
-from watchmen.database.storage.utils.topic_utils import get_flatten_field
+from watchmen.database.topic_utils import get_flatten_field
 from watchmen.pipeline.index import trigger_pipeline
 from watchmen.pipeline.model.trigger_type import TriggerType
 from watchmen.pipeline.utils.units_func import INSERT, add_audit_columns

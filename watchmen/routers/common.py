@@ -9,6 +9,7 @@ from watchmen.auth.tenant import Tenant
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
+from watchmen.common.data_page import DataPage
 from watchmen.common.model.user import User
 from watchmen.common.pagination import Pagination
 from watchmen.common.parameter import Parameter
@@ -18,10 +19,9 @@ from watchmen.common.watchmen_model import WatchmenModel
 from watchmen.console_space.model.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.database.datasource.container import data_source_container
-from watchmen.database.datasource.data_source import DataSource
+from storage.model.data_source import DataSource
 from watchmen.database.datasource.storage import data_source_storage
-from watchmen.database.mongo.index import delete_topic_collection
-from watchmen.database.storage.storage_template import clear_metadata, DataPage
+from watchmen.database.find_storage_template import find_storage_template
 from watchmen.external.model.external_writer import ExternalWriter
 from watchmen.external.storage import external_storage
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
@@ -104,7 +104,7 @@ async def patch_topic_instance(topic_name, instance_id, instance=Body(...),
 @router.post("/topic/data/remove", tags=["common"])
 async def remove_topic_collection(collections: List[str], current_user: User = Depends(deps.get_current_user)):
     for collection in collections:
-        delete_topic_collection(collection)
+        find_storage_template().delete_topic_collection(collection)
 
 
 class QueryFilter(BaseModel):
@@ -164,7 +164,7 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
 
 @router.get("/table/metadata/clear", tags=["common"])
 async def clear_table_metadata():
-    clear_metadata()
+    find_storage_template().clear_metadata()
 
 
 # TODO current_user

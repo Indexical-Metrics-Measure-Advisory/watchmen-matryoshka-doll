@@ -2,7 +2,7 @@ import abc
 
 from pydantic.main import BaseModel
 
-from watchmen.database.storage.storage_interface import Pageable, DataPage
+from storage.storage.storage_interface import Pageable, DataPage
 
 
 class TopicStorageInterface(abc.ABC):
