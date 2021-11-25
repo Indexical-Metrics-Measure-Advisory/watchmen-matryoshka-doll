@@ -1,18 +1,19 @@
 import logging
 import time
 
+from model.model.pipeline.trigger_data import TriggerData
+from storage.storage.engine_adaptor import MONGO
+from storage.storage.exception.exception import InsertConflictError
+
 from watchmen.common.utils.data_utils import get_id_name_by_datasource
 from watchmen.config.config import settings
 from watchmen.database.datasource.container import data_source_container
-from storage.storage.engine_adaptor import MONGO
-from storage.storage.exception.exception import InsertConflictError
 from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, ActionContext
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
 from watchmen.pipeline.core.retry.retry_template import RetryPolicy, retry_template
-from model.model.pipeline.trigger_data import TriggerData
 from watchmen.pipeline.storage.read_topic_data import query_topic_data
 from watchmen.pipeline.storage.write_topic_data import insert_topic_data, update_topic_data_one
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id

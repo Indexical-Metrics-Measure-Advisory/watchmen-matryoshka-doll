@@ -1,13 +1,13 @@
 from typing import List
 
+from model.model.space.space import Space
+
 from watchmen.auth.storage.user_group import get_user_group_list_by_ids, update_user_group_storage, USER_GROUPS
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.database.find_storage_template import find_storage_template
-from model.model.space.space import Space
 from watchmen.space.storage.space_storage import insert_space_to_storage, load_space_by_name, update_space_to_storage
-
 
 storage_template = find_storage_template()
 
@@ -31,7 +31,8 @@ def load_space(name: str) -> List[Space]:
 
 
 def sync_space_to_user_group(space: Space, current_user):
-    storage_template.pull_update({"spaceIds": {"in": [space.spaceId]}}, {"spaceIds": {"in": [space.spaceId]}}, UserGroup, USER_GROUPS)
+    storage_template.pull_update({"spaceIds": {"in": [space.spaceId]}}, {"spaceIds": {"in": [space.spaceId]}},
+                                 UserGroup, USER_GROUPS)
     user_group_list = get_user_group_list_by_ids(space.groupIds, current_user)
     for user_group in user_group_list:
         if user_group.spaceIds is None:

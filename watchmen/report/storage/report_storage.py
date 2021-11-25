@@ -1,9 +1,9 @@
-from model.model.common.user import User
 from model.model.common.pagination import Pagination
-from watchmen.common.snowflake.snowflake import get_surrogate_key
-
-from watchmen.database.find_storage_template import find_storage_template
+from model.model.common.user import User
 from model.model.report.report import Report
+
+from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.database.find_storage_template import find_storage_template
 
 CONSOLE_REPORTS = "console_reports"
 
@@ -20,12 +20,14 @@ def save_subject_report(report):
 
 
 def load_report_by_id(report_id, current_user):
-    return storage_template.find_one({"and": [{"reportId": report_id}, {"tenantId": current_user.tenantId}]}, Report, CONSOLE_REPORTS)
+    return storage_template.find_one({"and": [{"reportId": report_id}, {"tenantId": current_user.tenantId}]}, Report,
+                                     CONSOLE_REPORTS)
 
 
 def load_reports_by_ids(report_ids, current_user):
-    return storage_template.find_({"and": [{"reportId": {"in": report_ids}}, {"tenantId": current_user.tenantId}]}, Report,
-                 CONSOLE_REPORTS)
+    return storage_template.find_({"and": [{"reportId": {"in": report_ids}}, {"tenantId": current_user.tenantId}]},
+                                  Report,
+                                  CONSOLE_REPORTS)
 
 
 def delete_report_by_id(report_id):

@@ -1,11 +1,12 @@
-from watchmen.common.utils.data_utils import add_tenant_id_to_model
 from model.model.console_space.console_space import ConsoleSpace, ConsoleSpaceSubject
+from model.model.report.report import Report
+
+from watchmen.common.utils.data_utils import add_tenant_id_to_model
 from watchmen.console_space.storage.console_space_storage import load_console_space_by_subject_id, save_console_space, \
     load_console_space_by_id, delete_console_space_storage
 from watchmen.console_space.storage.console_subject_storage import delete_console_subject_by_id, \
     delete_console_subject_by_ids, load_console_subject_by_id, create_console_subject_to_storage, \
     load_console_subject_by_report_id
-from model.model.report.report import Report
 from watchmen.report.storage.report_storage import load_report_by_id, create_report
 
 

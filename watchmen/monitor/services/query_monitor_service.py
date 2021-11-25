@@ -2,12 +2,13 @@ import asyncio
 import time
 from datetime import datetime
 
+from model.model.console_space.console_space import ConsoleSpaceSubject
+from model.model.report.report import Report
+
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from model.model.console_space.console_space import ConsoleSpaceSubject
 from watchmen.monitor.model.query_monitor import QuerySource, QueryMonitor, QuerySummary, ResultSummary
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
-from model.model.report.report import Report
 
 
 def __build_query_for_subject(condition):

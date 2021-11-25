@@ -4,6 +4,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from model.model.common.user import User
 from starlette import status
 
 from watchmen.auth.service import security
@@ -11,7 +12,6 @@ from watchmen.auth.service.user import authenticate
 from watchmen.auth.storage.user import load_user_by_name
 from watchmen.auth.token import Token
 from watchmen.common import deps
-from model.model.common.user import User
 from watchmen.common.security.index import validate_jwt
 from watchmen.config.config import settings
 

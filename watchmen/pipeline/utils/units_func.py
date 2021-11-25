@@ -3,10 +3,10 @@ from datetime import datetime
 from decimal import Decimal
 
 import arrow
-
-from watchmen.common.constants import pipeline_constants
 from model.model.topic.factor import Factor
 from model.model.topic.topic import Topic
+
+from watchmen.common.constants import pipeline_constants
 
 log = logging.getLogger("app." + __name__)
 

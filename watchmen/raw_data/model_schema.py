@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional, Dict
 
 from model.model.common.watchmen_model import WatchmenModel
+
 from watchmen.raw_data.context import Context
 from watchmen.raw_data.model_field import ModelField
 from watchmen.raw_data.model_relationship import ModelRelationship

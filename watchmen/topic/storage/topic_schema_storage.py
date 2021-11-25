@@ -1,14 +1,14 @@
 from typing import List
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_ID, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME, \
-    TOPIC_DICT_BY_NAME
 from model.model.common.data_page import DataPage
 from model.model.common.pagination import Pagination
-from watchmen.common.utils.data_utils import build_collection_name
-from watchmen.database.find_storage_template import find_storage_template
+from model.model.topic.topic import Topic
 from storage.storage.storage_interface import OrderType
 
-from model.model.topic.topic import Topic
+from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_ID, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME, \
+    TOPIC_DICT_BY_NAME
+from watchmen.common.utils.data_utils import build_collection_name
+from watchmen.database.find_storage_template import find_storage_template
 
 TOPICS = "topics"
 
@@ -36,7 +36,8 @@ def get_topic_by_name(topic_name: str, current_user=None) -> Topic:
     if current_user is None:
         result = storage_template.find_one({"name": topic_name}, Topic, TOPICS)
     else:
-        result = storage_template.find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+        result = storage_template.find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic,
+                                           TOPICS)
     cacheman[TOPIC_BY_NAME].set(topic_name, result)
     return result
 
@@ -60,7 +61,8 @@ def load_topic_by_name(topic_name: str, current_user) -> Topic:
     cached_topic = cacheman[TOPIC_BY_NAME].get(topic_name)
     if cached_topic is not None:
         return cached_topic
-    result = storage_template.find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+    result = storage_template.find_one({"and": [{"name": topic_name}, {"tenantId": current_user.tenantId}]}, Topic,
+                                       TOPICS)
     cacheman[TOPIC_BY_NAME].set(topic_name, result)
     return result
 
@@ -71,13 +73,14 @@ def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
         return cached_topic
 
     if current_user is None:
-        result =storage_template. find_one({"topicId": topic_id}, Topic, TOPICS)
+        result = storage_template.find_one({"topicId": topic_id}, Topic, TOPICS)
         if result is not None:
             cacheman[TOPIC_BY_ID].set(topic_id, result)
         return result
 
     else:
-        result = storage_template.find_one({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic, TOPICS)
+        result = storage_template.find_one({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Topic,
+                                           TOPICS)
         if result is not None:
             cacheman[TOPIC_BY_ID].set(topic_id, result)
         return result

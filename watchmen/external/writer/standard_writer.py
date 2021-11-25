@@ -2,11 +2,11 @@ import json
 import logging
 
 import requests
-
-from watchmen.common.utils.date_utils import DateTimeEncoder
 from model.model.external.external_writer import ExternalWriter
 from model.model.pipeline.trigger_type import TriggerType
 from model.model.topic.topic import Topic
+
+from watchmen.common.utils.date_utils import DateTimeEncoder
 
 log = logging.getLogger("app." + __name__)
 

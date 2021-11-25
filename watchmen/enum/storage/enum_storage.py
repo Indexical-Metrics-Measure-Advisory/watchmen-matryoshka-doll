@@ -2,15 +2,15 @@ from typing import List
 
 from model.model.common.data_page import DataPage
 from model.model.common.pagination import Pagination
+from model.model.enum.enum import Enum
+
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.database.find_storage_template import find_storage_template
-from model.model.enum.enum import Enum
 
 ENUMS = "enums"
 
 ENUM_ITEMS = "enum_items"
-
 
 # template = find_template()
 
@@ -44,7 +44,8 @@ def load_enum_by_id(enum_id, current_user) -> Enum:
 
 def load_enum_by_parent_id(parent_id, current_user) -> Enum:
     # result = template.find_one(ENUMS, {"parentEnumId": parent_id}, Enum)
-    result = storage_template.find_one({"and": [{"parentEnumId": parent_id}, {"tenantId": current_user.tenantId}]}, Enum, ENUMS)
+    result = storage_template.find_one({"and": [{"parentEnumId": parent_id}, {"tenantId": current_user.tenantId}]},
+                                       Enum, ENUMS)
     # if result is not None:
     #     result.items = load_enum_items_by_enum_name(result.name, current_user)
     return result or []
@@ -52,12 +53,14 @@ def load_enum_by_parent_id(parent_id, current_user) -> Enum:
 
 def load_enum_list_by_name(enum_name, current_user) -> List[Enum]:
     # return template.find(ENUMS, {"name": regex.Regex(enum_name)}, Enum)
-    return storage_template.find_({"and": [{"name": {"like": enum_name}}, {"tenantId": current_user.tenantId}]}, Enum, ENUMS)
+    return storage_template.find_({"and": [{"name": {"like": enum_name}}, {"tenantId": current_user.tenantId}]}, Enum,
+                                  ENUMS)
 
 
 def load_all_enum_list(pagination: Pagination, current_user) -> DataPage:
     # return template.query_with_pagination(ENUMS, pagination, Enum, sort_dict={"last_modified": pymongo.DESCENDING})
-    return storage_template.page_({"tenantId": current_user.tenantId}, [("last_modified", "desc")], pagination, Enum, ENUMS)
+    return storage_template.page_({"tenantId": current_user.tenantId}, [("last_modified", "desc")], pagination, Enum,
+                                  ENUMS)
 
 
 def query_enum_list_with_pagination(query_name: str, pagination: Pagination, current_user) -> DataPage:
@@ -66,7 +69,7 @@ def query_enum_list_with_pagination(query_name: str, pagination: Pagination, cur
                                           sort_dict=["last_modified", pymongo.DESCENDING])
     '''
     return storage_template.page_({"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]},
-                 [("lastmodified", "desc")], pagination, Enum, ENUMS)
+                                  [("lastmodified", "desc")], pagination, Enum, ENUMS)
 
 
 def load_enum_list(current_user):

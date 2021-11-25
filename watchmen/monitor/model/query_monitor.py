@@ -1,9 +1,8 @@
 from datetime import datetime
 from typing import List
 
-from pydantic.main import BaseModel
-
 from model.model.common.watchmen_model import WatchmenModel
+from pydantic.main import BaseModel
 
 
 class QuerySource(BaseModel):

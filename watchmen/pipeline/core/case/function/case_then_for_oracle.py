@@ -1,9 +1,10 @@
 from typing import List
 
+from model.model.report.column import Operator
+
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.utils.units_func import get_factor
-from model.model.report.column import Operator
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

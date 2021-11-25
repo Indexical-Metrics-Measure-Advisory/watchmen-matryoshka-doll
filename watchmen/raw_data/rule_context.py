@@ -1,4 +1,5 @@
 from model.model.common.watchmen_model import WatchmenModel
+
 from watchmen.raw_data.rule_schema import RuleType, DSLType
 
 

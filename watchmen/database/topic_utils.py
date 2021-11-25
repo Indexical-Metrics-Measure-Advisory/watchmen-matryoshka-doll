@@ -1,7 +1,8 @@
 from typing import List
 
-from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 from model.model.topic.factor import Factor
+
+from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 
 
 #

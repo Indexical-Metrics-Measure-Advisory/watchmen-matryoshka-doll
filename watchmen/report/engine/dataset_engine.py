@@ -2,9 +2,9 @@ import logging
 import time
 import traceback
 
+from model.model.common.pagination import Pagination
 from pypika import functions as fn, AliasedQuery, Field, JoinType
 
-from model.model.common.pagination import Pagination
 from watchmen.common.presto.presto_client import get_connection
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.monitor.model.query_monitor import QueryMonitor

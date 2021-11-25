@@ -4,6 +4,18 @@ from typing import List
 
 import arrow
 from fastapi import APIRouter, Body, Depends
+from model.model.common.data_page import DataPage
+from model.model.common.pagination import Pagination
+from model.model.common.user import User
+from model.model.console_space.console_space import ConsoleSpace
+from model.model.dashborad.dashborad import ConsoleDashboard
+from model.model.enum.enum import Enum
+from model.model.pipeline.pipeline import Pipeline
+from model.model.pipeline.pipeline_flow import PipelineFlow
+from model.model.pipeline.pipeline_graph import PipelinesGraphics
+from model.model.report.report import Report
+from model.model.space.space import Space
+from model.model.topic.topic import Topic
 from pydantic import BaseModel
 
 from watchmen.auth.service.user import sync_user_to_user_groups
@@ -15,43 +27,31 @@ from watchmen.auth.storage.user_group import create_user_group_storage, query_us
     get_user_group_by_name
 from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
-from model.model.common.data_page import DataPage
-from model.model.common.user import User
-from model.model.common.pagination import Pagination
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
 from watchmen.common.security.pat.pat_service import createPAT, queryPAT, deletePAT
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id, add_tenant_id_to_model, \
     compare_tenant, clean_password, is_super_admin
-from model.model.console_space.console_space import ConsoleSpace
 from watchmen.console_space.service.console_space_service import load_space_list_by_dashboard
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
-from model.model.dashborad.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
-from model.model.enum.enum import Enum
 from watchmen.enum.storage.enum_storage import save_enum_to_storage, query_enum_list_with_pagination, load_enum_by_id, \
     load_enum_list
 from watchmen.monitor.services.query_service import query_pipeline_monitor
-from model.model.pipeline.pipeline import Pipeline
-from model.model.pipeline.pipeline_flow import PipelineFlow
-from model.model.pipeline.pipeline_graph import PipelinesGraphics
 from watchmen.pipeline.storage.pipeline_storage import update_pipeline, create_pipeline, load_pipeline_by_topic_id, \
     load_pipeline_list, load_pipeline_graph, create_pipeline_graph, update_pipeline_graph, update_pipeline_status, \
     update_pipeline_name, load_pipeline_by_id, remove_pipeline_graph
 from watchmen.raw_data.service.generate_raw_topic_schema import create_raw_topic
 from watchmen.raw_data.service.generate_raw_topic_schema_v3 import create_raw_topic_v3
 from watchmen.raw_data.service.generate_schema import create_raw_data_model_set, RawTopicGenerateEvent
-from model.model.report.report import Report
 from watchmen.report.storage.report_storage import query_report_list_with_pagination
 from watchmen.space.service.admin import create_space, update_space_by_id, sync_space_to_user_group
-from model.model.space.space import Space
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
     load_space_list_by_name, load_space_by_name
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name, \
     load_topic_list_by_name_and_exclude
-from model.model.topic.topic import Topic
 
 router = APIRouter()
 

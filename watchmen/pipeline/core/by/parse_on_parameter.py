@@ -1,11 +1,11 @@
 import pandas as pd
+from model.model.report.column import Operator
+from model.model.topic.topic import Topic
 
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, get_variable_with_func_pattern, \
     get_variable_with_dot_pattern, convert_datetime, check_and_convert_value_by_factor
 from watchmen.pipeline.utils.units_func import get_factor
-from model.model.report.column import Operator
-from model.model.topic.topic import Topic
 
 
 def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_topic: Topic, target_topic: Topic):

@@ -1,5 +1,6 @@
-from watchmen.common.utils.data_utils import RelationshipType
 from model.model.common.watchmen_model import WatchmenModel
+
+from watchmen.common.utils.data_utils import RelationshipType
 
 
 class ModelRelationship(WatchmenModel):

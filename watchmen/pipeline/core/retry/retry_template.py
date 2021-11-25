@@ -2,7 +2,6 @@ import logging
 import time
 
 from pydantic import BaseModel
-
 from storage.storage.exception.exception import OptimisticLockError
 
 log = logging.getLogger("app." + __name__)

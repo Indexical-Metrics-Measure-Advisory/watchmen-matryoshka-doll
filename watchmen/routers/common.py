@@ -2,27 +2,29 @@ import logging
 from typing import List, Any
 
 from fastapi import APIRouter, Depends, Body
+from model.model.common.data_page import DataPage
+from model.model.common.pagination import Pagination
+from model.model.common.parameter import Parameter
+from model.model.common.user import User
+from model.model.common.watchmen_model import WatchmenModel
+from model.model.console_space.console_space import ConsoleSpaceSubject
+from model.model.external.external_writer import ExternalWriter
+from model.model.report.filter import Filter
+from model.model.topic.topic import Topic
 from pydantic import BaseModel
+from storage.model.data_source import DataSource
 
 from watchmen.auth.service import tenant_service
 from watchmen.auth.tenant import Tenant
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
-from model.model.common.data_page import DataPage
-from model.model.common.user import User
-from model.model.common.pagination import Pagination
-from model.model.common.parameter import Parameter
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
-from model.model.common.watchmen_model import WatchmenModel
-from model.model.console_space.console_space import ConsoleSpaceSubject
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.database.datasource.container import data_source_container
-from storage.model.data_source import DataSource
 from watchmen.database.datasource.storage import data_source_storage
 from watchmen.database.find_storage_template import find_storage_template
-from model.model.external.external_writer import ExternalWriter
 from watchmen.external.storage import external_storage
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
@@ -31,11 +33,9 @@ from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.raw_data.service.generate_raw_instance_with_aid import create_raw_topic_instance
 from watchmen.raw_data.service.import_raw_data import import_raw_topic_data
 from watchmen.report.engine.dataset_engine import get_factor_value_by_subject_and_condition
-from model.model.report.filter import Filter
 from watchmen.topic.storage.topic_data_storage import find_topic_data_by_id_and_topic_name, \
     update_topic_instance, get_topic_instances_all
 from watchmen.topic.storage.topic_schema_storage import get_topic, get_topic_by_id, get_topic_by_name
-from model.model.topic.topic import Topic
 
 router = APIRouter()
 

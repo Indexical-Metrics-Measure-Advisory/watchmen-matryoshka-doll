@@ -3,13 +3,14 @@ from __future__ import annotations
 import operator
 from typing import List
 
+from model.model.report.column import Operator
+
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, AMP, FUNC, \
     get_variable_with_func_pattern, DOT, get_variable_with_dot_pattern
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.core.parameter.utils import cal_factor_value
 from watchmen.pipeline.utils.units_func import get_factor
-from model.model.report.column import Operator
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

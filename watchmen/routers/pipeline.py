@@ -2,13 +2,12 @@ import asyncio
 import logging
 
 from fastapi import APIRouter, Depends
+from model.model.common.user import User
+from model.model.topic.topic import Topic
 
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
-
-from model.model.common.user import User
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from model.model.topic.topic import Topic
 from watchmen.pipeline.service.pipeline_service import save_topic_data, get_input_data, run_pipeline
 from watchmen.topic.storage.topic_schema_storage import get_topic
 

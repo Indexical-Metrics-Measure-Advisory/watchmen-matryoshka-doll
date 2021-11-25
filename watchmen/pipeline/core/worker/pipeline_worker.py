@@ -5,6 +5,8 @@ import traceback
 from datetime import datetime
 from functools import lru_cache
 
+from model.model.pipeline.trigger_type import TriggerType
+
 import watchmen
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
@@ -17,7 +19,6 @@ from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.context.stage_context import StageContext
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joint
 from watchmen.pipeline.core.worker.stage_worker import run_stage
-from model.model.pipeline.trigger_type import TriggerType
 from watchmen.pipeline.utils.constants import PIPELINE_UID, FINISHED, ERROR
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, get_topic_by_name
 
@@ -91,7 +92,7 @@ def run_pipeline(pipeline_context: PipelineContext):
     pipeline = pipeline_context.pipeline
     data = pipeline_context.data
     pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),
-                                        startTime=datetime.now().replace(tzinfo=None),topicId=pipeline.topicId,
+                                        startTime=datetime.now().replace(tzinfo=None), topicId=pipeline.topicId,
                                         tenantId=pipeline_context.currentUser.tenantId,
                                         traceId=pipeline_context.traceId, pipelineName=pipeline.name)
     pipeline_status.oldValue = data[pipeline_constants.OLD]
@@ -114,7 +115,7 @@ def run_pipeline(pipeline_context: PipelineContext):
                     stage_run_status = StageRunStatus(name=stage.name)
                     stage_context = StageContext(pipeline_context, stage, stage_run_status)
                     stage_run_status.name = stage.name
-                    run_stage(stage_context,stage_run_status)
+                    run_stage(stage_context, stage_run_status)
                     pipeline_status.stages.append(stage_context.stageStatus)
 
                 elapsed_time = time.time() - start

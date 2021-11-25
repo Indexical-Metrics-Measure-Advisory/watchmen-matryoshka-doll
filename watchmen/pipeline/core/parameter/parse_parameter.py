@@ -3,6 +3,7 @@ from decimal import Decimal
 from typing import List
 
 import pandas as pd
+from model.model.report.column import Operator
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_collection_name
@@ -20,7 +21,6 @@ from watchmen.pipeline.core.parameter.operator.not_equals import do_not_equals_w
 from watchmen.pipeline.core.parameter.operator.not_in_operator import do_not_in_with_value_type_check
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, convert_datetime, check_and_convert_value_by_factor
 from watchmen.pipeline.utils.units_func import get_factor
-from model.model.report.column import Operator
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

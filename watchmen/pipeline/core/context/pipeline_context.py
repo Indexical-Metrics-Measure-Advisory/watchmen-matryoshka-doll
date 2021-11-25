@@ -1,7 +1,8 @@
 from model.model.common.user import User
-from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from model.model.pipeline.pipeline import Pipeline
 from model.model.topic.topic import Topic
+
+from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 
 
 class PipelineContext:

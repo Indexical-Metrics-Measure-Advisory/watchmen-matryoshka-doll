@@ -1,7 +1,8 @@
-from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
-from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 from model.model.topic.factor import Factor
 from model.model.topic.topic import Topic
+
+from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
+from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
 
 
 def parse_mappings(mappings, target_topic, previous_data, current_data, variables):

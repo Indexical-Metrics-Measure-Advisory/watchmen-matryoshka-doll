@@ -1,6 +1,7 @@
 from model.model.common.user import User
-from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from model.model.topic.topic import Topic
+
+from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 
 
 def __merge_tenant_id_to_where_condition(where_, current_user: User = None):

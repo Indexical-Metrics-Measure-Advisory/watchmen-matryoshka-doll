@@ -5,25 +5,24 @@ from datetime import datetime
 from decimal import Decimal
 from operator import eq
 
+from model.model.common.data_page import DataPage
 from sqlalchemy import Table, MetaData
 from sqlalchemy import update, and_, or_, delete, desc, asc, \
     text, JSON, inspect, func
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
+from storage.mysql.mysql_utils import parse_obj
+from storage.storage.exception.exception import OptimisticLockError, InsertConflictError
 
 from watchmen.common.cache.cache_manage import cacheman, STMT, COLUMNS_BY_TABLE_NAME
-from model.model.common.data_page import DataPage
 from watchmen.common.snowflake.snowflake import get_int_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.database.find_storage_template import find_storage_template
-from storage.mysql.mysql_utils import parse_obj
-from storage.storage.exception.exception import OptimisticLockError, InsertConflictError
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
-
 
 storage_template = find_storage_template()
 

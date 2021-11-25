@@ -1,17 +1,18 @@
 import logging
 from typing import List
 
+from model.model.pipeline.trigger_data import TriggerData
+from model.model.pipeline.trigger_type import TriggerType
+from model.model.topic.factor import Factor
+from model.model.topic.topic import Topic
+
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.utils.data_utils import get_id_name_by_datasource, add_tenant_id_to_instance
 from watchmen.config.config import settings
 from watchmen.database.datasource.container import data_source_container
 from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
-from model.model.pipeline.trigger_data import TriggerData
-from model.model.pipeline.trigger_type import TriggerType
 from watchmen.pipeline.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE
 from watchmen.security.index import encrypt_value
-from model.model.topic.factor import Factor
-from model.model.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 

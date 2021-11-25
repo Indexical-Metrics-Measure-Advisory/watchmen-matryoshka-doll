@@ -1,15 +1,15 @@
+from model.model.pipeline.pipeline import Pipeline
+from model.model.pipeline.pipeline_graph import PipelinesGraphics
+
 from watchmen.common.cache.cache_manage import cacheman, PIPELINES_BY_TOPIC_ID, PIPELINE_BY_ID
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.database.find_storage_template import find_storage_template
-from model.model.pipeline.pipeline import Pipeline
-from model.model.pipeline.pipeline_graph import PipelinesGraphics
 
 USER_ID = "userId"
 
 PIPELINES = "pipelines"
 
 PIPELINE_GRAPH = "pipeline_graph"
-
 
 storage_template = find_storage_template()
 
@@ -41,7 +41,8 @@ def load_pipeline_by_topic_id(topic_id, current_user=None):
             cacheman[PIPELINES_BY_TOPIC_ID].set(topic_id, pipelines)
         return pipelines
     else:
-        pipelines = storage_template.find_({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]}, Pipeline, PIPELINES)
+        pipelines = storage_template.find_({"and": [{"topicId": topic_id}, {"tenantId": current_user.tenantId}]},
+                                           Pipeline, PIPELINES)
         if pipelines is not None:
             cacheman[PIPELINES_BY_TOPIC_ID].set(topic_id, pipelines)
         return pipelines
@@ -51,7 +52,8 @@ def load_pipeline_by_id(pipeline_id, current_user):
     cached_pipeline = cacheman[PIPELINE_BY_ID].get(pipeline_id)
     if cached_pipeline is not None:
         return cached_pipeline
-    result = storage_template.find_one({"and": [{"pipelineId": pipeline_id}, {"tenantId": current_user.tenantId}]}, Pipeline, PIPELINES)
+    result = storage_template.find_one({"and": [{"pipelineId": pipeline_id}, {"tenantId": current_user.tenantId}]},
+                                       Pipeline, PIPELINES)
     if result is not None:
         cacheman[PIPELINE_BY_ID].set(pipeline_id, result)
     return result
@@ -86,7 +88,8 @@ def remove_pipeline_graph(pipeline_graph_id):
 
 
 def load_pipeline_graph(user_id, current_user):
-    return storage_template.find_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}]}, PipelinesGraphics, PIPELINE_GRAPH)
+    return storage_template.find_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}]},
+                                  PipelinesGraphics, PIPELINE_GRAPH)
 
 
 def import_pipeline_to_db(pipeline):

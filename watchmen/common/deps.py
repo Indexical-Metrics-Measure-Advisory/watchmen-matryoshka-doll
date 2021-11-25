@@ -5,10 +5,10 @@ from fastapi.security import OAuth2
 from fastapi.security.utils import get_authorization_scheme_param
 from jose import jwt
 from jsonschema import ValidationError
+from model.model.common.user import User
 from starlette import status
 
 from watchmen.auth.storage.user import load_user_by_name
-from model.model.common.user import User
 from watchmen.common.security.index import validate_jwt
 from watchmen.common.security.pat.pat_model import PersonAccessToken
 from watchmen.common.security.pat.pat_service import verifyPAT

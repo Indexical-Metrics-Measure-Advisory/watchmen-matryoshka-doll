@@ -7,6 +7,7 @@ KEY_STORES = "key_stores"
 
 storage_template = find_storage_template()
 
+
 def load_key_store_by_tenant(tenant_id: str) -> KeyStore:
     cached_key = cacheman[KEY_STORES].get(tenant_id)
     if cached_key is not None:

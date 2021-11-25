@@ -1,7 +1,8 @@
 from typing import List
 
-from watchmen.database.find_storage_template import find_storage_template
 from model.model.external.external_writer import ExternalWriter
+
+from watchmen.database.find_storage_template import find_storage_template
 
 EXTERNAL_WRITER = "external_writer"
 

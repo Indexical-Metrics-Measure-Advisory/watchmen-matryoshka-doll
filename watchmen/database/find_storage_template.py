@@ -1,7 +1,7 @@
+from storage.storage.engine_adaptor import MONGO, MYSQL, ORACLE
 from storage.storage.storage_template import StorageTemplate
 
 from watchmen.config.config import settings
-from storage.storage.engine_adaptor import MONGO, MYSQL, ORACLE
 
 
 def find_storage_template():
@@ -14,6 +14,3 @@ def find_storage_template():
     elif settings.STORAGE_ENGINE == ORACLE:
         from watchmen.database.table import oracle_table_definition
         return StorageTemplate(oracle_table_definition)
-
-
-

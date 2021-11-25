@@ -3,18 +3,18 @@ from decimal import Decimal
 from typing import List
 
 import arrow
+from model.model.common.parameter import Parameter
+from model.model.report.column import Column, Operator
+from model.model.report.filter import Filter, ConnectiveType
+from model.model.report.join import Join, JoinType
+from model.model.report.report import ReportIndicator, ReportDimension
 from pypika import Query, Table, JoinType, Order, CustomFunction
 from pypika import functions as fn
 from pypika.queries import QueryBuilder
 from pypika.terms import PseudoColumn, LiteralValue
 
-from model.model.common.parameter import Parameter
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.utils.units_func import get_factor
-from model.model.report.column import Column, Operator
-from model.model.report.filter import Filter, ConnectiveType
-from model.model.report.join import Join, JoinType
-from model.model.report.report import ReportIndicator, ReportDimension
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

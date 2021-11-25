@@ -7,6 +7,7 @@ from watchmen.database.find_storage_template import find_storage_template
 
 storage_template = find_storage_template()
 
+
 def createPAT(note: str, user_id: str, username: str, tenant_id: str):
     pat = PersonAccessToken()
     pat.patId = get_surrogate_key()

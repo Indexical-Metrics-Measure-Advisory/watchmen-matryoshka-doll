@@ -2,18 +2,18 @@ from decimal import Decimal
 from typing import List
 
 import arrow
+from model.model.common.parameter import Parameter, ParameterJoint
+from model.model.console_space.console_space import SubjectDataSetFilter
+from model.model.report.column import Column, Operator
 from pypika import Table, Schema, Field, Criterion, CustomFunction, AliasedQuery
 from pypika.enums import Arithmetic
 from pypika.terms import PseudoColumn, ArithmeticExpression, Term, ValueWrapper, LiteralValue
-
-from model.model.common.parameter import Parameter, ParameterJoint
-from watchmen.common.utils.data_utils import build_collection_name
-from model.model.console_space.console_space import SubjectDataSetFilter
 from storage.model.data_source import DataSource
+
+from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.database.datasource.storage.data_source_storage import load_data_source_by_id
 from watchmen.pipeline.utils.units_func import get_factor, get_factor_by_name
 from watchmen.report.builder.utils import transform_value_str_to_number, build_table_by_topic_id
-from model.model.report.column import Column, Operator
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, load_topic_by_name
 
 

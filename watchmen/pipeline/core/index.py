@@ -1,8 +1,9 @@
 import logging
 
+from model.model.pipeline.trigger_type import TriggerType
+
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
-from model.model.pipeline.trigger_type import TriggerType
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.topic.storage.topic_schema_storage import get_topic
 

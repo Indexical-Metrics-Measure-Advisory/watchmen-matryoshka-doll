@@ -1,6 +1,7 @@
+from model.model.pipeline.pipeline import ProcessUnit
+
 from watchmen.monitor.model.pipeline_monitor import UnitRunStatus
 from watchmen.pipeline.core.context.stage_context import StageContext
-from model.model.pipeline.pipeline import ProcessUnit
 
 
 class UnitContext:

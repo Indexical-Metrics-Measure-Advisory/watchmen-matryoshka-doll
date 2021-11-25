@@ -4,18 +4,19 @@ from datetime import date
 import arrow
 import pymongo
 from bson import regex, ObjectId
-from pymongo.errors import WriteError
-
 from model.model.common.data_page import DataPage
-from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
-from watchmen.database.find_storage_template import find_storage_template
+from pymongo.errors import WriteError
 from storage.mongo.index import build_code_options
 from storage.storage.exception.exception import OptimisticLockError, InsertConflictError
+
+from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
+from watchmen.database.find_storage_template import find_storage_template
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
 
 storage_template = find_storage_template()
+
 
 # @singleton
 class MongoTopicStorage(TopicStorageInterface):

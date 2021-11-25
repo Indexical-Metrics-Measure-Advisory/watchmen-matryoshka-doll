@@ -1,9 +1,10 @@
 from typing import Dict
 
-from watchmen.raw_data.model_field import ModelField
-from watchmen.raw_data.model_schema import ModelSchema
 from model.model.topic.factor import Factor
 from model.model.topic.topic import Topic
+
+from watchmen.raw_data.model_field import ModelField
+from watchmen.raw_data.model_schema import ModelSchema
 
 
 def convert_business_fields_to_factors(business_fields_dict: Dict[str, ModelField]):

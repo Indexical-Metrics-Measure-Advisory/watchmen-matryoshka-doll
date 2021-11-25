@@ -5,34 +5,34 @@ from enum import Enum
 from typing import List, Any, Dict
 
 from fastapi import APIRouter, Depends
+from model.model.common.user import User
+from model.model.common.watchmen_model import WatchmenModel
+from model.model.console_space.console_space import ConsoleSpace, ConsoleSpaceSubject
+from model.model.dashborad.dashborad import ConsoleDashboard
+from model.model.pipeline.pipeline import Pipeline
+from model.model.report.report import Report
+from model.model.space.space import Space
+from model.model.topic.topic import Topic
 from pydantic import BaseModel
 
 from watchmen.auth.storage.user import import_user_to_db, get_user, update_user_storage
 from watchmen.auth.storage.user_group import import_user_group_to_db, get_user_group, update_user_group_storage
 from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
-from model.model.common.user import User
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import add_tenant_id_to_model, add_user_id_to_model
-from model.model.common.watchmen_model import WatchmenModel
-from model.model.console_space.console_space import ConsoleSpace, ConsoleSpaceSubject
 from watchmen.console_space.storage.console_space_storage import load_console_space_by_id, \
     update_console_space, import_console_space_to_db
 from watchmen.console_space.storage.console_subject_storage import import_console_subject_to_db, \
     load_console_subject_by_id, update_console_subject
-from model.model.dashborad.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import import_dashboard_to_db, load_dashboard_by_id, \
     update_dashboard_to_storage
-from model.model.pipeline.pipeline import Pipeline
 from watchmen.pipeline.storage.pipeline_storage import import_pipeline_to_db, load_pipeline_by_id, update_pipeline
-from model.model.report.report import Report
 from watchmen.report.storage.report_storage import import_report_to_db, load_report_by_id, save_subject_report
 from watchmen.space.service.admin import update_space_by_id
-from model.model.space.space import Space
 from watchmen.space.storage.space_storage import import_space_to_db, get_space_by_id
 from watchmen.topic.service.topic_service import update_topic_schema, create_topic_schema
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, import_topic_to_db
-from model.model.topic.topic import Topic
 
 router = APIRouter()
 

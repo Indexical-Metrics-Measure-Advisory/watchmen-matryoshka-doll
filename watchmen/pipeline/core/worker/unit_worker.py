@@ -2,7 +2,6 @@ import logging
 
 from distributed import as_completed
 
-
 from watchmen.config.config import settings
 from watchmen.monitor.model.pipeline_monitor import UnitRunStatus
 from watchmen.pipeline.core.context.action_context import ActionContext
@@ -56,7 +55,7 @@ def run_unit(unit_context: UnitContext):
         if unit_context.unit.do is not None:
             unit_context.unitStatus = UnitRunStatus()
             unit_context.unitStatus.unitId = unit_context.unit.unitId
-            if should_run(unit_context,unit_context.unitStatus):
+            if should_run(unit_context, unit_context.unitStatus):
                 for action in unit_context.unit.do:
                     action_context = ActionContext(unit_context, action)
                     result, trigger_pipeline_data_list = run_action(action_context)
@@ -69,12 +68,11 @@ def run_unit(unit_context: UnitContext):
 
 
 def run_loop_actions(loop_variable_name, unit_context):
-
     for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
         unit_run_status = UnitRunStatus()
         unit_run_status.unitId = unit_context.unit.unitId
         if unit_context.unit.do is not None:
-            if should_run(unit_context,unit_run_status):
+            if should_run(unit_context, unit_run_status):
                 for action in unit_context.unit.do:
                     action_context = ActionContext(unit_context, action)
                     action_context.delegateVariableName = loop_variable_name
@@ -89,12 +87,12 @@ def run_loop_actions(loop_variable_name, unit_context):
         unit_context.stageContext.stageStatus.units.append(unit_context.unitStatus)
 
 
-def run_loop_with_dask(loop_variable_name, unit_context,unit_run_status):
+def run_loop_with_dask(loop_variable_name, unit_context, unit_run_status):
     from watchmen.common.dask.client import get_dask_client
     futures = []
     for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
         if unit_context.unit.do is not None:
-            if should_run(unit_context,unit_run_status):
+            if should_run(unit_context, unit_run_status):
                 unit_context.unitStatus = UnitRunStatus()
                 unit_context.unitStatus.unitId = unit_context.unit.unitId
                 for action in unit_context.unit.do:

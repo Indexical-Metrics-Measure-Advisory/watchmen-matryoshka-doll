@@ -7,5 +7,3 @@ def query_pipeline_monitor(topic_name, query, pagination, current_user=None):
     storage_template = get_template_by_datasource_id(topic.dataSourceId)
     result = storage_template.topic_data_page_(query, None, pagination, None, topic_name)
     return result
-
-

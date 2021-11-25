@@ -4,10 +4,8 @@ from typing import List
 from fastapi import APIRouter, Depends, Body
 
 from watchmen.common import deps
-from model.model.common.user import User
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
-from model.model.pipeline.pipeline import Pipeline
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
 from watchmen.topic.storage.topic_data_storage import find_topic_data_by_id_and_topic_name, \
     update_topic_instance, save_topic_instance

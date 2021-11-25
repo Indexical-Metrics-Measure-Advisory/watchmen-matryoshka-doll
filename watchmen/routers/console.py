@@ -2,22 +2,27 @@ from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Depends, Body, HTTPException
-from pydantic import BaseModel
-from starlette import status
-
-from watchmen.auth.storage.user import get_user
-from watchmen.common import deps
 from model.model.common.data_page import DataPage
-from model.model.common.user import User
 from model.model.common.pagination import Pagination
-from watchmen.common.security.index import validate_jwt
-from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import build_data_pages, check_fake_id, add_tenant_id_to_model
+from model.model.common.user import User
 from model.model.console_space.connect_space_graphics import ConnectedSpaceGraphics
 from model.model.console_space.console_space import ConsoleSpace, ConsoleSpaceSubject, \
     ConsoleSpaceSubjectChartDataSet, ConnectedSpaceTemplate
 from model.model.console_space.favorite import Favorite
 from model.model.console_space.last_snapshot import LastSnapshot
+from model.model.dashborad.dashborad import ConsoleDashboard
+from model.model.report.report import Report
+from model.model.space.space import Space
+from model.model.topic.topic import Topic
+from model.model.topic.topic_relationship import TopicRelationship
+from pydantic import BaseModel
+from starlette import status
+
+from watchmen.auth.storage.user import get_user
+from watchmen.common import deps
+from watchmen.common.security.index import validate_jwt
+from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.utils.data_utils import build_data_pages, check_fake_id, add_tenant_id_to_model
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
     delete_console_space_and_sub_data, copy_template_to_console_space, load_space_list_by_dashboard
 from watchmen.console_space.storage.console_space_storage import save_console_space, load_console_space_list_by_user, \
@@ -29,19 +34,14 @@ from watchmen.console_space.storage.console_subject_storage import create_consol
     load_console_subject_by_report_id
 from watchmen.console_space.storage.favorite_storage import load_favorite, save_favorite
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot, save_last_snapshot
-from model.model.dashborad.dashborad import ConsoleDashboard
 from watchmen.dashborad.storage.dashborad_storage import create_dashboard_to_storage, update_dashboard_to_storage, \
     load_dashboard_by_user_id, delete_dashboard_by_id, rename_dashboard_by_id, load_dashboard_by_id
 from watchmen.report.engine.dataset_engine import load_dataset_by_subject_id
 from watchmen.report.engine.report_engine import load_chart_dataset, load_chart_dataset_temp
-from model.model.report.report import Report
 from watchmen.report.storage.report_storage import create_report, save_subject_report, \
     load_reports_by_ids, delete_report_by_id
 from watchmen.space.service.console import load_topic_list_by_space_id
-from model.model.space.space import Space
 from watchmen.space.storage.space_storage import load_space_by_user
-from model.model.topic.topic import Topic
-from model.model.topic.topic_relationship import TopicRelationship
 
 router = APIRouter()
 

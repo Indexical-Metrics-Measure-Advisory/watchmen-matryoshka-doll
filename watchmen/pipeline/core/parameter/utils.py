@@ -2,7 +2,6 @@ from datetime import datetime
 from decimal import Decimal
 
 import arrow
-
 from model.model.topic.factor import Factor
 
 

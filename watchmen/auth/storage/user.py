@@ -1,7 +1,7 @@
-from watchmen.auth.service.security import get_password_hash
-
-from model.model.common.user import User
 from model.model.common.pagination import Pagination
+from model.model.common.user import User
+
+from watchmen.auth.service.security import get_password_hash
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import is_superuser
 from watchmen.database.find_storage_template import find_storage_template
@@ -35,13 +35,15 @@ def get_user_list_by_ids(user_ids: list, current_user):
 
 def get_user_list_by_ids(user_ids: list, current_user):
     if user_ids:
-        return storage_template.find_({"and": [{"userId": {"in": user_ids}}, {"tenantId": current_user.tenantId}]}, User, USERS)
+        return storage_template.find_({"and": [{"userId": {"in": user_ids}}, {"tenantId": current_user.tenantId}]},
+                                      User, USERS)
     else:
         return []
 
 
 def load_user_list_by_name(query_name, current_user):
-    return storage_template.find_({"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]}, User, USERS)
+    return storage_template.find_({"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]}, User,
+                                  USERS)
 
 
 def load_user_by_name(user_name) -> User:
@@ -64,7 +66,7 @@ def query_users_by_name_with_pagination(query_name: str, pagination: Pagination,
     else:
         where_ = {"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]}
     return storage_template.page_(where_, [("name", "desc")],
-                 pagination, User, USERS)
+                                  pagination, User, USERS)
 
 
 def import_user_to_db(user):

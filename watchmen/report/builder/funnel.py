@@ -2,12 +2,12 @@ from decimal import Decimal
 from typing import List
 
 import arrow
+from model.model.report.column import Column
+from model.model.report.report import ReportFunnel
 from pypika import Criterion, AliasedQuery, Field
 from pypika.terms import LiteralValue
 
 from watchmen.pipeline.utils.units_func import get_factor
-from model.model.report.column import Column
-from model.model.report.report import ReportFunnel
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

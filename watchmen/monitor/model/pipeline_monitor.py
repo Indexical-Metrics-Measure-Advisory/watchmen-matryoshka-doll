@@ -1,10 +1,8 @@
-
 from datetime import datetime
 from typing import Any, List
 
-from pydantic import BaseModel
-
 from model.model.common.user import User
+from pydantic import BaseModel
 
 
 class UnitActionStatus(BaseModel):
@@ -62,14 +60,14 @@ class MergeRowAction(UnitActionStatus, MappingHolder):
 
 
 class UnitRunStatus(ConditionHolder):
-    unitId:str = None
+    unitId: str = None
     conditionResult: bool = None
-    name:str = None
+    name: str = None
     actions: List[UnitActionStatus] = []
 
 
 class StageRunStatus(ConditionHolder):
-    stageId :str = None
+    stageId: str = None
     name: str = None
     conditionResult: bool = None
     units: List[UnitRunStatus] = []

@@ -1,6 +1,6 @@
 import logging
 
-from watchmen.monitor.model.pipeline_monitor import UnitRunStatus, StageRunStatus
+from watchmen.monitor.model.pipeline_monitor import StageRunStatus
 from watchmen.pipeline.core.context.stage_context import StageContext
 from watchmen.pipeline.core.context.unit_context import UnitContext
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joint

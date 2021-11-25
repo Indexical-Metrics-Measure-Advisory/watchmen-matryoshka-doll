@@ -1,8 +1,9 @@
+from model.model.topic.topic import Topic
+
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.pipeline.core.dependency.graph.label import Label
 from watchmen.pipeline.core.dependency.graph.node import Node
 from watchmen.pipeline.core.dependency.graph.property import Property
-from model.model.topic.topic import Topic
 
 
 def buildTopicNode(topic: Topic):

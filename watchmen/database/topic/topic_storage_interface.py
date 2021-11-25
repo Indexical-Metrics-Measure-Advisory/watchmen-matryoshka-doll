@@ -1,7 +1,6 @@
 import abc
 
 from pydantic.main import BaseModel
-
 from storage.storage.storage_interface import Pageable, DataPage
 
 
