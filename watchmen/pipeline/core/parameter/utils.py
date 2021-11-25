@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import arrow
 
-from watchmen.topic.factor.factor import Factor
+from model.model.topic.factor import Factor
 
 
 def convert_date(value):

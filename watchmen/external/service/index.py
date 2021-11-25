@@ -1,7 +1,7 @@
 import importlib
 
-from watchmen.external.model.external_writer import ExternalWriter
-from watchmen.topic.topic import Topic
+from model.model.external.external_writer import ExternalWriter
+from model.model.topic.topic import Topic
 
 WRITER_CORE_ACTION_ = "watchmen.external.writer."
 

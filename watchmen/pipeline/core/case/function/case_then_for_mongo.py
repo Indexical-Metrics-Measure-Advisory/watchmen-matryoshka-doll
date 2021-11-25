@@ -4,7 +4,7 @@ from typing import List
 
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.utils.units_func import get_factor
-from watchmen.report.model.column import Operator
+from model.model.report.column import Operator
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

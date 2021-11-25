@@ -1,4 +1,4 @@
-from watchmen.console_space.model.last_snapshot import LastSnapshot
+from model.model.console_space.last_snapshot import LastSnapshot
 # from watchmen.database.storage.storage_template import insert_one, find_one, update_one
 from watchmen.database.find_storage_template import find_storage_template
 

@@ -6,8 +6,8 @@ from pypika import Criterion, AliasedQuery, Field
 from pypika.terms import LiteralValue
 
 from watchmen.pipeline.utils.units_func import get_factor
-from watchmen.report.model.column import Column
-from watchmen.report.model.report import ReportFunnel
+from model.model.report.column import Column
+from model.model.report.report import ReportFunnel
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

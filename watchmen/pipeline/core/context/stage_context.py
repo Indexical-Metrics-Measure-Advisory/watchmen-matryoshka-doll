@@ -1,6 +1,6 @@
 from watchmen.monitor.model.pipeline_monitor import StageRunStatus
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
-from watchmen.pipeline.model.pipeline import Stage
+from model.model.pipeline.pipeline import Stage
 
 
 class StageContext:

@@ -1,6 +1,6 @@
 from watchmen.common.utils.data_utils import add_tenant_id_to_instance
 from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
-from watchmen.topic.topic import Topic
+from model.model.topic.topic import Topic
 
 
 def save_topic_instance(topic: Topic, instance, current_user=None):

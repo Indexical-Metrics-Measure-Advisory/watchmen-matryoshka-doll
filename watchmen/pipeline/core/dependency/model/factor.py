@@ -2,7 +2,7 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.pipeline.core.dependency.graph.label import Label
 from watchmen.pipeline.core.dependency.graph.node import Node
 from watchmen.pipeline.core.dependency.graph.property import Property
-from watchmen.topic.factor.factor import Factor
+from model.model.topic.factor import Factor
 
 
 def buildFactorNode(factor: Factor):

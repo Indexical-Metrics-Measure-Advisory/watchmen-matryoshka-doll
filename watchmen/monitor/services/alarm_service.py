@@ -1,11 +1,11 @@
 import asyncio
 
 from watchmen.collection.model.topic_event import TopicEvent
-from watchmen.common.alarm import AlarmMessage
+from model.model.common.alarm import AlarmMessage
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.notify.notify_service import send_notifier
 from watchmen.pipeline.index import trigger_pipeline
-from watchmen.pipeline.model.trigger_type import TriggerType
+from model.model.pipeline.trigger_type import TriggerType
 from watchmen.pipeline.utils.units_func import add_audit_columns, INSERT
 from watchmen.topic.storage.topic_data_storage import save_topic_instance
 from watchmen.topic.storage.topic_schema_storage import get_topic

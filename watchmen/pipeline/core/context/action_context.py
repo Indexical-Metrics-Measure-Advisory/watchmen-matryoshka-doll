@@ -1,7 +1,7 @@
 import copy
 
 from watchmen.pipeline.core.context.unit_context import UnitContext
-from watchmen.pipeline.model.pipeline import UnitAction
+from model.model.pipeline.pipeline import UnitAction
 
 
 class ActionContext:

@@ -6,12 +6,12 @@ from watchmen.common.utils.data_utils import get_id_name_by_datasource, add_tena
 from watchmen.config.config import settings
 from watchmen.database.datasource.container import data_source_container
 from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
-from watchmen.pipeline.model.trigger_data import TriggerData
-from watchmen.pipeline.model.trigger_type import TriggerType
+from model.model.pipeline.trigger_data import TriggerData
+from model.model.pipeline.trigger_type import TriggerType
 from watchmen.pipeline.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE
 from watchmen.security.index import encrypt_value
-from watchmen.topic.factor.factor import Factor
-from watchmen.topic.topic import Topic
+from model.model.topic.factor import Factor
+from model.model.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 

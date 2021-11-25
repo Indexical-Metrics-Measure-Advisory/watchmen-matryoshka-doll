@@ -10,8 +10,8 @@ from watchmen.common.utils.data_utils import build_collection_name, is_presto_va
 from watchmen.config.config import settings
 from watchmen.database.find_storage_template import find_storage_template
 from watchmen.pipeline.utils.units_func import BOOLEAN, NUMBER, TIME
-from watchmen.topic.factor.factor import Factor
-from watchmen.topic.topic import Topic
+from model.model.topic.factor import Factor
+from model.model.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 

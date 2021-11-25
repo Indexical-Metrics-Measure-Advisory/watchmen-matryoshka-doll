@@ -1,4 +1,4 @@
-from watchmen.external.model.external_writer import ExternalWriter
+from model.model.external.external_writer import ExternalWriter
 
 
 def init(external_writer: ExternalWriter):

@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from watchmen.common.watchmen_model import WatchmenModel
+from model.model.common.watchmen_model import WatchmenModel
 
 
 class FieldType(str, Enum):

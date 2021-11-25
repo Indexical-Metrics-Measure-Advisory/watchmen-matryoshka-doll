@@ -1,10 +1,10 @@
 from typing import List
 
-from watchmen.common.data_page import DataPage
-from watchmen.common.model.user import User
-from watchmen.common.pagination import Pagination
+from model.model.common.data_page import DataPage
+from model.model.common.user import User
+from model.model.common.pagination import Pagination
 from watchmen.database.find_storage_template import find_storage_template
-from watchmen.space.space import Space, SpaceFilter
+from model.model.space.space import Space, SpaceFilter
 
 SPACES = "spaces"
 

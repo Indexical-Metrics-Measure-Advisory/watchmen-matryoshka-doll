@@ -5,8 +5,8 @@ from enum import Enum
 from pydantic.tools import lru_cache
 
 from watchmen.common.constants.parameter_constants import RAW
-from watchmen.common.data_page import DataPage
-from watchmen.common.model.user import SUPER_ADMIN, User
+from model.model.common.data_page import DataPage
+from model.model.common.user import SUPER_ADMIN, User
 from watchmen.config.config import settings
 from storage.model.data_source import DataSource
 from watchmen.pipeline.utils.units_func import ADDRESS, CONTINENT, REGION, COUNTRY, PROVINCE, CITY, \

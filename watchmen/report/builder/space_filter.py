@@ -5,15 +5,15 @@ from arrow import arrow
 from pypika import Schema, Table, Field
 from pypika.terms import Term, Criterion, LiteralValue
 
-from watchmen.common.parameter import Parameter, ParameterJoint
+from model.model.common.parameter import Parameter, ParameterJoint
 from watchmen.common.utils.data_utils import build_collection_name
-from watchmen.console_space.model.console_space import SubjectDataSetFilter
+from model.model.console_space.console_space import SubjectDataSetFilter
 from watchmen.console_space.storage.console_space_storage import load_console_space_by_subject_id
 from watchmen.database.datasource.storage.data_source_storage import load_data_source_by_id
 from watchmen.pipeline.utils.units_func import get_factor
 from watchmen.report.builder.dialects import PrestoQuery
 from watchmen.report.builder.utils import build_table_by_topic_id
-from watchmen.space.space import SpaceFilter
+from model.model.space.space import SpaceFilter
 from watchmen.space.storage.space_storage import get_filters_by_id
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 

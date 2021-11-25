@@ -5,7 +5,7 @@ from watchmen.auth.service.security import verify_password
 from watchmen.auth.storage.user import load_user_by_name
 from watchmen.auth.storage.user_group import USER_GROUPS, get_user_group_list_by_ids, update_user_group_storage
 from watchmen.auth.user_group import UserGroup
-from watchmen.common.model.user import User
+from model.model.common.user import User
 # from watchmen.database.storage.storage_template import pull_update
 from watchmen.database.find_storage_template import find_storage_template
 

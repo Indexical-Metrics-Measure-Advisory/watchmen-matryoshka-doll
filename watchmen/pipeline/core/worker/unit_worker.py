@@ -2,7 +2,7 @@ import logging
 
 from distributed import as_completed
 
-from watchmen.common.dask.client import get_dask_client
+
 from watchmen.config.config import settings
 from watchmen.monitor.model.pipeline_monitor import UnitRunStatus
 from watchmen.pipeline.core.context.action_context import ActionContext
@@ -69,6 +69,7 @@ def run_unit(unit_context: UnitContext):
 
 
 def run_loop_actions(loop_variable_name, unit_context):
+
     for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
         unit_run_status = UnitRunStatus()
         unit_run_status.unitId = unit_context.unit.unitId
@@ -89,6 +90,7 @@ def run_loop_actions(loop_variable_name, unit_context):
 
 
 def run_loop_with_dask(loop_variable_name, unit_context,unit_run_status):
+    from watchmen.common.dask.client import get_dask_client
     futures = []
     for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
         if unit_context.unit.do is not None:

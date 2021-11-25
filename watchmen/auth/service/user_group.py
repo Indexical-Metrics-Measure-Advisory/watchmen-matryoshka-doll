@@ -1,8 +1,8 @@
 from watchmen.auth.storage.user import USERS, get_user_list_by_ids, update_user_storage
 from watchmen.auth.user_group import UserGroup
-from watchmen.common.model.user import User
+from model.model.common.user import User
 from watchmen.database.find_storage_template import find_storage_template
-from watchmen.space.space import Space
+from model.model.space.space import Space
 from watchmen.space.storage.space_storage import get_space_list_by_ids, update_space_to_storage, SPACES
 
 

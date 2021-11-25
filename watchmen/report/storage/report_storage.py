@@ -1,8 +1,9 @@
-from watchmen.common.model.user import User
-from watchmen.common.pagination import Pagination
+from model.model.common.user import User
+from model.model.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.console_space.model.console_space import Report
+
 from watchmen.database.find_storage_template import find_storage_template
+from model.model.report.report import Report
 
 CONSOLE_REPORTS = "console_reports"
 

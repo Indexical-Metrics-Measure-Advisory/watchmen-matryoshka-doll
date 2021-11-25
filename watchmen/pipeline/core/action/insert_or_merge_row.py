@@ -12,7 +12,7 @@ from watchmen.pipeline.core.context.action_context import get_variables, ActionC
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
 from watchmen.pipeline.core.retry.retry_template import RetryPolicy, retry_template
-from watchmen.pipeline.model.trigger_data import TriggerData
+from model.model.pipeline.trigger_data import TriggerData
 from watchmen.pipeline.storage.read_topic_data import query_topic_data
 from watchmen.pipeline.storage.write_topic_data import insert_topic_data, update_topic_data_one
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id

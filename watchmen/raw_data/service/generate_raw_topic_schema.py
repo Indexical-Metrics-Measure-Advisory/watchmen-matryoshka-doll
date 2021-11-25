@@ -3,9 +3,9 @@ from collections import deque
 from enum import Enum
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.topic.factor.factor import Factor
+from model.model.topic.factor import Factor
 from watchmen.topic.service.topic_service import create_topic_schema
-from watchmen.topic.topic import Topic
+from model.model.topic.topic import Topic
 
 
 class ValueType(str, Enum):

@@ -5,8 +5,8 @@ from decimal import Decimal
 import arrow
 
 from watchmen.common.constants import pipeline_constants
-from watchmen.topic.factor.factor import Factor
-from watchmen.topic.topic import Topic
+from model.model.topic.factor import Factor
+from model.model.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 

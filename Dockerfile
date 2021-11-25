@@ -17,6 +17,7 @@ RUN pip install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install -E mysql -E mongo -E rabbit -E kafka
 RUN pip install watchmen-storage-engine
+RUN pip install watchmen-model
 
 EXPOSE 8000
 CMD ["uvicorn","watchmen.main:app","--host", "0.0.0.0", "--port", "80"]

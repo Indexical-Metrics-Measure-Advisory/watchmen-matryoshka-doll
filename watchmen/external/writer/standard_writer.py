@@ -4,9 +4,9 @@ import logging
 import requests
 
 from watchmen.common.utils.date_utils import DateTimeEncoder
-from watchmen.external.model.external_writer import ExternalWriter
-from watchmen.pipeline.model.trigger_type import TriggerType
-from watchmen.topic.topic import Topic
+from model.model.external.external_writer import ExternalWriter
+from model.model.pipeline.trigger_type import TriggerType
+from model.model.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 

@@ -5,10 +5,10 @@ from arrow import arrow
 from pypika import functions as fn, AliasedQuery, Field
 from pypika.terms import LiteralValue, Criterion, Term
 
-from watchmen.common.parameter import Parameter, ParameterJoint
+from model.model.common.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.utils.units_func import get_factor
-from watchmen.report.model.column import Column
-from watchmen.report.model.report import ReportIndicator, ReportDimension
+from model.model.report.column import Column
+from model.model.report.report import ReportIndicator, ReportDimension
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

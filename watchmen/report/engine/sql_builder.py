@@ -8,13 +8,13 @@ from pypika import functions as fn
 from pypika.queries import QueryBuilder
 from pypika.terms import PseudoColumn, LiteralValue
 
-from watchmen.common.parameter import Parameter
+from model.model.common.parameter import Parameter
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.pipeline.utils.units_func import get_factor
-from watchmen.report.model.column import Column, Operator
-from watchmen.report.model.filter import Filter, ConnectiveType
-from watchmen.report.model.join import Join, JoinType
-from watchmen.report.model.report import ReportIndicator, ReportDimension
+from model.model.report.column import Column, Operator
+from model.model.report.filter import Filter, ConnectiveType
+from model.model.report.join import Join, JoinType
+from model.model.report.report import ReportIndicator, ReportDimension
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 

@@ -1,6 +1,6 @@
 from typing import Dict
 
-from watchmen.common.watchmen_model import WatchmenModel
+from model.model.common.watchmen_model import WatchmenModel
 from watchmen.raw_data.model_relationship import ModelRelationship
 from watchmen.raw_data.model_schema import ModelSchema
 

@@ -1,4 +1,4 @@
-from watchmen.common.watchmen_model import WatchmenModel
+from model.model.common.watchmen_model import WatchmenModel
 
 
 class UserGroup(WatchmenModel):

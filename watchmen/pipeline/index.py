@@ -1,7 +1,7 @@
 import logging
 
 from watchmen.pipeline.core.index import trigger_pipeline_2
-from watchmen.pipeline.model.trigger_type import TriggerType
+from model.model.pipeline.trigger_type import TriggerType
 
 log = logging.getLogger("app." + __name__)
 

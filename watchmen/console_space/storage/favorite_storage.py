@@ -1,4 +1,4 @@
-from watchmen.console_space.model.favorite import Favorite
+from model.model.console_space.favorite import Favorite
 from watchmen.database.find_storage_template import find_storage_template
 
 CONSOLE_SPACE_FAVORITES = "console_space_favorites"

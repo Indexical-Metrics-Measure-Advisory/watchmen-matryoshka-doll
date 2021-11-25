@@ -6,11 +6,11 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
-from watchmen.pipeline.model.trigger_type import TriggerType
+from model.model.pipeline.trigger_type import TriggerType
 from watchmen.pipeline.utils.units_func import add_audit_columns, INSERT
-from watchmen.topic.factor.factor import Factor
+from model.model.topic.factor import Factor
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_name, save_topic
-from watchmen.topic.topic import Topic
+from model.model.topic.topic import Topic
 
 
 def sync_pipeline_monitor_data(pipeline_monitor: PipelineRunStatus):

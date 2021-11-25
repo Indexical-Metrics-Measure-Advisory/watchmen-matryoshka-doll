@@ -3,18 +3,18 @@ from typing import List
 
 from watchmen.auth.storage.user_group import USER_GROUPS
 from watchmen.auth.user_group import UserGroup
-from watchmen.common.data_page import DataPage
-from watchmen.common.model.user import User
+from model.model.common.data_page import DataPage
+from model.model.common.user import User
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.database.find_storage_template import find_storage_template
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
-from watchmen.space.space import Space
+from model.model.space.space import Space
 from watchmen.space.storage.space_storage import SPACES
-from watchmen.topic.factor.factor import Factor
+from model.model.topic.factor import Factor
 from watchmen.topic.storage.topic_schema_storage import save_topic, update_topic
-from watchmen.topic.topic import Topic
+from model.model.topic.topic import Topic
 
 log = logging.getLogger("app." + __name__)
 

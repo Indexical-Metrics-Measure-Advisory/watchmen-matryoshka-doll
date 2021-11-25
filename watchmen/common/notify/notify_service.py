@@ -1,6 +1,6 @@
 from notifiers import get_notifier
 
-from watchmen.common.alarm import AlarmMessage
+from model.model.common.alarm import AlarmMessage
 from watchmen.config.config import settings
 
 

@@ -17,7 +17,7 @@ from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.context.stage_context import StageContext
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter_joint
 from watchmen.pipeline.core.worker.stage_worker import run_stage
-from watchmen.pipeline.model.trigger_type import TriggerType
+from model.model.pipeline.trigger_type import TriggerType
 from watchmen.pipeline.utils.constants import PIPELINE_UID, FINISHED, ERROR
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, get_topic_by_name
 

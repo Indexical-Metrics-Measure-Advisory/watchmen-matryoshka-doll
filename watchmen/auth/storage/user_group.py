@@ -1,8 +1,8 @@
 from typing import List
 
 from watchmen.auth.user_group import UserGroup
-from watchmen.common.data_page import DataPage
-from watchmen.common.pagination import Pagination
+from model.model.common.data_page import DataPage
+from model.model.common.pagination import Pagination
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.database.find_storage_template import find_storage_template
