@@ -2,6 +2,8 @@ import logging
 from typing import List
 
 from fastapi import APIRouter, Depends, Body
+from model.model.common.user import User
+from model.model.pipeline.pipeline import Pipeline
 
 from watchmen.common import deps
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
