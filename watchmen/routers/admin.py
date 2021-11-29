@@ -410,6 +410,18 @@ async def load_enum_list_by_name(query_name, pagination: Pagination = Body(...),
     return query_enum_list_with_pagination(query_name, pagination, current_user)
 
 
+
+@router.get("/enum/list/selection",tags=["admin"], response_model=List[Enum])
+async def load_enum_list_by_topic(topic_id:str,current_user: User = Depends(deps.get_current_user)):
+    topic = get_topic_by_id(topic_id,current_user)
+    enum_list = []
+    for factor in topic.factors:
+        if factor.enumId is not None:
+            enum_list.append(load_enum_by_id(factor.enumId, current_user))
+    return enum_list
+
+
+
 @router.get("/enum", tags=["admin"], response_model=Enum)
 async def load_pipeline_by_pipeline_id(enum_id, current_user: User = Depends(deps.get_current_user)):
     return load_enum_by_id(enum_id, current_user)
