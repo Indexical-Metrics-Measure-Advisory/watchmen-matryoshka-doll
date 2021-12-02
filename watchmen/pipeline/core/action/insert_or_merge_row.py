@@ -126,7 +126,7 @@ def init(action_context: ActionContext):
                 trigger_pipeline_data_list.append(result)
                 status.insertCount = status.insertCount + 1
                 elapsed_time = time.time() - start
-                status.complete_time = elapsed_time
+                status.completeTime = elapsed_time
                 return status, trigger_pipeline_data_list
             except InsertConflictError as e:
                 log.info("the insert failed because of conflict, try to update operator")
