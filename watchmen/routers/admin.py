@@ -49,6 +49,7 @@ from watchmen.space.service.admin import create_space, update_space_by_id, sync_
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
     load_space_list_by_name, load_space_by_name
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic
+from watchmen.topic.storage import factor_index_storage
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name, \
     load_topic_list_by_name_and_exclude
@@ -410,16 +411,14 @@ async def load_enum_list_by_name(query_name, pagination: Pagination = Body(...),
     return query_enum_list_with_pagination(query_name, pagination, current_user)
 
 
-
-@router.get("/enum/list/selection",tags=["admin"], response_model=List[Enum])
-async def load_enum_list_by_topic(topic_id:str,current_user: User = Depends(deps.get_current_user)):
-    topic = get_topic_by_id(topic_id,current_user)
+@router.get("/enum/list/selection", tags=["admin"], response_model=List[Enum])
+async def load_enum_list_by_topic(topic_id: str, current_user: User = Depends(deps.get_current_user)):
+    topic = get_topic_by_id(topic_id, current_user)
     enum_list = []
     for factor in topic.factors:
         if factor.enumId is not None:
             enum_list.append(load_enum_by_id(factor.enumId, current_user))
-    return enum_list
-
+    return enum_lists
 
 
 @router.get("/enum", tags=["admin"], response_model=Enum)
@@ -533,3 +532,20 @@ async def query_log_by_critical(query: MonitorLogQuery, current_user: User = Dep
         query_dict = query_list[0]
 
     return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
+
+
+@router.get("/query/topic/factor/index", tags=["admin"], response_model=List[Topic])
+async def load_topic_by_factor_index(query_name: str, current_user: User = Depends(deps.get_current_user)):
+    factor_index_list = factor_index_storage.load_factor_index_by_factor_name(query_name, current_user.tenantId)
+    topic_factor_index_list = factor_index_storage.load_factor_index_by_topic_name(query_name, current_user.tenantId)
+
+    all_list = factor_index_list + topic_factor_index_list
+    topic_id_list = []
+    for factor_index in all_list:
+        if factor_index.topicId not in topic_id_list:
+            topic_id_list.append(factor_index.topicId)
+
+    if topic_id_list:
+        return get_topic_list_by_ids(topic_id_list, current_user)
+    else:
+        return []

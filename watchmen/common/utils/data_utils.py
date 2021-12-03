@@ -38,6 +38,9 @@ def is_raw(topic):
     return topic.type == RAW
 
 
+def is_not_raw(topic):
+    return topic.type != RAW
+
 def get_id_name():
     if settings.STORAGE_ENGINE == "mongo":
         return "_id"

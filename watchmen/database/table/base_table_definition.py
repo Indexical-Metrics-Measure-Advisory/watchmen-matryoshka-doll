@@ -43,4 +43,6 @@ class TableDefinition(object):
             pid = "dataSourceId"
         elif table_name == "external_writer":
             pid = "writerId"
+        elif table_name == "factor_index":
+            pid = "factorindexid"
         return pid

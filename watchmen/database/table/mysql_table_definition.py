@@ -249,6 +249,20 @@ class MysqlTableDefinition(TableDefinition):
                                         Column('createtime', String(50), nullable=True)
                                         )
 
+        self.factor_index_table = Table("factor_index", self.metadata,
+                                        Column("factorindexid", String(50), primary_key=True),
+                                        Column("factorid", String(50), nullable=True),
+                                        Column("tenantid", String(50), nullable=True),
+                                        Column("topicid", String(50), nullable=True),
+                                        Column("name", String(50), nullable=True),
+                                        Column("label", String(50), nullable=True),
+                                        Column("topicname", String(50), nullable=True),
+                                        Column("description", String(50)),
+                                        Column("type", String(50)),
+                                        Column('lastmodified', DateTime, nullable=True),
+                                        Column('createtime', String(60), nullable=True)
+                                        )
+
     def get_table_by_name(self, table_name):
         return self.get_meta_table(table_name)
 
@@ -292,4 +306,6 @@ class MysqlTableDefinition(TableDefinition):
             table = self.external_writer
         elif table_name == "key_stores":
             table = self.key_store_table
+        elif table_name == "factor_index":
+            table = self.factor_index_table
         return table

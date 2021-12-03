@@ -11,10 +11,12 @@ from watchmen.auth.storage.user_group import USER_GROUPS
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
+from watchmen.config.config import settings
 from watchmen.database.find_storage_template import find_storage_template
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.storage.space_storage import SPACES
+from watchmen.topic.service import factor_index_service
 from watchmen.topic.storage.topic_schema_storage import save_topic, update_topic
 
 log = logging.getLogger("app." + __name__)
@@ -32,23 +34,21 @@ class QueryTopic(Topic):
 def create_topic_schema(topic: Topic) -> Topic:
     if topic.topicId is None or check_fake_id(topic.topicId):
         topic.topicId = get_surrogate_key()
-    '''   
-    if type(topic) is not dict:
-        topic = topic.dict()
-    '''
     save_topic(topic)
-    return Topic.parse_obj(topic)
+    result = Topic.parse_obj(topic)
+    if settings.FACTOR_INDEX_ON:
+        factor_index_service.create_factor_index_data(result,topic.tenantId)
+    return result
 
 
 def update_topic_schema(
         topic_id,
         topic: Topic):
-    '''
-    if type(topic) is not dict:
-        topic = topic.dict()
-    '''
     update_topic(topic_id, topic)
-    return Topic.parse_obj(topic)
+    result = Topic.parse_obj(topic)
+    if settings.FACTOR_INDEX_ON:
+        factor_index_service.update_factor_index_data(result,topic.tenantId)
+    return result
 
 
 def build_topic(model_schema_set: ModelSchemaSet, current_user):
