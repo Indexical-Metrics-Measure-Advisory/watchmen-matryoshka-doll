@@ -36,8 +36,8 @@ cacheout = "^0.13.1"
 presto-python-client = "^0.8.2"
 starlette-prometheus = "^0.8.0"
 SQLAlchemy = "^1.4.25"
-watchmen-model = "^0.1.3"
-watchmen-storage-engine = "^0.1.15"
+#watchmen-model = "^0.1.4"
+#watchmen-storage-engine = "^0.1.15"
 
 [tool.poetry.extras]
 mysql = ["mysqlclient"]
