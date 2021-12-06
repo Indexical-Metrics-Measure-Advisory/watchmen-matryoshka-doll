@@ -42,6 +42,18 @@ def get_topic_by_name(topic_name: str, current_user=None) -> Topic:
     return result
 
 
+def get_topic_by_name_and_tenant_id(topic_name:str,tenant_id:str):
+    cached_topic = cacheman[TOPIC_BY_NAME].get(topic_name)
+    if cached_topic is not None:
+        return cached_topic
+    if tenant_id is None:
+        raise Exception("tenant_id is empty")
+    else:
+        result = storage_template.find_one({"and": [{"name": topic_name}, {"tenantId": tenant_id}]}, Topic,
+                                           TOPICS)
+    cacheman[TOPIC_BY_NAME].set(topic_name, result)
+    return result
+
 def get_topic(topic_name: str, current_user=None) -> Topic:
     return get_topic_by_name(topic_name, current_user)
 
@@ -66,6 +78,9 @@ def load_topic_by_name(topic_name: str, current_user) -> Topic:
     cacheman[TOPIC_BY_NAME].set(topic_name, result)
     return result
 
+
+def get_topic_list_all():
+    return storage_template.list_all(Topic, TOPICS)
 
 def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
     cached_topic = cacheman[TOPIC_BY_ID].get(topic_id)

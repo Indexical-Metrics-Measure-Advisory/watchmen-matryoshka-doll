@@ -9,7 +9,7 @@ from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.pipeline.service.pipeline_service import save_topic_data, get_input_data, run_pipeline
-from watchmen.topic.storage.topic_schema_storage import get_topic
+from watchmen.topic.storage.topic_schema_storage import get_topic, get_topic_by_name_and_tenant_id
 
 router = APIRouter()
 
@@ -46,4 +46,15 @@ async def push_pipeline_data(topic_event: TopicEvent, current_user: User = Depen
     data = get_input_data(topic, topic_event)
     await save_topic_data(topic, data, current_user)
     await run_pipeline(topic_event, current_user, trace_id)
+    return {"received": True, "trace_id": trace_id}
+
+@router.post("/pipeline/data/async/tenant", tags=["pipeline"])
+async def push_pipeline_data_async(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
+    trace_id = get_surrogate_key()
+    topic = get_topic_by_name_and_tenant_id(topic_event.code,
+                                            topic_event.tenantId)
+    data = get_input_data(topic, topic_event)
+    current_user.tenantId =  topic_event.tenantId
+    await save_topic_data(topic, data, current_user)
+    asyncio.ensure_future(run_pipeline(topic_event, current_user, trace_id))
     return {"received": True, "trace_id": trace_id}

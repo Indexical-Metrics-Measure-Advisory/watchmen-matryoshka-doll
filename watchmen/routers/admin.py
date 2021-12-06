@@ -52,7 +52,7 @@ from watchmen.topic.service.topic_service import create_topic_schema, update_top
 from watchmen.topic.storage import factor_index_storage
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name, \
-    load_topic_list_by_name_and_exclude
+    load_topic_list_by_name_and_exclude, get_topic_list_all
 
 router = APIRouter()
 
@@ -219,6 +219,14 @@ async def query_topic_list_for_space(query_name: str, exclude: str,
 @router.post("/topic/ids", tags=["admin"], response_model=List[Topic])
 async def query_topic_list_by_ids(topic_ids: List[str], current_user: User = Depends(deps.get_current_user)):
     return get_topic_list_by_ids(topic_ids, current_user)
+
+
+@router.get("/topic/all/tenant", tags=["admin"], response_model=List[Topic])
+async def load_all_tenant_topics(current_user: User = Depends(deps.get_current_user)):
+    if current_user.role == "superadmin":
+        return get_topic_list_all()
+    else:
+        raise Exception("user role is not superadmin")
 
 
 @router.post("/user", tags=["admin"], response_model=User)
@@ -418,7 +426,7 @@ async def load_enum_list_by_topic(topic_id: str, current_user: User = Depends(de
     for factor in topic.factors:
         if factor.enumId is not None:
             enum_list.append(load_enum_by_id(factor.enumId, current_user))
-    return enum_lists
+    return enum_list
 
 
 @router.get("/enum", tags=["admin"], response_model=Enum)
