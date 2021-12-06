@@ -52,7 +52,7 @@ from watchmen.topic.service.topic_service import create_topic_schema, update_top
 from watchmen.topic.storage import factor_index_storage
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name, \
-    load_topic_list_by_name_and_exclude, get_topic_list_all
+    load_topic_list_by_name_and_exclude, get_topic_list_all, get_topic_by_name_and_tenant_id
 
 router = APIRouter()
 
@@ -187,6 +187,11 @@ async def load_topic_list_by_name_list(name_list: List[str], current_user: User 
     for name in name_list:
         results.append(load_topic_by_name(name, current_user))
     return results
+
+
+@router.get("/topic/name/tenant", tags=["admin"], response_model=Topic)
+async  def load_topic_by_name_and_tenant(name:str, tenant_id:str ,current_user: User = Depends(deps.get_current_user)):
+    return get_topic_by_name_and_tenant_id(name, tenant_id)
 
 
 @router.post("/report/name", tags=["admin"], response_model=DataPage)
