@@ -82,6 +82,7 @@ def load_topic_by_name(topic_name: str, current_user) -> Topic:
 def get_topic_list_all():
     return storage_template.list_all(Topic, TOPICS)
 
+
 def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
     cached_topic = cacheman[TOPIC_BY_ID].get(topic_id)
     if cached_topic is not None:
@@ -103,7 +104,7 @@ def get_topic_by_id(topic_id: str, current_user=None) -> Topic:
 
 def get_topic_list_by_ids(topic_ids: List[str], current_user) -> List[Topic]:
     if len(topic_ids) > 0:
-        where = {"and": [{"topicId": {"in": topic_ids}}, {"tenantId": current_user.tenantId}], }
+        where = {"and": [{"topicId": {"in": topic_ids}}, {"tenantId": current_user.tenantId}]}
         return storage_template.find_(where, Topic, TOPICS)
     else:
         return storage_template.find_({"tenantId": current_user.tenantId}, Topic, TOPICS)
