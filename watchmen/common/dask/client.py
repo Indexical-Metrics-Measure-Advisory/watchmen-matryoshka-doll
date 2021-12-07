@@ -1,10 +1,14 @@
-
-from distributed import Client
-
+from dask.distributed import Client
 from watchmen.config.config import settings
+from watchmen.database.singleton import singleton
 
-client = Client(processes=settings.DASK_PROCESSES, dashboard_address=':0')
 
+@singleton
+class DaskClient:
 
-def get_dask_client():
-    return client
+    def __init__(self):
+        self.client = Client(processes=settings.DASK_PROCESSES, )
+
+    def get_dask_client(self):
+        return self.client
+

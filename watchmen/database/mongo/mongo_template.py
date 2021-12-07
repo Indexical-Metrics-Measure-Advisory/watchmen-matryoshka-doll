@@ -27,9 +27,6 @@ log.info("mongo template initialized")
 @singleton
 class MongoStorage(StorageInterface):
 
-
-
-
     def build_mongo_where_expression(self, where: dict):
         """
         Build where, the common sql pattern is "column_name operator value", but we use dict,
