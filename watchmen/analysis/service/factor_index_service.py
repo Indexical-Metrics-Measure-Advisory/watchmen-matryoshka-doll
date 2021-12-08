@@ -5,8 +5,8 @@ from model.model.topic.topic import Topic
 
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import is_not_raw
-from watchmen.topic.index.factor_index import FactorIndex
-from watchmen.topic.storage import factor_index_storage
+from watchmen.analysis.model.factor_index import FactorIndex
+from watchmen.analysis.storage import factor_index_storage
 
 
 def create_factor_index_data(topic: Topic, current_user) -> List[FactorIndex]:

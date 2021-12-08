@@ -16,7 +16,7 @@ from watchmen.database.find_storage_template import find_storage_template
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet
 from watchmen.space.storage.space_storage import SPACES
-from watchmen.topic.service import factor_index_service
+from watchmen.analysis.service import factor_index_service
 from watchmen.topic.storage.topic_schema_storage import save_topic, update_topic
 
 log = logging.getLogger("app." + __name__)
