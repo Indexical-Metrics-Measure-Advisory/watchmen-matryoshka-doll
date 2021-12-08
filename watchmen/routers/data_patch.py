@@ -18,9 +18,6 @@ router = APIRouter()
 log = logging.getLogger("app." + __name__)
 
 
-@router.get("/health", tags=["patch"])
-async def health():
-    return {"health": True}
 
 
 def find_execute_pipeline_list(pipeline_id, pipeline_list) -> List[Pipeline]:
