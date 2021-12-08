@@ -18,8 +18,6 @@ router = APIRouter()
 log = logging.getLogger("app." + __name__)
 
 
-
-
 def find_execute_pipeline_list(pipeline_id, pipeline_list) -> List[Pipeline]:
     if pipeline_id is None:
         return pipeline_list
