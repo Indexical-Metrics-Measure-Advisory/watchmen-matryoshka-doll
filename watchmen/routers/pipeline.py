@@ -55,7 +55,7 @@ async def push_pipeline_data_async(topic_event: TopicEvent, current_user: User =
     topic = get_topic_by_name_and_tenant_id(topic_event.code,
                                             topic_event.tenantId)
     data = get_input_data(topic, topic_event)
-    current_user.tenantId =  topic_event.tenantId
+    current_user.tenantId = topic_event.tenantId
     await save_topic_data(topic, data, current_user)
     asyncio.ensure_future(run_pipeline(topic_event, current_user, trace_id))
     return {"received": True, "trace_id": trace_id}

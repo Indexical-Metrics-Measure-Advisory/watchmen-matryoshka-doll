@@ -42,7 +42,7 @@ def get_topic_by_name(topic_name: str, current_user=None) -> Topic:
     return result
 
 
-def get_topic_by_name_and_tenant_id(topic_name:str,tenant_id:str):
+def get_topic_by_name_and_tenant_id(topic_name: str, tenant_id: str):
     cached_topic = cacheman[TOPIC_BY_NAME].get(topic_name)
     if cached_topic is not None:
         return cached_topic
@@ -53,6 +53,7 @@ def get_topic_by_name_and_tenant_id(topic_name:str,tenant_id:str):
                                            TOPICS)
     cacheman[TOPIC_BY_NAME].set(topic_name, result)
     return result
+
 
 def get_topic(topic_name: str, current_user=None) -> Topic:
     return get_topic_by_name(topic_name, current_user)

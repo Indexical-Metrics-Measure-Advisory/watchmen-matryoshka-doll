@@ -190,7 +190,7 @@ async def load_topic_list_by_name_list(name_list: List[str], current_user: User 
 
 
 @router.get("/topic/name/tenant", tags=["admin"], response_model=Topic)
-async  def load_topic_by_name_and_tenant(name:str, tenant_id:str ,current_user: User = Depends(deps.get_current_user)):
+async def load_topic_by_name_and_tenant(name: str, tenant_id: str, current_user: User = Depends(deps.get_current_user)):
     return get_topic_by_name_and_tenant_id(name, tenant_id)
 
 
