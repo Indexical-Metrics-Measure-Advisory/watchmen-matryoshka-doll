@@ -9,7 +9,7 @@ class UnitContext:
     unit: ProcessUnit
     unitStatus: UnitRunStatus
 
-    def __init__(self, stageContext, unit, unitStatus=None):
+    def __init__(self, stageContext, unit):
         self.stageContext = stageContext
         self.unit = unit
-        self.unitStatus = unitStatus
+        self.unitStatus = UnitRunStatus()

@@ -9,6 +9,7 @@ from watchmen.common.utils.data_utils import get_id_name_by_datasource
 from watchmen.config.config import settings
 from watchmen.database.datasource.container import data_source_container
 from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
+from watchmen.pipeline.core.action.utils import update_retry_callback, update_recovery_callback
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, ActionContext
 from watchmen.pipeline.core.mapping.parse_mapping import parse_mappings
@@ -19,49 +20,6 @@ from watchmen.pipeline.storage.write_topic_data import insert_topic_data, update
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 log = logging.getLogger("app." + __name__)
-
-
-def update_recovery_callback(mappings_results, where_, target_topic):
-    log.error("The maximum number of retry times (3) is exceeded, retry failed. Do recovery, "
-              "mappings_results: {0}, where: {1}, target_topic: {2}".format(mappings_results, where_, target_topic))
-    target_data = query_topic_data(where_,
-                                   target_topic.name)
-    if target_data is not None:
-        id_ = target_data.get(
-            get_id_name_by_datasource(data_source_container.get_data_source_by_id(target_topic.dataSourceId)), None)
-        if id_ is not None:
-            template = get_template_by_datasource_id(target_topic.dataSourceId)
-            template.topic_data_update_one(id_, mappings_results, target_topic.name)
-            data = {**target_data, **mappings_results}
-            return TriggerData(topicName=target_topic.name,
-                               triggerType="Update",
-                               data={"new": data, "old": target_data})
-        else:
-            raise RuntimeError("when do update, the id_ {0} should not be None".format(id_))
-    else:
-        raise RuntimeError("target topic {0} recovery failed. where: {1}".format(target_topic, where_))
-
-
-def update_retry_callback(mappings_results, where_, target_topic, current_user):
-    target_data = query_topic_data(where_,
-                                   target_topic, current_user)
-
-    if target_data is not None:
-        id_ = target_data.get(
-            get_id_name_by_datasource(data_source_container.get_data_source_by_id(target_topic.dataSourceId)), None)
-        version_ = target_data.get("version_", None)
-        if id_ is not None and version_ is not None:
-            mappings_results['version_'] = version_
-            template = get_template_by_datasource_id(target_topic.dataSourceId)
-            template.topic_data_update_one_with_version(id_, version_, mappings_results, target_topic.name)
-            data = {**target_data, **mappings_results}
-            return TriggerData(topicName=target_topic.name,
-                               triggerType="Update",
-                               data={"new": data, "old": target_data})
-        else:
-            raise RuntimeError("when do update, the id_ {0} and version_ {1} should not be None".format(id_, version_))
-    else:
-        raise RuntimeError("insert or merge action failed")
 
 
 def init(action_context: ActionContext):
@@ -135,8 +93,8 @@ def init(action_context: ActionContext):
         retry_callback = (update_retry_callback, args)
         recovery_callback = (update_recovery_callback, args)
         execute_ = retry_template(retry_callback, recovery_callback, RetryPolicy())
-        execute_()
-
+        result = execute_()
+        trigger_pipeline_data_list.append(result)
         status.updateCount = status.updateCount + 1
         elapsed_time = time.time() - start
         status.completeTime = elapsed_time

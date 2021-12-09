@@ -27,4 +27,4 @@ def run_stage(stage_context: StageContext, stage_run_status: StageRunStatus):
         for unit in stage.units:
             unit_context = UnitContext(stage_context, unit)
             run_unit(unit_context)
-            # stage_context.stageStatus.units.append(unit_context.unitStatus)
+            stage_context.stageStatus.units.append(unit_context.unitStatus)

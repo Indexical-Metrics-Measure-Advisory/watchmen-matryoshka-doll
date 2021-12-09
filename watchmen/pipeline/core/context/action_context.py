@@ -2,6 +2,7 @@ import copy
 
 from model.model.pipeline.pipeline import UnitAction
 
+from watchmen.monitor.model.pipeline_monitor import UnitActionStatus
 from watchmen.pipeline.core.context.unit_context import UnitContext
 
 
@@ -10,7 +11,7 @@ class ActionContext:
     action: UnitAction
     previousOfTriggerData: dict = {}
     currentOfTriggerData: dict = {}
-    actionStatus: any
+    actionStatus: UnitActionStatus = None
     delegateVariableName: str = None
     delegateValue: any = None
 
@@ -19,6 +20,9 @@ class ActionContext:
         self.action = action
         self.previousOfTriggerData = unit_context.stageContext.pipelineContext.previousOfTriggerData
         self.currentOfTriggerData = unit_context.stageContext.pipelineContext.currentOfTriggerData
+        self.actionStatus = UnitActionStatus()
+        self.delegateVariableName = None
+        self.delegateValue = None
 
     def get_current_user(self):
         return self.unitContext.stageContext.pipelineContext.currentUser
