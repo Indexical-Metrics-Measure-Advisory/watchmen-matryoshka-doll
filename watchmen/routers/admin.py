@@ -18,6 +18,7 @@ from model.model.space.space import Space
 from model.model.topic.topic import Topic
 from pydantic import BaseModel
 
+from watchmen.analysis.storage import factor_index_storage
 from watchmen.auth.service.user import sync_user_to_user_groups
 from watchmen.auth.service.user_group import sync_user_group_to_space, sync_user_group_to_user
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \
@@ -49,7 +50,6 @@ from watchmen.space.service.admin import create_space, update_space_by_id, sync_
 from watchmen.space.storage.space_storage import query_space_with_pagination, get_space_by_id, get_space_list_by_ids, \
     load_space_list_by_name, load_space_by_name
 from watchmen.topic.service.topic_service import create_topic_schema, update_topic_schema, build_topic
-from watchmen.analysis.storage import factor_index_storage
 from watchmen.topic.storage.topic_schema_storage import query_topic_list_with_pagination, get_topic_by_id, \
     get_topic_list_by_ids, load_all_topic_list, load_topic_list_by_name, load_all_topic, load_topic_by_name, \
     load_topic_list_by_name_and_exclude, get_topic_list_all, get_topic_by_name_and_tenant_id

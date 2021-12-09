@@ -1,15 +1,14 @@
 from datetime import datetime
-from typing import List
 
 from model.model.topic.topic import Topic
 
-from watchmen.common.snowflake.snowflake import get_surrogate_key
-from watchmen.common.utils.data_utils import is_not_raw
 from watchmen.analysis.model.factor_index import FactorIndex
 from watchmen.analysis.storage import factor_index_storage
+from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen.common.utils.data_utils import is_not_raw
 
 
-def create_factor_index_data(topic: Topic, current_user) -> List[FactorIndex]:
+def create_factor_index_data(topic: Topic, current_user):
     if is_not_raw(topic):
         for factor in topic.factors:
             factor_index = build_factor_index(factor, topic)

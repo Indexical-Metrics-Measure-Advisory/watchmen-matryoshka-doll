@@ -1,5 +1,7 @@
 from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer
 
+from watchmen.config.config import settings
+
 metadata = MetaData()
 
 
@@ -291,19 +293,20 @@ data_sources_table = Table("data_sources", metadata,
                            Column('createtime', String(50), nullable=True)
                            )
 
-factor_index_table = Table("factor_index", metadata,
-                           Column("factorindexid", String(50), primary_key=True),
-                           Column("factorid", String(50), nullable=True),
-                           Column("tenantid", String(50), nullable=True),
-                           Column("topicid", String(50), nullable=True),
-                           Column("name", String(50), nullable=True),
-                           Column("label", String(50), nullable=True),
-                           Column("topicname", String(50), nullable=True),
-                           Column("description", String(50)),
-                           Column("type", String(50)),
-                           Column('lastmodified', DateTime, nullable=True),
-                           Column('createtime', String(60), nullable=True)
-                           )
+if settings.INDEX_ON:
+    factor_index_table = Table("factor_index", metadata,
+                               Column("factorindexid", String(50), primary_key=True),
+                               Column("factorid", String(50), nullable=True),
+                               Column("tenantid", String(50), nullable=True),
+                               Column("topicid", String(50), nullable=True),
+                               Column("name", String(50), nullable=True),
+                               Column("label", String(50), nullable=True),
+                               Column("topicname", String(50), nullable=True),
+                               Column("description", String(50)),
+                               Column("type", String(50)),
+                               Column('lastmodified', DateTime, nullable=True),
+                               Column('createtime', String(60), nullable=True)
+                               )
 
 
 def get_table_by_name(table_name):

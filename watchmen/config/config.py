@@ -92,7 +92,7 @@ class Settings(BaseSettings):
 
     PROMETHEUS_ON = False
 
-    FACTOR_INDEX_ON = False
+    INDEX_ON = False
 
     PIPELINE_MONITOR_ON = True
 

@@ -1,5 +1,5 @@
-from watchmen.database.find_storage_template import find_storage_template
 from watchmen.analysis.model.factor_index import FactorIndex
+from watchmen.database.find_storage_template import find_storage_template
 
 FACTOR_INDEX = "factor_index"
 
