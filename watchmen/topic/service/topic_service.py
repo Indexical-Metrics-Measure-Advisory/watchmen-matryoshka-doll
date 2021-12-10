@@ -46,7 +46,7 @@ def update_topic_schema(
         topic: Topic):
     update_topic(topic_id, topic)
     result = Topic.parse_obj(topic)
-    if settings.FACTOR_INDEX_ON:
+    if settings.INDEX_ON:
         factor_index_service.update_factor_index_data(result, topic.tenantId)
     return result
 

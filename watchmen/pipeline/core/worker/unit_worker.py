@@ -2,6 +2,7 @@ import logging
 
 from distributed import as_completed
 
+from watchmen.common.dask.client import DaskClient
 from watchmen.config.config import settings
 from watchmen.monitor.model.pipeline_monitor import UnitRunStatus
 from watchmen.pipeline.core.context.action_context import ActionContext
@@ -25,85 +26,68 @@ def should_run(unit_context: UnitContext, unit_run_status: UnitRunStatus) -> boo
 
 
 def run_unit(unit_context: UnitContext):
-    loop_variable_name = unit_context.unit.loopVariableName
-    if loop_variable_name is not None and loop_variable_name != "":
-        loop_variable = unit_context.stageContext.pipelineContext.variables[loop_variable_name]
-        if isinstance(loop_variable, list):
-            if settings.DASK_ON:
-                run_loop_with_dask(loop_variable_name, unit_context)
-            else:
-                run_loop_actions(loop_variable_name, unit_context)
-        elif loop_variable is not None:  # the loop variable just have one element.
-            unit_run_status = UnitRunStatus()
-            if unit_context.unit.do is not None:
-                unit_context.unitStatus = UnitRunStatus()
-                unit_context.unitStatus.unitId = unit_context.unit.unitId
-                if should_run(unit_context, unit_run_status):
-                    unit_context.unitStatus.name = unit_context.unit.name
-                    for action in unit_context.unit.do:
-                        action_context = ActionContext(unit_context, action)
-                        action_context.delegateVariableName = loop_variable_name
-                        action_context.delegateValue = loop_variable
-                        result, trigger_pipeline_data_list = run_action(action_context)
-                        if trigger_pipeline_data_list:
-                            unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
-                                *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
-                                *trigger_pipeline_data_list]
-                        unit_context.unitStatus.actions.append(result.actionStatus)
-                unit_context.stageContext.stageStatus.units.append(unit_context.unitStatus)
-    else:
-        if unit_context.unit.do is not None:
-            unit_context.unitStatus = UnitRunStatus()
+    if unit_context.unit.do is not None:
+        if should_run(unit_context, unit_context.unitStatus):
             unit_context.unitStatus.unitId = unit_context.unit.unitId
-            if should_run(unit_context, unit_context.unitStatus):
-                for action in unit_context.unit.do:
-                    action_context = ActionContext(unit_context, action)
-                    result, trigger_pipeline_data_list = run_action(action_context)
-                    if trigger_pipeline_data_list:
-                        unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
-                            *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
-                            *trigger_pipeline_data_list]
+            unit_context.unitStatus.name = unit_context.unit.name
+            loop_variable_name = unit_context.unit.loopVariableName
+            if loop_variable_name is not None and loop_variable_name != "":
+                loop_variable = unit_context.stageContext.pipelineContext.variables[loop_variable_name]
+                if isinstance(loop_variable, list):
+                    if settings.DASK_ON:
+                        results, triggers = run_actions(unit_context,
+                                                        loop_variable_name,
+                                                        None,
+                                                        True,
+                                                        True)
+                    else:
+                        results, triggers = run_actions(unit_context,
+                                                        loop_variable_name,
+                                                        None,
+                                                        True,
+                                                        False)
+                else:
+                    raise ValueError(
+                        "the value type of loop variable \"{0}\" must be list, now the value is \"{1}\"".format(
+                            loop_variable_name, loop_variable))
+            else:
+                results, triggers = run_actions(unit_context, None, None, False, False)
+
+            if triggers:
+                unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
+                    *unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list,
+                    *triggers]
+            if results:
+                for result in results:
                     unit_context.unitStatus.actions.append(result.actionStatus)
-            unit_context.stageContext.stageStatus.units.append(unit_context.unitStatus)
 
 
-def run_loop_actions(loop_variable_name, unit_context):
-    for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
-        unit_run_status = UnitRunStatus()
-        unit_run_status.unitId = unit_context.unit.unitId
-        if unit_context.unit.do is not None:
-            if should_run(unit_context, unit_run_status):
-                for action in unit_context.unit.do:
-                    action_context = ActionContext(unit_context, action)
-                    action_context.delegateVariableName = loop_variable_name
-                    action_context.delegateValue = value
-                    result, trigger_pipeline_data_list = run_action(action_context)
-                    if trigger_pipeline_data_list:
-                        unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
-                            *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
-                            *trigger_pipeline_data_list]
-                    unit_run_status.actions.append(result.actionStatus)
-                unit_context.unitStatus = unit_run_status
-        unit_context.stageContext.stageStatus.units.append(unit_context.unitStatus)
-
-
-def run_loop_with_dask(loop_variable_name, unit_context, unit_run_status):
-    from watchmen.common.dask.client import get_dask_client
-    futures = []
-    for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
-        if unit_context.unit.do is not None:
-            if should_run(unit_context, unit_run_status):
-                unit_context.unitStatus = UnitRunStatus()
-                unit_context.unitStatus.unitId = unit_context.unit.unitId
-                for action in unit_context.unit.do:
-                    action_context = ActionContext(unit_context, action)
-                    action_context.delegateVariableName = loop_variable_name
-                    action_context.delegateValue = value
-                    futures.append(get_dask_client().submit(run_action, action_context))
-    for future in as_completed(futures):
-        result, trigger_pipeline_data_list = future.result()
-        if trigger_pipeline_data_list:
-            unit_context.stageContext.pipelineContext.pipeline_trigger_merge_list = [
-                *action_context.unitContext.stageContext.pipelineContext.pipeline_trigger_merge_list,
-                *trigger_pipeline_data_list]
-        unit_context.unitStatus.actions.append(result.actionStatus)
+def run_actions(unit_context, loop_variable_name=None, loop_variable_value=None, in_loop=None, on_dask=None):
+    results = []
+    triggers = []
+    if in_loop:
+        if on_dask:
+            futures = []
+            client = DaskClient().get_dask_client()
+            for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
+                futures.append(
+                    client.submit(run_actions, unit_context, loop_variable_name, value, False, False, pure=False))
+            for future in as_completed(futures):
+                result, trigger_pipeline_data_list = future.result()
+                results.extend(result)
+                triggers.extend(trigger_pipeline_data_list)
+        else:
+            for value in unit_context.stageContext.pipelineContext.variables[loop_variable_name]:
+                result, trigger_pipeline_data_list = run_actions(unit_context, loop_variable_name, value, False, False)
+                results.extend(result)
+                triggers.extend(trigger_pipeline_data_list)
+    else:
+        for action in unit_context.unit.do:
+            action_context = ActionContext(unit_context, action)
+            if loop_variable_name and loop_variable_value:
+                action_context.delegateVariableName = loop_variable_name
+                action_context.delegateValue = loop_variable_value
+            result, trigger_pipeline_data_list = run_action(action_context)
+            results.append(result)
+            triggers.extend(trigger_pipeline_data_list)
+    return results, triggers

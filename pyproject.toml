@@ -11,7 +11,7 @@ python = "^3.9.2"
 fastapi = "^0.63.0"
 pypika = "^0.47.3"
 dask = "^2021.1.0"
-bson = "^0.5.10"
+# bson = "^0.5.10"
 regex = "^2020.11.13"
 jose = "^1.0.0"
 python-jose = "^3.2.0"
@@ -37,7 +37,7 @@ presto-python-client = "^0.8.2"
 starlette-prometheus = "^0.8.0"
 SQLAlchemy = "^1.4.25"
 #watchmen-model = "^0.1.4"
-#watchmen-storage-engine = "^0.1.15"
+#watchmen-storage-engine = "^0.1.16"
 
 [tool.poetry.extras]
 mysql = ["mysqlclient"]

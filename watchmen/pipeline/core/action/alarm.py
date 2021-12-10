@@ -21,7 +21,7 @@ def init(action_context: ActionContext):
         log.info("need to do, alarm action")
 
         elapsed_time = time.time() - start
-        status.complete_time = elapsed_time
+        status.completeTime = elapsed_time
         return status, []
 
     return alarm

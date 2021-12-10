@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import operator
+import threading
 from decimal import Decimal
 from operator import eq
 
@@ -34,11 +35,17 @@ class OracleTopicStorage(TopicStorageInterface):
     def __init__(self, client):
         self.engine = client
         self.insp = inspect(client)
+        self.metadata = MetaData()
+        self.lock = threading.RLock()
         log.info("topic oracle template initialized")
 
     def get_topic_table_by_name(self, table_name):
-        table = Table(table_name, self.metadata, extend_existing=False, autoload=True, autoload_with=self.engine)
-        return table
+        self.lock.acquire()
+        try:
+            table = Table(table_name, self.metadata, extend_existing=False, autoload=True, autoload_with=self.engine)
+            return table
+        finally:
+            self.lock.release()
 
     def build_oracle_where_expression(self, table, where):
         for key, value in where.items():

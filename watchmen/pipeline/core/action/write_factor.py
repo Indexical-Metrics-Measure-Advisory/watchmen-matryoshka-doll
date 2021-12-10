@@ -4,11 +4,13 @@ from decimal import Decimal
 
 from watchmen.common.utils.data_utils import get_id_name_by_datasource
 from watchmen.database.datasource.container import data_source_container
+from watchmen.pipeline.core.action.utils import update_retry_callback, update_recovery_callback
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import ActionContext, get_variables
 from watchmen.pipeline.core.monitor.model.pipeline_monitor import ActionStatus
 from watchmen.pipeline.core.parameter.parse_parameter import parse_parameter
 from watchmen.pipeline.core.parameter.utils import check_and_convert_value_by_factor
+from watchmen.pipeline.core.retry.retry_template import retry_template, RetryPolicy
 from watchmen.pipeline.storage.read_topic_data import query_topic_data
 from watchmen.pipeline.storage.write_topic_data import update_topic_data_one
 from watchmen.pipeline.utils.units_func import get_factor
@@ -70,13 +72,24 @@ def init(action_context: ActionContext):
             updates_ = result
             trigger_pipeline_data_list = []
             if target_data is not None:
-                trigger_pipeline_data_list.append(update_topic_data_one(
-                    updates_, target_data,
-                    action_context.get_pipeline_id(),
-                    target_data[get_id_name_by_datasource(
-                        data_source_container.get_data_source_by_id(target_topic.dataSourceId))],
-                    target_topic, action_context.get_current_user()))
+                if target_topic.type == "aggregate":
+                    args = [updates_, where_, target_topic, action_context.get_current_user()]
+                    retry_callback = (update_retry_callback, args)
+                    recovery_callback = (update_recovery_callback, args)
+                    execute_ = retry_template(retry_callback, recovery_callback, RetryPolicy())
+                    result = execute_()
+                    trigger_pipeline_data_list.append(result)
+                else:
+                    trigger_pipeline_data_list.append(update_topic_data_one(
+                        updates_, target_data,
+                        action_context.get_pipeline_id(),
+                        target_data[get_id_name_by_datasource(
+                            data_source_container.get_data_source_by_id(target_topic.dataSourceId))],
+                        target_topic, action_context.get_current_user()))
+            else:
+                raise Exception("can't insert data in write factor action ")
 
+        status.updateCount = status.updateCount + 1
         elapsed_time = time.time() - start
         status.completeTime = elapsed_time
         return status, trigger_pipeline_data_list
