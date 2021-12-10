@@ -32,7 +32,6 @@ def __build_merge_key(topic_name, trigger_type):
 
 def __merge_pipeline_data(pipeline_trigger_merge_list):
     merge_context = {}
-    # id_dict = {}
     for pipeline_data in pipeline_trigger_merge_list:
 
         if pipeline_data.topicName in merge_context:
