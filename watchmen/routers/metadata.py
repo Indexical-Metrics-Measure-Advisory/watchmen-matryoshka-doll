@@ -249,7 +249,8 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=result_connect_space.connectId, reason="connect_space alredy existed"))
         else:
-            console_space = __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)))
+            console_space = __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)),
+                                                         current_user)
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=console_space.connectId, reason="connect space successfully imported"))
 
