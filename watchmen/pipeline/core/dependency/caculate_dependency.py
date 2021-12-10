@@ -1,5 +1,6 @@
 import datetime
 
+from watchmen.common.constants import pipeline_constants
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.pipeline.core.dependency.denpendence import Graph, add_edge, show_graph
 from watchmen.pipeline.core.dependency.graph.property import Property
@@ -104,27 +105,27 @@ def buildPipelineGraph(pipeline, already_see, pipeline_graph):
     for stage in pipeline.stages:
         for unit in stage.units:
             for action in unit.do:
-                if action.type == 'insert-or-merge-row':
+                if action.type == pipeline_constants.INSERT_OR_MERGE_ROW:
                     insert_or_update(action, already_see, pipeline_graph, pipeline_node)
-                elif action.type == 'copy-to-memory':
+                elif action.type == pipeline_constants.COPY_TO_MEMORY:
                     pass
-                elif action.type == 'insert-row':
+                elif action.type == pipeline_constants.INSERT_ROW:
                     insert_or_update(action, already_see, pipeline_graph, pipeline_node)
-                elif action.type == 'write-factor':
+                elif action.type == pipeline_constants.WRITE_FACTOR:
                     insert_or_update(action, already_see, pipeline_graph, pipeline_node)
-                elif action.type == 'merge-row':
+                elif action.type == pipeline_constants.MERGE_ROW:
                     insert_or_update(action, already_see, pipeline_graph, pipeline_node)
-                elif action.type == 'read-row':
+                elif action.type == pipeline_constants.READ_ROW:
                     read_(action, already_see, pipeline_graph, pipeline_node)
-                elif action.type == 'read-rows':
+                elif action.type == pipeline_constants.READ_ROWS:
                     read_(action, already_see, pipeline_graph, pipeline_node)
-                elif action.type == 'read-factors':
+                elif action.type == pipeline_constants.READ_FACTORS:
                     read_(action, already_see, pipeline_graph, pipeline_node)
-                elif action.type == 'read-factor':
+                elif action.type == pipeline_constants.READ_FACTOR:
                     read_(action, already_see, pipeline_graph, pipeline_node)
-                elif action.type == 'exists':
+                elif action.type == pipeline_constants.EXIST:
                     pass
-                elif action.type == 'alarm':
+                elif action.type == pipeline_constants.ALARM:
                     pass
                 else:
                     raise ("action not support:" + action.type)
@@ -154,9 +155,9 @@ def buildRelationShipProperties(properties: dict):
     return property_list
 
 
-def getFactorFromTopic(topic, factorId):
+def getFactorFromTopic(topic, factor_id):
     for factor in topic.factors:
-        if factor.factorId == factorId:
+        if factor.factorId == factor_id:
             return factor
 
 

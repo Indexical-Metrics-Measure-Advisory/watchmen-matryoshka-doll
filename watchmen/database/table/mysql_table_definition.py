@@ -265,49 +265,72 @@ class MysqlTableDefinition(TableDefinition):
                                             Column('createtime', String(60), nullable=True)
                                             )
 
+            self.pipeline_index_table = Table("pipeline_index", self.metadata,
+                                              Column("pipelineindexid", String(50), primary_key=True),
+                                              Column("factorid", String(50), nullable=True),
+                                              Column("pipelineid", String(50), nullable=True),
+                                              Column("topicid", String(50), nullable=True),
+                                              Column("stageid", String(50), nullable=True),
+                                              Column("unitid", String(50), nullable=True),
+                                              Column("actionid", String(50), nullable=True),
+                                              Column("mappingtofactorid", String(50), nullable=True),
+                                              Column("mappingtotopicid", String(50), nullable=True),
+                                              Column("sourcefromfactorid", String(50), nullable=True),
+                                              Column("sourcefromtopicid", String(50), nullable=True),
+                                              Column("pipelinename", String(60)),
+                                              Column("stagename", String(60)),
+                                              Column("unitname", String(60)),
+                                              Column("reftype", String(50)),
+                                              Column("tenantid", String(50), nullable=True),
+                                              Column('lastmodified', DateTime, nullable=True),
+                                              Column('createtime', String(60), nullable=True)
+                                              )
+
     def get_table_by_name(self, table_name):
         return self.get_meta_table(table_name)
 
     def get_meta_table(self, table_name):
-        table = None
         if table_name == "users":
-            table = self.users_table
+            return self.users_table
         elif table_name == "console_space_last_snapshot":
-            table = self.console_space_last_snapshot_table
+            return self.console_space_last_snapshot_table
         elif table_name == "console_dashboards":
-            table = self.console_dashboards_table
+            return self.console_dashboards_table
         elif table_name == "topics":
-            table = self.topics_table
+            return self.topics_table
         elif table_name == "enums":
-            table = self.enums_table
+            return self.enums_table
         elif table_name == "spaces":
-            table = self.spaces_table
+            return self.spaces_table
         elif table_name == "console_space_favorites":
-            table = self.console_space_favorites_table
+            return self.console_space_favorites_table
         elif table_name == "console_space_graph":
-            table = self.console_space_graph_table
+            return self.console_space_graph_table
         elif table_name == "console_spaces":
-            table = self.console_spaces_table
+            return self.console_spaces_table
         elif table_name == "user_groups":
-            table = self.user_groups_table
+            return self.user_groups_table
         elif table_name == "pipelines":
-            table = self.pipelines_table
+            return self.pipelines_table
         elif table_name == "pipeline_graph":
-            table = self.pipeline_graph_table
+            return self.pipeline_graph_table
         elif table_name == "console_space_subjects":
-            table = self.console_space_subjects_table
+            return self.console_space_subjects_table
         elif table_name == "console_reports":
-            table = self.console_reports_table
+            return self.console_reports_table
         elif table_name == "tenants":
-            table = self.tenants_table
+            return self.tenants_table
         elif table_name == "pats":
-            table = self.pats_table
+            return self.pats_table
         elif table_name == "data_sources":
-            table = self.data_sources_table
+            return self.data_sources_table
         elif table_name == "external_writer":
-            table = self.external_writer
+            return self.external_writer
         elif table_name == "key_stores":
-            table = self.key_store_table
+            return self.key_store_table
         elif table_name == "factor_index":
-            table = self.factor_index_table
-        return table
+            return self.factor_index_table
+        elif table_name == "pipeline_index":
+            return self.pipeline_index_table
+        else:
+            raise Exception(" table_name is not a valid table name")

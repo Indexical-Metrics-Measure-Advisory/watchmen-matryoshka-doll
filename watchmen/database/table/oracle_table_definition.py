@@ -308,6 +308,27 @@ if settings.INDEX_ON:
                                Column('createtime', String(60), nullable=True)
                                )
 
+    pipeline_index_table = Table("pipeline_index", metadata,
+                                 Column("pipelineindexid", String(50), primary_key=True),
+                                 Column("factorid", String(50)),
+                                 Column("pipelineid", String(50)),
+                                 Column("topicid", String(50)),
+                                 Column("stageid", String(50), nullable=True),
+                                 Column("unitid", String(50), nullable=True),
+                                 Column("actionid", String(50), nullable=True),
+                                 Column("mappingtofactorid", String(50), nullable=True),
+                                 Column("mappingtotopicid", String(50), nullable=True),
+                                 Column("sourcefromfactorid", String(50), nullable=True),
+                                 Column("sourcefromtopicid", String(50), nullable=True),
+                                 Column("pipelinename", String(60)),
+                                 Column("stagename", String(60)),
+                                 Column("unitname", String(60)),
+                                 Column("reftype", String(50), nullable=True),
+                                 Column("tenantid", String(50), nullable=True),
+                                 Column('lastmodified', DateTime, nullable=True),
+                                 Column('createtime', String(60), nullable=True)
+                                 )
+
 
 def get_table_by_name(table_name):
     if table_name == "users":
@@ -350,4 +371,6 @@ def get_table_by_name(table_name):
         table = key_store_table
     elif table_name == "factor_index":
         table = factor_index_table
+    elif table_name == "pipeline_index":
+        table = pipeline_index_table
     return table

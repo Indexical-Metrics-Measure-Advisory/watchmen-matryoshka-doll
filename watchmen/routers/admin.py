@@ -18,6 +18,7 @@ from model.model.space.space import Space
 from model.model.topic.topic import Topic
 from pydantic import BaseModel
 
+from watchmen.analysis.service import pipeline_index_service
 from watchmen.analysis.storage import factor_index_storage
 from watchmen.auth.service.user import sync_user_to_user_groups
 from watchmen.auth.service.user_group import sync_user_group_to_space, sync_user_group_to_user
@@ -33,6 +34,7 @@ from watchmen.common.security.pat.pat_service import createPAT, queryPAT, delete
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id, add_tenant_id_to_model, \
     compare_tenant, clean_password, is_super_admin
+from watchmen.config.config import settings
 from watchmen.console_space.service.console_space_service import load_space_list_by_dashboard
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id
@@ -355,9 +357,15 @@ async def load_user_list_by_name_list(name_list: List[str], current_user: User =
 async def save_pipeline(pipeline: Pipeline, current_user: User = Depends(deps.get_current_user)):
     pipeline = add_tenant_id_to_model(pipeline, current_user)
     if check_fake_id(pipeline.pipelineId):
-        return create_pipeline(pipeline)
+        result = create_pipeline(pipeline)
+        if settings.INDEX_ON:
+            await pipeline_index_service.save_pipeline_index(result,current_user)
+        return result
     else:
-        return update_pipeline(pipeline)
+        result = update_pipeline(pipeline)
+        if settings.INDEX_ON:
+            await pipeline_index_service.save_pipeline_index(result, current_user)
+        return result
 
 
 @router.get("/pipeline", tags=["admin"], response_model=PipelineFlow)

@@ -7,6 +7,7 @@ class PipelineIndex(WatchmenModel):
     topicId: str = None
     refType: str = None
     pipelineId: str = None
+    pipelineName: str = None
     tenantId: str = None
     stageId: str = None
     stageName: str = None

@@ -15,6 +15,7 @@ class Settings(BaseSettings):
 
     DASK_ON: bool = False
     DASK_PROCESSES: bool = False
+    DASK_TEMP:str = None
 
     ENVIRONMENT: str = DEV
 
