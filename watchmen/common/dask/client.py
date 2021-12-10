@@ -11,6 +11,7 @@ if settings.DASK_TEMP:
 @singleton
 class DaskClient:
 
+
     def __init__(self):
         self.client = Client(processes=settings.DASK_PROCESSES)
 
