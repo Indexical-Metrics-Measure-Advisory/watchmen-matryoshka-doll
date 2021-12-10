@@ -10,6 +10,7 @@ from model.model.topic.topic import Topic
 from watchmen.analysis.service import factor_index_service
 from watchmen.auth.storage.user_group import USER_GROUPS
 from watchmen.auth.user_group import UserGroup
+from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.config.config import settings
@@ -36,7 +37,7 @@ def create_topic_schema(topic: Topic) -> Topic:
         topic.topicId = get_surrogate_key()
     save_topic(topic)
     result = Topic.parse_obj(topic)
-    if settings.FACTOR_INDEX_ON:
+    if settings.INDEX_ON and topic.type !=RAW:
         factor_index_service.create_factor_index_data(result, topic.tenantId)
     return result
 
@@ -46,7 +47,7 @@ def update_topic_schema(
         topic: Topic):
     update_topic(topic_id, topic)
     result = Topic.parse_obj(topic)
-    if settings.INDEX_ON:
+    if settings.INDEX_ON and topic.type != RAW:
         factor_index_service.update_factor_index_data(result, topic.tenantId)
     return result
 
