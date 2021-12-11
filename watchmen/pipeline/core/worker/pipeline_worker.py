@@ -44,10 +44,6 @@ def __merge_pipeline_data(pipeline_trigger_merge_list):
     return merge_context
 
 
-def __build_merge_key(topic_name, trigger_type):
-    return topic_name + "_" + trigger_type.value
-
-
 def __trigger_all_pipeline(pipeline_trigger_merge_list, current_user=None, trace_id=None):
     after_merge_list = __merge_pipeline_data(pipeline_trigger_merge_list)
 
