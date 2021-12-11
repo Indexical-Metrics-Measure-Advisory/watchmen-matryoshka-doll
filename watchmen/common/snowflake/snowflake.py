@@ -107,11 +107,7 @@ def get_surrogate_key():
 
 def get_int_surrogate_key():
     if settings.SNOWFLAKE_REMOTE:
-        start = time.time()
-        result = next_id()
-        end = time.time() - start
-        print(end)
-        return result
+        return next_id()
     else:
         return worker.get_id()
 
