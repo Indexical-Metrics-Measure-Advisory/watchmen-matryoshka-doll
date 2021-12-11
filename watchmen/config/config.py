@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     DASK_ON: bool = False
     DASK_PROCESSES: bool = False
-    DASK_TEMP:str = None
+    DASK_TEMP: str = None
 
     ENVIRONMENT: str = DEV
 
@@ -87,6 +87,8 @@ class Settings(BaseSettings):
     MOCK_USER = "demo_user"
     SNOWFLAKE_DATACENTER = 0
     SNOWFLAKE_WORKER = 0
+    SNOWFLAKE_REMOTE = False
+    SNOWFLAKE_REMOTE_HOST: str = None
 
     MULTIPLE_DATA_SOURCE = False
     EXTERNAL_WRITER_ON = True

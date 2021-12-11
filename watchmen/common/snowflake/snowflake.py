@@ -3,6 +3,7 @@
 import random
 import time
 
+from watchmen.common.snowflake.remoteid import next_id
 from watchmen.config.config import settings
 
 
@@ -101,11 +102,18 @@ worker = IdWorker(settings.SNOWFLAKE_DATACENTER, settings.SNOWFLAKE_WORKER)
 
 
 def get_surrogate_key():
-    return str(worker.get_id())
+    return str(get_int_surrogate_key())
 
 
 def get_int_surrogate_key():
-    return worker.get_id()
+    if settings.SNOWFLAKE_REMOTE:
+        start = time.time()
+        result = next_id()
+        end = time.time() - start
+        print(end)
+        return result
+    else:
+        return worker.get_id()
 
 
 if __name__ == '__main__':
