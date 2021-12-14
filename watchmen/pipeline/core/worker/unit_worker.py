@@ -32,6 +32,7 @@ def run_unit(unit_context: UnitContext):
             unit_context.unitStatus.name = unit_context.unit.name
             loop_variable_name = unit_context.unit.loopVariableName
             if loop_variable_name is not None and loop_variable_name != "":
+
                 loop_variable = unit_context.stageContext.pipelineContext.variables[loop_variable_name]
                 if isinstance(loop_variable, list):
                     if settings.DASK_ON:
@@ -48,8 +49,10 @@ def run_unit(unit_context: UnitContext):
                                                         False)
                 else:
                     raise ValueError(
-                        "the value type of loop variable \"{0}\" must be list, now the value is \"{1}\"".format(
+                        "the value type of loop variable \"{0}\" must be list, now the value is \"{1}\" ".format(
                             loop_variable_name, loop_variable))
+
+
             else:
                 results, triggers = run_actions(unit_context, None, None, False, False)
 
