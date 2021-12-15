@@ -1,14 +1,12 @@
 import logging
 import time
 
-from model.model.pipeline.trigger_data import TriggerData
 from storage.storage.engine_adaptor import MONGO
 from storage.storage.exception.exception import InsertConflictError
 
 from watchmen.common.utils.data_utils import get_id_name_by_datasource
 from watchmen.config.config import settings
 from watchmen.database.datasource.container import data_source_container
-from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from watchmen.pipeline.core.action.utils import update_retry_callback, update_recovery_callback
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
 from watchmen.pipeline.core.context.action_context import get_variables, ActionContext
@@ -147,6 +145,7 @@ def init(action_context: ActionContext):
             status.insertCount = status.insertCount + 1
 
         else:
+
             trigger_pipeline_data_list.append(
                 update_topic_data_one(mappings_results, target_data,
                                       action_context.get_pipeline_id(),

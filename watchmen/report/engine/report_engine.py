@@ -1,6 +1,7 @@
 import logging
 import time
 
+from model.model.report.report import Report
 from pypika import AliasedQuery
 from pypika import Order
 
@@ -18,7 +19,8 @@ log = logging.getLogger("app." + __name__)
 
 def build_query_for_chart(chart_id, current_user):
     console_subject = load_console_subject_by_report_id(chart_id, current_user)
-    report = load_report_by_id(chart_id, current_user)
+    report:Report = load_report_by_id(chart_id, current_user)
+    # print(report.dimensions)
     return __build_chart_query(report, console_subject, current_user)
 
 
