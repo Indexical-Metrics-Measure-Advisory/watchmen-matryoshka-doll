@@ -73,17 +73,12 @@ def create_console_space_graph(console_space_graph: ConnectedSpaceGraphics) -> C
 
 
 def update_console_space_graph(console_space_graph: ConnectedSpaceGraphics) -> ConnectedSpaceGraphics:
-    '''
-    return template.update_one("console_space_graph", {"connectId": console_space_graph.connectId}, console_space_graph,
-                               ConnectedSpaceGraphics)
-    '''
     return storage_template.update_one_first({"connectId": console_space_graph.connectId}, console_space_graph,
                                              ConnectedSpaceGraphics,
                                              "console_space_graph")
 
 
 def load_console_space_graph_by_user_id(user_id: str, current_user) -> List[ConnectedSpaceGraphics]:
-    # return template.find("console_space_graph", {"userId": user_id}, ConnectedSpaceGraphics)
     return storage_template.list_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}]},
                                   ConnectedSpaceGraphics,
                                   "console_space_graph")

@@ -61,10 +61,10 @@ def parse_simpleflake(flake):
                 + extract_bits(flake,
                                SIMPLEFLAKE_TIMESTAMP_SHIFT,
                                SIMPLEFLAKE_TIMESTAMP_LENGTH) / 1000.0
-    random = extract_bits(flake,
-                          SIMPLEFLAKE_RANDOM_SHIFT,
-                          SIMPLEFLAKE_RANDOM_LENGTH)
-    return simpleflake_struct(timestamp, random)
+    random_ = extract_bits(flake,
+                           SIMPLEFLAKE_RANDOM_SHIFT,
+                           SIMPLEFLAKE_RANDOM_LENGTH)
+    return simpleflake_struct(timestamp, random_)
 
 
 def get_next_id():

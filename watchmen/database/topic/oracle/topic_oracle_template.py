@@ -19,12 +19,9 @@ from storage.storage.exception.exception import InsertConflictError, OptimisticL
 from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
-
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
-
-
 
 
 class OracleTopicStorage(TopicStorageInterface):
@@ -279,7 +276,7 @@ class OracleTopicStorage(TopicStorageInterface):
         values = []
         for instance in instances:
             one_dict = capital_to_lower(convert_to_dict(instance))
-            value = self.build_oracle_updates_expression(table, one_dict,"update")
+            value = self.build_oracle_updates_expression(table, one_dict, "update")
             values.append(value)
         stmt = stmt.values(values)
         with self.engine.begin() as conn:

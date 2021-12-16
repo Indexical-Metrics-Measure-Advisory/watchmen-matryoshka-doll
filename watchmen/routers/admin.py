@@ -358,7 +358,7 @@ async def save_pipeline(pipeline: Pipeline, current_user: User = Depends(deps.ge
     if check_fake_id(pipeline.pipelineId):
         result = create_pipeline(pipeline)
         if settings.INDEX_ON:
-            await pipeline_index_service.save_pipeline_index(result,current_user)
+            await pipeline_index_service.save_pipeline_index(result, current_user)
         return result
     else:
         result = update_pipeline(pipeline)
@@ -552,7 +552,3 @@ async def query_log_by_critical(query: MonitorLogQuery, current_user: User = Dep
         query_dict = query_list[0]
 
     return query_pipeline_monitor("raw_pipeline_monitor", query_dict, query.pagination)
-
-
-
-

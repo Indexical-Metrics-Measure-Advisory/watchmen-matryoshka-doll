@@ -37,7 +37,7 @@ def create_topic_schema(topic: Topic) -> Topic:
         topic.topicId = get_surrogate_key()
     save_topic(topic)
     result = Topic.parse_obj(topic)
-    if settings.INDEX_ON and topic.type !=RAW:
+    if settings.INDEX_ON and topic.type != RAW:
         factor_index_service.create_factor_index_data(result, topic.tenantId)
     return result
 

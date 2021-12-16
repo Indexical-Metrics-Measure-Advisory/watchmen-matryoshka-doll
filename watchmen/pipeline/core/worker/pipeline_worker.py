@@ -83,6 +83,7 @@ async def sync_pipeline_monitor_log(pipeline_status):
     pipeline_monitor_service.sync_pipeline_monitor_data(pipeline_status)
 
 
+# noinspection PyBroadException
 def run_pipeline(pipeline_context: PipelineContext):
     pipeline = pipeline_context.pipeline
     data = pipeline_context.data
@@ -105,6 +106,7 @@ def run_pipeline(pipeline_context: PipelineContext):
         pipeline_context.pipelineStatus = pipeline_status
         start = time.time()
         if should_run(pipeline_context):
+            # noinspection PyBroadException
             try:
                 for stage in pipeline.stages:
                     stage_run_status = StageRunStatus(name=stage.name)

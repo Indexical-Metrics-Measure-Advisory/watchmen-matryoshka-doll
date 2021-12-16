@@ -167,13 +167,13 @@ def parse_parameter(parameter_: Parameter, instance, variables):
             if result is not None:
                 return convert_datetime(result).year
             else:
-                result
+                return result
         elif parameter_.type == "month-of":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
             if result is not None:
                 return convert_datetime(result).month
             else:
-                result
+                return result
         elif parameter_.type == "week-of-year":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
             return convert_datetime(result).isocalendar()[1]

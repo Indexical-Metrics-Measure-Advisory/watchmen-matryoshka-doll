@@ -48,9 +48,5 @@ class TopicStorageEngine(object):
     def topic_data_page_(self, where: dict, sort: list, pageable: Pageable, model: BaseModel, name: str) -> DataPage:
         return self.template.topic_data_page_(where, sort, pageable, model, name)
 
-    def delete_topic_collection(self,collection_name):
-        '''
-        topic_name = build_collection_name(collection_name)
-        client.get_collection(topic_name).drop()
-        '''
+    def delete_topic_collection(self, collection_name):
         self.template.topic_data_delete_(None, collection_name)

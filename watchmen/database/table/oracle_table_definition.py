@@ -6,52 +6,52 @@ metadata = MetaData()
 
 
 def get_primary_key(table_name):
-    pid = get_pid(table_name)
-    return pid
+    return get_pid(table_name)
 
 
 def get_pid(table_name):
     if table_name == 'topics':
-        pid = 'topicId'
+        return 'topicId'
     elif table_name == 'console_space_subjects':
-        pid = 'subjectId'
+        return 'subjectId'
     elif table_name == 'pipelines':
-        pid = 'pipelineId'
+        return 'pipelineId'
     elif table_name == 'users':
-        pid = 'userId'
+        return 'userId'
     elif table_name == 'console_dashboards':
-        pid = 'dashboardId'
+        return 'dashboardId'
     elif table_name == 'pipeline_graph':
-        pid = 'pipelineGraphId'
+        return 'pipelineGraphId'
     elif table_name == 'console_spaces':
-        pid = 'connectId'
+        return 'connectId'
     elif table_name == 'console_space_favorites':
-        pid = 'userId'
+        return 'userId'
     elif table_name == 'spaces':
-        pid = 'spaceId'
+        return 'spaceId'
     elif table_name == 'console_space_subjects':
-        pid = 'subjectId'
+        return 'subjectId'
     elif table_name == 'console_reports':
-        pid = 'reportId'
+        return 'reportId'
     elif table_name == 'user_groups':
-        pid = 'userGroupId'
+        return 'userGroupId'
     elif table_name == 'enums':
-        pid = 'enumId'
+        return 'enumId'
     elif table_name == 'console_reports':
-        pid = 'reportId'
+        return 'reportId'
     elif table_name == "console_space_last_snapshot":
-        pid = "userId"
+        return "userId"
     elif table_name == "tenants":
-        pid = "tenantId"
+        return "tenantId"
     elif table_name == "pats":
-        pid = "patId"
+        return "patId"
     elif table_name == "data_sources":
-        pid = "dataSourceId"
+        return "dataSourceId"
     elif table_name == "external_writer":
-        pid = "writerId"
+        return "writerId"
     elif table_name == "factor_index":
-        pid = "factorindexid"
-    return pid
+        return "factorindexid"
+    else:
+        raise Exception("table_name does not exist {0}".format(table_name))
 
 
 users_table = Table("users", metadata,

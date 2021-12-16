@@ -21,15 +21,15 @@ def createPAT(note: str, user_id: str, username: str, tenant_id: str):
     return result
 
 
-def queryPAT(tenantid):
-    token_list: List[PersonAccessToken] = storage_template.list_({"tenantid": tenantid}, PersonAccessToken, "pats")
+def queryPAT(tenant_id):
+    token_list: List[PersonAccessToken] = storage_template.list_({"tenantid": tenant_id}, PersonAccessToken, "pats")
     for token in token_list:
         token.tokenId = token.tokenId.replace(token.tokenId[4:-4], '*' * len(token.tokenId[4:-4]))
     return token_list
 
 
-def deletePAT(patid):
-    storage_template.delete_by_id(patid, "pats")
+def deletePAT(pat_id):
+    storage_template.delete_by_id(pat_id, "pats")
 
 
 def verifyPAT(token):
