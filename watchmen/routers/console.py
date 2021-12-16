@@ -154,8 +154,7 @@ async def load_complete_console_space(console_space_list, current_user):
     return result
 
 
-## SUBJECT
-
+# SUBJECT
 @router.post("/console_space/subject", tags=["console"], response_model=ConsoleSpaceSubject)
 async def create_console_subject(connect_id, subject: ConsoleSpaceSubject = Body(...),
                                  current_user: User = Depends(deps.get_current_user)):
@@ -295,7 +294,7 @@ async def rename_dashboard(dashboard_id, name: str, current_user: User = Depends
     rename_dashboard_by_id(dashboard_id, name)
 
 
-##Share
+#Share
 @router.get("/share/dashboard", tags=["share"], response_model=ShareDashboard)
 async def share_dashboard(dashboard_id: str, token: str):
     security_payload = validate_jwt(token)
@@ -316,7 +315,7 @@ async def share_subject(subject_id: str, token: str):
     return {"subject": subject}
 
 
-## FAVORITE
+#FAVORITE
 
 @router.get('/favorites/me', tags=["console"], response_model=Favorite)
 async def load_favorites_by_user(current_user: User = Depends(deps.get_current_user)):
@@ -335,7 +334,7 @@ async def save_favorite_with_user(favorite: Favorite, current_user: User = Depen
     return favorite
 
 
-## LastSnapshot
+# LastSnapshot
 @router.get('/last_snapshot/me', tags=["console"], response_model=LastSnapshot)
 async def load_last_snapshot_by_user(current_user: User = Depends(deps.get_current_user)):
     result = load_last_snapshot(current_user.userId, current_user)

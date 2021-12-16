@@ -333,45 +333,46 @@ if settings.INDEX_ON:
 
 def get_table_by_name(table_name):
     if table_name == "users":
-        table = users_table
+        return users_table
     elif table_name == "console_space_last_snapshot":
-        table = console_space_last_snapshot_table
+        return console_space_last_snapshot_table
     elif table_name == "console_dashboards":
-        table = console_dashboards_table
+        return console_dashboards_table
     elif table_name == "topics":
-        table = topics_table
+        return topics_table
     elif table_name == "enums":
-        table = enums_table
+        return enums_table
     elif table_name == "spaces":
-        table = spaces_table
+        return spaces_table
     elif table_name == "console_space_favorites":
-        table = console_space_favorites_table
+        return console_space_favorites_table
     elif table_name == "console_space_graph":
-        table = console_space_graph_table
+        return console_space_graph_table
     elif table_name == "console_spaces":
-        table = console_spaces_table
+        return console_spaces_table
     elif table_name == "user_groups":
-        table = user_groups_table
+        return user_groups_table
     elif table_name == "pipelines":
-        table = pipelines_table
+        return pipelines_table
     elif table_name == "pipeline_graph":
-        table = pipeline_graph_table
+        return pipeline_graph_table
     elif table_name == "console_space_subjects":
-        table = console_space_subjects_table
+        return console_space_subjects_table
     elif table_name == "console_reports":
-        table = console_reports_table
+        return console_reports_table
     elif table_name == "pats":
-        table = pats_table
+        return pats_table
     elif table_name == "tenants":
-        table = tenants_table
+        return tenants_table
     elif table_name == "data_sources":
-        table = data_sources_table
+        return data_sources_table
     elif table_name == "external_writer":
-        table = external_writer_table
+        return external_writer_table
     elif table_name == "key_stores":
-        table = key_store_table
+        return key_store_table
     elif table_name == "factor_index":
-        table = factor_index_table
+        return factor_index_table
     elif table_name == "pipeline_index":
-        table = pipeline_index_table
-    return table
+        return pipeline_index_table
+    else:
+        raise Exception("table_name does not exist {}".format(table_name))
