@@ -19,7 +19,6 @@ from model.model.topic.topic import Topic
 from pydantic import BaseModel
 
 from watchmen.analysis.service import pipeline_index_service
-from watchmen.analysis.storage import factor_index_storage
 from watchmen.auth.service.user import sync_user_to_user_groups
 from watchmen.auth.service.user_group import sync_user_group_to_space, sync_user_group_to_user
 from watchmen.auth.storage.user import create_user_storage, query_users_by_name_with_pagination, get_user_list_by_ids, \

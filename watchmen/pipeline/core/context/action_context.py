@@ -15,7 +15,7 @@ class ActionContext:
     delegateVariableName: str = None
     delegateValue: any = None
 
-    def __init__(self, unit_context, action):
+    def __init__(self, unit_context, action:UnitAction):
         self.unitContext = unit_context
         self.action = action
         self.previousOfTriggerData = unit_context.stageContext.pipelineContext.previousOfTriggerData

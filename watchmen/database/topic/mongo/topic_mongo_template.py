@@ -9,8 +9,8 @@ from pymongo.errors import WriteError
 from storage.mongo.index import build_code_options
 from storage.storage.exception.exception import OptimisticLockError, InsertConflictError
 
+from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name
-# from watchmen.database.find_storage_template import find_storage_template
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
@@ -275,7 +275,7 @@ class MongoTopicStorage(TopicStorageInterface):
             return build_data_pages(pageable, [model.parse_obj(result) for result in list(cursor)], total)
         else:
             results = []
-            if self.storage_template.check_topic_type(name) == "raw":
+            if self.storage_template.check_topic_type(name) == RAW:
                 for doc in cursor:
                     results.append(doc['data_'])
             else:

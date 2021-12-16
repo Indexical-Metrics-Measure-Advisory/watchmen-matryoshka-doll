@@ -6,7 +6,7 @@ from watchmen.auth.user_group import UserGroup
 from watchmen.database.find_storage_template import find_storage_template
 from watchmen.space.storage.space_storage import get_space_list_by_ids, update_space_to_storage, SPACES
 
-storage_template = find_storage_template
+storage_template = find_storage_template()
 
 
 def sync_user_group_to_space(user_group: UserGroup, current_user):

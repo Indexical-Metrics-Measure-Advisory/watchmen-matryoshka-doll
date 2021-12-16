@@ -24,7 +24,7 @@ def init(action_context: ActionContext):
     def merge_or_insert_topic():
         action = action_context.action
         if action.topicId is None:
-            raise ValueError("action.topicId is empty {0}".format(action.name))
+            raise ValueError("action.topicId is empty {0}".format(action.topicId))
         target_topic = get_topic_by_id(action.topicId)
         if target_topic.type == "aggregate":
             return aggregation_topic_merge_or_insert_topic()
@@ -44,7 +44,7 @@ def init(action_context: ActionContext):
         current_data = action_context.currentOfTriggerData
         action = action_context.action
         if action.topicId is None:
-            raise ValueError("action.topicId is empty {0}".format(action.name))
+            raise ValueError("action.topicId is empty {0}".format(action.topicId))
 
         pipeline_topic = action_context.get_pipeline_context().pipelineTopic
         target_topic = get_topic_by_id(action.topicId)
@@ -111,7 +111,7 @@ def init(action_context: ActionContext):
         current_data = action_context.currentOfTriggerData
         action = action_context.action
         if action.topicId is None:
-            raise ValueError("action.topicId is empty {0}".format(action.name))
+            raise ValueError("action.topicId is empty {0}".format(action.topicId))
 
         pipeline_topic = action_context.get_pipeline_context().pipelineTopic
         target_topic = get_topic_by_id(action.topicId)

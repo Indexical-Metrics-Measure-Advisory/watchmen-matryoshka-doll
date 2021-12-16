@@ -29,7 +29,7 @@ def init(action_context: ActionContext):
         current_data = action_context.currentOfTriggerData
         action = action_context.action
         if action.topicId is None:
-            raise ValueError("action.topicId is empty {0}".format(action.name))
+            raise ValueError("action.topicId is empty {0}".format(action.topicId))
 
         pipeline_topic = action_context.unitContext.stageContext.pipelineContext.pipelineTopic
         target_topic = get_topic_by_id(action.topicId)

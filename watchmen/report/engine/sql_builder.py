@@ -1,6 +1,6 @@
 import operator
 from decimal import Decimal
-from typing import List
+from typing import List, Union
 
 import arrow
 from model.model.common.parameter import Parameter
@@ -200,7 +200,7 @@ def _connective_filter(filter: Filter):
     if filter.jointType == ConnectiveType.or_type:
         for criterion in criterion_list:
             if result is not None:
-                result = (result) | (criterion)
+                result = Union[result, criterion]
             else:
                 result = criterion
 
