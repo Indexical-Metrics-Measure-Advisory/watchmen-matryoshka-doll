@@ -19,12 +19,12 @@ from storage.storage.exception.exception import InsertConflictError, OptimisticL
 from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME
 from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
-from watchmen.database.find_storage_template import find_storage_template
+
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
 
-storage_template = find_storage_template()
+
 
 
 class OracleTopicStorage(TopicStorageInterface):
@@ -32,8 +32,9 @@ class OracleTopicStorage(TopicStorageInterface):
     insp = None
     metadata = MetaData()
 
-    def __init__(self, client):
+    def __init__(self, client, storage_template):
         self.engine = client
+        self.storage_template = storage_template
         self.insp = inspect(client)
         self.metadata = MetaData()
         self.lock = threading.RLock()
@@ -395,11 +396,11 @@ class OracleTopicStorage(TopicStorageInterface):
                                 result[name] = None
                         else:
                             result[name] = row[name]
-                    if storage_template.check_topic_type(name) == "raw":
+                    if self.storage_template.check_topic_type(name) == "raw":
                         results.append(result['DATA_'])
                     else:
                         results.append(result)
-                if storage_template.check_topic_type(name) == "raw":
+                if self.storage_template.check_topic_type(name) == "raw":
                     return results
                 else:
                     return self._convert_list_elements_key(results, topic_name)
@@ -422,7 +423,7 @@ class OracleTopicStorage(TopicStorageInterface):
             columns = [col[0] for col in cursor.description]
             cursor.rowfactory = lambda *args: dict(zip(columns, args))
             res = cursor.fetchall()
-        if storage_template.check_topic_type(name) == "raw":
+        if self.storage_template.check_topic_type(name) == "raw":
             for row in res:
                 result.append(json.loads(row['DATA_']))
         else:
@@ -455,7 +456,7 @@ class OracleTopicStorage(TopicStorageInterface):
         if dict_info is None:
             return None
         new_dict = {}
-        factors = storage_template.get_topic_factors(topic_name)
+        factors = self.storage_template.get_topic_factors(topic_name)
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].upper()]
         new_dict['id_'] = dict_info['ID_']
@@ -476,7 +477,7 @@ class OracleTopicStorage(TopicStorageInterface):
             return None
         new_dict = {}
         new_list = []
-        factors = storage_template.get_topic_factors(topic_name)
+        factors = self.storage_template.get_topic_factors(topic_name)
         for item in list_info:
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].upper()]

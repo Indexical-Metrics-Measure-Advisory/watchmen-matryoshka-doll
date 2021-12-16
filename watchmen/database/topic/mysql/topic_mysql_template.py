@@ -20,19 +20,17 @@ from watchmen.common.cache.cache_manage import cacheman, STMT, COLUMNS_BY_TABLE_
 from watchmen.common.snowflake.snowflake import get_int_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
-from watchmen.database.find_storage_template import find_storage_template
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
 
 log = logging.getLogger("app." + __name__)
-
-storage_template = find_storage_template()
 
 
 # @singleton
 class MysqlTopicStorage(TopicStorageInterface):
 
-    def __init__(self, client):
+    def __init__(self, client, storage_template):
         self.engine = client
+        self.storage_template = storage_template
         self.insp = inspect(client)
         self.metadata = MetaData()
         self.lock = threading.RLock()
@@ -425,11 +423,11 @@ class MysqlTopicStorage(TopicStorageInterface):
                                 result[name] = None
                         else:
                             result[name] = row[index]
-                    if storage_template.check_topic_type(topic_name) == "raw":
+                    if self.storage_template.check_topic_type(topic_name) == "raw":
                         results.append(result['data_'])
                     else:
                         results.append(result)
-                if storage_template.check_topic_type(topic_name) == "raw":
+                if self.storage_template.check_topic_type(topic_name) == "raw":
                     return results
                 else:
                     return self._convert_list_elements_key(results, topic_name)
@@ -450,7 +448,7 @@ class MysqlTopicStorage(TopicStorageInterface):
             cursor = conn.execute(stmt).cursor
             columns = [col[0] for col in cursor.description]
             res = cursor.fetchall()
-        if storage_template.check_topic_type(name) == "raw":
+        if self.storage_template.check_topic_type(name) == "raw":
             for row in res:
                 result = {}
                 for index, name in enumerate(columns):
@@ -493,13 +491,12 @@ class MysqlTopicStorage(TopicStorageInterface):
             cacheman[COLUMNS_BY_TABLE_NAME].set(table_name, columns)
             return columns
 
-    @staticmethod
-    def _convert_list_elements_key(list_info, topic_name):
+    def _convert_list_elements_key(self, list_info, topic_name):
         if list_info is None:
             return None
         new_dict = {}
         new_list = []
-        factors = storage_template.get_topic_factors(topic_name)
+        factors = self.storage_template.get_topic_factors(topic_name)
         for item in list_info:
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].lower()]
@@ -517,12 +514,11 @@ class MysqlTopicStorage(TopicStorageInterface):
             new_list.append(new_dict)
         return new_list
 
-    @staticmethod
-    def _convert_dict_key(dict_info, topic_name):
+    def _convert_dict_key(self, dict_info, topic_name):
         if dict_info is None:
             return None
         new_dict = {}
-        factors = storage_template.get_topic_factors(topic_name)
+        factors = self.storage_template.get_topic_factors(topic_name)
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].lower()]
         new_dict['id_'] = dict_info['id_']

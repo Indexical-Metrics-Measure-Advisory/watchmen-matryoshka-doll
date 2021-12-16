@@ -5,6 +5,7 @@ from storage.storage.engine_adaptor import get_default_datasource
 
 from watchmen.common.cache.cache_manage import DATA_SOURCE_LIST, cacheman
 from watchmen.database.datasource.storage.data_source_storage import list_all_data_source_list
+from watchmen.database.find_storage_template import find_storage_template
 from watchmen.database.singleton import singleton
 from watchmen.database.topic.mongo.topic_mongo_template import MongoTopicStorage
 from watchmen.database.topic.mysql.topic_mysql_template import MysqlTopicStorage
@@ -41,18 +42,19 @@ class DataSourceContainer(object):
 
     @staticmethod
     def build_storage(datasource: DataSource):
+        storage_template = find_storage_template()
         if datasource.dataSourceType == "mongodb":
             from storage.mongo.mongo_client import MongoEngine
             engine = MongoEngine(datasource)
-            return MongoTopicStorage(client=engine.get_engine())
+            return MongoTopicStorage(client=engine.get_engine(),storage_template=storage_template)
         elif datasource.dataSourceType == "mysql":
             from storage.mysql.mysql_client import MysqlEngine
             engine = MysqlEngine(datasource)
-            return MysqlTopicStorage(client=engine.get_engine())
+            return MysqlTopicStorage(client=engine.get_engine(),storage_template=storage_template)
         elif datasource.dataSourceType == "oracle":
             from storage.oracle.oracle_client import OracleEngine
             engine = OracleEngine(datasource)
-            return OracleTopicStorage(client=engine.get_engine())
+            return OracleTopicStorage(client=engine.get_engine(),storage_template=storage_template)
 
     def get_storage(self, datasource_id):
         if datasource_id is None:
