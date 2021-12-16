@@ -3,8 +3,6 @@ from model.model.common.data_page import DataPage
 from watchmen.auth.tenant import Tenant
 from watchmen.database.find_storage_template import find_storage_template
 
-# from watchmen.database.storage import storage_template
-
 TENANTS = "tenants"
 
 storage_template = find_storage_template()

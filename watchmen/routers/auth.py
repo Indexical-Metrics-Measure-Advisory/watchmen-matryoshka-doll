@@ -64,6 +64,4 @@ async def test_token(current_user: User = Depends(deps.get_current_user)) -> Any
     """
     return current_user
 
-# async def load_user_list_by_names(username_list:List[str],current_user: User = Depends(deps.get_current_user))
-#
-#
+

@@ -21,8 +21,8 @@ class ActionContext:
         self.previousOfTriggerData = unit_context.stageContext.pipelineContext.previousOfTriggerData
         self.currentOfTriggerData = unit_context.stageContext.pipelineContext.currentOfTriggerData
         self.actionStatus = UnitActionStatus()
-        self.delegateVariableName = None
-        self.delegateValue = None
+        # self.delegateVariableName = None
+        # self.delegateValue = None
 
     def get_current_user(self):
         return self.unitContext.stageContext.pipelineContext.currentUser

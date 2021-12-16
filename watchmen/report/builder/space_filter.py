@@ -8,6 +8,7 @@ from model.model.space.space import SpaceFilter
 from pypika import Schema, Table, Field
 from pypika.terms import Term, Criterion, LiteralValue
 
+from watchmen.common.constants.parameter_constants import TOPIC
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.console_space.storage.console_space_storage import load_console_space_by_subject_id
 from watchmen.database.datasource.storage.data_source_storage import load_data_source_by_id
@@ -109,7 +110,7 @@ def build_space_filter_criterion_expression(operator_, left, right):
 
 
 def parse_space_filter_parameter(parameter: Parameter, ):
-    if parameter.kind == "topic":
+    if parameter.kind == TOPIC:
         topic = get_topic_by_id(parameter.topicId)
         topic_col_name = build_collection_name(topic.name)
         datasource = load_data_source_by_id(topic.dataSourceId)
