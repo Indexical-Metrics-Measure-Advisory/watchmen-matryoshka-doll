@@ -279,7 +279,7 @@ class OracleTopicStorage(TopicStorageInterface):
         values = []
         for instance in instances:
             one_dict = capital_to_lower(convert_to_dict(instance))
-            value = self.build_oracle_updates_expression(table, one_dict)
+            value = self.build_oracle_updates_expression(table, one_dict,"update")
             values.append(value)
         stmt = stmt.values(values)
         with self.engine.begin() as conn:

@@ -26,8 +26,8 @@ def update_space_by_id(space_id: str, space: Space) -> Space:
     return update_space_to_storage(space_id, space)
 
 
-def load_space(name: str) -> List[Space]:
-    return load_space_by_name(name)
+# def load_space(name: str) -> List[Space]:
+#     return load_space_by_name(name)
 
 
 def sync_space_to_user_group(space: Space, current_user):

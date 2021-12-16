@@ -6,6 +6,7 @@ from model.model.common.user import User
 from model.model.pipeline.pipeline import Pipeline
 
 from watchmen.common import deps
+from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id
@@ -31,11 +32,12 @@ def find_execute_pipeline_list(pipeline_id, pipeline_list) -> List[Pipeline]:
 async def rerun_pipeline(topic_name, instance_id, pipeline_id=None,
                          current_user: User = Depends(deps.get_current_user)):
     topic = get_topic(topic_name)
+    trace_id = get_surrogate_key()
     instance = find_topic_data_by_id_and_topic_name(topic, instance_id)
     pipeline_list = load_pipeline_by_topic_id(topic.topicId)
     for pipeline in find_execute_pipeline_list(pipeline_id, pipeline_list):
         log.info("rerun topic {0} and pipeline {1}".format(topic_name, pipeline.pipelineId))
-        pipeline_context = PipelineContext(pipeline, instance, current_user)
+        pipeline_context = PipelineContext(pipeline, instance, current_user,trace_id)
         run_pipeline(pipeline_context)
     return {"received": True}
 

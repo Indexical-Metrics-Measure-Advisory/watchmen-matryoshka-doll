@@ -100,7 +100,7 @@ def parse_constants_parameter(constant_value, pipeline_index, temporary_context_
                         pipeline_index.sourceFromFactorId = factor.factorId
 
 
-def __process_factor_actions(action: UnitAction) -> List[PipelineIndex]:
+def __process_factor_actions(action: UnitAction,pipeline, pipeline_index_dict, temporary_context_dict) -> List[PipelineIndex]:
     pass
 
 

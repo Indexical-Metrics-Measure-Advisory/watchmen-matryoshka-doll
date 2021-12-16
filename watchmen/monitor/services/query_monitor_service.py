@@ -49,7 +49,7 @@ def build_result_summary(row, start):
     return result_summary
 
 
-async def sync_query_monitor_data(query_monitor: QueryMonitor):
-    topic_event = TopicEvent(code="raw_query_monitor", data=query_monitor.dict())
-
-    asyncio.ensure_future(import_raw_topic_data(topic_event))
+# async def sync_query_monitor_data(query_monitor: QueryMonitor):
+#     topic_event = TopicEvent(code="raw_query_monitor", data=query_monitor.dict())
+#
+#     asyncio.ensure_future(import_raw_topic_data(topic_event))
