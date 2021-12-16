@@ -101,7 +101,8 @@ class Settings(BaseSettings):
 
     QUERY_MONITOR_ON = False
 
-    KEY_MANAGEMENT_TYPE: str = "db"  ## 'aws-kms' 'azure-kms' , 'aliyun-kms'
+    # 'aws-kms' 'azure-kms' , 'aliyun-kms'
+    KEY_MANAGEMENT_TYPE: str = "db"
 
     DATA_SECURITY_ON = False
 

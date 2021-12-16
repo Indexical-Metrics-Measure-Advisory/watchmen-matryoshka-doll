@@ -358,7 +358,7 @@ async def save_pipeline(pipeline: Pipeline, current_user: User = Depends(deps.ge
     if check_fake_id(pipeline.pipelineId):
         result = create_pipeline(pipeline)
         if settings.INDEX_ON:
-            await pipeline_index_service.save_pipeline_index(result,current_user)
+            await pipeline_index_service.save_pipeline_index(result, current_user)
         return result
     else:
         result = update_pipeline(pipeline)
@@ -457,8 +457,6 @@ async def load_admin_dashboard(current_user: User = Depends(deps.get_current_use
         return AdminDashboard()
 
 
-## ENUM
-
 @router.post("/enum", tags=["admin"], response_model=Enum)
 async def save_enum(enum: Enum, current_user: User = Depends(deps.get_current_user)):
     enum = add_tenant_id_to_model(enum, current_user)
@@ -526,7 +524,6 @@ async def create_raw_topic_schema_v3(event: RawTopicGenerateEvent, current_user:
     create_raw_topic_v3(event.code, json_list, current_user)
 
 
-### LOG
 @router.post("/pipeline/log/query", tags=["admin"])
 async def query_log_by_critical(query: MonitorLogQuery, current_user: User = Depends(deps.get_current_user)):
     query_dict = {}
