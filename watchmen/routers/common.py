@@ -86,7 +86,7 @@ async def rerun_pipeline(topic_name, instance_id, pipeline_id, current_user: Use
     for pipeline in pipeline_list:
         if pipeline.pipelineId == pipeline_id:
             log.info("rerun topic {0} and pipeline {1}".format(topic_name, pipeline.pipelineId))
-            pipeline_context = PipelineContext(pipeline, instance, current_user, trace_id)
+            pipeline_context = PipelineContext(pipeline, instance, current_user,trace_id)
             run_pipeline(pipeline_context)
     return {"received": True}
 
@@ -160,7 +160,7 @@ async def get_factor_value_by_topic_name_and_condition(query_subject: QuerySubje
     subject_filter = __build_subject_filter(query_subject.conditions, console_subject)
     factor_name_list = __get_factor_name_by_alias(query_subject.columnNames, console_subject)
     return get_factor_value_by_subject_and_condition(console_subject, factor_name_list,
-                                                     subject_filter, current_user)
+                                                     subject_filter,current_user)
 
 
 @router.get("/table/metadata/clear", tags=["common"])

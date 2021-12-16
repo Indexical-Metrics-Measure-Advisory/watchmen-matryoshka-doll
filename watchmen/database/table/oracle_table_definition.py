@@ -9,6 +9,7 @@ def get_primary_key(table_name):
     return get_pid(table_name)
 
 
+
 def get_pid(table_name):
     if table_name == 'topics':
         return 'topicId'

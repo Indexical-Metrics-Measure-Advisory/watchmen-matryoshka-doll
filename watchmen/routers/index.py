@@ -31,16 +31,21 @@ async def load_topic_by_factor_index(query_name: str, current_user: User = Depen
 
 
 @router.get("/factor/build/index", tags=["index"])
-async def build_factor_index(topic_id=None, current_user: User = Depends(deps.get_current_user)):
+async def build_factor_index(topic_id=None,current_user:User = Depends(deps.get_current_user)):
     if topic_id is None:
-        pass  ## build
+        pass ## build
     else:
-        pass  ## build pne
+        pass ## build pne
+
 
 
 @router.get("/pipeline/build/index", tags=["index"])
-async def build_pipeline_index(pipeline_id=None, current_user: User = Depends(deps.get_current_user)):
+async def build_pipeline_index(pipeline_id=None,current_user:User = Depends(deps.get_current_user)):
     if pipeline_id is None:
-        pass  ## build
+        pass ## build
     else:
-        pass  ## build pne
+        pass ## build pne
+
+
+
+

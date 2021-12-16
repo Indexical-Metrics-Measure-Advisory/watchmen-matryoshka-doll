@@ -342,13 +342,12 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
         result_connect_space = load_console_space_by_id(console_space.connectId, current_user)
         console_space = add_tenant_id_to_model(console_space, current_user)
         if result_connect_space:
-            __update_console_space_to_db(__update_last_modified(console_space), current_user)
+            __update_console_space_to_db(__update_last_modified(console_space),current_user)
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=result_connect_space.connectId,
                                   reason="connect space successfully updated"))
         else:
-            console_space = __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)),
-                                                         current_user)
+            console_space = __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)),current_user)
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=console_space.connectId, reason="connect space successfully imported"))
     import_response.passed = True

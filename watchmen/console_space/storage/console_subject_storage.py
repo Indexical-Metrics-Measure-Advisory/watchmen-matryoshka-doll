@@ -24,6 +24,7 @@ def load_console_subject_list_by_ids(subject_id_list, current_user):
 
 
 def update_console_subject(console_subject: ConsoleSpaceSubject):
+
     return storage_template.update_one(console_subject, ConsoleSpaceSubject, CONSOLE_SPACE_SUBJECTS)
 
 

@@ -303,7 +303,7 @@ async def share_dashboard(dashboard_id: str, token: str):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     dashboard = load_dashboard_by_id(dashboard_id, user)
-    return load_space_list_by_dashboard(dashboard, user)
+    return load_space_list_by_dashboard(dashboard,user)
 
 
 @router.get("/share/subject", tags=["share"], response_model=ConsoleSpaceSubject)

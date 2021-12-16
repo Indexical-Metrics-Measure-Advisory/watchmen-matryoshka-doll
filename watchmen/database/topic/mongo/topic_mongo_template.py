@@ -16,11 +16,13 @@ from watchmen.database.topic.topic_storage_interface import TopicStorageInterfac
 log = logging.getLogger("app." + __name__)
 
 
+
+
 # @singleton
 class MongoTopicStorage(TopicStorageInterface):
     client = None
 
-    def __init__(self, client, storage_template):
+    def __init__(self, client,storage_template):
         self.client = client
         self.storage_template = storage_template
         log.info("mongo template initialized")

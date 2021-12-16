@@ -34,7 +34,8 @@ def __get_pipeline_index_in_dict(topic_id, factor_id, pipeline_id, pipeline_inde
 
 
 def __add_mapping_to_pipeline_index(mapping_factor, pipeline_index, pipeline_index_dict):
-    topic: Topic = get_topic_by_id(mapping_factor.source.topicId)
+
+    topic:Topic = get_topic_by_id(mapping_factor.source.topicId)
     if topic.type != RAW:
         new_pipeline_index = __get_pipeline_index_in_dict(mapping_factor.source.topicId, mapping_factor.source.factorId,
                                                           pipeline_index.pipelineId,
@@ -99,8 +100,7 @@ def parse_constants_parameter(constant_value, pipeline_index, temporary_context_
                         pipeline_index.sourceFromFactorId = factor.factorId
 
 
-def __process_factor_actions(action: UnitAction, pipeline, pipeline_index_dict, temporary_context_dict) -> List[
-    PipelineIndex]:
+def __process_factor_actions(action: UnitAction,pipeline, pipeline_index_dict, temporary_context_dict) -> List[PipelineIndex]:
     pass
 
 

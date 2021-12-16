@@ -106,7 +106,7 @@ class Settings(BaseSettings):
     DATA_SECURITY_ON = False
 
     @validator("STORAGE_ENGINE", pre=True)
-    def check_storage_configuration(self, v: str, values: Dict[str, Any]) -> bool:
+    def check_storage_configuration(cls, v: str, values: Dict[str, Any]) -> bool:
         # print(v)
         if v and v == "mongo":
             result = bool(

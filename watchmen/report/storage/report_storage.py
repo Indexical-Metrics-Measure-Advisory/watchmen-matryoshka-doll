@@ -40,6 +40,7 @@ def import_report_to_db(report):
 
 
 def query_report_list_with_pagination(query_name: str, pagination: Pagination, current_user: User):
+
     query_dict = {"and": [{"name": {"like": query_name}}, {"tenantId": current_user.tenantId}]}
     sort_dict = [("last_modified", "desc")]
     return storage_template.page_(query_dict, sort_dict, pagination, Report, CONSOLE_REPORTS)

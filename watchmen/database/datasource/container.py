@@ -46,15 +46,15 @@ class DataSourceContainer(object):
         if datasource.dataSourceType == "mongodb":
             from storage.mongo.mongo_client import MongoEngine
             engine = MongoEngine(datasource)
-            return MongoTopicStorage(client=engine.get_engine(), storage_template=storage_template)
+            return MongoTopicStorage(client=engine.get_engine(),storage_template=storage_template)
         elif datasource.dataSourceType == "mysql":
             from storage.mysql.mysql_client import MysqlEngine
             engine = MysqlEngine(datasource)
-            return MysqlTopicStorage(client=engine.get_engine(), storage_template=storage_template)
+            return MysqlTopicStorage(client=engine.get_engine(),storage_template=storage_template)
         elif datasource.dataSourceType == "oracle":
             from storage.oracle.oracle_client import OracleEngine
             engine = OracleEngine(datasource)
-            return OracleTopicStorage(client=engine.get_engine(), storage_template=storage_template)
+            return OracleTopicStorage(client=engine.get_engine(),storage_template=storage_template)
 
     def get_storage(self, datasource_id):
         if datasource_id is None:

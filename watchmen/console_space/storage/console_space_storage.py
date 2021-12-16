@@ -79,6 +79,7 @@ def update_console_space_graph(console_space_graph: ConnectedSpaceGraphics) -> C
 
 
 def load_console_space_graph_by_user_id(user_id: str, current_user) -> List[ConnectedSpaceGraphics]:
+
     return storage_template.list_({"and": [{"userId": user_id}, {"tenantId": current_user.tenantId}]},
                                   ConnectedSpaceGraphics,
                                   "console_space_graph")
