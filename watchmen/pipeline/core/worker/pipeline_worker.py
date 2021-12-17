@@ -91,8 +91,8 @@ def run_pipeline(pipeline_context: PipelineContext):
                                         startTime=datetime.now().replace(tzinfo=None), topicId=pipeline.topicId,
                                         tenantId=pipeline_context.currentUser.tenantId,
                                         traceId=pipeline_context.traceId, pipelineName=pipeline.name)
-    pipeline_status.oldValue = data[pipeline_constants.OLD]
-    pipeline_status.newValue = data[pipeline_constants.NEW]
+    pipeline_status.oldValue = data.get(pipeline_constants.OLD)
+    pipeline_status.newValue = data.get(pipeline_constants.NEW)
     pipeline_status.currentUser = pipeline_context.currentUser
     if pipeline_context.currentUser is None:
         raise Exception("pipeline_context currentUser is None")

@@ -12,7 +12,6 @@ from watchmen.auth.storage.user import load_user_by_name
 from watchmen.common.security.index import validate_jwt
 from watchmen.common.security.pat.pat_model import PersonAccessToken
 from watchmen.common.security.pat.pat_service import verifyPAT
-# from watchmen.common.utils.data_utils import is_superuser
 from watchmen.config.config import settings
 
 tokenUrl = f"{settings.API_V1_STR}/login/access-token"
@@ -26,9 +25,7 @@ def get_current_user(authorization=Depends(reusable_oauth2)
                      ) -> User:
     scheme, token = get_authorization_scheme_param(authorization)
     username = get_username(scheme, token)
-    # if is_superuser(username):
-    #     user = User(name=username, role=SUPER_ADMIN)
-    # else:
+
     user = load_user_by_name(username)
 
     if settings.DEFAULT_DATA_ZONE_ON:
