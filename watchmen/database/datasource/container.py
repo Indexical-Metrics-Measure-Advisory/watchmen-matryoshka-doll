@@ -1,12 +1,12 @@
 from typing import List, Dict
 
-from storage.model.data_source import DataSource
+from watchmen_boot.storage.model.data_source import DataSource
 from storage.storage.engine_adaptor import get_default_datasource
 
-from watchmen.common.cache.cache_manage import DATA_SOURCE_LIST, cacheman
+from watchmen_boot.cache.cache_manage import DATA_SOURCE_LIST, cacheman
 from watchmen.database.datasource.storage.data_source_storage import list_all_data_source_list
 from watchmen.database.find_storage_template import find_storage_template
-from watchmen.database.singleton import singleton
+from watchmen_boot.utils.singleton import singleton
 from watchmen.database.topic.mongo.topic_mongo_template import MongoTopicStorage
 from watchmen.database.topic.mysql.topic_mysql_template import MysqlTopicStorage
 from watchmen.database.topic.oracle.topic_oracle_template import OracleTopicStorage

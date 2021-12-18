@@ -21,7 +21,7 @@ from starlette import status
 from watchmen.auth.storage.user import get_user
 from watchmen.common import deps
 from watchmen.common.security.index import validate_jwt
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, check_fake_id, add_tenant_id_to_model
 from watchmen.console_space.service.console_space_service import delete_console_subject, \
     delete_console_space_and_sub_data, copy_template_to_console_space, load_space_list_by_dashboard

@@ -5,7 +5,7 @@ from model.model.common.pagination import Pagination
 from model.model.topic.topic import Topic
 from storage.storage.storage_interface import OrderType
 
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_ID, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME, \
+from watchmen_boot.cache.cache_manage import cacheman, TOPIC_BY_ID, TOPIC_BY_NAME, COLUMNS_BY_TABLE_NAME, \
     TOPIC_DICT_BY_NAME
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.database.find_storage_template import find_storage_template

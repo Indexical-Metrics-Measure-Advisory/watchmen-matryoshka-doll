@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "watchmen-data-processor"
-version = "0.1.0"
+version = "15.1.13"
 description = ""
 authors = ["luke0623 <luke0623@outlook.com>"]
 
@@ -36,8 +36,9 @@ cacheout = "^0.13.1"
 presto-python-client = "^0.8.2"
 starlette-prometheus = "^0.8.0"
 SQLAlchemy = "^1.4.25"
-#watchmen-model = "^0.1.4"
-#watchmen-storage-engine = "^0.1.16"
+#watchmen-boot = "^15.1.13"
+#watchmen-model = "^15.1.13"
+#watchmen-storage-engine = "^15.1.13"
 
 [tool.poetry.extras]
 mysql = ["mysqlclient"]

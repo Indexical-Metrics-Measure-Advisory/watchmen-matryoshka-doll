@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from pypika import Table, Schema
 from pypika.terms import LiteralValue
-from storage.model.data_source import DataSource
+from watchmen_boot.storage.model.data_source import DataSource
 
 from watchmen.common.utils.data_utils import build_collection_name
 from watchmen.database.datasource.storage.data_source_storage import load_data_source_by_id

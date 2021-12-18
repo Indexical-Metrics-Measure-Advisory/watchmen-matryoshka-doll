@@ -11,20 +11,16 @@ from watchmen.common.constants import pipeline_constants
 log = logging.getLogger("app." + __name__)
 
 MEMORY = "memory"
-
 SNOWFLAKE = "snowflake"
-
 SPLIT_FLAG = ","
 
 INSERT = "insert"
 UPDATE = "update"
-SEQUENCE = "sequence"
 
+SEQUENCE = "sequence"
 NUMBER = "number"
 UNSIGNED = "unsigned"  # 0 & positive
-
 TEXT = "text"
-TIME = 'time'
 
 # address
 ADDRESS = "address"
@@ -45,32 +41,33 @@ PHONE = "phone"
 MOBILE = "mobile"
 FAX = "fax"
 
-DATETIME = "datetime"  # YYYY - MM - DD
+DATETIME = "datetime"  # YYYY-MM-DD HH:mm:ss
+FULL_DATETIME = "full-datetime"  # YYYY-MM-DD HH:mm:ss.SSS
 DATE = "date"  # YYYY - MM - DD
 TIME = "time"  # HH: mm:ss
 YEAR = "year"  # 4
-
-HALF_YEAR = "half-year"  # 1: first
+HALF_YEAR = "half-year"  # 1: first half, 2: second half
 
 QUARTER = "quarter"  # 1 - 4
 SEASON = "season"  # 1: spring, 2: summer, 3: autumn, 4: winter
 MONTH = "month"  # 1 - 12
-HALF_MONTH = "half-month"  # 1: first
+HALF_MONTH = "half-month"  # 1: first half, 2: second half
 
 TEN_DAYS = "ten-days"  # 1, 2, 3
-WEEK_OF_YEAR = "week-of-year"  # 1 - 53
-WEEK_OF_MONTH = "week-of-month"  # 1 - 6
-HALF_WEEK = "half-week"  # 1: first
+WEEK_OF_YEAR = "week-of-year"  # 0 - 53
+WEEK_OF_MONTH = "week-of-month"  # 0 - 5
+HALF_WEEK = "half-week"  # 1: first half, 2: second half
 
 DAY_OF_MONTH = "day-of-month"  # 1 - 31, according
 
 DAY_OF_WEEK = "day-of-week"  # 1 - 7
 DAY_KIND = "day-kind"  # 1: workday, 2: weekend, 3: holiday
 HOUR = "hour"  # 0 - 23
-HOUR_KIND = "hour-kind"  # 1: work
+HOUR_KIND = "hour-kind"  # 1: work time, 2: off hours, 3: sleeping time
 
 MINUTE = "minute"  # 0 - 59
 SECOND = "second"  # 0 - 59
+MILLISECOND = "millisecond"  # 0-999
 AM_PM = "am-pm"  # 1, 2
 
 # individual

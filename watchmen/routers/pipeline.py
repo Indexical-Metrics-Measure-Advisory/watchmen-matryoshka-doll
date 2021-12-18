@@ -7,7 +7,7 @@ from model.model.topic.topic import Topic
 
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.pipeline.service.pipeline_service import save_topic_data, get_input_data, run_pipeline
 from watchmen.topic.storage.topic_schema_storage import get_topic, get_topic_by_name_and_tenant_id
 

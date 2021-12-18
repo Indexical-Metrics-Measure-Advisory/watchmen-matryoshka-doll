@@ -19,7 +19,7 @@ from watchmen.auth.storage.user import import_user_to_db, get_user, update_user_
 from watchmen.auth.storage.user_group import import_user_group_to_db, get_user_group, update_user_group_storage
 from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import add_tenant_id_to_model, add_user_id_to_model
 from watchmen.console_space.storage.console_space_storage import load_console_space_by_id, \
     update_console_space, import_console_space_to_db

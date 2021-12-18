@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from model.model.common.user import User
 
 from watchmen.common import deps
-from watchmen.common.cache.cache_manage import cacheman, TOPIC_BY_NAME, TOPIC_BY_ID, PIPELINE_BY_ID, \
+from watchmen_boot.cache.cache_manage import cacheman, TOPIC_BY_NAME, TOPIC_BY_ID, PIPELINE_BY_ID, \
     PIPELINES_BY_TOPIC_ID, COLUMNS_BY_TABLE_NAME, TOPIC_DICT_BY_NAME
 from watchmen.database.find_storage_template import find_storage_template
 

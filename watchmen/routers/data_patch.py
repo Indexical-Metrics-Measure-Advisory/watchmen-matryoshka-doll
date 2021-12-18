@@ -6,7 +6,7 @@ from model.model.common.user import User
 from model.model.pipeline.pipeline import Pipeline
 
 from watchmen.common import deps
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.pipeline.core.context.pipeline_context import PipelineContext
 from watchmen.pipeline.core.worker.pipeline_worker import run_pipeline
 from watchmen.pipeline.storage.pipeline_storage import load_pipeline_by_topic_id

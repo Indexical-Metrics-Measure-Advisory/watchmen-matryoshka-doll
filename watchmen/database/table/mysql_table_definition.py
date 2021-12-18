@@ -1,7 +1,7 @@
 from sqlalchemy import MetaData, Table, Column, String, Date, DateTime, Integer, JSON, Boolean
 
-from watchmen.config.config import settings
-from watchmen.database.singleton import singleton
+from watchmen_boot.config.config import settings
+from watchmen_boot.utils.singleton import singleton
 from watchmen.database.table.base_table_definition import TableDefinition
 
 

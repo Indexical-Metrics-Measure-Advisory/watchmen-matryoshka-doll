@@ -5,7 +5,7 @@ from enum import Enum
 from model.model.topic.factor import Factor
 from model.model.topic.topic import Topic
 
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.topic.service.topic_service import create_topic_schema
 
 

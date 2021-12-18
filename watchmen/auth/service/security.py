@@ -4,7 +4,7 @@ from typing import Any, Union
 from jose import jwt
 from passlib.context import CryptContext
 
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

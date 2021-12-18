@@ -9,7 +9,7 @@ from watchmen.analysis.model.pipeline_index import PipelineIndex
 from watchmen.analysis.storage import pipeline_index_storage
 from watchmen.common.constants import pipeline_constants, parameter_constants
 from watchmen.common.constants.parameter_constants import RAW
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, DOT
 from watchmen.pipeline.utils.units_func import get_factor, get_factor_by_name
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
