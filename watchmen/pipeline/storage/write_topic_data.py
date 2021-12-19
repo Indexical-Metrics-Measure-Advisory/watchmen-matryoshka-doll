@@ -41,8 +41,7 @@ def __encrypt_value(need_encrypt_factors: List[Factor], mapping_result, current_
 
 
 def insert_topic_data(mapping_result, pipeline_uid, topic: Topic, current_user):
-    if current_user is None:
-        raise Exception("current_user is None")
+    check_current_user(current_user)
     add_audit_columns(mapping_result, INSERT)
     add_tenant_id_to_instance(mapping_result, current_user)
     add_trace_columns(mapping_result, "insert_row", pipeline_uid)
@@ -56,8 +55,7 @@ def insert_topic_data(mapping_result, pipeline_uid, topic: Topic, current_user):
 
 
 def update_topic_data(mapping_result, target_data, pipeline_uid, query_, topic: Topic, current_user):
-    if current_user is None:
-        raise Exception("current_user is None")
+    check_current_user(current_user)
     template = get_template_by_datasource_id(topic.dataSourceId)
     old_data = template.topic_data_find_by_id(
         target_data[get_id_name_by_datasource(data_source_container.get_data_source_by_id(topic.dataSourceId))],
@@ -74,9 +72,13 @@ def update_topic_data(mapping_result, target_data, pipeline_uid, query_, topic: 
                                          TriggerType.update)
 
 
-def update_topic_data_one(mapping_result, target_data, pipeline_uid, id_, topic: Topic, current_user):
+def check_current_user(current_user):
     if current_user is None:
         raise Exception("current_user is None")
+
+
+def update_topic_data_one(mapping_result, target_data, pipeline_uid, id_, topic: Topic, current_user):
+    check_current_user(current_user)
     template = get_template_by_datasource_id(topic.dataSourceId)
     old_data = template.topic_data_find_by_id(
         target_data[get_id_name_by_datasource(data_source_container.get_data_source_by_id(topic.dataSourceId))],
@@ -95,8 +97,7 @@ def update_topic_data_one(mapping_result, target_data, pipeline_uid, id_, topic:
 
 def update_topic_data_one_with_version(mapping_result, target_data, pipeline_uid, id_, version_, topic: Topic,
                                        current_user):
-    if current_user is None:
-        raise Exception("current_user is None")
+    check_current_user(current_user)
     template = get_template_by_datasource_id(topic.dataSourceId)
     old_data = template.topic_data_find_by_id(
         target_data[get_id_name_by_datasource(data_source_container.get_data_source_by_id(topic.dataSourceId))],

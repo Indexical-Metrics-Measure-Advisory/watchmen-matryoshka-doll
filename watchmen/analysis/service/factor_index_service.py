@@ -8,7 +8,7 @@ from watchmen.common.snowflake.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import is_not_raw
 
 
-def create_factor_index_data(topic: Topic, current_user):
+def create_factor_index_data(topic: Topic, current_user=None):
     if is_not_raw(topic):
         for factor in topic.factors:
             factor_index = build_factor_index(factor, topic)
