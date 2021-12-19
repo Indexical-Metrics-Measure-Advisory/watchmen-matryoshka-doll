@@ -4,7 +4,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.connector.kafka import kafka_connector
 from watchmen.connector.rabbitmq import rabbit_connector
 from watchmen.monitor.prometheus.index import init_prometheus_monitor

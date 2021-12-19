@@ -11,9 +11,9 @@ from watchmen.analysis.service import factor_index_service
 from watchmen.auth.storage.user_group import USER_GROUPS
 from watchmen.auth.user_group import UserGroup
 from watchmen.common.constants.parameter_constants import RAW
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.database.find_storage_template import find_storage_template
 from watchmen.raw_data.model_schema import ModelSchema
 from watchmen.raw_data.model_schema_set import ModelSchemaSet

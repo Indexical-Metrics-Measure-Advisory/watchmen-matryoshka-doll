@@ -30,10 +30,10 @@ from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
 from watchmen.common.presto.presto_utils import create_or_update_presto_schema_fields
 from watchmen.common.security.pat.pat_service import createPAT, queryPAT, deletePAT
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id, add_tenant_id_to_model, \
     compare_tenant, clean_password, is_super_admin
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.console_space.service.console_space_service import load_space_list_by_dashboard
 from watchmen.console_space.storage.last_snapshot_storage import load_last_snapshot
 from watchmen.dashborad.storage.dashborad_storage import load_dashboard_by_id

@@ -9,7 +9,7 @@ from watchmen.common.constants import presto_constants
 from watchmen.common.constants.parameter_constants import RAW
 from watchmen.common.utils.data_utils import build_collection_name, is_presto_varchar_type, is_presto_int_type, \
     is_presto_datetime
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.database.find_storage_template import find_storage_template
 from watchmen.pipeline.utils.units_func import BOOLEAN, NUMBER, TIME
 

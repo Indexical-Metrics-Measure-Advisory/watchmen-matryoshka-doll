@@ -9,9 +9,9 @@ from model.model.pipeline.trigger_type import TriggerType
 
 import watchmen
 from watchmen.common.constants import pipeline_constants
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import get_id_name_by_datasource
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.database.datasource.container import data_source_container
 from watchmen.monitor.model.pipeline_monitor import PipelineRunStatus, StageRunStatus
 from watchmen.monitor.services import pipeline_monitor_service

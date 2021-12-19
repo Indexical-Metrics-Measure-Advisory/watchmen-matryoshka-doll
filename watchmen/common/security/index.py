@@ -3,7 +3,7 @@ from jose import jwt
 from jsonschema import ValidationError
 from starlette import status
 
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 
 
 def validate_jwt(token):

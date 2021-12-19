@@ -1,6 +1,6 @@
 from sqlalchemy import MetaData, Table, Column, String, CLOB, Date, DateTime, Integer
 
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 
 metadata = MetaData()
 

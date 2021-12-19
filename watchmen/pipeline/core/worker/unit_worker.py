@@ -3,7 +3,7 @@ import logging
 from distributed import as_completed
 
 from watchmen.common.dask.client import DaskClient
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.monitor.model.pipeline_monitor import UnitRunStatus
 from watchmen.pipeline.core.context.action_context import ActionContext
 from watchmen.pipeline.core.context.unit_context import UnitContext

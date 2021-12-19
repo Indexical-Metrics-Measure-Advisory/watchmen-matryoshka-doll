@@ -12,14 +12,14 @@ from model.model.external.external_writer import ExternalWriter
 from model.model.report.filter import Filter
 from model.model.topic.topic import Topic
 from pydantic import BaseModel
-from storage.model.data_source import DataSource
+from watchmen_boot.storage.model.data_source import DataSource
 
 from watchmen.auth.service import tenant_service
 from watchmen.auth.tenant import Tenant
 from watchmen.collection.model.topic_event import TopicEvent
 from watchmen.common import deps
 from watchmen.common.constants.parameter_constants import TOPIC, CONSTANT
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.console_space.storage.console_subject_storage import load_console_subject_by_id
 from watchmen.database.datasource.container import data_source_container

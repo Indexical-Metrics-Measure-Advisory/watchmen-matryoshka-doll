@@ -4,7 +4,7 @@ from model.model.common.user import User
 from model.model.console_space.connect_space_graphics import ConnectedSpaceGraphics
 from model.model.console_space.console_space import ConsoleSpace
 
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import check_fake_id
 from watchmen.database.find_storage_template import find_storage_template
 

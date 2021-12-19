@@ -13,7 +13,7 @@ from watchmen.auth.storage.user import load_user_by_name
 from watchmen.auth.token import Token
 from watchmen.common import deps
 from watchmen.common.security.index import validate_jwt
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 
 router = APIRouter()
 log = logging.getLogger("app." + __name__)

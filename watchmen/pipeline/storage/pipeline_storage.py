@@ -1,8 +1,8 @@
 from model.model.pipeline.pipeline import Pipeline
 from model.model.pipeline.pipeline_graph import PipelinesGraphics
 
-from watchmen.common.cache.cache_manage import cacheman, PIPELINES_BY_TOPIC_ID, PIPELINE_BY_ID
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.cache.cache_manage import cacheman, PIPELINES_BY_TOPIC_ID, PIPELINE_BY_ID
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.database.find_storage_template import find_storage_template
 
 USER_ID = "userId"

@@ -1,4 +1,4 @@
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 
 PRESTODB = "prestodb"
 TRINO = "trino"

@@ -1,8 +1,8 @@
 import dask
 from dask.distributed import Client
 
-from watchmen.config.config import settings
-from watchmen.database.singleton import singleton
+from watchmen_boot.config.config import settings
+from watchmen_boot.utils.singleton import singleton
 
 if settings.DASK_TEMP:
     dask.config.set(temporary_directory=settings.DASK_TEMP)

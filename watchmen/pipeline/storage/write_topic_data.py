@@ -8,7 +8,7 @@ from model.model.topic.topic import Topic
 
 from watchmen.common.constants import pipeline_constants
 from watchmen.common.utils.data_utils import get_id_name_by_datasource, add_tenant_id_to_instance
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.database.datasource.container import data_source_container
 from watchmen.database.topic.adapter.topic_storage_adapter import get_template_by_datasource_id
 from watchmen.pipeline.utils.units_func import add_audit_columns, add_trace_columns, INSERT, UPDATE

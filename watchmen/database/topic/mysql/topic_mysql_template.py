@@ -13,11 +13,11 @@ from sqlalchemy import update, and_, or_, delete, desc, asc, \
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
-from storage.mysql.mysql_utils import parse_obj
+from watchmen_boot.storage.mysql.mysql_utils import parse_obj
 from storage.storage.exception.exception import OptimisticLockError, InsertConflictError
 
-from watchmen.common.cache.cache_manage import cacheman, STMT, COLUMNS_BY_TABLE_NAME
-from watchmen.common.snowflake.snowflake import get_int_surrogate_key
+from watchmen_boot.cache.cache_manage import cacheman, STMT, COLUMNS_BY_TABLE_NAME
+from watchmen_boot.guid.snowflake import get_int_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, capital_to_lower, build_collection_name
 from watchmen.common.utils.data_utils import convert_to_dict
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface

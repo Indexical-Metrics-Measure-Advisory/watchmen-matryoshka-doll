@@ -6,7 +6,7 @@ import pymongo
 from bson import regex, ObjectId
 from model.model.common.data_page import DataPage
 from pymongo.errors import WriteError
-from storage.mongo.index import build_code_options
+from watchmen_boot.storage.mongo.index import build_code_options
 from storage.storage.exception.exception import OptimisticLockError, InsertConflictError
 
 from watchmen.common.constants.parameter_constants import RAW

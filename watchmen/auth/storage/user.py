@@ -2,7 +2,7 @@ from model.model.common.pagination import Pagination
 from model.model.common.user import User
 
 from watchmen.auth.service.security import get_password_hash
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import is_superuser
 from watchmen.database.find_storage_template import find_storage_template
 

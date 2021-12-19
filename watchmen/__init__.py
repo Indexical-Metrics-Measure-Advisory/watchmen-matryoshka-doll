@@ -1,4 +1,5 @@
-from watchmen.common.log import log
+
+from watchmen_boot.logging import log
 
 log.init()
 

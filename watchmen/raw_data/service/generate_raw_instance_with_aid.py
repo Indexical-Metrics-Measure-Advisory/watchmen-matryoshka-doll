@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from watchmen.common.snowflake.snowflake import get_int_surrogate_key
+from watchmen_boot.guid.snowflake import get_int_surrogate_key
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_name
 
 

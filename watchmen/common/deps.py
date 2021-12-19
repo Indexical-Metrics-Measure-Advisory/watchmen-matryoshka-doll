@@ -12,7 +12,7 @@ from watchmen.auth.storage.user import load_user_by_name
 from watchmen.common.security.index import validate_jwt
 from watchmen.common.security.pat.pat_model import PersonAccessToken
 from watchmen.common.security.pat.pat_service import verifyPAT
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 
 tokenUrl = f"{settings.API_V1_STR}/login/access-token"
 flows = OAuthFlowsModel(password={"tokenUrl": tokenUrl, "scopes": {}})

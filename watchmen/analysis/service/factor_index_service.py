@@ -4,7 +4,7 @@ from model.model.topic.topic import Topic
 
 from watchmen.analysis.model.factor_index import FactorIndex
 from watchmen.analysis.storage import factor_index_storage
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import is_not_raw
 
 

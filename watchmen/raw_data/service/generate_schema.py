@@ -5,7 +5,7 @@ from typing import Any
 from bson import ObjectId
 from pydantic import BaseModel
 
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.raw_data.model_field import ModelField
 from watchmen.raw_data.model_relationship import ModelRelationship
 from watchmen.raw_data.model_schema import ModelSchema

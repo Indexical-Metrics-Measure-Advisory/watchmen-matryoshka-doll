@@ -12,12 +12,12 @@ from sqlalchemy import update, and_, or_, delete, CLOB, desc, asc, \
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import NoSuchTableError, IntegrityError
 from sqlalchemy.future import select
-from storage.oracle.oracle_engine import dumps
-from storage.oracle.oracle_utils import parse_obj
+from watchmen_boot.storage.utility.date_utils import dumps
+from watchmen_boot.storage.oracle.oracle_utils import parse_obj
 from storage.storage.exception.exception import InsertConflictError, OptimisticLockError
 
-from watchmen.common.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME
-from watchmen.common.snowflake.snowflake import get_surrogate_key
+from watchmen_boot.cache.cache_manage import cacheman, COLUMNS_BY_TABLE_NAME
+from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import build_data_pages, build_collection_name, convert_to_dict, capital_to_lower
 
 from watchmen.database.topic.topic_storage_interface import TopicStorageInterface
