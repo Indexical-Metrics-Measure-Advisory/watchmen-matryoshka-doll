@@ -1,6 +1,7 @@
 import pandas as pd
 from model.model.report.column import Operator
 from model.model.topic.topic import Topic
+from watchmen_boot.utils.date_func import parsing_and_formatting, YEAR
 
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, get_variable_with_func_pattern, \
@@ -111,7 +112,8 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
         elif parameter_.type == "year-of":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            return {"value": convert_datetime(value_).year, "position": "right"}
+            # return {"value": convert_datetime(value_).year, "position": "right"}
+            return {"value": parsing_and_formatting(convert_datetime(value_), YEAR), "position": "right"}
         elif parameter_.type == "month-of":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
