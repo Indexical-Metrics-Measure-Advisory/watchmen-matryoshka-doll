@@ -1,4 +1,4 @@
-from watchmen.common.cache.cache_manage import cacheman
+from watchmen_boot.cache.cache_manage import cacheman
 from watchmen.database.find_storage_template import find_storage_template
 
 from watchmen.security.key.db.key_model import KeyStore
