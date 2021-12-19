@@ -1,7 +1,8 @@
 import pandas as pd
 from model.model.report.column import Operator
 from model.model.topic.topic import Topic
-from watchmen_boot.utils.date_func import parsing_and_formatting, YEAR
+from watchmen_boot.utils.date_func import parsing_and_formatting, YEAR, MONTH, WEEK_OF_YEAR, DAY_OF_WEEK, WEEK_OF_MONTH, \
+    QUARTER, HALF_YEAR, DAY_OF_MONTH
 
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
 from watchmen.pipeline.core.parameter.utils import cal_factor_value, get_variable_with_func_pattern, \
@@ -112,41 +113,41 @@ def parse_parameter(parameter_: Parameter, current_data, variables, pipeline_top
         elif parameter_.type == "year-of":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            # return {"value": convert_datetime(value_).year, "position": "right"}
             return {"value": parsing_and_formatting(convert_datetime(value_), YEAR), "position": "right"}
         elif parameter_.type == "month-of":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            return {"value": convert_datetime(value_).month, "position": "right"}
+            month_ = parsing_and_formatting(convert_datetime(value_), MONTH)
+            return {"value": month_, "position": "right"}
         elif parameter_.type == "week-of-year":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            return {"value": convert_datetime(value_).isocalendar()[1], "position": "right"}
+            week_of_year_ = parsing_and_formatting(convert_datetime(value_), WEEK_OF_YEAR)
+            return {"value": week_of_year_, "position": "right"}
         elif parameter_.type == "day-of-week":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            return {"value": convert_datetime(value_).weekday(), "position": "right"}
+            day_of_week_ = parsing_and_formatting(convert_datetime(value_), DAY_OF_WEEK)
+            return {"value": day_of_week_, "position": "right"}
         elif parameter_.type == "week-of-month":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            return {"value": __week_number_of_month(convert_datetime(value_).date()), "position": "right"}
+            week_of_month_ = parsing_and_formatting(convert_datetime(value_), WEEK_OF_MONTH)
+            return {"value": week_of_month_, "position": "right"}
         elif parameter_.type == "quarter-of":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            quarter = pd.Timestamp(convert_datetime(value_)).quarter
+            quarter = parsing_and_formatting(convert_datetime(value_), QUARTER)
             return {"value": quarter, "position": "right"}
         elif parameter_.type == "half-year-of":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            month = convert_datetime(value_).month
-            if month <= 6:
-                return {"value": 1, "position": "right"}
-            else:
-                return {"value": 2, "position": "right"}
+            half_year_ = parsing_and_formatting(convert_datetime(value_), HALF_YEAR)
+            return {"value": half_year_, "position": "right"}
         elif parameter_.type == "day-of-month":
             result = parse_parameter(parameter_.parameters[0], current_data, variables, pipeline_topic, target_topic)
             value_ = result["value"]
-            return {"value": convert_datetime(value_).day, "position": "right"}
+            return {"value": parsing_and_formatting(convert_datetime(value_), DAY_OF_MONTH), "position": "right"}
         elif parameter_.type == "case-then":
             parameters_ = parameter_.parameters
             when_ = []
@@ -228,10 +229,6 @@ def parse_parameter_joint(joint: ParameterJoint, current_data, variables, pipeli
             return {name: {"=": None}}
         else:
             raise Exception("operator is not supported")
-
-
-def __week_number_of_month(date_value):
-    return date_value.isocalendar()[1] - date_value.replace(day=1).isocalendar()[1] + 1
 
 
 def check_calculate_scope(parameter_: Parameter, pipeline_topic: Topic, target_topic: Topic, condition: str) -> bool:
