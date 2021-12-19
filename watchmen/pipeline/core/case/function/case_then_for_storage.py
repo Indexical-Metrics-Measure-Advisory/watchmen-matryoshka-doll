@@ -1,6 +1,6 @@
 from typing import List
 
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.pipeline.core.case.model.parameter import Parameter
 
 MYSQL = "mysql"

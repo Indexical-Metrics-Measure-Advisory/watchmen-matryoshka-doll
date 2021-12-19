@@ -1,7 +1,7 @@
 from model.model.common.alarm import AlarmMessage
 from notifiers import get_notifier
 
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 
 
 async def send_notifier(message: AlarmMessage):

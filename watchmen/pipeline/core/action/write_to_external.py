@@ -2,7 +2,7 @@ import asyncio
 import logging
 import time
 
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.external.service.index import get_writer_func
 from watchmen.external.storage import external_storage
 from watchmen.pipeline.core.context.action_context import ActionContext

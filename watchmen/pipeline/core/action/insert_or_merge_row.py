@@ -5,7 +5,7 @@ from storage.storage.engine_adaptor import MONGO
 from storage.storage.exception.exception import InsertConflictError
 
 from watchmen.common.utils.data_utils import get_id_name_by_datasource
-from watchmen.config.config import settings
+from watchmen_boot.config.config import settings
 from watchmen.database.datasource.container import data_source_container
 from watchmen.pipeline.core.action.utils import update_retry_callback, update_recovery_callback
 from watchmen.pipeline.core.by.parse_on_parameter import parse_parameter_joint
