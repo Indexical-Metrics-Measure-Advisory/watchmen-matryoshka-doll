@@ -1,8 +1,6 @@
 import operator
 from decimal import Decimal
 from typing import List
-
-import pandas as pd
 from model.model.report.column import Operator
 
 from watchmen_boot.guid.snowflake import get_surrogate_key
@@ -10,7 +8,6 @@ from watchmen_boot.utils.date_func import parsing_and_formatting, YEAR, MONTH, W
     QUARTER, HALF_YEAR, DAY_OF_MONTH
 
 from watchmen.common.utils.data_utils import build_collection_name
-from watchmen.pipeline.core.by.parse_on_parameter import __week_number_of_month
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, AMP, FUNC, \
     get_variable_with_func_pattern, DOT, get_variable_with_dot_pattern
 from watchmen.pipeline.core.case.model.parameter import Parameter, ParameterJoint
