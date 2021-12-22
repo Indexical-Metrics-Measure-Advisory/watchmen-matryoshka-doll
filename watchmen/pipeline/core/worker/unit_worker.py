@@ -25,6 +25,8 @@ def should_run(unit_context: UnitContext) -> bool:
 def run_unit(unit_context: UnitContext):
     if unit_context.unit.do is not None:
         if should_run(unit_context):
+            triggers = None
+            results = None
             unit_context.unitStatus = UnitRunStatus()
             loop_variable_name = unit_context.unit.loopVariableName
             if loop_variable_name is not None and loop_variable_name != "":
