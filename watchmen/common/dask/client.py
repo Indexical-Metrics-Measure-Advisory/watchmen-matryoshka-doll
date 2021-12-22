@@ -7,7 +7,7 @@ from watchmen.database.singleton import singleton
 class DaskClient:
 
     def __init__(self):
-        self.client = Client(processes=settings.DASK_PROCESSES, )
+        self.client = Client(processes=settings.DASK_PROCESSES)
 
     def get_dask_client(self):
         return self.client

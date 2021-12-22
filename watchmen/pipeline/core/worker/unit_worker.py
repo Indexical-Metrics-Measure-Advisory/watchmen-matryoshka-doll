@@ -29,23 +29,27 @@ def run_unit(unit_context: UnitContext):
             loop_variable_name = unit_context.unit.loopVariableName
             if loop_variable_name is not None and loop_variable_name != "":
                 loop_variable = unit_context.stageContext.pipelineContext.variables[loop_variable_name]
-                if isinstance(loop_variable, list):
-                    if settings.DASK_ON:
-                        results, triggers = run_actions(unit_context,
-                                                        loop_variable_name,
-                                                        None,
-                                                        True,
-                                                        True)
+                if loop_variable:
+                    if isinstance(loop_variable, list):
+                        if settings.DASK_ON:
+                            results, triggers = run_actions(unit_context,
+                                                            loop_variable_name,
+                                                            None,
+                                                            True,
+                                                            True)
+                        else:
+                            results, triggers = run_actions(unit_context,
+                                                            loop_variable_name,
+                                                            None,
+                                                            True,
+                                                            False)
                     else:
-                        results, triggers = run_actions(unit_context,
-                                                        loop_variable_name,
-                                                        None,
-                                                        True,
-                                                        False)
-                else:
-                    raise ValueError(
-                        "the value type of loop variable \"{0}\" must be list, now the value is \"{1}\"".format(
-                            loop_variable_name, loop_variable))
+                        results, triggers = run_actions(unit_context, loop_variable_name, loop_variable, False, False)
+                        """
+                        raise ValueError(
+                            "the value type of loop variable \"{0}\" must be list, now the value is \"{1}\"".format(
+                                loop_variable_name, loop_variable))
+                        """
             else:
                 results, triggers = run_actions(unit_context, None, None, False, False)
 
