@@ -503,7 +503,6 @@ async def create_raw_topic_schema(event: RawTopicGenerateEvent, current_user: Us
     json_list = []
     for data in event.data:
         json_list.append(data)
-    # print(len(json_list))
     result = create_raw_data_model_set(event.code, json_list)
     return build_topic(result, current_user)
 
