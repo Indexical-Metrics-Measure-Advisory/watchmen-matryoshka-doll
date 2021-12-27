@@ -498,7 +498,7 @@ async def pat_delete(pat_id: str, current_user: User = Depends(deps.get_current_
     return deletePAT(pat_id)
 
 
-@router.post("/topic/raw/generation", tags=["common"])
+@router.post("/topic/raw/generation", tags=["common"], deprecated=True)
 async def create_raw_topic_schema(event: RawTopicGenerateEvent, current_user: User = Depends(deps.get_current_user)):
     json_list = []
     for data in event.data:
