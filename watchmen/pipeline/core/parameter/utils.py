@@ -51,7 +51,7 @@ def cal_factor_value(data_, factor):
         data, prefix = get_factor_value(data, name, prefix, result)
     if type(result[factor.name]) is list:
         if len(result[factor.name]) == 1:
-            return result[factor.name]
+            return result[factor.name][0]
         elif len(result[factor.name]) == 0:
             return None
         else:
