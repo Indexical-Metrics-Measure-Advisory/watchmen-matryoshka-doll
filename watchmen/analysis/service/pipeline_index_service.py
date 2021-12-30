@@ -28,7 +28,6 @@ def __get_pipeline_index_in_dict(topic_id, factor_id, pipeline_id, pipeline_inde
     else:
         pipeline_index = PipelineIndex(topicId=topic_id, factorId=factor_id, pipelineId=pipeline_id)
         pipeline_index.createTime = datetime.now().replace(tzinfo=None).isoformat()
-        # pipeline_index.pipelineIndexId = get_surrogate_key()
         pipeline_index_dict[uni_key] = pipeline_index
         return pipeline_index
 
