@@ -1,4 +1,3 @@
-import pandas as pd
 from model.model.report.column import Operator
 from model.model.topic.topic import Topic
 from watchmen_boot.utils.date_func import parsing_and_formatting, YEAR, MONTH, WEEK_OF_YEAR, DAY_OF_WEEK, WEEK_OF_MONTH, \
