@@ -17,7 +17,7 @@ def build_report_funnels(funnels: List[ReportFunnel], dataset_columns: List[Colu
     for funnel in funnels:
         if funnel.enabled:
             column = columns.get(funnel.columnId)
-            field: Field = parse_column_parameter(column.parameter, dataset_query_alias)["value"]
+            field: Field = parse_column_parameter(column, dataset_query_alias)["value"]
             if funnel.type == "numeric":
                 if funnel.range:
                     lower = Decimal(funnel.values[0])
@@ -53,10 +53,11 @@ def convent_column_list_to_dict(columns) -> dict:
     return columns_dict
 
 
-def parse_column_parameter(parameter, dataset_query_alias):
+def parse_column_parameter(column, dataset_query_alias):
+    parameter = column.parameter
     if parameter.kind == "topic":
         topic = get_topic_by_id(parameter.topicId)
         table = AliasedQuery(dataset_query_alias)
         factor = get_factor(parameter.factorId, topic)
-        field = Field(factor.name, None, table)
+        field = Field(column.alias, None, table)
         return {"value": field, "type": factor.type}

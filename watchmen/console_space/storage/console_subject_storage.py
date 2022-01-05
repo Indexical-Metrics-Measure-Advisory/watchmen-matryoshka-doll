@@ -34,6 +34,12 @@ def load_console_subject_by_id(subject_id, current_user) -> ConsoleSpaceSubject:
                                      CONSOLE_SPACE_SUBJECTS)
 
 
+def load_console_subject_by_name(subject_name, current_user) -> ConsoleSpaceSubject:
+    return storage_template.find_one({"and": [{"name": subject_name}, {"tenantId": current_user.tenantId}]},
+                                     ConsoleSpaceSubject,
+                                     CONSOLE_SPACE_SUBJECTS)
+
+
 def delete_console_subject_by_id(subject_id):
     storage_template.delete_by_id(subject_id, CONSOLE_SPACE_SUBJECTS)
 
