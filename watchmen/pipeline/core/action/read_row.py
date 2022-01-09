@@ -37,6 +37,8 @@ def init(action_context: ActionContext):
             else:
                 set_variable(action_context, action.variableName, target_data)
                 status.value = target_data
+        else:
+            raise ValueError("read row action must match one record at least")
 
         elapsed_time = time.time() - start
         status.completeTime = elapsed_time

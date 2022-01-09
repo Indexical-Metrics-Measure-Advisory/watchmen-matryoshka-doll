@@ -165,47 +165,32 @@ def parse_parameter(parameter_: Parameter, instance, variables):
         elif parameter_.type == "year-of":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
             if result is not None:
-                # return convert_datetime(result).year
                 return parsing_and_formatting(convert_datetime(result), YEAR)
             else:
                 return result
         elif parameter_.type == "month-of":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
             if result is not None:
-                # return convert_datetime(result).month
                 return parsing_and_formatting(convert_datetime(result), MONTH)
             else:
                 return result
         elif parameter_.type == "week-of-year":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
-            # return convert_datetime(result).isocalendar()[1]
             return parsing_and_formatting(convert_datetime(result), WEEK_OF_YEAR)
         elif parameter_.type == "day-of-week":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
-            # return convert_datetime(result).weekday()
             return parsing_and_formatting(convert_datetime(result), DAY_OF_WEEK)
         elif parameter_.type == "week-of-month":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
-            # return __week_number_of_month(convert_datetime(result).date())
             return parsing_and_formatting(convert_datetime(result), WEEK_OF_MONTH)
         elif parameter_.type == "quarter-of":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
-            #quarter = pd.Timestamp(convert_datetime(result)).quarter
-            #return quarter
             return parsing_and_formatting(convert_datetime(result), QUARTER)
         elif parameter_.type == "half-year-of":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
-            """
-            month = convert_datetime(result).month
-            if month <= 6:
-                return 1
-            else:
-                return 2
-            """
             return parsing_and_formatting(convert_datetime(result), HALF_YEAR)
         elif parameter_.type == "day-of-month":
             result = parse_parameter(parameter_.parameters[0], instance, variables)
-            #return convert_datetime(result).day
             return parsing_and_formatting(convert_datetime(result), DAY_OF_MONTH)
         elif parameter_.type == "case-then":
             return parse_mapper_case_then(parameter_.parameters, instance, variables)

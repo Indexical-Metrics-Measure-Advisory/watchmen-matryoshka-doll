@@ -11,13 +11,6 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 log = logging.getLogger("app." + __name__)
 
 
-def __check_factors_result(target_data_list):
-    if isinstance(target_data_list, list):
-        pass
-    else:
-        log.warning("result is not a list {0}".format(target_data_list))
-
-
 def init(action_context: ActionContext):
     def read_factors():
         # begin time
@@ -56,7 +49,8 @@ def init(action_context: ActionContext):
                 read_value = target_data[target_factor.name]
                 set_variable(action_context, action.variableName, [read_value])
                 status.value = read_value
-
+        else:
+            raise ValueError("read factors action must match one factor record at least")
         status.completeTime = time.time() - start
         return status, []
 

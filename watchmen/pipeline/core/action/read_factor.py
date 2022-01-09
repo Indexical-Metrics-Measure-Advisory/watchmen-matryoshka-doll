@@ -43,23 +43,28 @@ def init(action_context: ActionContext):
                     read_value = target_data[target_factor.name]
                     set_variable(action_context, action.variableName, read_value)
                     status.value = read_value
+            else:
+                raise ValueError("read factor action must match one factor record")
         else:
+            read_value = None
             if action.arithmetic == "sum":
                 read_value = query_topic_data_aggregate(where_,
                                                         {target_factor.name: "sum"},
                                                         target_topic, action_context.get_current_user())
-                set_variable(action_context, action.variableName, read_value)
             elif action.arithmetic == "count":
                 read_value = query_topic_data_aggregate(where_,
                                                         {target_factor.name: "count"},
                                                         target_topic, action_context.get_current_user())
-                set_variable(action_context, action.variableName, read_value)
             elif action.arithmetic == "avg":
                 read_value = query_topic_data_aggregate(where_,
                                                         {target_factor.name: "avg"},
                                                         target_topic,
                                                         action_context.get_current_user())
+            if read_value is not None:
                 set_variable(action_context, action.variableName, read_value)
+            else:
+                raise ValueError("read factor action must match one factor record at least")
+
             status.value = read_value
 
         elapsed_time = time.time() - start
