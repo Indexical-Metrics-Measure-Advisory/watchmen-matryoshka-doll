@@ -20,12 +20,17 @@ async def load_topic_by_factor_index(query_name: str, current_user: User = Depen
     topic_factor_index_list = factor_index_storage.load_factor_index_by_topic_name(query_name, current_user.tenantId)
     all_list = factor_index_list + topic_factor_index_list
     topic_id_list = []
+
+    # print(all_list)
     for factor_index in all_list:
         if factor_index.topicId not in topic_id_list:
             topic_id_list.append(factor_index.topicId)
-
+    #
+    # print(topic_id_list)
     if topic_id_list:
-        return get_topic_list_by_ids(topic_id_list, current_user)
+        result = get_topic_list_by_ids(topic_id_list, current_user)
+        print(result)
+        return result
     else:
         return []
 
