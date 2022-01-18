@@ -709,10 +709,11 @@ class OracleStorage(StorageInterface):
     def _convert_list_elements_key(self, list_info, topic_name):
         if list_info is None:
             return None
-        new_dict = {}
+
         new_list = []
         factors = self._get_topic_factors(topic_name)
         for item in list_info:
+            new_dict = {}
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].upper()]
                 new_dict['id_'] = item['ID_']
@@ -726,7 +727,7 @@ class OracleStorage(StorageInterface):
                     new_dict['version_'] = item.get("VERSION_", 0)
                 if "AGGREGATE_ASSIST_" in item:
                     new_dict['aggregate_assist_'] = item.get("AGGREGATE_ASSIST_")
-                new_list.append(new_dict)
+            new_list.append(new_dict)
         return new_list
 
     @staticmethod
