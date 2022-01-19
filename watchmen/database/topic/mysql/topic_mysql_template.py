@@ -518,6 +518,7 @@ class MysqlTopicStorage(TopicStorageInterface):
         if dict_info is None:
             return None
         new_dict = {}
+        # print("topic_name",topic_name)
         factors = self.storage_template.get_topic_factors(topic_name)
         for factor in factors:
             new_dict[factor['name']] = dict_info[factor['name'].lower()]

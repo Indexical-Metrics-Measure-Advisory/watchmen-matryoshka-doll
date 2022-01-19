@@ -14,12 +14,12 @@ from model.model.report.report import Report
 from model.model.space.space import Space
 from model.model.topic.topic import Topic
 from pydantic import BaseModel
+from watchmen_boot.guid.snowflake import get_surrogate_key
 
 from watchmen.auth.storage.user import import_user_to_db, get_user, update_user_storage
 from watchmen.auth.storage.user_group import import_user_group_to_db, get_user_group, update_user_group_storage
 from watchmen.auth.user_group import UserGroup
 from watchmen.common import deps
-from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.common.utils.data_utils import add_tenant_id_to_model, add_user_id_to_model
 from watchmen.console_space.storage.console_space_storage import load_console_space_by_id, \
     update_console_space, import_console_space_to_db
@@ -209,7 +209,6 @@ def __process_non_redundant_import(import_request: ImportDataRequest, current_us
     for topic in import_request.topics:
         result_topic = get_topic_by_id(topic.topicId, current_user)
         topic = add_tenant_id_to_model(topic, current_user)
-
         if result_topic:
             import_response.topics.append(
                 ImportCheckResult(topicId=result_topic.topicId, reason="topic alredy existed"))
@@ -281,18 +280,23 @@ def __import_console_space_to_db(console_space: ConsoleSpace, current_user):
     return import_console_space_to_db(console_space)
 
 
-def __create_console_space_with_new_id(console_space: ConsoleSpace, current_user):
+def __create_console_space_with_new_id(console_space: ConsoleSpace, current_user, topic_ids_map):
+    console_space.subjectIds = []
     for console_space_subject in console_space.subjects:
         console_space_subject: ConsoleSpaceSubject = add_tenant_id_to_model(console_space_subject, current_user)
+        # print(console_space_subject.name)
+
+        print(console_space_subject.dataset.columns)
+        # console_space_subject = __replace_id(console_space_subject, "topicId", topic_ids_map)
+        console_space_subject.reportIds = []
         for report in console_space_subject.reports:
             report.reportId = get_surrogate_key()
             report = add_tenant_id_to_model(report, current_user)
+            # report = __replace_id(report, "topicId", topic_ids_map)
             new_report: Report = import_report_to_db(__update_create_time(__update_last_modified(report)))
-            console_space_subject.reportIds = []
             console_space_subject.reportIds.append(new_report.reportId)
         console_space_subject.subjectId = get_surrogate_key()
         new_subject = import_console_subject_to_db(__update_create_time(__update_last_modified(console_space_subject)))
-        console_space.subjectIds = []
         console_space.subjectIds.append(new_subject.subjectId)
     import_console_space_to_db(console_space)
 
@@ -342,12 +346,13 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
         result_connect_space = load_console_space_by_id(console_space.connectId, current_user)
         console_space = add_tenant_id_to_model(console_space, current_user)
         if result_connect_space:
-            __update_console_space_to_db(__update_last_modified(console_space),current_user)
+            __update_console_space_to_db(__update_last_modified(console_space), current_user)
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=result_connect_space.connectId,
                                   reason="connect space successfully updated"))
         else:
-            console_space = __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)),current_user)
+            console_space = __import_console_space_to_db(__update_create_time(__update_last_modified(console_space)),
+                                                         current_user)
             import_response.connectedSpaces.append(
                 ImportCheckResult(connectId=console_space.connectId, reason="connect space successfully imported"))
     import_response.passed = True
@@ -357,7 +362,8 @@ def __process_replace_import(import_request: ImportDataRequest, current_user):
 def __process_model_dict(model_dict: Dict, replace_key, ids_map: Dict):
     for key, value in model_dict.items():
         if key == replace_key and value:
-            # print("replace_key {} id {}".format(replace_key,ids_map[value]))
+            if value not in ids_map:
+                print("replace_key {} id {}".format(replace_key,model_dict))
             model_dict[key] = ids_map[value]
         elif type(value) == dict:
             __process_model_dict(value, replace_key, ids_map)
@@ -414,7 +420,8 @@ def __process_forced_new_import(import_request: ImportDataRequest, current_user)
         console_space = __replace_id(console_space, "topicId", topic_ids_map)
         console_space = __replace_id(console_space, "spaceId", space_ids_map)
         console_space.userId = current_user.userId
-        __create_console_space_with_new_id(__update_create_time(__update_last_modified(console_space)), current_user)
+        __create_console_space_with_new_id(__update_create_time(__update_last_modified(console_space)), current_user,
+                                           topic_ids_map)
         import_response.connectedSpaces.append(
             {"connectId": console_space.connectId, "reason": "create a new connectedSpace"})
 

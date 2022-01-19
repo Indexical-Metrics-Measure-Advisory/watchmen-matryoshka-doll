@@ -185,7 +185,7 @@ def parse_parameter_joint(joint: ParameterJoint, current_data, variables, pipeli
         right_expr_item = parse_parameter(joint.right, current_data, variables, pipeline_topic, target_topic)
 
         if left_expr_item["position"] == right_expr_item["position"]:
-            raise Exception("the configuration of by have error, please check")
+                raise Exception("the configuration of by have error, please check")
 
         if left_expr_item["position"] == "left":
             name = left_expr_item["value"]

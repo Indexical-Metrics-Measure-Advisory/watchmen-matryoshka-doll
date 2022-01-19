@@ -28,6 +28,7 @@ def parse_mappings(mappings, target_topic, previous_data, current_data, variable
             if previous_value_ is None:
                 previous_value_ = 0
             value_ = current_value_ - previous_value_
+
             result = {target_factor.name: {"_sum": value_}}
             having_aggregate_functions = True
         elif arithmetic == "count":

@@ -4,12 +4,12 @@ from typing import List
 from model.model.common.parameter import Parameter
 from model.model.pipeline.pipeline import Pipeline, UnitAction, Stage, ProcessUnit
 from model.model.topic.topic import Topic
+from watchmen_boot.guid.snowflake import get_surrogate_key
 
 from watchmen.analysis.model.pipeline_index import PipelineIndex
 from watchmen.analysis.storage import pipeline_index_storage
 from watchmen.common.constants import pipeline_constants, parameter_constants
 from watchmen.common.constants.parameter_constants import RAW
-from watchmen_boot.guid.snowflake import get_surrogate_key
 from watchmen.pipeline.core.case.function.utils import parse_constant_expression, DOT
 from watchmen.pipeline.utils.units_func import get_factor, get_factor_by_name
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
@@ -33,9 +33,8 @@ def __get_pipeline_index_in_dict(topic_id, factor_id, pipeline_id, pipeline_inde
 
 
 def __add_mapping_to_pipeline_index(mapping_factor, pipeline_index, pipeline_index_dict):
-
-    topic:Topic = get_topic_by_id(mapping_factor.source.topicId)
-    if topic.type != RAW:
+    topic: Topic = get_topic_by_id(mapping_factor.source.topicId)
+    if topic is not None and topic.type != RAW:
         new_pipeline_index = __get_pipeline_index_in_dict(mapping_factor.source.topicId, mapping_factor.source.factorId,
                                                           pipeline_index.pipelineId,
                                                           pipeline_index_dict)
@@ -99,7 +98,8 @@ def parse_constants_parameter(constant_value, pipeline_index, temporary_context_
                         pipeline_index.sourceFromFactorId = factor.factorId
 
 
-def __process_factor_actions(action: UnitAction,pipeline, pipeline_index_dict, temporary_context_dict) -> List[PipelineIndex]:
+def __process_factor_actions(action: UnitAction, pipeline, pipeline_index_dict, temporary_context_dict) -> List[
+    PipelineIndex]:
     pass
 
 

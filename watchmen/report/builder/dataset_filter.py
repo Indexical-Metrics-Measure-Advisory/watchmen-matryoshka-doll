@@ -1,6 +1,7 @@
 from decimal import Decimal
 from typing import List
 
+from watchmen.common.presto import presto_fn
 import arrow
 from model.model.common.parameter import Parameter, ParameterJoint
 from model.model.console_space.console_space import SubjectDataSetFilter
@@ -20,12 +21,18 @@ from watchmen.topic.storage.topic_schema_storage import get_topic_by_id, load_to
 def build_dataset_select_fields(columns: List[Column], topic_space_filter) -> List[Field]:
     fields = []
     for column in columns:
-        field: Field = dataset_parse_parameter(column.parameter, topic_space_filter)["value"]
-        if check_column_type_is_date(column.parameter):
+        # print(column)
+        result = dataset_parse_parameter(column.parameter, topic_space_filter)
+        field: Field = result["value"]
+        if "computed_type" in result and result["computed_type"] == "month-of":
+
+            fields.append(field.as_(column.alias))
+        elif check_column_type_is_date(column.parameter):
             date_fnc = CustomFunction("date", ["col1"])
             fields.append(date_fnc(field).as_(column.alias))
         else:
             fields.append(field.as_(column.alias))
+
     return fields
 
 
@@ -37,7 +44,8 @@ def check_column_type_is_date(parameter: Parameter):
 
 
 def dataset_parse_parameter(parameter: Parameter, topic_space_filter):
-    if parameter.kind == "topic":
+    # print(parameter)
+    if parameter.kind   == "topic":
         topic = get_topic_by_id(parameter.topicId)
         alias_table = topic_space_filter(parameter.topicId)
         if alias_table:
@@ -60,13 +68,33 @@ def dataset_parse_parameter(parameter: Parameter, topic_space_filter):
             return {"value": Term.wrap_constant(parameter.value), "type": "text"}
     elif parameter.kind == 'computed':
         left = None
-        for item in parameter.parameters:
-            if left is not None:
-                right = dataset_parse_parameter(item, topic_space_filter)
-                return {"value": build_arithmetic_expression(parameter.type, left, right),
-                        "type": "number"}
+        if parameter.type == "month-of":
+            topic_factor = parameter.parameters[0]
+            topic = get_topic_by_id(topic_factor.topicId)
+            factor = get_factor(topic_factor.factorId, topic)
+            # print(factor)
+            alias_table = topic_space_filter(topic_factor.topicId)
+            if alias_table:
+                table = AliasedQuery(alias_table["alias"])
             else:
-                left = dataset_parse_parameter(item, topic_space_filter)
+                topic_col_name = build_collection_name(topic.name)
+                datasource: DataSource = load_data_source_by_id(topic.dataSourceId)
+                catalog_name = datasource.dataSourceCode
+                schema_name = datasource.name
+                schema = Schema(schema_name, LiteralValue(catalog_name))
+                table = Table(topic_col_name, schema)
+
+            return {"value": presto_fn.PrestoMonth(Field(factor.name, table=table)), "type": factor.type, "computed_type": "month-of"}
+        else:
+            for item in parameter.parameters:
+                if left is not None:
+                    right = dataset_parse_parameter(item, topic_space_filter)
+                    return {"value": build_arithmetic_expression(parameter.type, left, right),
+                            "type": "number"}
+                else:
+                    left = dataset_parse_parameter(item, topic_space_filter)
+                    # return {"value": build_arithmetic_expression(parameter.type, left, right),
+                    #         "type": "number"}
 
 
 def build_function(func_expr_str: str, topic_space_filter):
