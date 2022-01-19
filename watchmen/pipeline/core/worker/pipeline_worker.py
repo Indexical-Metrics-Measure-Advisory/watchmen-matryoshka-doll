@@ -49,7 +49,7 @@ def __trigger_all_pipeline(pipeline_trigger_merge_list, current_user=None, trace
 
     for topic_name, item in after_merge_list.items():
         merge_data = {}
-        topic = get_topic_by_name(topic_name)
+        topic = get_topic_by_name(topic_name,current_user)
         if TriggerType.update.value in item:
             for update_data in item[TriggerType.update.value]:
                 old_value = update_data[pipeline_constants.OLD]
@@ -84,7 +84,7 @@ async def sync_pipeline_monitor_log(pipeline_status):
 
 
 # noinspection PyBroadException
-def run_pipeline(pipeline_context: PipelineContext):
+def run_pipeline(pipeline_context: PipelineContext,current_user):
     pipeline = pipeline_context.pipeline
     data = pipeline_context.data
     pipeline_status = PipelineRunStatus(pipelineId=pipeline.pipelineId, uid=get_surrogate_key(),

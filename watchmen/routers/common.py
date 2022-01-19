@@ -87,7 +87,7 @@ async def rerun_pipeline(topic_name, instance_id, pipeline_id, current_user: Use
         if pipeline.pipelineId == pipeline_id:
             log.info("rerun topic {0} and pipeline {1}".format(topic_name, pipeline.pipelineId))
             pipeline_context = PipelineContext(pipeline, instance, current_user, trace_id)
-            run_pipeline(pipeline_context)
+            run_pipeline(pipeline_context,current_user)
     return {"received": True}
 
 

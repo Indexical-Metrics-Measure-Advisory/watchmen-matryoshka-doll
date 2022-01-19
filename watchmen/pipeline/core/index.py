@@ -27,4 +27,4 @@ def trigger_pipeline_2(topic_name, instance, trigger_type: TriggerType, current_
     for pipeline in pipeline_list:
         if __match_trigger_type(trigger_type, pipeline):
             pipeline_context = PipelineContext(pipeline, instance, current_user, trace_id)
-            run_pipeline(pipeline_context)
+            run_pipeline(pipeline_context,current_user)
