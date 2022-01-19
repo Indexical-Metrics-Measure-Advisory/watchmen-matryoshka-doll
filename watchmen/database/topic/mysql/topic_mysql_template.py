@@ -494,10 +494,10 @@ class MysqlTopicStorage(TopicStorageInterface):
     def _convert_list_elements_key(self, list_info, topic_name):
         if list_info is None:
             return None
-        new_dict = {}
         new_list = []
         factors = self.storage_template.get_topic_factors(topic_name)
         for item in list_info:
+            new_dict = {}
             for factor in factors:
                 new_dict[factor['name']] = item[factor['name'].lower()]
                 new_dict['id_'] = item['id_']
