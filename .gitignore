@@ -7,7 +7,7 @@ distributions
 trino/
 /trino
 presto/
-presto
+
 /presto/
 
 # C extensions

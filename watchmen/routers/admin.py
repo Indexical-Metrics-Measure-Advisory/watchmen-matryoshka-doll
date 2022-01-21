@@ -449,6 +449,7 @@ async def load_pipeline_by_pipeline_id(enum_id, current_user: User = Depends(dep
 @router.get("/home/dashboard", tags=["admin"], response_model=AdminDashboard)
 async def load_admin_dashboard(current_user: User = Depends(deps.get_current_user)):
     result = load_last_snapshot(current_user.userId, current_user)
+    # print(result)
     if result is not None:
         admin_dashboard_id = result.adminDashboardId
         dashboard = load_dashboard_by_id(admin_dashboard_id, current_user)

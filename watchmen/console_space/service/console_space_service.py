@@ -31,11 +31,14 @@ def load_space_list_by_dashboard(dashboard, current_user):
     report_dict = {}
     space_list = []
     if dashboard is not None:
+
+        # print(dashboard)
         for dashboard_report in dashboard.reports:
             report = load_report_by_id(dashboard_report.reportId, current_user)
             report_dict[report.reportId] = report
             console_subject = load_console_subject_by_report_id(report.reportId, current_user)
             subject_dict[console_subject.subjectId] = console_subject
+
             console_space = load_console_space_by_subject_id(console_subject.subjectId, current_user)
             space_dict[console_space.spaceId] = console_space
         for key, space in space_dict.items():
