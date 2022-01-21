@@ -44,8 +44,7 @@ def check_column_type_is_date(parameter: Parameter):
 
 
 def dataset_parse_parameter(parameter: Parameter, topic_space_filter):
-    # print(parameter)
-    if parameter.kind   == "topic":
+    if parameter.kind == "topic":
         topic = get_topic_by_id(parameter.topicId)
         alias_table = topic_space_filter(parameter.topicId)
         if alias_table:
@@ -72,7 +71,6 @@ def dataset_parse_parameter(parameter: Parameter, topic_space_filter):
             topic_factor = parameter.parameters[0]
             topic = get_topic_by_id(topic_factor.topicId)
             factor = get_factor(topic_factor.factorId, topic)
-            # print(factor)
             alias_table = topic_space_filter(topic_factor.topicId)
             if alias_table:
                 table = AliasedQuery(alias_table["alias"])
@@ -84,7 +82,8 @@ def dataset_parse_parameter(parameter: Parameter, topic_space_filter):
                 schema = Schema(schema_name, LiteralValue(catalog_name))
                 table = Table(topic_col_name, schema)
 
-            return {"value": presto_fn.PrestoMonth(Field(factor.name, table=table)), "type": factor.type, "computed_type": "month-of"}
+            return {"value": presto_fn.PrestoMonth(Field(factor.name, table=table)), "type": factor.type,
+                    "computed_type": "month-of"}
         else:
             for item in parameter.parameters:
                 if left is not None:
