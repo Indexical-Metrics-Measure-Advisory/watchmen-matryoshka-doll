@@ -25,7 +25,6 @@ def build_dataset_select_fields(columns: List[Column], topic_space_filter) -> Li
         result = dataset_parse_parameter(column.parameter, topic_space_filter)
         field: Field = result["value"]
         if "computed_type" in result and result["computed_type"] == "month-of":
-
             fields.append(field.as_(column.alias))
         elif check_column_type_is_date(column.parameter):
             date_fnc = CustomFunction("date", ["col1"])
