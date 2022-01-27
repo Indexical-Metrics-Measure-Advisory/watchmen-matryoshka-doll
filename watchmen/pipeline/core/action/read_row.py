@@ -28,7 +28,7 @@ def init(action_context: ActionContext):
 
         where_ = parse_parameter_joint(action.by, current_data, variables, pipeline_topic, target_topic)
         status.by = where_
-
+        # print(where_)
         target_data = query_topic_data(where_, target_topic, action_context.get_current_user())
 
         if target_data is not None:
