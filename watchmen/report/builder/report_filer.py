@@ -1,8 +1,6 @@
 from decimal import Decimal
 from typing import List
 
-from watchmen.common.presto import presto_fn
-
 from arrow import arrow
 from model.model.common.parameter import Parameter, ParameterJoint
 from model.model.report.column import Column
@@ -10,7 +8,9 @@ from model.model.report.report import ReportIndicator, ReportDimension
 from pypika import functions as fn, AliasedQuery, Field
 from pypika.terms import LiteralValue, Criterion, Term
 
+from watchmen.common.presto import presto_fn
 from watchmen.pipeline.utils.units_func import get_factor
+from watchmen.report.builder.dataset_filter import build_dataset_select_computed_type
 from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
 
 
@@ -116,6 +116,7 @@ def build_criterion(filter, dataset_columns: List[Column], dataset_query_alias) 
 
 
 def _build_criterion_expression(operator_, left, right):
+
     if operator_ == "equals":
         return left.eq(right)
     elif operator_ == "not-equals":
@@ -159,7 +160,6 @@ def parse_report_filter_parameter(parameter: Parameter, dataset_columns, dataset
 
 def parse_column_parameter(column, dataset_query_alias):
     parameter = column.parameter
-    # print(parameter)
     if parameter.kind == "topic":
         topic = get_topic_by_id(parameter.topicId)
         table = AliasedQuery(dataset_query_alias)
@@ -169,19 +169,23 @@ def parse_column_parameter(column, dataset_query_alias):
     elif parameter.kind == "computed":
         if parameter.type == "month-of":
             result = parameter.parameters[0]
-            factor, table = build_chart_indicator_field(dataset_query_alias, result)
-            field = presto_fn.PrestoMonth(Field(factor.name, table=table))
+            column_field, factor = build_chart_indicator_field(dataset_query_alias, result)
+            field = presto_fn.PrestoMonth(column_field)
             return {"value": field, "type": factor.type}
         elif parameter.type == "year-of":
             result = parameter.parameters[0]
-            factor, table =  build_chart_indicator_field(dataset_query_alias, result)
-            field = presto_fn.PrestoYear(Field(factor.name, table=table))
+            column_field, factor = build_chart_indicator_field(dataset_query_alias, result)
+            field = presto_fn.PrestoYear(column_field)
             return {"value": field, "type": factor.type}
+        elif parameter.type in ["divide", "subtract", "multiply", "add", "modulus"]:
+            table = AliasedQuery(dataset_query_alias)
+            field = Field(column.alias, None, table)
+            return {"value": field, "type": "number"}
 
 
 def build_chart_indicator_field(dataset_query_alias, result):
     topic = get_topic_by_id(result.topicId)
     table = AliasedQuery(dataset_query_alias)
     factor = get_factor(result.factorId, topic)
-
-    return factor,table
+    column_field = Field(factor.name, table=table)
+    return column_field, factor

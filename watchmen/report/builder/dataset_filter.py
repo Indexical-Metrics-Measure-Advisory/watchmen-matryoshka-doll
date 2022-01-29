@@ -27,8 +27,6 @@ def build_dataset_select_fields(columns: List[Column], topic_space_filter) -> Li
         field: Field = result["value"]
         if "computed_type" in result and result["computed_type"] == "month-of":
             fields.append(field.as_(column.alias))
-        # elif "computed_type" in result and result["computed_type"] in ["subtract","divide",]:
-        #     fields.append(field.as_(column.alias))
         elif check_column_type_is_date(column.parameter):
             date_fnc = CustomFunction("date", ["col1"])
             fields.append(date_fnc(field).as_(column.alias))
