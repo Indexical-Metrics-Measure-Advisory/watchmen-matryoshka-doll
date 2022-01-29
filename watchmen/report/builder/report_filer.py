@@ -167,18 +167,21 @@ def parse_column_parameter(column, dataset_query_alias):
         field = Field(column.alias, None, table)
         return {"value": field, "type": factor.type}
     elif parameter.kind == "computed":
-
         if parameter.type == "month-of":
             result = parameter.parameters[0]
-            topic = get_topic_by_id(result.topicId)
-            table = AliasedQuery(dataset_query_alias)
-            factor = get_factor(result.factorId, topic)
+            factor, table = build_chart_indicator_field(dataset_query_alias, result)
             field = presto_fn.PrestoMonth(Field(factor.name, table=table))
             return {"value": field, "type": factor.type}
         elif parameter.type == "year-of":
             result = parameter.parameters[0]
-            topic = get_topic_by_id(result.topicId)
-            table = AliasedQuery(dataset_query_alias)
-            factor = get_factor(result.factorId, topic)
+            factor, table =  build_chart_indicator_field(dataset_query_alias, result)
             field = presto_fn.PrestoYear(Field(factor.name, table=table))
             return {"value": field, "type": factor.type}
+
+
+def build_chart_indicator_field(dataset_query_alias, result):
+    topic = get_topic_by_id(result.topicId)
+    table = AliasedQuery(dataset_query_alias)
+    factor = get_factor(result.factorId, topic)
+
+    return factor,table
