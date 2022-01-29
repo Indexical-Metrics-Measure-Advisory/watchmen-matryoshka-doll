@@ -1,7 +1,6 @@
 from decimal import Decimal
 from typing import List
 
-import parameters as parameters
 
 from watchmen.common.presto import presto_fn
 import arrow
