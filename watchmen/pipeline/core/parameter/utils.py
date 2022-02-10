@@ -107,7 +107,13 @@ def check_and_convert_value_by_factor(factor: Factor, value):
         elif factor.type == "text":
             return str(value)
         elif factor.type == "number" or factor.type == "unsigned":
-            return Decimal(value)
+            # for float error
+            # >>> Decimal(600.38)
+            # Decimal('600.3799999999999954525264911353588104248046875')
+            if isinstance(value, float):
+                return Decimal(str(value))
+            else:
+                return Decimal(value)
         elif factor.type == "datetime":
             return convert_datetime(value)
         elif factor.type == "year":

@@ -12,6 +12,7 @@ from watchmen.auth.service.user import authenticate
 from watchmen.auth.storage.user import load_user_by_name
 from watchmen.auth.token import Token
 from watchmen.common import deps
+from watchmen.common.deps import get_current_user
 from watchmen.common.security.index import validate_jwt
 from watchmen_boot.config.config import settings
 
@@ -57,11 +58,14 @@ async def validate_token(token: str) -> User:
     return user
 
 
+@router.get("/login/authorization", response_model=User, tags=["authenticate"])
+async def validate_authorization(authorization: str) -> User:
+    return get_current_user(authorization)
+
+
 @router.post("/login/test-token", response_model=User, tags=["authenticate"])
 async def test_token(current_user: User = Depends(deps.get_current_user)) -> Any:
     """
     Test access token
     """
     return current_user
-
-
