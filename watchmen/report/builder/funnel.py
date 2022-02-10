@@ -3,61 +3,84 @@ from typing import List
 
 import arrow
 from model.model.report.column import Column
-from model.model.report.report import ReportFunnel
-from pypika import Criterion, AliasedQuery, Field
+from model.model.report.report import ReportFunnel, ReportFunnelType
+from pypika import Criterion, Field, AliasedQuery
 from pypika.terms import LiteralValue
 
-from watchmen.pipeline.utils.units_func import get_factor
-from watchmen.topic.storage.topic_schema_storage import get_topic_by_id
+from watchmen.common.presto import presto_fn
+from watchmen.report.builder.utils import convent_column_list_to_dict
 
 
-def build_report_funnels(funnels: List[ReportFunnel], dataset_columns: List[Column], dataset_query_alias):
+def build_report_funnels(funnels: List[ReportFunnel], dataset_query_alias, dataset_columns: List[Column]):
     columns = convent_column_list_to_dict(dataset_columns)
     criterions = []
     for funnel in funnels:
         if funnel.enabled:
             column = columns.get(funnel.columnId)
-            field: Field = parse_column_parameter(column, dataset_query_alias)["value"]
-            if funnel.type == "numeric":
+            field = Field(column.alias, None, AliasedQuery(dataset_query_alias))
+            if funnel.type == ReportFunnelType.NUMERIC:
                 if funnel.range:
-                    lower = Decimal(funnel.values[0])
-                    upper = Decimal(funnel.values[1])
-                    criterions.append(field.between(lower, upper))
+                    if check_funnel_values(funnel.values, True):
+                        lower = Decimal(funnel.values[0])
+                        upper = Decimal(funnel.values[1])
+                        criterions.append(field.between(lower, upper))
                 else:
-                    if funnel.values:
+                    if check_funnel_values(funnel.values, False):
                         criterions.append(field.eq(Decimal(funnel.values[0])))
-            elif funnel.type == "date":
+            elif funnel.type == ReportFunnelType.DATE:
                 if funnel.range:
-                    lower = LiteralValue("DATE \'{0}\'".format(arrow.get(funnel.values[0]).format('YYYY-MM-DD')))
-                    upper = LiteralValue("DATE \'{0}\'".format(arrow.get(funnel.values[1]).format('YYYY-MM-DD')))
-                    criterions.append(field.between(lower, upper))
+                    if check_funnel_values(funnel.values, True):
+                        lower_value = funnel.values[0]
+                        upper_value = funnel.values[1]
+                        lower = LiteralValue("DATE \'{0}\'".format(arrow.get(lower_value).format('YYYY-MM-DD')))
+                        upper = LiteralValue("DATE \'{0}\'".format(arrow.get(upper_value).format('YYYY-MM-DD')))
+                        criterions.append(field.between(lower, upper))
                 else:
-                    value = LiteralValue("DATE \'{0}\'".format(arrow.get(funnel.values[0]).format('YYYY-MM-DD')))
-                    criterions.append(field.eq(value))
-            else:
-                if funnel.range:
-                    lower = LiteralValue(funnel.values[0])
-                    upper = LiteralValue(funnel.values[1])
-                    criterions.append(field.between(lower, upper))
-                else:
-                    value = LiteralValue(funnel.values[0])
-                    if value:
+                    if check_funnel_values(funnel.values, False):
+                        value = LiteralValue("DATE \'{0}\'".format(arrow.get(funnel.values[0]).format('YYYY-MM-DD')))
                         criterions.append(field.eq(value))
-        return Criterion.all(criterions)
+            elif funnel.type == ReportFunnelType.YEAR:
+                if funnel.range:
+                    if check_funnel_values(funnel.values, True):
+                        lower = Decimal(funnel.values[0])
+                        upper = Decimal(funnel.values[1])
+                        criterions.append(presto_fn.PrestoYear(field).between(lower, upper))
+                else:
+                    if check_funnel_values(funnel.values, False):
+                        value = Decimal(funnel.values[0])
+                        criterions.append(presto_fn.PrestoYear(field).eq(value))
+            elif funnel.type == ReportFunnelType.MONTH:
+                if funnel.range:
+                    if check_funnel_values(funnel.values, True):
+                        lower = Decimal(funnel.values[0])
+                        upper = Decimal(funnel.values[1])
+                        criterions.append(presto_fn.PrestoMonth(field).between(lower, upper))
+                else:
+                    if check_funnel_values(funnel.values, False):
+                        value = Decimal(funnel.values[0])
+                        criterions.append(presto_fn.PrestoMonth(field).eq(value))
+            else:
+                raise NotImplementedError("funnel type is not supported")
+    return Criterion.all(criterions)
 
 
-def convent_column_list_to_dict(columns) -> dict:
-    columns_dict = {}
-    for column in columns:
-        columns_dict[column.columnId] = column
-    return columns_dict
+def check_funnel_values(values, is_range):
+    if values:
+        if is_range:
+            if len(values) != 2:
+                return False
+            else:
+                value1 = values[0]
+                value2 = values[1]
+                if value1 and value2:
+                    return True
+        else:
+            if len(values) != 1:
+                return False
+            else:
+                value = values[0]
+                if value:
+                    return True
+    else:
+        return False
 
-
-def parse_column_parameter(column, dataset_query_alias):
-    parameter = column.parameter
-    if parameter.kind == "topic":
-        topic = get_topic_by_id(parameter.topicId)
-        table = AliasedQuery(dataset_query_alias)
-        factor = get_factor(parameter.factorId, topic)
-        field = Field(column.alias, None, table)
-        return {"value": field, "type": factor.type}

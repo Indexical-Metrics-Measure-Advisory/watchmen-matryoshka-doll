@@ -11,6 +11,7 @@ from watchmen.monitor.services.query_monitor_service import build_query_summary,
 from watchmen.report.builder.dialects import PrestoQuery
 from watchmen.report.builder.funnel import build_report_funnels
 from watchmen.report.builder.report_filer import build_indicators, build_dimensions, build_report_where
+from watchmen.report.builder.space_filter import get_topic_sub_query_with_space_filter
 from watchmen.report.engine.dataset_engine import build_dataset_query_for_subject
 from watchmen.report.storage.report_storage import load_report_by_id
 
@@ -19,7 +20,7 @@ log = logging.getLogger("app." + __name__)
 
 def build_query_for_chart(chart_id, current_user):
     console_subject = load_console_subject_by_report_id(chart_id, current_user)
-    report:Report = load_report_by_id(chart_id, current_user)
+    report: Report = load_report_by_id(chart_id, current_user)
     # print(report.dimensions)
     return __build_chart_query(report, console_subject, current_user)
 
@@ -51,13 +52,17 @@ def __build_chart_query(report, console_subject, current_user):
                 chart_query = chart_query.limit(count)
 
     if report.filters:
+        topic_space_filter = get_topic_sub_query_with_space_filter(console_subject, current_user)
         chart_query = chart_query.where(build_report_where(report.filters,
-                                                           console_subject.dataset.columns,
-                                                           dataset_query_alias))
+                                                           topic_space_filter,
+                                                           dataset_query_alias,
+                                                           console_subject.dataset.columns
+                                                           ))
     if report.funnels:
         chart_query = chart_query.where(build_report_funnels(report.funnels,
-                                                             console_subject.dataset.columns,
-                                                             dataset_query_alias))
+                                                             dataset_query_alias,
+                                                             console_subject.dataset.columns
+                                                             ))
     return chart_query
 
 

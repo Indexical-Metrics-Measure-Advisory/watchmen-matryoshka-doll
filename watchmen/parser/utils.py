@@ -25,8 +25,5 @@ def build_table_by_topic_id(topic_id) -> Table:
     return Table(topic_col_name, schema)
 
 
-def convent_column_list_to_dict(columns) -> dict:
-    columns_dict = {}
-    for column in columns:
-        columns_dict[column.columnId] = column
-    return columns_dict
+def convert_string_to_constant(value: str) -> str:
+    return value.replace("-", "_").upper()

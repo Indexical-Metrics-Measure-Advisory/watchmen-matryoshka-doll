@@ -22,7 +22,7 @@ def convert_datetime(value):
             return value.replace(tzinfo=None)
         else:
             if settings.TOPIC_DATE_FORMAT:
-                return arrow.get(value,settings.TOPIC_DATE_FORMAT).datetime.replace(tzinfo=None)
+                return arrow.get(value, settings.TOPIC_DATE_FORMAT).datetime.replace(tzinfo=None)
             else:
                 return arrow.get(value).datetime.replace(tzinfo=None)
     else:
