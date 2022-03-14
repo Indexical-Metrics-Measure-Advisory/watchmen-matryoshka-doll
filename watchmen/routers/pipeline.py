@@ -52,7 +52,7 @@ async def push_pipeline_data(topic_event: TopicEvent, current_user: User = Depen
 
 
 @router.post("/pipeline/data/async/tenant", tags=["pipeline"])
-async def push_pipeline_data_async(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
+async def push_pipeline_data_async_tenant(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
     trace_id = get_surrogate_key()
     topic = get_topic_by_name_and_tenant_id(topic_event.code,
                                             topic_event.tenantId)
