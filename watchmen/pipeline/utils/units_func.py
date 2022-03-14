@@ -5,6 +5,7 @@ from decimal import Decimal
 import arrow
 from model.model.topic.factor import Factor
 from model.model.topic.topic import Topic
+from watchmen_boot.config.config import settings
 
 from watchmen.common.constants import pipeline_constants
 
@@ -169,7 +170,10 @@ def convert_datetime(value):
         if isinstance(value, datetime):
             return value.replace(tzinfo=None)
         else:
-            return arrow.get(value).datetime.replace(tzinfo=None)
+            if settings.TOPIC_DATE_FORMAT:
+                return arrow.get(value, settings.TOPIC_DATE_FORMAT).datetime.replace(tzinfo=None)
+            else:
+                return arrow.get(value).datetime.replace(tzinfo=None)
     else:
         return value
 
