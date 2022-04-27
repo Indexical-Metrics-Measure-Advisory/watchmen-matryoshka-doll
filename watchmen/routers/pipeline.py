@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import logging
 
 from fastapi import APIRouter, Depends
@@ -44,10 +45,18 @@ async def push_pipeline_data_async(topic_event: TopicEvent, current_user: User =
 @router.post("/pipeline/data", tags=["pipeline"])
 async def push_pipeline_data(topic_event: TopicEvent, current_user: User = Depends(deps.get_current_user)):
     trace_id = get_surrogate_key()
+    enter_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"The request trace id is {trace_id}, entry_time is {enter_time}.")
     topic = await __load_topic_definition(topic_event.code, current_user)
     data = get_input_data(topic, topic_event)
+    before_save_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"The request trace id is {trace_id}, before_save_time is {before_save_time}.")
     await save_topic_data(topic, data, current_user)
+    after_save_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"The request trace id is {trace_id}, after_save_time is {after_save_time}.")
     await run_pipeline(topic_event, current_user, trace_id)
+    after_run_pipeline_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"The request trace id is {trace_id}, after_run_pipeline_time is {after_run_pipeline_time}.")
     return {"received": True, "trace_id": trace_id}
 
 
