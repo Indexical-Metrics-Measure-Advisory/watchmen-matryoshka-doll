@@ -17,7 +17,7 @@ RUN pip install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install -E mysql -E mongo -E rabbit -E kafka
 RUN pip install watchmen-storage-engine
-RUN pip install watchmen-model
+RUN pip install watchmen-model==15.2.14
 RUN pip install watchmen-boot
 
 EXPOSE 8000
